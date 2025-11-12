@@ -7,7 +7,7 @@ export const revalidate = false;
 
 export async function GET(
   _req: Request,
-  { params }: RouteContext<'/og/docs/[...slug]'>,
+  { params }: RouteContext<'/og/docs/[...slug]'>
 ) {
   const { slug } = await params;
   const page = source.getPage(slug.slice(0, -1));
@@ -24,7 +24,7 @@ export async function GET(
     {
       width: 1200,
       height: 630,
-    },
+    }
   );
 }
 

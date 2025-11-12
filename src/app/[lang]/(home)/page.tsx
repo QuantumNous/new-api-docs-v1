@@ -8,8 +8,8 @@ export default async function HomePage({
   const { lang } = await params;
 
   return (
-    <div className="flex flex-col justify-center text-center flex-1">
-      <h1 className="text-2xl font-bold mb-4">Hello World</h1>
+    <div className="flex flex-1 flex-col justify-center text-center">
+      <h1 className="mb-4 text-2xl font-bold">Hello World</h1>
       <p>
         You can open{' '}
         <Link href={`/${lang}/docs`} className="font-medium underline">
@@ -20,4 +20,3 @@ export default async function HomePage({
     </div>
   );
 }
-

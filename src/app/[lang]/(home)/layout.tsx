@@ -12,4 +12,3 @@ export default async function Layout({
 
   return <HomeLayout {...baseOptions(lang)}>{children}</HomeLayout>;
 }
-

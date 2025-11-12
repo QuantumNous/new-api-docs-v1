@@ -6,4 +6,3 @@ export const i18n = defineI18n({
   // 使用 'dir' parser，按语言文件夹组织内容
   parser: 'dir',
 });
-

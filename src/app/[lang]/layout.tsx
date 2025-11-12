@@ -46,8 +46,7 @@ export async function generateMetadata({
 
   return {
     metadataBase: new URL(
-      process.env.NEXT_PUBLIC_URL || 
-      process.env.VERCEL_URL 
+      process.env.NEXT_PUBLIC_URL || process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000'
     ),
@@ -77,10 +76,9 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} className={inter.className} suppressHydrationWarning>
-      <body className="flex flex-col min-h-screen">
+      <body className="flex min-h-screen flex-col">
         <RootProvider i18n={provider(lang)}>{children}</RootProvider>
       </body>
     </html>
   );
 }
-
