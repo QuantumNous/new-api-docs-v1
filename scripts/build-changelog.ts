@@ -128,7 +128,7 @@ function formatTimeToChina(
 }
 
 function processMarkdownHeaders(body: string): string {
-  if (!body) return body;
+  if (!body) return '';
 
   // 降低标题级别（从高到低处理，避免多次降级）
   let processed = body;
@@ -203,7 +203,16 @@ function formatReleasesMarkdown(
   }
 
   const i18n = CHANGELOG_I18N[lang];
-  let markdown = `${i18n.title}\n\n`;
+
+  // 添加 frontmatter
+  const titleMap = {
+    zh: '更新日志',
+    en: 'Changelog',
+    ja: '変更履歴',
+  };
+  let markdown = `---\ntitle: ${titleMap[lang]}\n---\n\n`;
+
+  markdown += `${i18n.title}\n\n`;
 
   // 添加警告信息
   const currentTime = new Date()

@@ -514,6 +514,14 @@ function generateSpecialThanksContent(
   const i18n = SPECIAL_THANKS_I18N[lang];
   const parts: string[] = [];
 
+  // 添加 frontmatter
+  const titleMap = {
+    zh: '特别鸣谢',
+    en: 'Special Thanks',
+    ja: 'スペシャルサンクス',
+  };
+  parts.push(`---\ntitle: ${titleMap[lang]}\n---\n\n`);
+
   parts.push(`${i18n.title}\n\n${i18n.intro}\n\n`);
 
   // 赞助商部分
