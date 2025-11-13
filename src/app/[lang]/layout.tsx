@@ -115,6 +115,10 @@ export async function generateMetadata({
   });
 }
 
+export async function generateStaticParams() {
+  return i18n.languages.map((lang) => ({ lang }));
+}
+
 export default async function RootLayout({
   params,
   children,

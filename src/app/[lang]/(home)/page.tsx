@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/cn';
 import { Github, BookOpen } from 'lucide-react';
 import { Hero } from './page.client';
+import { getLocalePath, i18n } from '@/lib/i18n';
 
 const contentMap: Record<
   string,
@@ -55,7 +56,7 @@ export default async function Page({
           </h1>
           <div className="flex w-fit flex-row flex-wrap items-center justify-center gap-4">
             <Link
-              href={`/${lang}/docs`}
+              href={getLocalePath(lang, 'docs')}
               className="bg-brand text-brand-foreground hover:bg-brand-200 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-medium tracking-tight transition-colors max-sm:text-sm"
             >
               <BookOpen className="size-4" />
@@ -77,4 +78,8 @@ export default async function Page({
       </div>
     </main>
   );
+}
+
+export async function generateStaticParams() {
+  return i18n.languages.map((lang) => ({ lang }));
 }

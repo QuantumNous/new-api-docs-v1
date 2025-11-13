@@ -1,5 +1,5 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { i18n } from '@/lib/i18n';
+import { i18n, getLocalePath } from '@/lib/i18n';
 import Image from 'next/image';
 import type { LinkItemType } from 'fumadocs-ui/layouts/docs';
 
@@ -66,7 +66,7 @@ export function baseOptions(locale: string): BaseLayoutProps {
       {
         type: 'main',
         text: translations.docs,
-        url: `/${locale}/docs`,
+        url: getLocalePath(locale, 'docs'),
       },
     ],
   };

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Github, Container, MessageCircle } from 'lucide-react';
+import { getLocalePath } from '@/lib/i18n';
 
 interface FooterProps {
   lang: string;
@@ -23,17 +24,17 @@ const footerContent: Record<
       {
         title: '关于我们',
         links: [
-          { label: '关于项目', href: '/zh/docs/wiki/project-introduction' },
-          { label: '联系我们', href: '/zh/docs/support/community-interaction' },
-          { label: '功能特性', href: '/zh/docs/wiki/features-introduction' },
+          { label: '关于项目', href: 'docs/wiki/project-introduction' },
+          { label: '联系我们', href: 'docs/support/community-interaction' },
+          { label: '功能特性', href: 'docs/wiki/features-introduction' },
         ],
       },
       {
         title: '文档',
         links: [
-          { label: '快速开始', href: '/zh/docs/getting-started' },
-          { label: '安装指南', href: '/zh/docs/installation' },
-          { label: 'API 文档', href: '/zh/docs/api' },
+          { label: '快速开始', href: 'docs/getting-started' },
+          { label: '安装指南', href: 'docs/installation' },
+          { label: 'API 文档', href: 'docs/api' },
         ],
       },
       {
@@ -129,21 +130,21 @@ const footerContent: Record<
         links: [
           {
             label: 'About Project',
-            href: '/en/docs/wiki/project-introduction',
+            href: 'docs/wiki/project-introduction',
           },
           {
             label: 'Contact Us',
-            href: '/en/docs/support/community-interaction',
+            href: 'docs/support/community-interaction',
           },
-          { label: 'Features', href: '/en/docs/wiki/features-introduction' },
+          { label: 'Features', href: 'docs/wiki/features-introduction' },
         ],
       },
       {
         title: 'Docs',
         links: [
-          { label: 'Quick Start', href: '/en/docs/getting-started' },
-          { label: 'Installation Guide', href: '/en/docs/installation' },
-          { label: 'API Docs', href: '/en/docs/api' },
+          { label: 'Quick Start', href: 'docs/getting-started' },
+          { label: 'Installation Guide', href: 'docs/installation' },
+          { label: 'API Docs', href: 'docs/api' },
         ],
       },
       {
@@ -239,21 +240,21 @@ const footerContent: Record<
         links: [
           {
             label: 'プロジェクトについて',
-            href: '/ja/docs/wiki/project-introduction',
+            href: 'docs/wiki/project-introduction',
           },
           {
             label: 'お問い合わせ',
-            href: '/ja/docs/support/community-interaction',
+            href: 'docs/support/community-interaction',
           },
-          { label: '機能', href: '/ja/docs/wiki/features-introduction' },
+          { label: '機能', href: 'docs/wiki/features-introduction' },
         ],
       },
       {
         title: 'ドキュメント',
         links: [
-          { label: 'クイックスタート', href: '/ja/docs/getting-started' },
-          { label: 'インストールガイド', href: '/ja/docs/installation' },
-          { label: 'APIドキュメント', href: '/ja/docs/api' },
+          { label: 'クイックスタート', href: 'docs/getting-started' },
+          { label: 'インストールガイド', href: 'docs/installation' },
+          { label: 'APIドキュメント', href: 'docs/api' },
         ],
       },
       {
@@ -371,7 +372,7 @@ export function Footer({ lang }: FooterProps) {
                       </a>
                     ) : (
                       <Link
-                        href={link.href}
+                        href={getLocalePath(lang, link.href)}
                         className="text-fd-muted-foreground hover:text-fd-foreground text-sm transition-colors"
                       >
                         {link.label}
