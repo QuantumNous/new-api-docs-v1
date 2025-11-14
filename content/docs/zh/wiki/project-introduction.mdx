@@ -1,167 +1,212 @@
 ﻿---
 title: 项目介绍
+description: 了解 New API，新一代 AI 网关与资产管理系统
 ---
 
-<div class="text-center" markdown>
+import { Callout } from 'fumadocs-ui/components/callout';
 
-![New API Logo](/assets/logo.png)
-
-<strong style={{ fontSize: '1.5em' }}>New API</strong>
-
-<img
-  src="/assets/trendshift.svg"
-  alt="NewAPI_Trendshift"
-  style={{ width: '250px', height: '55px' }}
-  width="250"
-  height="55"
-/>
-
-</div>
-
-New API 是一个新一代大模型网关与 AI 资产管理系统，基于 [One API](https://github.com/songquanpeng/one-api) 进行二次开发。该项目旨在提供一个统一的接口来管理和使用各种 AI 模型服务，包括但不限于 OpenAI、Anthropic、Gemini和Midjourney 等。
-
-## 🤝 我们信任的合作伙伴
-
-<p align="center">
-  <strong>排名不分先后</strong>
-</p>
-
-<div class="text-center" markdown>
-
-<a href="https://www.cherry-ai.com/" target="_blank">
+<div className="my-8 text-center">
   <img
-    src="/assets/partner/cherry-studio.png"
-    alt="Cherry Studio"
+    src="/assets/logo.png"
+    alt="New API Logo"
+    className="mx-auto"
+    width="120"
     height="120"
   />
-</a>
-<a href="https://bda.pku.edu.cn/" target="_blank">
-  <img src="/assets/partner/pku.png" alt="北京大学" height="120" />
-</a>
-<a href="https://www.compshare.cn/?ytag=GPU_yy_gh_newapi" target="_blank">
-  <img src="/assets/partner/ucloud.png" alt="UCloud 优刻得" height="120" />
-</a>
-<a href="https://www.aliyun.com/" target="_blank">
-  <img src="/assets/partner/aliyun.png" alt="阿里云" height="120" />
-</a>
-<a href="https://io.net/" target="_blank">
-  <img src="/assets/partner/io-net.png" alt="IO.NET" height="120" />
-</a>
-
+  <h1 className="mt-4 mb-2 text-4xl font-bold">New API</h1>
+  <img
+    src="/assets/trendshift.svg"
+    alt="NewAPI Trendshift Badge"
+    className="mx-auto mt-4"
+    style={{ width: '250px', height: '55px' }}
+    width="250"
+    height="55"
+  />
 </div>
 
-## 📜 许可证
+## 概述
 
-New API 采用**基于使用场景的双重许可 (Usage-Based Dual Licensing)** 模式：
+New API 是一个新一代大模型网关与 AI 资产管理系统，基于 [One API](https://github.com/songquanpeng/one-api) 进行二次开发。该项目提供了一个统一的接口来管理和使用各种 AI 模型服务。
 
-**核心原则：**
+<Callout type="info">
+  New API 无缝集成了主要 AI 平台，包括 OpenAI、Anthropic、Google
+  Gemini、Midjourney 等众多服务。
+</Callout>
 
-- **默认许可:** 本项目默认在 **GNU Affero 通用公共许可证 v3.0 (AGPLv3)** 下提供。任何用户在遵守 AGPLv3 条款和下述附加限制的前提下，均可免费使用。
-- **商业许可:** 在特定商业场景下，或当您希望获得 AGPLv3 之外的权利时，**必须**获取**商业许可证 (Commercial License)**。
+### 核心特性
 
-许可全文与最新版本见：[项目 LICENSE](https://github.com/QuantumNous/new-api/blob/main/LICENSE)。
+- **统一接口** - 多个 AI 提供商的单一 API 端点
+- **安全管理** - 先进的身份验证和授权
+- **使用分析** - 全面的追踪和报告
+- **高性能** - 为速度和可靠性进行了优化
+- **多租户支持** - 完美适配团队和企业
 
-### 1. 开源许可证 (AGPLv3) - 适用于基础使用
+## 我们信任的合作伙伴
 
-- 在遵守 **AGPLv3** 条款的前提下，您可以自由地使用、修改和分发 New API。AGPLv3 的完整文本可访问 [https://www.gnu.org/licenses/agpl-3.0.html](https://www.gnu.org/licenses/agpl-3.0.html) 获取。
-- **核心义务:** 如果您修改了 New API 并通过网络提供服务 (SaaS)，或者分发了修改后的版本，您必须以 AGPLv3 许可证向所有用户提供相应的**完整源代码**。
-- **附加限制（重要）:** 在仅使用 AGPLv3 开源许可证的情况下，您**必须**完整保留项目代码中原有的品牌标识、LOGO 及版权声明信息。**禁止以任何形式修改、移除或遮盖**这些信息。如需移除，必须获取商业许可证。
-- 使用前请务必仔细阅读并理解 AGPLv3 的所有条款及上述附加限制。
+<div className="text-muted-foreground mb-6 text-center text-sm">
+  排名不分先后
+</div>
 
-### 2. 商业许可证 (Commercial License) - 适用于高级场景及闭源需求
+<div className="my-8 flex flex-wrap items-center justify-center gap-6">
+  <a
+    href="https://www.cherry-ai.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-block"
+  >
+    <img
+      src="/assets/partner/cherry-studio.png"
+      alt="Cherry Studio"
+      width="120"
+      height="100"
+      className="h-[100px] w-auto"
+    />
+  </a>
+  <a
+    href="https://bda.pku.edu.cn/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-block"
+  >
+    <img
+      src="/assets/partner/pku.png"
+      alt="北京大学"
+      width="120"
+      height="100"
+      className="h-[100px] w-auto"
+    />
+  </a>
+  <a
+    href="https://www.compshare.cn/?ytag=GPU_yy_gh_newapi"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-block"
+  >
+    <img
+      src="/assets/partner/ucloud.png"
+      alt="UCloud 优刻得"
+      width="120"
+      height="100"
+      className="h-[100px] w-auto"
+    />
+  </a>
+  <a
+    href="https://www.aliyun.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-block"
+  >
+    <img
+      src="/assets/partner/aliyun.png"
+      alt="阿里云"
+      width="120"
+      height="100"
+      className="h-[100px] w-auto"
+    />
+  </a>
+  <a
+    href="https://io.net/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-block"
+  >
+    <img
+      src="/assets/partner/io-net.png"
+      alt="IO.NET"
+      width="120"
+      height="100"
+      className="h-[100px] w-auto"
+    />
+  </a>
+</div>
 
-在以下任一情况下，您**必须**联系我们获取并签署一份商业许可证，才能合法使用 New API：
+## 许可证
 
-- **场景一：移除品牌和版权信息**  
-  您希望在您的产品或服务中移除 New API 的 LOGO、UI 界面中的版权声明或其他品牌标识。
+New API 采用**基于使用场景的双重许可（Usage-Based Dual Licensing）**模式。
 
-- **场景二：规避 AGPLv3 开源义务**  
-  您基于 New API 进行了修改，并希望：
-  - 通过网络提供服务（SaaS），但**不希望**向您的服务用户公开您修改后的源代码。
-  - 分发一个集成了 New API 的软件产品，但**不希望**以 AGPLv3 许可证发布您的产品或公开源代码。
+<Callout type="warn">
+  在使用 New API 之前，请阅读[项目
+  LICENSE](https://github.com/QuantumNous/new-api/blob/main/LICENSE)
+  中的完整许可条款。
+</Callout>
 
-- **场景三：企业政策与集成需求**
-  - 您所在公司的政策、客户合同或项目要求不允许使用 AGPLv3 许可的软件。
-  - 您需要进行 OEM 集成，将 New API 作为您闭源商业产品的一部分进行再分发。
+### 开源许可证（AGPLv3）
 
-- **场景四：需要商业支持与保障**  
-  您需要 AGPLv3 未提供的商业保障，如官方技术支持等。
+在 AGPLv3 下，您可以自由地使用、修改和分发 New API，用于个人和开源项目。
 
-**获取商业许可：**  
-请通过电子邮件 [support@quantumnous.com](mailto:support@quantumnous.com) 联系 New API 团队洽谈商业授权事宜。
+**主要条款：**
 
-### 3. 贡献（Contributions）
+- 可自由使用、修改和分发
+- 完整许可文本：[GNU AGPLv3](https://www.gnu.org/licenses/agpl-3.0.html)
+- **核心义务**：如果您修改并作为网络服务（SaaS）部署，您必须在 AGPLv3 下提供完整的源代码
+- **品牌要求**：您必须保留所有原始品牌、标识和版权声明
 
-- 我们欢迎社区对 New API 的贡献。所有向本项目提交的贡献（例如通过 Pull Request）都将被视为在 **AGPLv3** 许可证下提供。
-- 通过向本项目提交贡献，即表示您同意您的代码以 AGPLv3 许可证授权给本项目及所有后续使用者（无论这些使用者最终遵循 AGPLv3 还是商业许可）。
-- 您也理解并同意，您的贡献可能会被包含在根据商业许可证分发的 New API 版本中。
+<Callout type="error">
+  仅使用 AGPLv3 许可证时，您不能删除或修改 New API
+  的品牌标识。白标化需要获得商业许可证。
+</Callout>
 
-### 4. 其他条款（Other Terms）
+### 商业许可证
 
-- 关于商业许可证的具体条款、条件和价格，以双方签署的正式商业许可协议为准。
-- 项目维护者保留根据需要更新本许可政策的权利。相关更新将通过项目官方渠道（如代码仓库、官方网站）进行通知。
+在以下场景中，您**必须**获得商业许可证：
 
----
+**场景一：白标化**
 
-### New API Licensing (English)
+- 您希望在产品中删除或修改 New API 的标识、品牌或版权声明。
 
-This page describes the software license of the New API project (not this documentation site).
+**场景二：闭源 SaaS**
 
-This project uses a **Usage-Based Dual Licensing** model.
+- 您修改了 New API 并希望将其作为服务提供，但不想开源您的修改。
 
-**Core Principles:**
+**场景三：企业需求**
 
-- **Default License:** The project is available by default under the **GNU Affero General Public License v3.0 (AGPLv3)**, provided you comply with both the AGPLv3 terms and the additional restriction below.
-- **Commercial License:** For specific commercial scenarios, or if you require rights beyond AGPLv3, you **must** obtain a **Commercial License**.
+- 您所在组织的政策禁止使用 AGPLv3 软件，或您需要 OEM 集成权。
 
-For the full and latest license text, see the project's [LICENSE](https://github.com/QuantumNous/new-api/blob/main/LICENSE).
+**场景四：商业支持**
 
-#### 1. Open Source License: AGPLv3 – For Basic Usage
+- 您需要官方技术支持、SLA 和商业保证。
 
-- Under the terms of **AGPLv3**, you are free to use, modify, and distribute New API. Full text: [https://www.gnu.org/licenses/agpl-3.0.html](https://www.gnu.org/licenses/agpl-3.0.html).
-- **Core Obligation:** If you modify New API and provide it as a network service (SaaS), or distribute a modified version, you must make the **complete corresponding source code** available to all users under AGPLv3.
-- **Additional Restriction (Important):** When using only the AGPLv3 license, you **must** retain all original branding, logos, and copyright statements in the project. **You are prohibited from modifying, removing, or concealing** such information. A Commercial License is required to remove them.
-- Please read and ensure you fully understand AGPLv3 and the above additional restriction before use.
+**获取商业许可证：**
 
-#### 2. Commercial License – For Advanced Scenarios & Closed Source Needs
+如需商业许可咨询，请发送邮件至：[support@quantumnous.com](mailto:support@quantumnous.com)
 
-You **must** contact us to obtain and sign a Commercial License in any of the following scenarios to legally use New API:
+### 贡献
 
-- **Scenario 1: Removal of Branding and Copyright**  
-  You wish to remove the New API logo, copyright statement, or other branding elements from your product or service.
+所有对 New API 的贡献均在 AGPLv3 下授权，并可能包含在开源和商业发行版中。
 
-- **Scenario 2: Avoidance of AGPLv3 Open Source Obligations**  
-  You have modified New API and wish to:
-  - Offer it as a network service (SaaS) **without** disclosing your modifications' source code to your users.
-  - Distribute a software product integrated with New API **without** releasing your product under AGPLv3 or open-sourcing the code.
+**提交贡献即表示：**
 
-- **Scenario 3: Enterprise Policy & Integration Needs**
-  - Your organization’s policies, client contracts, or project requirements prohibit the use of AGPLv3-licensed software.
-  - You require OEM integration and need to redistribute New API as part of your closed-source commercial product.
+- 您的代码在 AGPLv3 下授权给本项目和所有用户
+- 您的贡献可能会包含在商业许可证发行版中
+- 您保留贡献的版权
 
-- **Scenario 4: Commercial Support and Assurances**  
-  You require commercial assurances not provided by AGPLv3, such as official technical support.
+### 附加条款
 
-**Obtaining a Commercial License:**  
-Please contact the New API team at [support@quantumnous.com](mailto:support@quantumnous.com) to discuss commercial licensing.
+- 商业许可证的条款、条件和定价由正式协议管理
+- 许可证政策可能通过官方渠道（GitHub、网站）更新
+- 如有争议，请参阅正式的 [LICENSE](https://github.com/QuantumNous/new-api/blob/main/LICENSE) 文档
 
-#### 3. Contributions
+## 免责声明
 
-- Community contributions are welcome. All contributions (e.g., via Pull Request) are deemed to be provided under **AGPLv3**.
-- By submitting a contribution, you agree your code is licensed to this project and all downstream users under AGPLv3 (regardless of whether they ultimately operate under AGPLv3 or a Commercial License).
-- You also acknowledge your contribution may be included in Commercial License distributions of New API.
+<Callout type="error">在使用 New API 之前，请阅读并理解这些重要声明。</Callout>
 
-#### 4. Other Terms
+**1. AI 提供商服务条款**
 
-- The specific terms, conditions, and pricing of the Commercial License are governed by a formal commercial license agreement executed by both parties.
-- Project maintainers reserve the right to update this licensing policy via official channels (e.g., repository, website).
+用户必须遵守所有适用的 AI 提供商服务条款，包括 [OpenAI 使用条款](https://openai.com/policies/terms-of-use)、Anthropic 政策以及其他相关提供商协议。
 
-## ⚠️ 免责声明
+**2. 教育和个人用途**
 
-<Callout type="error" title="使用须知">
-  1. 使用者必须遵循 OpenAI
-  的[使用条款](https://openai.com/policies/terms-of-use)以及相关法律法规 2.
-  本项目仅供个人学习使用，不保证稳定性，且不提供技术支持 3.
-  请遵守[《生成式人工智能服务管理暂行办法》](http://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm)的相关规定
-  4. 请遵守当地的政策与法规
+本项目主要用于个人学习和研究。不保证稳定性，开源许可证下可能不提供官方技术支持。
+
+**3. AI 法规合规**
+
+用户必须遵守相关 AI 法规，包括[《生成式人工智能服务管理暂行办法》](http://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm)和其他适用的 AI 治理框架。
+
+**4. 地方法律法规**
+
+用户有责任确保遵守适用于其司法管辖区和使用场景的所有地方、国家和国际法律法规。
+
+<Callout type="warn">
+  New API
+  按"原样"提供，不提供任何形式的保证。开发者和维护者对使用本软件产生的任何损害或法律问题不承担责任。
 </Callout>
