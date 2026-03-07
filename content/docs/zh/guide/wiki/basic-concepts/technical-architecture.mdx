@@ -1,5 +1,97 @@
-﻿---
+---
 title: 技术架构
 ---
 
+New API 是一个 AI 模型聚合网关，作为统一的中间层，连接客户端应用和各种 AI 服务提供商。
+
 ![technical-architecture.svg](/assets/technical-architecture.svg)
+
+## 核心架构
+
+### 1. 客户端层
+客户端通过标准的 OpenAI 兼容 API 调用 New API：
+- Web 应用（ChatGPT-Next-Web、LobeChat 等）
+- 移动应用
+- 命令行工具
+- 自定义应用
+
+### 2. New API 网关层
+作为核心中间层，提供以下功能：
+
+**请求处理**
+- 接收客户端的 API 请求
+- 验证令牌和权限
+- 格式转换（OpenAI ⇄ Claude ⇄ Gemini）
+- 智能路由和负载均衡
+
+**渠道管理**
+- 管理多个上游 AI 服务渠道
+- 自动故障转移和重试
+- 渠道权重分配
+- 健康检查
+
+**计费系统**
+- 按量计费
+- 额度管理
+- 缓存计费支持
+- 使用统计
+
+**用户管理**
+- 多用户支持
+- 令牌管理
+- 权限控制
+- 数据统计
+
+### 3. 上游服务层
+New API 支持连接多种 AI 服务：
+- **OpenAI**：GPT-4、GPT-3.5 等
+- **Anthropic**：Claude 系列
+- **Google**：Gemini 系列
+- **Azure OpenAI**：企业级 OpenAI 服务
+- **国内模型**：通义千问、文心一言、智谱 AI 等
+- **其他服务**：Midjourney、Suno 等
+
+## 技术栈
+
+### 后端
+- **语言**：Go
+- **框架**：Gin（Web 框架）
+- **数据库**：SQLite / MySQL / PostgreSQL
+- **缓存**：Redis（可选）
+
+### 前端
+- **框架**：React
+- **UI 库**：Ant Design / Material-UI
+- **状态管理**：Redux / Context API
+
+### 部署
+- **容器化**：Docker / Docker Compose
+- **反向代理**：Nginx（推荐）
+- **进程管理**：Systemd / Supervisor
+
+## 数据流向
+
+1. **请求流程**
+   ```
+   客户端 → New API → 验证令牌 → 选择渠道 → 上游 API → 返回结果 → 计费 → 客户端
+   ```
+
+2. **格式转换**
+   - 客户端发送 OpenAI 格式请求
+   - New API 根据目标渠道自动转换格式
+   - 调用上游 API（OpenAI / Claude / Gemini）
+   - 将响应转换回 OpenAI 格式返回
+
+3. **智能路由**
+   - 根据模型名称匹配可用渠道
+   - 按权重随机选择渠道
+   - 失败时自动重试其他渠道
+   - 记录使用日志和计费信息
+
+## 核心优势
+
+1. **统一接口**：所有 AI 模型都通过 OpenAI 兼容接口访问
+2. **高可用性**：多渠道冗余，自动故障转移
+3. **灵活计费**：支持多种计费模式和额度管理
+4. **易于扩展**：模块化设计，方便添加新的 AI 服务
+5. **数据安全**：支持本地部署，数据完全可控
