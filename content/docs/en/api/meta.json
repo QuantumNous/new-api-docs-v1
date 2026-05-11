@@ -1,6 +1,6 @@
 {
   "title": "API Reference",
-  "description": "TokenFactory Complete API Documentation",
+  "description": "__brandName__ Complete API Documentation",
   "icon": "Code",
   "root": true,
   "pages": ["index", "ai-model", "management"]

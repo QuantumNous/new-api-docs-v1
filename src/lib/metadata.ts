@@ -1,19 +1,30 @@
 import type { Metadata } from 'next';
+import {
+  DEFAULT_DOCS_CONFIG,
+  type DocsConfig,
+  getLocalizedSiteName,
+} from '@/lib/docs-config';
 
-export function createMetadata(override: Metadata): Metadata {
+export function createMetadata(
+  override: Metadata,
+  config: DocsConfig = DEFAULT_DOCS_CONFIG,
+  locale = 'en'
+): Metadata {
+  const siteName = getLocalizedSiteName(config, locale);
+
   return {
     ...override,
     icons: {
       icon: '/favicon.png',
       shortcut: '/favicon.png',
-      apple: '/assets/logo.png',
+      apple: config.logoUrl,
     },
     openGraph: {
       title: override.title ?? undefined,
       description: override.description ?? undefined,
-      url: 'https://www.tokenfactoryopen.com',
-      images: '/assets/logo.png',
-      siteName: 'TokenFactory',
+      url: config.homeUrl,
+      images: config.logoUrl,
+      siteName,
       type: 'website',
       ...override.openGraph,
     },
@@ -21,7 +32,7 @@ export function createMetadata(override: Metadata): Metadata {
       card: 'summary_large_image',
       title: override.title ?? undefined,
       description: override.description ?? undefined,
-      images: '/assets/logo.png',
+      images: config.logoUrl,
       ...override.twitter,
     },
   };

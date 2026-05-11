@@ -5,6 +5,11 @@ import '../global.css';
 import type { Metadata } from 'next';
 import { createMetadata, baseUrl } from '@/lib/metadata';
 import { notFound } from 'next/navigation';
+import {
+  getDocsConfig,
+  getLocalizedSiteName,
+  replaceBrandName,
+} from '@/lib/docs-config';
 
 const { provider } = defineI18nUI(i18n, {
   translations: {
@@ -68,51 +73,47 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const lang = (await params).lang;
+  const docsConfig = await getDocsConfig();
+  const siteName = getLocalizedSiteName(docsConfig, lang);
   const titles = titleMap[lang] || titleMap.en;
+  const title = {
+    default: replaceBrandName(titles.default, docsConfig),
+    template: `%s | ${siteName}`,
+  };
 
-  return createMetadata({
-    metadataBase: baseUrl,
-    title: {
-      default: titles.default,
-      template: titles.template,
-    },
-    description: titles.description,
-    keywords: [
-      'AI Infrastructure',
-      'AI Gateway',
-      'AI Asset Management',
-      'API Orchestration',
-      'AI Application Platform',
-      'Multi-Model Integration',
-      'Enterprise AI',
-      'AI Ecosystem',
-      'Unified AI Interface',
-      'Intelligent API Management',
-    ],
-    authors: [
-      { name: 'TokenFactory Team', url: 'https://github.com/fyinfor/token-factory' },
-    ],
-    creator: 'TokenFactory Team',
-    alternates: {
-      languages: {
-        en: '/en',
-        zh: '/zh',
-        ja: '/ja',
+  return createMetadata(
+    {
+      metadataBase: baseUrl,
+      title,
+      description: titles.description,
+      keywords: docsConfig.metaKeywords,
+      authors: [
+        { name: `${docsConfig.brandName} Team`, url: docsConfig.githubUrl },
+      ],
+      creator: `${docsConfig.brandName} Team`,
+      alternates: {
+        languages: {
+          en: '/en',
+          zh: '/zh',
+          ja: '/ja',
+        },
+      },
+      openGraph: {
+        type: 'website',
+        locale: lang,
+        title: title.default,
+        description: titles.description,
+        siteName,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: title.default,
+        description: titles.description,
       },
     },
-    openGraph: {
-      type: 'website',
-      locale: lang,
-      title: titles.default,
-      description: titles.description,
-      siteName: 'TokenFactory',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: titles.default,
-      description: titles.description,
-    },
-  });
+    docsConfig,
+    lang
+  );
 }
 
 export async function generateStaticParams() {

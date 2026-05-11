@@ -3,8 +3,5 @@
   "description": "常见问题和社区支持",
   "icon": "Headset",
   "root": true,
-  "pages": [
-    "index",
-    "faq"
-  ]
+  "pages": ["index", "faq"]
 }

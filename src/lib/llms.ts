@@ -1,5 +1,10 @@
 import { i18n } from '@/lib/i18n';
 import { getLLMText, source } from '@/lib/source';
+import {
+  DEFAULT_DOCS_CONFIG,
+  type DocsConfig,
+  replaceBrandName,
+} from '@/lib/docs-config';
 
 const defaultLanguage = i18n.defaultLanguage;
 
@@ -18,7 +23,8 @@ export async function generateLLMsFullText(
 
 export function generateLLMsText(
   origin: string,
-  lang: string = defaultLanguage
+  lang: string = defaultLanguage,
+  config: DocsConfig = DEFAULT_DOCS_CONFIG
 ): string {
   const pages = source
     .getPages(lang)
@@ -38,9 +44,12 @@ export function generateLLMsText(
     .sort((a, b) => a.docsUrl.localeCompare(b.docsUrl));
 
   const lines = [
-    `# TokenFactory Docs (${lang})`,
+    `# ${config.brandName} Docs (${lang})`,
     '',
-    '> LLM-friendly index for TokenFactory documentation.',
+    replaceBrandName(
+      '> LLM-friendly index for TokenFactory documentation.',
+      config
+    ),
     '',
     '## Preferred Sources',
     `- [Full Documentation](${toAbsoluteUrl(origin, `/${lang}/llms-full.txt`)}): Full corpus in one file.`,

@@ -1,11 +1,7 @@
 {
   "title": "Skills",
-  "description": "TokenFactory Skills，支持 Claude Code、Codex、OpenClaw（龙虾），可提问使用问题",
+  "description": "__brandName__ Skills，支持 Claude Code、Codex、OpenClaw（龙虾），可提问使用问题",
   "icon": "Puzzle",
   "root": true,
-  "pages": [
-    "index",
-    "tokenfactory",
-    "tokenfactory-admin"
-  ]
+  "pages": ["index", "tokenfactory", "tokenfactory-admin"]
 }

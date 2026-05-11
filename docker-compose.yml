@@ -10,6 +10,8 @@ services:
       - '3001:3000'
     environment:
       DOCS_PUBLIC_URL: ${DOCS_PUBLIC_URL:-http://localhost:3001}
+      # 后台站点地址，用于读取 /api/docs/config；例如 https://tokenfactoryopen.com/
+      DOCS_CONFIG_API_BASE_URL: ${DOCS_CONFIG_API_BASE_URL:-https://tokenfactoryopen.com/}
       PORT: '3000'
       HOSTNAME: '0.0.0.0'
     networks:

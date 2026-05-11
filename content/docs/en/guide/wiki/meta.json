@@ -1,6 +1,6 @@
 {
   "title": "Wiki",
-  "description": "TokenFactory project documentation and basics",
+  "description": "__brandName__ project documentation and basics",
   "icon": "BookOpen",
   "pages": ["basic-concepts"]
 }

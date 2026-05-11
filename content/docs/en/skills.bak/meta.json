@@ -1,11 +1,7 @@
 {
   "title": "Skills",
-  "description": "TokenFactory Skills for Claude Code, Codex, and OpenClaw with usage help",
+  "description": "__brandName__ Skills for Claude Code, Codex, and OpenClaw with usage help",
   "icon": "Puzzle",
   "root": true,
-  "pages": [
-    "index",
-    "tokenfactory",
-    "tokenfactory-admin"
-  ]
+  "pages": ["index", "tokenfactory", "tokenfactory-admin"]
 }

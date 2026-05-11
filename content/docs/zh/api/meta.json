@@ -1,6 +1,6 @@
 {
   "title": "API 参考",
-  "description": "TokenFactory 接口文档",
+  "description": "__brandName__ 接口文档",
   "icon": "Code",
   "root": true,
   "pages": ["index", "ai-model", "management"]

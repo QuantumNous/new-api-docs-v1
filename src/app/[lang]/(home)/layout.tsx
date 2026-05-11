@@ -1,5 +1,5 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { baseOptions, linkItems } from '@/lib/layout.shared';
+import { baseOptions, getLinkItems } from '@/lib/layout.shared';
 import {
   NavbarMenu,
   NavbarMenuContent,
@@ -21,6 +21,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { getLocalePath } from '@/lib/i18n';
+import { getDocsConfig, replaceBrandName } from '@/lib/docs-config';
 
 // Navigation items configuration
 const NAV_ITEMS = [
@@ -72,7 +73,10 @@ const i18nText: Record<
     title: { text: 'ドキュメント', desc: '' },
     apiDocs: { text: 'Apifox プレイグラウンド', desc: '' },
     skills: { text: 'Skills', desc: '' },
-    start: { text: 'はじめに', desc: 'TokenFactory のデプロイと設定方法を学ぶ。' },
+    start: {
+      text: 'はじめに',
+      desc: 'TokenFactory のデプロイと設定方法を学ぶ。',
+    },
     install: {
       text: 'インストール',
       desc: '様々なデプロイ方法とインストールガイド。',
@@ -132,14 +136,18 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const { lang } = await params;
+  const docsConfig = await getDocsConfig();
   const texts = getTexts(lang);
   const docsUrl = getLocalePath(lang, 'docs');
-  const navItems = buildNavItems(lang, docsUrl);
+  const navItems = buildNavItems(lang, docsUrl).map((item) => ({
+    ...item,
+    desc: replaceBrandName(item.desc, docsConfig),
+  }));
 
   return (
     <div className="flex min-h-screen flex-col">
       <HomeLayout
-        {...baseOptions(lang)}
+        {...baseOptions(lang, docsConfig)}
         links={[
           // Mobile menu
           {
@@ -235,7 +243,7 @@ export default async function Layout({
           //   url: 'https://apifox.tokenfactoryopen.com/',
           //   external: true,
           // },
-          ...linkItems,
+          ...getLinkItems(docsConfig),
         ]}
         className="flex-1 dark:bg-neutral-950 dark:[--color-fd-background:var(--color-neutral-950)]"
       >

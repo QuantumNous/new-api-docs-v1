@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { cn } from '@/lib/cn';
+import { DEFAULT_DOCS_CONFIG } from '@/lib/docs-config';
 
 const GrainGradient = dynamic(
   () => import('@paper-design/shaders-react').then((m) => m.GrainGradient),
@@ -87,7 +88,11 @@ function detectShaderProfile(): ShaderProfile {
   };
 }
 
-export function Hero() {
+export function Hero({
+  logoUrl = DEFAULT_DOCS_CONFIG.logoUrl,
+}: {
+  logoUrl?: string;
+}) {
   const { resolvedTheme } = useTheme();
   const [showShaders, setShowShaders] = useState(false);
   const [imageReady, setImageReady] = useState(false);
@@ -185,14 +190,13 @@ export function Hero() {
               : 'invisible'
           )}
         >
-          <Image
-            src="/assets/logo.png"
+          <img
+            src={logoUrl}
             alt="logo"
             width={288}
             height={288}
             className="size-32 drop-shadow-2xl sm:size-40 md:size-56 lg:size-72"
             onLoad={() => setLogoReady(true)}
-            priority
           />
         </div>
       )}

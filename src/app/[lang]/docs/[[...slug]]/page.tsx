@@ -12,6 +12,8 @@ import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { Feedback } from '@/components/feedback';
 import { LLMCopyButton, ViewOptions } from '@/components/page-actions';
 import { onRateAction } from '@/lib/github';
+import { BrandTextReplacer } from '@/components/brand-text-replacer';
+import { getDocsConfig, replaceBrandName } from '@/lib/docs-config';
 
 // GitHub repository info for source links
 const owner = 'fyinfor';
@@ -24,9 +26,14 @@ export default async function Page(props: {
   const { slug, lang } = await props.params;
   const page = source.getPage(slug, lang);
   if (!page) notFound();
+  const docsConfig = await getDocsConfig();
 
   const MDX = page.data.body as any;
   const lastModified = page.data.lastModified;
+  const title = replaceBrandName(page.data.title, docsConfig);
+  const description = page.data.description
+    ? replaceBrandName(page.data.description, docsConfig)
+    : undefined;
 
   return (
     <DocsPage
@@ -39,10 +46,8 @@ export default async function Page(props: {
         enabled: !page.data.full,
       }}
     >
-      <DocsTitle>{page.data.title}</DocsTitle>
-      <DocsDescription className="mb-2">
-        {page.data.description}
-      </DocsDescription>
+      <DocsTitle>{title}</DocsTitle>
+      <DocsDescription className="mb-2">{description}</DocsDescription>
       <div className="mb-6 flex flex-row flex-wrap items-center gap-2 border-b pb-6">
         <LLMCopyButton
           markdownUrl={`/${lang}/llms.mdx/${page.slugs.join('/')}`}
@@ -55,11 +60,13 @@ export default async function Page(props: {
         />
       </div>
       <DocsBody>
-        <MDX
-          components={getMDXComponents({
-            a: createRelativeLink(source, page) as any,
-          })}
-        />
+        <BrandTextReplacer brandName={docsConfig.brandName}>
+          <MDX
+            components={getMDXComponents({
+              a: createRelativeLink(source, page) as any,
+            })}
+          />
+        </BrandTextReplacer>
       </DocsBody>
       <Feedback lang={lang} onRateAction={onRateAction} />
     </DocsPage>
@@ -76,10 +83,13 @@ export async function generateMetadata(props: {
   const { slug, lang } = await props.params;
   const page = source.getPage(slug, lang);
   if (!page) notFound();
+  const docsConfig = await getDocsConfig();
 
   return {
-    title: page.data.title,
-    description: page.data.description,
+    title: replaceBrandName(page.data.title, docsConfig),
+    description: page.data.description
+      ? replaceBrandName(page.data.description, docsConfig)
+      : undefined,
     openGraph: { images: getPageImage(page).url },
   };
 }

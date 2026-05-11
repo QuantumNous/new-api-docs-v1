@@ -1,6 +1,6 @@
 {
   "title": "APIリファレンス",
-  "description": "TokenFactory の完全なインターフェースドキュメント",
+  "description": "__brandName__ の完全なインターフェースドキュメント",
   "icon": "Code",
   "root": true,
   "pages": ["index", "ai-model", "management"]

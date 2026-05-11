@@ -1,6 +1,6 @@
 {
   "title": "维基百科",
-  "description": "TokenFactory 项目文档与基础知识",
+  "description": "__brandName__ 项目文档与基础知识",
   "icon": "BookOpen",
   "pages": ["basic-concepts"]
 }
