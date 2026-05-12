@@ -13,6 +13,9 @@ import {
   replaceBrandName,
 } from '@/lib/docs-config';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 function replacePageTreeBrand<T>(node: T, config: DocsConfig): T {
   if (Array.isArray(node)) {
     return node.map((item) => replacePageTreeBrand(item, config)) as T;

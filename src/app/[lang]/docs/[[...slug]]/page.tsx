@@ -15,6 +15,9 @@ import { onRateAction } from '@/lib/github';
 import { BrandTextReplacer } from '@/components/brand-text-replacer';
 import { getDocsConfig, replaceBrandName } from '@/lib/docs-config';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // GitHub repository info for source links
 const owner = 'fyinfor';
 const repo = 'token-factory-docs';

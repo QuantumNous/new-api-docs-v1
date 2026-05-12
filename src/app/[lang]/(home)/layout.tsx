@@ -23,6 +23,9 @@ import {
 import { getLocalePath } from '@/lib/i18n';
 import { getDocsConfig, replaceBrandName } from '@/lib/docs-config';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Navigation items configuration
 const NAV_ITEMS = [
   { key: 'start', icon: Rocket, path: '' },

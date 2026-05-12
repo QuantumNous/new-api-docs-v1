@@ -11,6 +11,9 @@ import {
   replaceBrandName,
 } from '@/lib/docs-config';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const { provider } = defineI18nUI(i18n, {
   translations: {
     en: {

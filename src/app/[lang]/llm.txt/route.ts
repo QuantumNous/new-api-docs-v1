@@ -1,7 +1,8 @@
 import { generateLLMsText } from '@/lib/llms';
 import { getDocsConfig } from '@/lib/docs-config';
 
-export const revalidate = false;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(
   req: Request,
