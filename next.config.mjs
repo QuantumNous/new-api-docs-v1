@@ -5,6 +5,14 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const config = {
   output: 'standalone',
+  /**
+   * Per-endpoint OpenAPI JSON is read at runtime from disk (see src/lib/openapi.ts).
+   * Webpack builds run collect-build-traces and merge these into the server bundle trace.
+   * Turbopack production builds skip that step, so package.json uses `next build --webpack`.
+   */
+  outputFileTracingIncludes: {
+    '/app/[lang]/docs/[[...slug]]': ['./openapi/generated/**/*'],
+  },
   reactStrictMode: true,
   poweredByHeader: false,
   experimental: {

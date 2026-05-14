@@ -32,6 +32,9 @@ RUN addgroup --system --gid 1001 nodejs \
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Runtime OpenAPI JSON (read by src/lib/openapi.ts). Standalone tracing needs `next build --webpack`;
+# keep an explicit copy so Docker/Caddy deployments always have these files on disk.
+COPY --from=builder --chown=nextjs:nodejs /app/openapi ./openapi
 
 USER nextjs
 
