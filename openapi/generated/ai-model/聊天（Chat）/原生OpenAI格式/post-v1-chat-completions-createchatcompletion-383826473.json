@@ -3,7 +3,7 @@
   "info": {
     "title": "ChatCompletions格式",
     "version": "1.0.0",
-    "description": "根据对话历史创建模型响应。支持流式和非流式响应。\n\n兼容 OpenAI Chat Completions API。\n"
+    "description": "根据对话历史创建模型响应。支持流式和非流式响应。\n\n兼容 OpenAI Chat Completions API。\n\n**多模态支持**：\n- `image_url`: 图片输入，支持 URL 或 Base64 (data:image/jpeg;base64,xxx)，可选 detail 参数 (low/high/auto)\n- `input_audio`: 音频输入，包含 data (Base64) 和 format (wav/mp3)\n- `video_url`: 视频输入，通过 URL 传入\n- `file`: 文件输入，支持 filename、file_data (Base64)、file_id\n\n支持组合多种模态内容同时传入。"
   },
   "tags": [
     {
@@ -85,17 +85,20 @@
                                       "input_audio",
                                       "file",
                                       "video_url"
-                                    ]
+                                    ],
+                                    "description": "内容类型: text(文本), image_url(图片), input_audio(音频), file(文件), video_url(视频)"
                                   },
                                   "text": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "文本内容，当 type=text 时使用"
                                   },
                                   "image_url": {
                                     "type": "object",
+                                    "description": "图片输入，当 type=image_url 时使用。支持 URL 或 Base64 格式",
                                     "properties": {
                                       "url": {
                                         "type": "string",
-                                        "description": "图片 URL 或 base64"
+                                        "description": "图片 URL 或 Base64 编码 (格式: data:image/jpeg;base64,xxx)"
                                       },
                                       "detail": {
                                         "type": "string",
@@ -103,7 +106,8 @@
                                           "low",
                                           "high",
                                           "auto"
-                                        ]
+                                        ],
+                                        "description": "图片细节级别: low(低分辨率), high(高分辨率), auto(自动)"
                                       }
                                     },
                                     "x-apifox-orders": [
@@ -113,6 +117,7 @@
                                   },
                                   "input_audio": {
                                     "type": "object",
+                                    "description": "音频输入，当 type=input_audio 时使用。支持 Base64 编码的音频数据",
                                     "properties": {
                                       "data": {
                                         "type": "string",
@@ -123,7 +128,8 @@
                                         "enum": [
                                           "wav",
                                           "mp3"
-                                        ]
+                                        ],
+                                        "description": "音频格式: wav 或 mp3"
                                       }
                                     },
                                     "x-apifox-orders": [
@@ -133,15 +139,19 @@
                                   },
                                   "file": {
                                     "type": "object",
+                                    "description": "文件输入，当 type=file 时使用。支持上传文件进行分析",
                                     "properties": {
                                       "filename": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "文件名"
                                       },
                                       "file_data": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "文件的 Base64 编码数据"
                                       },
                                       "file_id": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "文件 ID(如已通过文件上传接口上传)"
                                       }
                                     },
                                     "x-apifox-orders": [
@@ -152,9 +162,11 @@
                                   },
                                   "video_url": {
                                     "type": "object",
+                                    "description": "视频输入，当 type=video_url 时使用。通过 URL 传入视频",
                                     "properties": {
                                       "url": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "视频 URL 地址"
                                       }
                                     },
                                     "x-apifox-orders": [
@@ -173,7 +185,7 @@
                               }
                             }
                           ],
-                          "description": "消息内容"
+                          "description": "消息内容。支持文本或多模态内容数组(可包含图片、音频、视频、文件等)"
                         },
                         "name": {
                           "type": "string",

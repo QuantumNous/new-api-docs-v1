@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "创建视频 ",
+    "title": "创建视频",
     "version": "1.0.0",
-    "description": "OpenAI 兼容的视频生成接口。\n\n参考文档: https://platform.openai.com/docs/api-reference/videos/create\n"
+    "description": "OpenAI 兼容的视频生成接口。支持文生视频和图生视频。\n\n参考文档: https://platform.openai.com/docs/api-reference/videos/create\n\n**多模态参数说明(图生视频)**：\n- `image`: 可选的图片输入参数，提供首帧图像用于图生视频\n  - URL 格式: `https://example.com/image.jpg`\n  - Base64 格式: `data:image/jpeg;base64,/9j/4AAQ...`\n\n**支持的图片格式**: JPEG/JPG, PNG, WebP\n\n当提供 `image` 参数时，将根据图片生成视频; 不提供时，将根据 `prompt` 进行文生视频。\n"
   },
   "tags": [
     {
@@ -53,9 +53,10 @@
                   },
                   "image": {
                     "type": "string",
-                    "description": "图片输入 (URL 或 Base64)",
+                    "description": "可选的图片输入参数，用于图生视频。支持 URL 或 Base64 编码格式，作为视频生成的首帧图像。URL 示例: https://example.com/image.jpg; Base64 示例: data:image/jpeg;base64,/9j/4AAQ...",
                     "examples": [
-                      "https://example.com/image.jpg"
+                      "https://example.com/image.jpg",
+                      "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..."
                     ]
                   },
                   "duration": {

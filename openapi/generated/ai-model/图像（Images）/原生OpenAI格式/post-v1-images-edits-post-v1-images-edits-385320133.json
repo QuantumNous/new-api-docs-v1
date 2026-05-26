@@ -3,7 +3,7 @@
   "info": {
     "title": "编辑图像",
     "version": "1.0.0",
-    "description": "在给定原始图像和提示的情况下创建编辑或扩展图像。\n\n"
+    "description": "在给定原始图像和提示的情况下创建编辑或扩展图像。\n\n**多模态参数说明(文件上传)**：\n- `image` (必填): 要编辑的原始图像文件\n  - 必须是有效的 PNG 文件\n  - 文件大小小于 4MB\n  - 必须是正方形图像\n  - 如未提供遮罩，图像必须具有透明度(将用作遮罩)\n- `mask` (可选): 遮罩图像文件\n  - 必须是有效的 PNG 文件\n  - 文件大小小于 4MB\n  - 尺寸必须与原始图像相同\n  - 完全透明区域(alpha为零)指示应编辑的位置\n\n**支持的格式**: PNG (必需)\n**支持的尺寸**: 256x256, 512x512, 1024x1024\n\n**其他参数**: \n- `prompt` (必填): 编辑指令描述，最大 1000 字符\n- `n`: 生成图像数量(1-10)\n- `size`: 输出尺寸\n- `response_format`: 返回格式(url 或 b64_json)\n"
   },
   "tags": [
     {
@@ -36,19 +36,19 @@
                 "type": "object",
                 "properties": {
                   "image": {
-                    "description": "要编辑的图像。必须是有效的 PNG 文件，小于 4MB，并且是方形的。如果未提供遮罩，图像必须具有透明度，将用作遮罩。",
+                    "description": "要编辑的原始图像文件(PNG格式)。要求: 1)必须是有效的PNG文件 2)小于4MB 3)正方形尺寸 4)如未提供mask，图像必须具有透明度(将用作遮罩)。支持尺寸: 256x256, 512x512, 1024x1024",
                     "type": "string",
                     "format": "binary",
                     "examples": [
-                      "cmMtdXBsb2FkLTE2ODc4MzMzNDc3NTEtMjA=/31225951_59371037e9_small.png"
+                      "@original_image.png"
                     ]
                   },
                   "mask": {
-                    "description": "附加图像，其完全透明区域（例如，alpha 为零的区域）指示image应编辑的位置。必须是有效的 PNG 文件，小于 4MB，并且尺寸与原始image相同。",
+                    "description": "可选的遮罩图像文件(PNG格式)。要求: 1)必须是有效的PNG文件 2)小于4MB 3)尺寸与原始图像相同。完全透明区域(alpha=0)指示应编辑的位置",
                     "type": "string",
                     "format": "binary",
                     "examples": [
-                      []
+                      "@mask_image.png"
                     ]
                   },
                   "prompt": {

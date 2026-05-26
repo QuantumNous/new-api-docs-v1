@@ -3,7 +3,7 @@
   "info": {
     "title": "编辑图像",
     "version": "1.0.0",
-    "description": " 百炼qwen-image系列图片编辑"
+    "description": "百炼qwen-image系列图片编辑。支持基于输入图片进行编辑和重绘。\n\n**多模态参数说明(图片输入)**：\n- `input.messages.content.image`: 待编辑的原始图片\n  - URL 格式: `https://example.com/image.jpg`\n  - Base64 格式: `data:image/jpeg;base64,/9j/4AAQ...`\n- `input.messages.content.text`: 编辑指令描述\n\n**支持的图片格式**: JPEG/JPG, PNG, WebP\n\n**参数说明**: \n- `model`: 图像编辑模型(如 qwen-image-edit-v1)\n- `parameters.n`: 生成图片数量\n- `parameters.size`: 输出尺寸(如 1024x1024)\n- `parameters.negative_prompt`: 负面提示词\n- `parameters.prompt_extend`: 是否自动扩写提示词\n- `parameters.watermark`: 是否添加水印\n"
   },
   "tags": [
     {

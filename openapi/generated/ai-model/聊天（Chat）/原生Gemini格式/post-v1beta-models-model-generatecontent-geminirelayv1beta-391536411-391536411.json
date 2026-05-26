@@ -3,7 +3,7 @@
   "info": {
     "title": "Gemini媒体识别",
     "version": "1.0.0",
-    "description": "Gemini图像、PDF、音频、视频识别请求\n\n⚠️注意：仅支持通过 inlineData 以 base64 方式上传图像、PDF、音频、视频，不支持 fileData.fileUri 或 File API。"
+    "description": "Gemini图像、PDF、音频、视频识别请求\n\n⚠️注意：仅支持通过 inlineData 以 base64 方式上传图像、PDF、音频、视频，不支持 fileData.fileUri 或 File API。\n\n**多模态参数说明**：\n- `contents`: 消息内容数组，每个元素包含 role 和 parts\n- `parts`: 内容部件数组，可包含以下类型:\n  - `text`: 文本内容\n  - `inlineData`: 二进制数据(Base64)，用于图像/PDF/音频/视频\n    - `mimeType`: MIME类型，如 image/jpeg, application/pdf, audio/mp3, video/mp4\n    - `data`: Base64 编码的数据\n\n**支持的 MIME 类型**：\n- 图片: image/jpeg, image/png, image/webp, image/heic, image/heif\n- PDF: application/pdf\n- 音频: audio/mp3, audio/wav, audio/ogg, audio/m4a, audio/flac\n- 视频: video/mp4, video/mpeg, video/mov, video/avi, video/webm\n\n可同时传入多种媒体类型组合。"
   },
   "tags": [
     {
@@ -60,20 +60,25 @@
                         },
                         "parts": {
                           "type": "array",
+                          "description": "内容部件数组，可包含文本或多模态数据",
                           "items": {
                             "type": "object",
                             "properties": {
                               "text": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "文本内容"
                               },
                               "inlineData": {
                                 "type": "object",
+                                "description": "内联二进制数据(Base64)，用于图片/PDF/音频/视频。不支持 fileData.fileUri 或 File API",
                                 "properties": {
                                   "mimeType": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "MIME类型。图片: image/jpeg|png|webp|heic|heif; PDF: application/pdf; 音频: audio/mp3|wav|ogg|m4a|flac; 视频: video/mp4|mpeg|mov|avi|webm"
                                   },
                                   "data": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Base64 编码的媒体数据"
                                   }
                                 },
                                 "x-apifox-orders": [

@@ -3,7 +3,7 @@
   "info": {
     "title": "原生Claude格式",
     "version": "1.0.0",
-    "description": "Anthropic Claude Messages API 格式的请求。\n需要在请求头中包含 `anthropic-version`。\n"
+    "description": "Anthropic Claude Messages API 格式的请求。\n需要在请求头中包含 `anthropic-version`。\n\n**多模态支持(图片输入)**：\n- `content`: 消息内容，支持字符串或内容块数组\n  - `type`: 内容类型 - text(文本) 或 image(图片)\n  - `text`: 当 type=text 时的文本内容\n  - `source`: 当 type=image 时的图片源\n    - `type`: 图片源类型 - base64 或 url\n    - `media_type`: MIME类型 (image/jpeg, image/png, image/webp, image/gif)\n    - `data`: 当 type=base64 时的 Base64 编码图片数据\n    - `url`: 当 type=url 时的图片 URL\n\n可同时传入多张图片和文本组合。"
   },
   "tags": [
     {
@@ -88,10 +88,12 @@
                         "content": {
                           "oneOf": [
                             {
-                              "type": "string"
+                              "type": "string",
+                              "description": "纯文本消息内容"
                             },
                             {
                               "type": "array",
+                              "description": "内容块数组，支持文本、图片等多模态内容",
                               "items": {
                                 "type": "object",
                                 "properties": {
@@ -102,29 +104,36 @@
                                       "image",
                                       "tool_use",
                                       "tool_result"
-                                    ]
+                                    ],
+                                    "description": "内容类型: text(文本), image(图片), tool_use(工具调用), tool_result(工具结果)"
                                   },
                                   "text": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "当 type=text 时的文本内容"
                                   },
                                   "source": {
                                     "type": "object",
+                                    "description": "当 type=image 时的图片源信息",
                                     "properties": {
                                       "type": {
                                         "type": "string",
                                         "enum": [
                                           "base64",
                                           "url"
-                                        ]
+                                        ],
+                                        "description": "图片源类型: base64(传入Base64数据) 或 url(传入图片URL)"
                                       },
                                       "media_type": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "图片MIME类型: image/jpeg, image/png, image/webp, image/gif"
                                       },
                                       "data": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "当 type=base64 时的 Base64 编码图片数据"
                                       },
                                       "url": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "当 type=url 时的图片 URL 地址"
                                       }
                                     },
                                     "x-apifox-orders": [
@@ -135,21 +144,26 @@
                                     ]
                                   },
                                   "id": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "内容块 ID"
                                   },
                                   "name": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "工具名称"
                                   },
                                   "input": {
                                     "type": "object",
+                                    "description": "工具输入参数",
                                     "properties": {},
                                     "x-apifox-orders": []
                                   },
                                   "tool_use_id": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "关联的工具调用 ID"
                                   },
                                   "content": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "工具结果内容"
                                   }
                                 },
                                 "x-apifox-orders": [
@@ -164,7 +178,8 @@
                                 ]
                               }
                             }
-                          ]
+                          ],
+                          "description": "消息内容。支持纯文本字符串或多模态内容块数组(包含文本和图片)"
                         }
                       },
                       "x-apifox-orders": [

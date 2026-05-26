@@ -3,7 +3,7 @@
   "info": {
     "title": "Kling 图生视频",
     "version": "1.0.0",
-    "description": "使用 Kling 模型从图片生成视频。\n\n支持通过 image 参数传入图片 URL 或 Base64 编码的图片数据。\n"
+    "description": "使用 Kling 模型从图片生成视频。\n\n**图片输入参数说明**：\n- `image`: 图片输入 (URL 或 Base64 编码)，作为视频生成的首帧\n  - URL 格式: `https://example.com/image.jpg`\n  - Base64 格式: `data:image/jpeg;base64,/9j/4AAQ...`\n\n**支持的图片格式**: JPEG/JPG, PNG, WebP\n\n**其他参数**: \n- `prompt`: 视频运动描述提示词\n- `duration`: 视频时长(秒)\n- `width/height`: 视频尺寸(建议 1280x720 或 1024x1024)\n- `fps`: 视频帧率\n- `n`: 生成视频数量\n- `metadata`: 扩展参数(如 negative_prompt, quality_level)\n"
   },
   "tags": [
     {
@@ -53,9 +53,10 @@
                   },
                   "image": {
                     "type": "string",
-                    "description": "图片输入 (URL 或 Base64)",
+                    "description": "图片输入，支持 URL 或 Base64 编码格式。作为视频生成的首帧图像。URL 示例: https://example.com/image.jpg; Base64 示例: data:image/jpeg;base64,/9j/4AAQ...",
                     "examples": [
-                      "https://example.com/image.jpg"
+                      "https://example.com/image.jpg",
+                      "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..."
                     ]
                   },
                   "duration": {
