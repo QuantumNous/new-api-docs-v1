@@ -15,8 +15,8 @@ export function createMetadata(
   return {
     ...override,
     icons: {
-      icon: '/favicon.png',
-      shortcut: '/favicon.png',
+      icon: config.logoUrl,
+      shortcut: config.logoUrl,
       apple: config.logoUrl,
     },
     openGraph: {
