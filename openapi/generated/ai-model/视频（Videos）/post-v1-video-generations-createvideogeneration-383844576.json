@@ -3,7 +3,7 @@
   "info": {
     "title": "创建视频生成任务",
     "version": "1.0.0",
-    "description": "提交视频生成任务，支持文生视频和图生视频。\n\n返回任务 ID，可通过 GET 接口查询任务状态。\n"
+    "description": "提交视频生成任务，适用于视频系列模型。\n\n支持以下生成模式：\n- **文生视频**：`model` + `prompt`，不传 `images` 和 `metadata.video_urls`\n- **图生视频**：`model` + `prompt` + `images`（1 张图）\n- **视频生视频**：`model` + `prompt` + `metadata.video_urls`（1 个视频）\n- **多参考图**：`images` 含多张参考图\n- **多参考视频**：`metadata.video_urls` 含多个参考视频\n\n返回任务 ID，可通过 GET 接口查询任务状态。\n"
   },
   "tags": [
     {
@@ -15,7 +15,7 @@
       "BearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "description": "使用 Bearer Token 认证。\n格式: `Authorization: Bearer sk-xxxxxx`\n"
+        "description": "使用 Bearer Token 认证。\n格式: `Authorization: Bearer <YOUR_API_KEY>`\n"
       }
     }
   },
@@ -26,7 +26,7 @@
           "视频（Videos）"
         ],
         "summary": "创建视频生成任务",
-        "description": "提交视频生成任务，支持文生视频和图生视频。\n\n返回任务 ID，可通过 GET 接口查询任务状态。\n",
+        "description": "提交视频生成任务，适用于视频系列模型。\n\n支持以下生成模式：\n- **文生视频**：`model` + `prompt`，不传 `images` 和 `metadata.video_urls`\n- **图生视频**：`model` + `prompt` + `images`（1 张图）\n- **视频生视频**：`model` + `prompt` + `metadata.video_urls`（1 个视频）\n- **多参考图**：`images` 含多张参考图\n- **多参考视频**：`metadata.video_urls` 含多个参考视频\n\n返回任务 ID，可通过 GET 接口查询任务状态。\n",
         "operationId": "createvideogeneration",
         "parameters": [],
         "requestBody": {
@@ -36,104 +36,113 @@
               "schema": {
                 "type": "object",
                 "description": "视频生成请求",
+                "required": [
+                  "model"
+                ],
                 "properties": {
                   "model": {
                     "type": "string",
-                    "description": "模型/风格 ID",
+                    "description": "模型名称，如 `Seedance 2.0/uP`",
                     "examples": [
-                      "kling-v1"
+                      "Seedance 2.0/uP"
                     ]
                   },
                   "prompt": {
                     "type": "string",
-                    "description": "文本描述提示词",
+                    "description": "正向提示词；文生视频、图生视频、视频生视频场景必填",
                     "examples": [
-                      "宇航员站起身走了"
-                    ]
-                  },
-                  "image": {
-                    "type": "string",
-                    "description": "图片输入 (URL 或 Base64)",
-                    "examples": [
-                      "https://example.com/image.jpg"
+                      "黄昏海岸线，电影级光影，慢镜头推进，海浪拍打礁石"
                     ]
                   },
                   "duration": {
-                    "type": "number",
-                    "description": "视频时长（秒）",
+                    "type": "integer",
+                    "description": "视频时长（秒），如 `5`、`8`",
                     "examples": [
                       5
                     ]
                   },
-                  "width": {
-                    "type": "integer",
-                    "description": "视频宽度",
+                  "images": {
+                    "type": "array",
+                    "description": "图片 URL 数组；图生视频、多参考图场景使用。单图时数组含 1 个 URL，多参考图时按顺序传入多张。支持 `.png`、`.jpg`、`.jpeg`、`.webp` 格式，URL 须公网可访问。",
+                    "items": {
+                      "type": "string"
+                    },
                     "examples": [
-                      1280
-                    ]
-                  },
-                  "height": {
-                    "type": "integer",
-                    "description": "视频高度",
-                    "examples": [
-                      720
-                    ]
-                  },
-                  "fps": {
-                    "type": "integer",
-                    "description": "视频帧率",
-                    "examples": [
-                      30
-                    ]
-                  },
-                  "seed": {
-                    "type": "integer",
-                    "description": "随机种子",
-                    "examples": [
-                      20231234
-                    ]
-                  },
-                  "n": {
-                    "type": "integer",
-                    "description": "生成视频数量",
-                    "examples": [
-                      1
-                    ]
-                  },
-                  "response_format": {
-                    "type": "string",
-                    "description": "响应格式",
-                    "examples": [
-                      "url"
-                    ]
-                  },
-                  "user": {
-                    "type": "string",
-                    "description": "用户标识",
-                    "examples": [
-                      "user-1234"
+                      [
+                        "https://cdn.example.com/main.png"
+                      ]
                     ]
                   },
                   "metadata": {
                     "type": "object",
-                    "description": "扩展参数 (如 negative_prompt, style, quality_level 等)",
-                    "additionalProperties": true,
-                    "properties": {},
-                    "x-apifox-orders": []
+                    "description": "扩展参数",
+                    "properties": {
+                      "video_urls": {
+                        "type": "array",
+                        "description": "参考视频 URL 数组；视频生视频、多参考视频场景使用。单视频时数组含 1 个 URL，多参考视频时按顺序传入多个。支持 `.mp4`、`.mov`、`.webm` 格式，URL 须公网可访问。",
+                        "items": {
+                          "type": "string"
+                        },
+                        "examples": [
+                          [
+                            "https://cdn.example.com/source.mp4"
+                          ]
+                        ]
+                      },
+                      "resolution": {
+                        "type": "string",
+                        "description": "分辨率",
+                        "enum": [
+                          "480p",
+                          "720p",
+                          "1080p"
+                        ],
+                        "examples": [
+                          "720p"
+                        ]
+                      },
+                      "ratio": {
+                        "type": "string",
+                        "description": "画面比例",
+                        "enum": [
+                          "16:9",
+                          "9:16",
+                          "1:1"
+                        ],
+                        "examples": [
+                          "16:9"
+                        ]
+                      },
+                      "duration": {
+                        "type": "integer",
+                        "description": "视频时长（秒）",
+                        "examples": [
+                          5
+                        ]
+                      },
+
+                      "watermark": {
+                        "type": "boolean",
+                        "description": "是否加水印",
+                        "examples": [
+                          false
+                        ]
+                      }
+                    },
+                    "x-apifox-orders": [
+                      "video_urls",
+                      "resolution",
+                      "ratio",
+                      "duration",
+                      "watermark"
+                    ]
                   }
                 },
                 "x-apifox-orders": [
                   "model",
                   "prompt",
-                  "image",
                   "duration",
-                  "width",
-                  "height",
-                  "fps",
-                  "seed",
-                  "n",
-                  "response_format",
-                  "user",
+                  "images",
                   "metadata"
                 ]
               }
@@ -154,24 +163,63 @@
                   "type": "object",
                   "description": "视频生成任务提交响应",
                   "properties": {
-                    "task_id": {
+                    "id": {
                       "type": "string",
                       "description": "任务 ID",
                       "examples": [
-                        "abcd1234efgh"
+                        "task_abc123"
+                      ]
+                    },
+                    "object": {
+                      "type": "string",
+                      "description": "对象类型",
+                      "examples": [
+                        "video.generation"
+                      ]
+                    },
+                    "model": {
+                      "type": "string",
+                      "description": "使用的模型名称",
+                      "examples": [
+                        "Seedance 2.0/uP"
                       ]
                     },
                     "status": {
                       "type": "string",
                       "description": "任务状态",
+                      "enum": [
+                        "queued",
+                        "in_progress",
+                        "completed",
+                        "failed"
+                      ],
                       "examples": [
                         "queued"
+                      ]
+                    },
+                    "progress": {
+                      "type": "integer",
+                      "description": "任务进度（0-100）",
+                      "examples": [
+                        0
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "任务创建时间",
+                      "examples": [
+                        "2026-06-17T08:00:00Z"
                       ]
                     }
                   },
                   "x-apifox-orders": [
-                    "task_id",
-                    "status"
+                    "id",
+                    "object",
+                    "model",
+                    "status",
+                    "progress",
+                    "created_at"
                   ]
                 }
               }

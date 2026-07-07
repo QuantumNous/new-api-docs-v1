@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "chat",
+    "completions",
+    "images",
+    "videos",
+    "models",
+    "moderations",
+    "unimplemented"
+  ],
+  "videosPages": ["createvideogeneration", "getvideogeneration"],
+  "imagesPages": ["openai", "gemini"],
+  "imagesOpenaiPages": ["post-v1-images-generations", "post-v1-images-edits"]
+}

@@ -60,6 +60,39 @@ async function loadTagSlugOverrides(): Promise<TagSlugOverrides> {
   }
 }
 
+type AiModelSidebarConfig = {
+  pages: string[];
+  videosPages: string[];
+  imagesPages: string[];
+  imagesOpenaiPages: string[];
+};
+
+async function loadAiModelSidebarConfig(): Promise<AiModelSidebarConfig> {
+  const p = './scripts/config/ai-model-sidebar.json';
+  try {
+    const raw = await readFile(p, 'utf8');
+    return JSON.parse(raw) as AiModelSidebarConfig;
+  } catch {
+    return {
+      pages: [
+        'chat',
+        'completions',
+        'images',
+        'videos',
+        'models',
+        'moderations',
+        'unimplemented',
+      ],
+      videosPages: ['createvideogeneration', 'getvideogeneration'],
+      imagesPages: ['openai', 'gemini'],
+      imagesOpenaiPages: [
+        'post-v1-images-generations',
+        'post-v1-images-edits',
+      ],
+    };
+  }
+}
+
 function deriveSlugFromTagSegment(
   rawSegment: string,
   overrides: TagSlugOverrides
@@ -193,6 +226,7 @@ async function ensureFileFromTemplate(destPath: string, templatePath: string) {
 
 async function generate() {
   const slugOverrides = await loadTagSlugOverrides();
+  const aiModelSidebar = await loadAiModelSidebarConfig();
 
   // Clean old generated docs (all locales) to keep the output absolutely clean
   const locales = ['zh', 'en', 'ja'];
@@ -268,9 +302,20 @@ async function generate() {
   // Root folder display name (sidebar) - keep consistent with Apifox docs wording
   await writeMetaJson('./content/docs/zh/api/ai-model', {
     title: 'AI 模型接口',
+    pages: aiModelSidebar.pages,
   });
   for (const [dir, title] of aiModelMeta.entries()) {
-    await writeMetaJson(`./content/docs/zh/api/ai-model/${dir}`, { title });
+    const meta: Record<string, unknown> = { title };
+    if (dir === 'videos') {
+      meta.pages = aiModelSidebar.videosPages;
+    }
+    if (dir === 'images') {
+      meta.pages = aiModelSidebar.imagesPages;
+    }
+    if (dir === 'images/openai') {
+      meta.pages = aiModelSidebar.imagesOpenaiPages;
+    }
+    await writeMetaJson(`./content/docs/zh/api/ai-model/${dir}`, meta);
   }
 
   // Generate Management API docs with custom path control

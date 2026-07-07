@@ -15,7 +15,7 @@
       "BearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "description": "使用 Bearer Token 认证。\n格式: `Authorization: Bearer sk-xxxxxx`\n"
+        "description": "使用 Bearer Token 认证。\n格式: `Authorization: Bearer <YOUR_API_KEY>`\n"
       }
     }
   },
@@ -26,17 +26,20 @@
           "视频（Videos）"
         ],
         "summary": "获取视频生成任务状态",
-        "description": "查询视频生成任务的状态和结果。\n\n任务状态：\n- `queued`: 排队中\n- `in_progress`: 生成中\n- `completed`: 已完成\n- `failed`: 失败\n",
+        "description": "查询视频生成任务的状态和结果。任务完成后，`output.video_url` 字段包含生成的视频地址。\n\n任务状态：\n- `queued`: 排队中\n- `in_progress`: 生成中\n- `completed`: 已完成\n- `failed`: 失败\n",
         "operationId": "getvideogeneration",
         "parameters": [
           {
             "name": "task_id",
             "in": "path",
             "required": true,
-            "description": "任务 ID",
+            "description": "任务 ID（创建任务时返回的 `id` 字段）",
             "schema": {
               "type": "string"
-            }
+            },
+            "examples": [
+              "task_abc123"
+            ]
           }
         ],
         "security": [
@@ -53,11 +56,25 @@
                   "type": "object",
                   "description": "视频任务状态查询响应",
                   "properties": {
-                    "task_id": {
+                    "id": {
                       "type": "string",
                       "description": "任务 ID",
                       "examples": [
-                        "abcd1234efgh"
+                        "task_abc123"
+                      ]
+                    },
+                    "object": {
+                      "type": "string",
+                      "description": "对象类型",
+                      "examples": [
+                        "video.generation"
+                      ]
+                    },
+                    "model": {
+                      "type": "string",
+                      "description": "使用的模型名称",
+                      "examples": [
+                        "Seedance 2.0/uP"
                       ]
                     },
                     "status": {
@@ -73,93 +90,76 @@
                         "completed"
                       ]
                     },
-                    "url": {
-                      "type": "string",
-                      "description": "视频资源 URL（成功时）",
+                    "progress": {
+                      "type": "integer",
+                      "description": "任务进度（0-100）",
                       "examples": [
-                        "https://example.com/video.mp4"
+                        100
                       ]
                     },
-                    "format": {
+                    "created_at": {
                       "type": "string",
-                      "description": "视频格式",
+                      "format": "date-time",
+                      "description": "任务创建时间",
                       "examples": [
-                        "mp4"
+                        "2026-06-17T08:00:00Z"
                       ]
                     },
-                    "metadata": {
+                    "completed_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "任务完成时间（仅 `completed` 或 `failed` 时返回）",
+                      "examples": [
+                        "2026-06-17T08:01:30Z"
+                      ]
+                    },
+                    "output": {
                       "type": "object",
-                      "description": "视频任务元数据",
+                      "description": "生成结果（仅 `completed` 时返回）",
                       "properties": {
-                        "duration": {
-                          "type": "number",
-                          "description": "实际生成的视频时长",
+                        "video_url": {
+                          "type": "string",
+                          "description": "生成的视频 URL",
                           "examples": [
-                            5
-                          ]
-                        },
-                        "fps": {
-                          "type": "integer",
-                          "description": "实际帧率",
-                          "examples": [
-                            30
-                          ]
-                        },
-                        "width": {
-                          "type": "integer",
-                          "description": "实际宽度",
-                          "examples": [
-                            1280
-                          ]
-                        },
-                        "height": {
-                          "type": "integer",
-                          "description": "实际高度",
-                          "examples": [
-                            720
-                          ]
-                        },
-                        "seed": {
-                          "type": "integer",
-                          "description": "使用的随机种子",
-                          "examples": [
-                            20231234
+                            "https://cdn.example.com/output/task_abc123.mp4"
                           ]
                         }
                       },
                       "x-apifox-orders": [
-                        "duration",
-                        "fps",
-                        "width",
-                        "height",
-                        "seed"
+                        "video_url"
                       ]
                     },
                     "error": {
-                      "type": "object",
-                      "description": "视频任务错误信息",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "错误信息（失败时返回，成功时为 `null`）",
                       "properties": {
-                        "code": {
-                          "type": "integer",
-                          "description": "错误码"
-                        },
                         "message": {
                           "type": "string",
                           "description": "错误信息"
+                        },
+                        "code": {
+                          "type": "string",
+                          "description": "错误代码"
                         }
                       },
                       "x-apifox-orders": [
-                        "code",
-                        "message"
+                        "message",
+                        "code"
                       ]
                     }
                   },
                   "x-apifox-orders": [
-                    "task_id",
+                    "id",
+                    "object",
+                    "model",
                     "status",
-                    "url",
-                    "format",
-                    "metadata",
+                    "progress",
+                    "created_at",
+                    "completed_at",
+                    "output",
                     "error"
                   ]
                 }

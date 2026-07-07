@@ -167,9 +167,19 @@ export function getLocalizedBusinessWorkTime(
   return config.business.workTime[locale] || config.business.workTime.en;
 }
 
+export const API_BASE_URL_PLACEHOLDER = '__apiBaseUrl__';
+
+export function getApiBaseUrl(config: DocsConfig): string {
+  return config.homeUrl.replace(/\/+$/, '');
+}
+
 export function replaceBrandName(value: string, config: DocsConfig): string {
   return value
     .replaceAll('__brandName__', config.brandName)
     .replaceAll('{{brandName}}', config.brandName)
     .replaceAll(DEFAULT_DOCS_CONFIG.brandName, config.brandName);
+}
+
+export function replaceApiBaseUrl(value: string, config: DocsConfig): string {
+  return value.replaceAll(API_BASE_URL_PLACEHOLDER, getApiBaseUrl(config));
 }

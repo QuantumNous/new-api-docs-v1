@@ -13,7 +13,13 @@ import { Feedback } from '@/components/feedback';
 import { LLMCopyButton, ViewOptions } from '@/components/page-actions';
 import { onRateAction } from '@/lib/github';
 import { BrandTextReplacer } from '@/components/brand-text-replacer';
-import { getDocsConfig, replaceBrandName } from '@/lib/docs-config';
+import {
+  getApiBaseUrl,
+  getDocsConfig,
+  replaceBrandName,
+} from '@/lib/docs-config';
+import { getDocsFooterItems } from '@/lib/docs-footer';
+import { replacePageTreeBrand } from '@/lib/docs-page-tree';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -37,12 +43,15 @@ export default async function Page(props: {
   const description = page.data.description
     ? replaceBrandName(page.data.description, docsConfig)
     : undefined;
+  const pageTree = replacePageTreeBrand(source.pageTree[lang], docsConfig);
+  const footerItems = getDocsFooterItems(page, pageTree, docsConfig);
 
   return (
     <DocsPage
       toc={page.data.toc}
       full={page.data.full}
       lastUpdate={lastModified ? new Date(lastModified) : undefined}
+      footer={footerItems ? { items: footerItems } : undefined}
       tableOfContent={{
         style: 'clerk',
         // Disable TOC in 'full' mode (OpenAPI page) to enable two-column layout
@@ -63,7 +72,10 @@ export default async function Page(props: {
         />
       </div>
       <DocsBody>
-        <BrandTextReplacer brandName={docsConfig.brandName}>
+        <BrandTextReplacer
+          brandName={docsConfig.brandName}
+          apiBaseUrl={getApiBaseUrl(docsConfig)}
+        >
           <MDX
             components={getMDXComponents({
               a: createRelativeLink(source, page) as any,
