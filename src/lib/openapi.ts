@@ -1,6 +1,22 @@
 import { createOpenAPI } from 'fumadocs-openapi/server';
+import type { OpenAPIV3_1 } from 'openapi-types';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { baseUrl } from '@/lib/metadata';
+
+function withDefaultServer(
+  schema: OpenAPIV3_1.Document
+): OpenAPIV3_1.Document {
+  if (schema.servers && schema.servers.length > 0) return schema;
+
+  // fumadocs-openapi falls back to `https://loading` during SSR when servers
+  // are missing, but uses `window.location.origin` on the client — inject an
+  // absolute URL so both sides render the same cURL examples.
+  return {
+    ...schema,
+    servers: [{ url: baseUrl.origin }],
+  };
+}
 
 async function walkJsonFiles(dir: string): Promise<string[]> {
   const out: string[] = [];
@@ -39,7 +55,8 @@ export const openapi = createOpenAPI({
     const entries = await Promise.all(
       files.map(async (p) => {
         const raw = await readFile(p, 'utf8');
-        return [p, JSON.parse(raw)] as const;
+        const schema = JSON.parse(raw) as OpenAPIV3_1.Document;
+        return [p, withDefaultServer(schema)] as const;
       })
     );
     return Object.fromEntries(entries);

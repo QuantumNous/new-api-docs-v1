@@ -45,7 +45,8 @@ function resolveBaseUrl(): URL {
     return new URL(u.startsWith('http') ? u : `https://${u}`);
   }
   if (process.env.NODE_ENV === 'development') {
-    return new URL('http://localhost:3000');
+    const port = process.env.PORT?.trim() || '3000';
+    return new URL(`http://localhost:${port}`);
   }
   const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
   if (vercelHost) {
