@@ -1,0 +1,63 @@
+---
+title: OpenCode 接入指南
+description: 通过 @ai-sdk/openai-compatible 将 OpenCode CLI 或 Desktop 接入自定义接口。
+---
+
+<AgentStepGuide
+  app="OpenCode"
+  steps={[
+    {
+      title: '添加 Provider',
+      description: '在配置文件的 provider 中新增 agnes。',
+      image: '/assets/agent-integrations/opencode-step-1.png',
+    },
+    {
+      title: '设置环境变量',
+      description: '通过 AGNES_API_KEY 保存密钥，避免写入代码仓库。',
+      image: '/assets/agent-integrations/opencode-step-2.png',
+    },
+    {
+      title: '选择模型验证',
+      description: '启动 OpenCode，使用 /models 选择 agnes-2.0-flash。',
+      image: '/assets/agent-integrations/opencode-step-3.png',
+    }
+  ]}
+/>
+
+## 统一接入参数
+
+| 配置项 | 填写内容 |
+| --- | --- |
+| API Base URL | `https://apihub.agnes-ai.com/v1` |
+| API Key | `YOUR_API_KEY` |
+| 模型 | `agnes-2.0-flash` |
+| 协议 | OpenAI Chat Completions |
+
+## 配置说明
+
+```json
+{
+  "model": "agnes/agnes-2.0-flash",
+  "provider": {
+    "agnes": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Agnes",
+      "options": {
+        "baseURL": "https://apihub.agnes-ai.com/v1",
+        "apiKey": "{env:AGNES_API_KEY}"
+      },
+      "models": {
+        "agnes-2.0-flash": { "name": "Agnes 2.0 Flash" }
+      }
+    }
+  }
+}
+```
+
+```bash
+export AGNES_API_KEY="YOUR_API_KEY"
+```
+
+## 验证与排查
+
+配置完成后发送一条测试消息。认证失败时重新复制 API Key；模型不存在时检查模型权限；连接失败时确认 Base URL 只填写到 `/v1`。

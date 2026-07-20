@@ -1,0 +1,42 @@
+---
+title: Codex++ 接入指南
+description: 在 Codex++ 管理工具中添加 API Only 提供商。
+---
+
+<AgentStepGuide
+  app="Codex++"
+  steps={[
+    {
+      title: '打开提供商管理',
+      description: '进入 Provider Configuration 并点击 Add Provider。',
+      image: '/assets/agent-integrations/codex-plus-plus-step-1.png',
+    },
+    {
+      title: '填写 API Only 配置',
+      description: '选择 Chat Completions，填写接口、密钥和测试模型。',
+      image: '/assets/agent-integrations/codex-plus-plus-step-2.png',
+    },
+    {
+      title: '启用并启动',
+      description: '切换到 Agnes 提供商，然后启动或重启 Codex++。',
+      image: '/assets/agent-integrations/codex-plus-plus-step-3.png',
+    }
+  ]}
+/>
+
+## 统一接入参数
+
+| 配置项 | 填写内容 |
+| --- | --- |
+| API Base URL | `https://apihub.agnes-ai.com/v1` |
+| API Key | `YOUR_API_KEY` |
+| 模型 | `agnes-2.0-flash` |
+| 协议 | OpenAI Chat Completions |
+
+## 配置说明
+
+Access Mode 选择 `API Only`，Upstream Protocol 选择 `Chat Completions`。
+
+## 验证与排查
+
+配置完成后发送一条测试消息。认证失败时重新复制 API Key；模型不存在时检查模型权限；连接失败时确认 Base URL 只填写到 `/v1`。

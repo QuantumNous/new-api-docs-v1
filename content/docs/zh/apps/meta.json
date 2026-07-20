@@ -5,6 +5,7 @@
   "root": true,
   "pages": [
     "index",
+    "agent",
     "aionui",
     "cc-switch",
     "cherry-studio",

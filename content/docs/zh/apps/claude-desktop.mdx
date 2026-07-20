@@ -1,0 +1,42 @@
+---
+title: Claude Desktop 接入指南
+description: 通过 CC Switch 或兼容路由工具为 Claude Desktop 添加自定义模型。
+---
+
+<AgentStepGuide
+  app="Claude Desktop"
+  steps={[
+    {
+      title: '选择桌面客户端',
+      description: '在路由管理工具中选择 Claude Desktop。',
+      image: '/assets/agent-integrations/claude-desktop-step-1.png',
+    },
+    {
+      title: '添加兼容提供商',
+      description: '填写 Base URL、API Key，并完成 Sonnet、Opus、Haiku 模型映射。',
+      image: '/assets/agent-integrations/claude-desktop-step-2.png',
+    },
+    {
+      title: '保存并重启',
+      description: '启用提供商并完全退出后重新打开 Claude Desktop。',
+      image: '/assets/agent-integrations/claude-desktop-step-3.png',
+    }
+  ]}
+/>
+
+## 统一接入参数
+
+| 配置项 | 填写内容 |
+| --- | --- |
+| API Base URL | `https://apihub.agnes-ai.com/v1` |
+| API Key | `YOUR_API_KEY` |
+| 模型 | `agnes-2.0-flash` |
+| 协议 | OpenAI Chat Completions |
+
+## 配置说明
+
+协议选择 `OpenAI Chat Completions`，三个 Claude 模型均可映射到 `agnes-2.0-flash`。
+
+## 验证与排查
+
+配置完成后发送一条测试消息。认证失败时重新复制 API Key；模型不存在时检查模型权限；连接失败时确认 Base URL 只填写到 `/v1`。
