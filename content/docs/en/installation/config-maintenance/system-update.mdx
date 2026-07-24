@@ -92,21 +92,14 @@ cd new-api
 # 拉取最新代码
 git pull
 
-# 编译后端
-go build -o new-api
-
-# Update and build frontend (choose new or classic as needed, default is new)
-# New Frontend (default)
-cd web/default
+# Update and build frontend
+cd web
 bun install
 bun run build
-cd ../..
+cd ..
 
-# Classic Frontend (classic)
-# cd web/classic
-# bun install
-# bun run build
-# cd ../..
+# Compile backend after web/dist is ready
+go build -o new-api
 
 # 重启服务
 ./new-api --port 3000
@@ -169,21 +162,14 @@ cd new-api
 # 切换到特定版本
 git checkout v1.x.x
 
-# 重新编译
-go build -o new-api
-
-# Update and build frontend (choose new or classic as needed, default is new)
-# New Frontend (default)
-cd web/default
+# Update and build frontend
+cd web
 bun install
 bun run build
-cd ../..
+cd ..
 
-# Classic Frontend (classic)
-# cd web/classic
-# bun install
-# bun run build
-# cd ../..
+# Recompile backend after web/dist is ready
+go build -o new-api
 
 # 重启服务
 ./new-api --port 3000

@@ -103,61 +103,30 @@ brew install bun
 
 ### 安装前端依赖
 
-根据您需要开发或编译的前端版本，进入对应的目录进行安装和开发：
-
-#### 新版前端 (default)
+前端代码现在直接位于 `web` 目录中。从项目根目录运行：
 
 ```bash
-cd web/default
-bun install   # 使用 bun 安装新版前端依赖
-```
-
-#### 旧版前端 (classic)
-
-```bash
-cd web/classic
-bun install   # 使用 bun 安装旧版前端依赖
+cd web
+bun install   # 使用 bun 安装前端依赖
 ```
 
 ### 运行开发服务器
 
-选择一个前端版本运行：
-
-**新版前端 (default):**
-
 ```bash
-cd web/default
-bun run dev   # 使用 bun 运行新版开发服务器
+cd web
+bun run dev   # 使用 bun 运行前端开发服务器
 ```
 
-**旧版前端 (classic):**
-
-```bash
-cd web/classic
-bun run dev   # 使用 bun 运行旧版开发服务器
-```
-
-前端开发服务器默认运行在 `http://localhost:5173`（各版本可能略有不同，具体请查看终端输出），并配置了代理，会将 API 请求转发到后端服务。
+Rsbuild 会从 `http://localhost:3000` 开始使用第一个可用端口。后端已占用 3000 端口时，前端通常会运行在 `http://localhost:3001`；实际地址请查看终端输出。开发服务器已配置代理，会将 API 请求转发到后端服务。
 
 ### 构建前端资源
 
-根据需要构建对应的前端资源：
-
-**新版前端 (default):**
-
 ```bash
-cd web/default
-bun run build   # 使用 bun 构建新版前端资源
+cd web
+bun run build   # 使用 bun 构建前端资源
 ```
 
-**旧版前端 (classic):**
-
-```bash
-cd web/classic
-bun run build   # 使用 bun 构建旧版前端资源
-```
-
-构建后的文件会生成到各自的 `dist` 目录（例如 `web/default/dist` 或 `web/classic/dist`），后端服务会自动加载这些静态资源。
+构建后的文件会生成到 `web/dist` 目录，后端服务会自动加载这些静态资源。
 
 7. **创建拉取请求**：在 GitHub 上创建 PR，描述您的更改
 

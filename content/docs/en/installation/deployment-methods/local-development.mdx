@@ -107,61 +107,30 @@ After installation, restart your terminal or run `source ~/.bashrc` (or `~/.zshr
 
 ### Install Frontend Dependencies
 
-Depending on the frontend version you need to develop or compile, navigate to the corresponding directory to install dependencies and develop:
-
-#### New Frontend (default)
+The frontend now lives directly in the `web` directory. From the repository root, install its dependencies with:
 
 ```bash
-cd web/default
-bun install   # Install new frontend dependencies using bun
-```
-
-#### Classic Frontend (classic)
-
-```bash
-cd web/classic
-bun install   # Install classic frontend dependencies using bun
+cd web
+bun install   # Install frontend dependencies using bun
 ```
 
 ### Run Development Server
 
-Choose a frontend version to run:
-
-**New Frontend (default):**
-
 ```bash
-cd web/default
-bun run dev   # Run new development server using bun
+cd web
+bun run dev   # Run the frontend development server using bun
 ```
 
-**Classic Frontend (classic):**
-
-```bash
-cd web/classic
-bun run dev   # Run classic development server using bun
-```
-
-The frontend development server runs on `http://localhost:5173` by default (each version may differ slightly, please check terminal output for details) and is configured with a proxy that forwards API requests to the backend service.
+Rsbuild uses the first available port starting at `http://localhost:3000`. When the backend is already using port 3000, the frontend usually starts at `http://localhost:3001`; check the terminal output for the actual URL. The development server is configured with a proxy that forwards API requests to the backend service.
 
 ### Build Frontend Assets
 
-Build the corresponding frontend assets as needed:
-
-**New Frontend (default):**
-
 ```bash
-cd web/default
-bun run build   # Build new frontend assets using bun
+cd web
+bun run build   # Build frontend assets using bun
 ```
 
-**Classic Frontend (classic):**
-
-```bash
-cd web/classic
-bun run build   # Build classic frontend assets using bun
-```
-
-The built files will be generated into their respective `dist` directories (e.g., `web/default/dist` or `web/classic/dist`), and the backend service will automatically load these static assets.
+The built files will be generated in `web/dist`, and the backend service will automatically load these static assets.
 
 7.  **Create a Pull Request**: Create a PR on GitHub, describing your changes.
 
