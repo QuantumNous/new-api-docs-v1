@@ -243,7 +243,7 @@ As your business grows, you may need to expand your cluster size. The scaling st
 
 1.  **Regularly back up the database**: Even in a cluster environment, the database should be backed up regularly
 2.  **Monitor resource usage**: Closely monitor CPU, memory, and disk usage
-3.  **Adopt a rolling update strategy**: When updating, update slave nodes first, and then update the master node after confirming stability
+3.  **Adopt a rolling update strategy**: Update the master node first and confirm that database migrations have completed and the node is stable, then update the slave nodes one by one
 4.  **Configure an alerting system**: Monitor node status and promptly notify administrators when issues occur
 5.  **Geographically distributed deployment**: If possible, deploy nodes in different geographical locations to improve availability
 

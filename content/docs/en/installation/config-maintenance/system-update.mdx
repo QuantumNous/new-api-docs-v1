@@ -109,11 +109,11 @@ go build -o new-api
 
 For multi-node deployment environments, the following update strategy is recommended:
 
-1.  **Update secondary nodes first**: First update one secondary node and test its stability
-2.  **Gradual rollout**: After confirming the stability of the secondary node, update the remaining secondary nodes one by one
-3.  **Finally update the primary node**: After all secondary nodes are running stably, update the primary node
+1.  **Update the primary node first**: Only the primary node runs GORM AutoMigrate, so update it first to apply the required database schema migrations
+2.  **Verify the primary node**: Check its startup logs and service status to confirm that the migrations completed and the node is stable
+3.  **Update secondary nodes gradually**: Update the remaining secondary nodes one by one, confirming stability after each update
 
-This strategy can minimize the risk of service interruption.
+This order ensures that the database schema is ready before secondary nodes start running the new version.
 
 <Callout title="Detailed Guide">
   For a complete guide on cluster deployment, please refer to the [Cluster
