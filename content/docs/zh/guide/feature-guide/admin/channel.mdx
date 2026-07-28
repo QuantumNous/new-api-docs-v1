@@ -44,6 +44,22 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 点击「提交」完成渠道添加,新渠道出现在列表中
 
+### 示例：接入 Anthropic 兼容服务（apiToken.sale）
+
+[apiToken.sale](https://apitoken.sale) 是第三方 Anthropic 兼容 API 服务商，无需新增专用渠道类型即可接入 New API：
+
+1. 服务商类型选择 `Anthropic`
+2. `Base URL` 填写 `https://api.apitoken.sale`，不要添加 `/v1` 或末尾斜杠；New API 会自动拼接 `/v1/messages`
+3. `API Key` 填写 apiToken.sale 签发的密钥（格式为 `sk-pool-...`），而不是 Anthropic 签发的密钥
+4. 根据 [apiToken.sale 模型列表](https://apitoken.sale/models) 勾选或手动填写可用模型
+5. 保存渠道后点击「测试」，确认所选模型连接成功
+
+更多配置说明请参阅 [apiToken.sale 文档](https://openkeys.apitoken.sale/docs)。
+
+<Callout type="warn">
+  apiToken.sale 是第三方服务，并非 Anthropic 官方端点。用于生产环境前，请独立核实服务商的授权、服务条款和数据处理政策，并遵守 New API 的合规与可接受使用政策。
+</Callout>
+
 ## 渠道测试
 
 ### 单个渠道测试

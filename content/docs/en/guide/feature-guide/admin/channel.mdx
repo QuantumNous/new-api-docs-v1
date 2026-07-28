@@ -29,6 +29,22 @@ The channel list shows all configured AI provider channels with their name, type
 
 6. Click "Submit" — the new channel appears in the list
 
+### Example: Connect an Anthropic-Compatible Provider (apiToken.sale)
+
+[apiToken.sale](https://apitoken.sale) is a third-party Anthropic-compatible API provider. It works with New API's existing channel type:
+
+1. Select `Anthropic` as the provider type
+2. Set `Base URL` to `https://api.apitoken.sale` without `/v1` or a trailing slash; New API appends `/v1/messages` automatically
+3. Enter the API key issued by apiToken.sale (format: `sk-pool-...`), not a key issued by Anthropic
+4. Select or enter supported model IDs from the [apiToken.sale model list](https://apitoken.sale/models)
+5. Save the channel, then click "Test" to verify the selected model
+
+See the [apiToken.sale documentation](https://openkeys.apitoken.sale/docs) for provider-specific details.
+
+<Callout type="warn">
+  apiToken.sale is a third-party service, not an official Anthropic endpoint. Before production use, independently verify the provider's authorization, terms, and data-handling policies, and follow New API's compliance and acceptable-use policy.
+</Callout>
+
 ## Test a Channel
 
 1. Find the target channel in the list and click the "Test" button in the action column on the right
