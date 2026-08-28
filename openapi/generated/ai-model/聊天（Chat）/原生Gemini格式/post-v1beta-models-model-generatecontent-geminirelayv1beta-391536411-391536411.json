@@ -3,7 +3,7 @@
   "info": {
     "title": "Gemini媒体识别",
     "version": "1.0.0",
-    "description": "Gemini图像、PDF、音频、视频识别请求\n\n⚠️注意：仅支持通过 inlineData 以 base64 方式上传图像、PDF、音频、视频，不支持 fileData.fileUri 或 File API。"
+    "description": "Gemini图像、PDF、音频、视频识别请求\n\n⚠️注意：原生 Gemini 格式请求支持通过 inlineData（base64）或 fileData.fileUri（可公开访问的 URL，支持 YouTube 链接）传递媒体。通过 Gemini File API 上传的文件 URI 能否访问，取决于上游渠道 Key 的权限，建议优先使用可公开访问的 URL。OpenAI 格式（chat/completions）请求转换为 Gemini 时，媒体将统一下载并转换为 inlineData（base64）传递。"
   },
   "tags": [
     {
@@ -26,7 +26,7 @@
           "聊天（Chat）/原生Gemini格式"
         ],
         "summary": "Gemini媒体识别",
-        "description": "Gemini图像、PDF、音频、视频识别请求\n\n⚠️注意：仅支持通过 inlineData 以 base64 方式上传图像、PDF、音频、视频，不支持 fileData.fileUri 或 File API。",
+        "description": "Gemini图像、PDF、音频、视频识别请求\n\n⚠️注意：原生 Gemini 格式请求支持通过 inlineData（base64）或 fileData.fileUri（可公开访问的 URL，支持 YouTube 链接）传递媒体。通过 Gemini File API 上传的文件 URI 能否访问，取决于上游渠道 Key 的权限，建议优先使用可公开访问的 URL。OpenAI 格式（chat/completions）请求转换为 Gemini 时，媒体将统一下载并转换为 inlineData（base64）传递。",
         "operationId": "geminirelayv1beta-391536411",
         "parameters": [
           {
