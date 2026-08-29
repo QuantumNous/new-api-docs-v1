@@ -1,0 +1,108 @@
+---
+title: AQBot - 本地优先的桌面 AI 工作台
+description: AQBot 教程 — 将本地优先桌面 AI 工作台对接 New API。支持 aqbot:// 一键导入，以及 OpenAI / Claude / Gemini 协议手动配置。
+---
+
+<Callout type="info" title="聊天设置选项">
+  在 New API
+  控制台的系统设置->聊天设置中，可添加如下快捷选项，便于在令牌管理页一键填充到
+  AQBot：
+</Callout>
+
+    ```json
+    { "AQBot": "aqbot://providers?name=New%20API&baseurl={address}&apikey={key}&type=openai" }
+    ```
+
+<Callout type="info">
+  AQBot
+  是一款本地优先的开源桌面 AI
+  工作台（AGPL-3.0），统一多服务商对话、ACP Agent、知识库、MCP
+  工具与本地 API 网关，应用数据与用户文件保留在本机。
+</Callout>
+
+<img
+  src="/assets/aqbot/aqbot-icon.svg"
+  alt="AQBot"
+  width="48"
+  height="48"
+  className="dark:invert"
+/>
+
+- 官网：[https://app.aqbot.top](https://app.aqbot.top)
+- GitHub：[https://github.com/AQBot-Desktop/AQBot](https://github.com/AQBot-Desktop/AQBot)
+- 下载：[GitHub Releases](https://github.com/AQBot-Desktop/AQBot/releases)
+- 官方文档：[快速开始](https://app.aqbot.top/zh/guide/getting-started)
+
+## 核心特性
+
+- **多服务商对话** — 连接 OpenAI、Claude、Gemini、DeepSeek、Qwen 以及任意 OpenAI 兼容端点
+- **服务商快速导入** — 通过 `aqbot://` 链接导入服务商，确认后写入本地配置
+- **模型管理** — 同步远程模型列表、能力标签与延迟测试
+- **Agent** — 对话内 Agent（使用已配置服务商 API）与 ACP Agent 工作台
+- **本地数据** — 应用状态位于 `~/.aqbot/`，用户文件位于 `~/Documents/aqbot/`
+
+完整功能请参考 [AQBot 官网](https://app.aqbot.top)。本页只覆盖对接 New API。
+
+## NewAPI 接入方法
+
+请使用您自己部署的 New API，或确认服务方具备合法上游授权和合规义务的 New API 服务。不要将来源不明的 API 地址或密钥接入生产环境。
+
+### 方式一：一键导入（推荐）
+
+1. 安装并至少打开过一次 AQBot 桌面端，系统才会注册 `aqbot://` 协议
+2. 在 New API 控制台的「系统设置 → 聊天设置」中加入上文 JSON
+3. 打开「令牌管理」，在目标令牌的操作菜单中选择 **AQBot**
+4. 浏览器唤起 AQBot，在确认框中核对服务商名称、API 地址、类型 `openai` 和密钥前缀
+5. 确认后 AQBot 会进入 **设置 → 服务商管理**；按 API 地址 + 类型复用已有服务商，否则新建
+6. 打开该服务商，点击 **同步模型**，再回到对话页选择模型开始使用
+
+`{address}` 是 New API 站点根地址（例如 `https://your-newapi.example`），不要带 query。AQBot 对 OpenAI 类型会自动补上 `/v1`。导入后不会自动验证密钥，也不会自动同步模型。
+
+### 方式二：手动配置
+
+1. 在 New API 令牌管理页复制 API Key
+2. 打开 AQBot → **设置 → 服务商管理** → **添加服务商**
+3. 填写以下字段：
+
+| 字段 | 填法 |
+| --- | --- |
+| 服务商名称 | 例如 `New API` |
+| 服务商类型 | `OpenAI`（推荐） |
+| API 地址 | New API 站点地址，如 `https://your-newapi.example` |
+| API 密钥 | New API 令牌 |
+
+4. 点击 **同步模型**，拉取 New API 当前可用的模型
+5. 回到对话页，选择刚同步的模型开始使用
+
+![切换模型](/assets/aqbot/switch-model.png)
+
+### API 地址注意
+
+- 推荐只填站点根地址，让 AQBot 自动补 `/v1`
+- 如果地址已经以 `/v1` 结尾，AQBot 不会再追加
+- 只有在必须禁用自动补全时，才在地址末尾加 `!`
+
+### 可选：原生协议
+
+New API 同时提供 Claude / Gemini 原生接口时，可以再添加一条服务商：
+
+| 需求 | 服务商类型 | API 地址 |
+| --- | --- | --- |
+| Chat Completions（默认） | OpenAI | 站点根地址 |
+| Claude 原生 `/v1/messages` | Anthropic | 站点根地址 |
+| Gemini 原生 | Gemini | 站点根地址 |
+
+一键导入模板里的 `type` 对应改为 `anthropic` 或 `gemini`。同一套 API Key 可以挂多条服务商。
+
+## 常见问题
+
+- **点击 AQBot 没有唤起应用**：先安装并启动过桌面端。只打开官网或开发服务器不会注册 `aqbot://`
+- **导入成功但无法对话**：先点击「同步模型」，并确认模型 ID 与 New API 实际暴露的名称一致
+- **macOS 提示「已损坏」或「无法验证开发者」**：按 [AQBot README](https://github.com/AQBot-Desktop/AQBot) 与[官方快速开始](https://app.aqbot.top/zh/guide/getting-started)放行当前应用，不必关闭整个 Gatekeeper
+- **一键链接里带有 API Key**：只在已登录的令牌页生成该链接，不要把带真实密钥的 URL 发到公开页面
+
+## 相关链接
+
+- [AQBot GitHub](https://github.com/AQBot-Desktop/AQBot)
+- [配置服务商（官网）](https://app.aqbot.top/zh/guide/providers)
+- [下载](https://github.com/AQBot-Desktop/AQBot/releases)
