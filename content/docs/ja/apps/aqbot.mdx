@@ -1,0 +1,106 @@
+---
+title: AQBot - ローカル優先のデスクトップ AI ワークベンチ
+description: AQBot ガイド — ローカル優先のデスクトップ AI ワークベンチを New API に接続します。aqbot:// によるワンクリック導入と、OpenAI / Claude / Gemini プロトコルの手動設定に対応します。
+---
+
+<Callout type="info" title="チャット設定オプション">
+  New API コンソールのシステム設定 -> チャット設定で、以下のショートカットオプションを追加できます。これにより、トークン管理ページから
+  AQBot へワンクリックで入力できます：
+</Callout>
+
+    ```json
+    { "AQBot": "aqbot://providers?name=New%20API&baseurl={address}&apikey={key}&type=openai" }
+    ```
+
+<Callout type="info">
+  AQBot はローカル優先のオープンソース デスクトップ AI
+  ワークベンチ（AGPL-3.0）です。マルチプロバイダー対話、ACP Agent、ナレッジベース、MCP
+  ツール、ローカル API ゲートウェイをひとつにまとめ、アプリデータとユーザーファイルは端末内に保持します。
+</Callout>
+
+<img
+  src="/assets/aqbot/aqbot-icon.svg"
+  alt="AQBot"
+  width="48"
+  height="48"
+  className="dark:invert"
+/>
+
+- 公式サイト：[https://app.aqbot.top](https://app.aqbot.top)
+- GitHub：[https://github.com/AQBot-Desktop/AQBot](https://github.com/AQBot-Desktop/AQBot)
+- ダウンロード：[GitHub Releases](https://github.com/AQBot-Desktop/AQBot/releases)
+- 公式ドキュメント：[クイックスタート](https://app.aqbot.top/ja/guide/getting-started)
+
+## 主な機能
+
+- **マルチプロバイダー対話** — OpenAI、Claude、Gemini、DeepSeek、Qwen、および任意の OpenAI 互換エンドポイントに接続
+- **プロバイダーのクイック導入** — `aqbot://` リンクから確認後にプロバイダーを取り込みます
+- **モデル管理** — リモートのモデル一覧、能力タグ、レイテンシテストを同期
+- **Agent** — 対話内 Agent（設定済みプロバイダー API を使用）と ACP Agent ワークベンチ
+- **ローカルデータ** — アプリ状態は `~/.aqbot/`、ユーザーファイルは `~/Documents/aqbot/`
+
+全機能は [AQBot 公式サイト](https://app.aqbot.top) を参照してください。このページでは New API との接続のみを扱います。
+
+## NewAPI 接続方法
+
+自己ホストした New API を使うか、正規の上流認可とコンプライアンス義務を備えた New API サービスであることを確認してください。出所不明の API アドレスやキーを本番環境に接続しないでください。
+
+### 方法一：ワンクリック導入（推奨）
+
+1. AQBot デスクトップアプリをインストールし、一度は起動して `aqbot://` プロトコルを登録します
+2. New API コンソールの「システム設定 → チャット設定」に上記 JSON を追加します
+3. 「トークン管理」を開き、対象トークンの操作から **AQBot** を選びます
+4. ブラウザが AQBot を起動します。確認ダイアログでプロバイダー名、APIホスト、タイプ `openai`、キーのプレフィックスを確認します
+5. 確認後、AQBot は **設定 → プロバイダー管理** を開きます。同じ APIホスト + タイプのプロバイダーがあれば再利用し、なければ新規作成します
+6. そのプロバイダーを開き、**モデルを同期** をクリックしてから、対話画面でモデルを選んで使い始めます
+
+`{address}` は New API のサイトルート（例：`https://your-newapi.example`）で、クエリ文字列は付けません。OpenAI タイプでは AQBot が自動で `/v1` を補完します。導入時にキー検証やモデル同期は行われません。
+
+### 方法二：手動設定
+
+1. New API のトークン管理ページで API キーをコピーします
+2. AQBot で **設定 → プロバイダー管理 → プロバイダーを追加** を開きます
+3. 次の項目を入力します：
+
+| 項目 | 入力内容 |
+| --- | --- |
+| プロバイダー名 | 例：`New API` |
+| プロバイダータイプ | `OpenAI`（推奨） |
+| APIホスト | New API のサイトアドレス。例：`https://your-newapi.example` |
+| API キー | New API のトークン |
+
+4. **モデルを同期** をクリックし、New API が公開しているモデルを取得します
+5. 対話画面に戻り、同期したモデルを選択して使い始めます
+
+![モデルを切り替え](/assets/aqbot/switch-model.png)
+
+### APIホストに関する注意
+
+- サイトルートだけを入力し、`/v1` は AQBot に補完させることを推奨します
+- アドレスがすでに `/v1` で終わっている場合、AQBot は追加しません
+- 自動補完を無効にする必要があるときだけ、末尾に `!` を付けます
+
+### オプション：ネイティブプロトコル
+
+New API が Claude / Gemini のネイティブ API も提供している場合は、プロバイダーを追加できます：
+
+| 用途 | プロバイダータイプ | APIホスト |
+| --- | --- | --- |
+| Chat Completions（デフォルト） | OpenAI | サイトルート |
+| Claude ネイティブ `/v1/messages` | Anthropic | サイトルート |
+| Gemini ネイティブ | Gemini | サイトルート |
+
+ワンクリック用テンプレートの `type` を `anthropic` または `gemini` に変更します。同じ API キーを複数のプロバイダーで使えます。
+
+## よくある質問
+
+- **AQBot をクリックしてもアプリが開かない**：先にデスクトップアプリをインストールして起動してください。公式サイトや開発サーバーだけでは `aqbot://` は登録されません
+- **導入は成功したが対話できない**：先に「モデルを同期」をクリックし、モデル ID が New API が公開している名前と一致することを確認してください
+- **macOS で「破損している」または「開発元を検証できない」と表示される**：[AQBot README](https://github.com/AQBot-Desktop/AQBot) と[公式クイックスタート](https://app.aqbot.top/ja/guide/getting-started) に従い、このアプリだけを許可してください。Gatekeeper 全体をオフにする必要はありません
+- **ワンクリックリンクに API キーが含まれる**：ログイン済みのトークンページでのみ生成し、実キーを含む URL を公開ページに載せないでください
+
+## 関連リンク
+
+- [AQBot GitHub](https://github.com/AQBot-Desktop/AQBot)
+- [プロバイダー設定（公式ドキュメント）](https://app.aqbot.top/ja/guide/providers)
+- [ダウンロード](https://github.com/AQBot-Desktop/AQBot/releases)
