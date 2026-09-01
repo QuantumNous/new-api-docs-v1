@@ -41,8 +41,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 在 API 密钥列表中点击掩码密钥，按页面提示查看和复制完整值。完整密钥属于敏感凭证，查看行为可能需要额外安全验证。
 
-「复制连接信息」会把当前实例地址和密钥编码为客户端导入信息；「聊天」会按 Root 配置的预设打开网页、桌面应用协议或浏览器扩展。预设如果包含 `{key}`、`{cherryConfig}`、`{aionuiConfig}` 或 `{deepchatConfig}`，完整密钥会被写入跳转 URL 或编码配置并交给目标客户端，只应对可信目标使用。
-
+「复制连接信息」会将密钥和平台地址复制为应用导入信息；点击左侧栏「聊天」中的目标预设聊天应用，浏览器将尝试启动已安装的聊天应用，并自动跳转填充配置信息。
 ![查看API密钥页](/assets/guide/feature-guide/view-key.png)
 
 ## 编辑 API 密钥
