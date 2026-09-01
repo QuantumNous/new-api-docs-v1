@@ -1,25 +1,46 @@
 ---
-title: API の使い方
-description: OpenAI の base_url をプラットフォームアドレスに置き換え、トークンを api_key として使用
+title: API とプレイグラウンドの使用
+description: プレイグラウンドでAIモデルをオンラインでテストおよび体験し、OpenAI互換インターフェースを通じてNew APIを呼び出します。
 ---
 
-OpenAI の `base_url` をプラットフォームアドレスに置き換え、プラットフォーム発行のトークンを `api_key` として使用するだけで呼び出しを開始できます。
+import { Callout } from 'fumadocs-ui/components/callout';
 
-## Playground オンラインテスト
+## プレイグラウンド
 
-左側ナビゲーションの「Playground」をクリックするか、`/console/playground` に直接アクセスしてください。
+- プレイグラウンドは、AIモデルをオンラインで簡単にテストおよび体験するために使用されます。ユーザーは質問や指示を入力し、モデルと対話して生成結果を確認できます。
+​
+1.  **グループとモデルの選択**：入力ボックスの右下で利用可能なモデルグループと具体的なモデルを選択し、今回の対話で使用するモデルを確認します。
+2.  **リクエストパラメータの設定**：パラメータ設定ボタンをクリックし、必要に応じて温度、Top P、頻度ペナルティ、存在ペナルティ、最大Tokensなどの生成パラメータを有効にして調整します。
+3.  **対話内容の入力**：下部の入力ボックスに質問、指示、またはプロンプトを入力します。検索、ファイルのアップロード、写真のアップロード、スクリーンショット、写真撮影機能は現在未実装です。
+4.  **リクエストの送信**：モデル、パラメータ、入力内容を確認後、「送信」ボタンをクリックしてリクエストを送信します。
+5.  **応答結果の確認**：モデルの生成が完了したら、対話エリアで返された内容を確認し、新しい質問を入力して複数回の対話を行うことができます。
 
-![Playground ページ](/assets/guide/feature-guide/playground.png)
+![游乐场页面](/assets/guide/feature-guide/playground.png)
 
-Playground はコード不要でモデルと直接対話できる内蔵オンラインテストツールです。トークンが正常に動作するか確認できます。
+## APIアドレスと認証
 
-## API アドレスの取得
+ゲートウェイのOpenAI互換アドレスは通常次のとおりです。
 
-![ホームページ API アドレスコピーエリア](/assets/guide/feature-guide/api-address.png)
+```text
+https://your-host/v1
+```
 
-ホームページから API Base URL をコピーし、クライアントまたはコードの `base_url` として使用してください。
+APIキーをBearer Tokenとして使用します。
 
-## コード例
+```http
+Authorization: Bearer sk-your-api-key
+```
+
+チャット補完の例：
+
+```bash
+curl https://your-host/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"你好"}]}'
+```
+
+## SDKの例
 
 ### Python（OpenAI SDK）
 
@@ -27,30 +48,60 @@ Playground はコード不要でモデルと直接対話できる内蔵オンラ
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-xxxxxxxxxxxxxxxx",  # プラットフォーム発行のトークン
-    base_url="https://your-platform.com/v1"
+    api_key="sk-xxxxxxxx",
+    base_url="https://your-host/v1",
 )
 
 response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Hello!"}]
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": "你好"}],
 )
 print(response.choices[0].message.content)
 ```
 
-## 対応エンドポイント
+### Claudeネイティブ形式
 
-> **注**: 以下のエンドポイントは上流プラットフォーム（OpenAI、Claude、Gemini など）が提供する標準的な API エンドポイントの例です。本プラットフォームはこれらのリクエストを対応する上流サービスにプロキシします。
+```bash
+curl https://your-platform.com/v1/messages \
+  -H "x-api-key: sk-xxxxxxxx" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "content-type: application/json" \
+  -d '{"model": "claude-3-5-sonnet-20241022", "max_tokens": 1024, "messages": [{"role": "user", "content": "Hello"}]}'
+```
 
-| エンドポイント | パス | 説明 |
+### Geminiネイティブ形式
+
+```bash
+curl "https://your-platform.com/v1beta/models/gemini-1.5-pro:generateContent?key=sk-xxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"contents": [{"parts": [{"text": "Hello"}]}]}'
+```
+
+## サポートされているAPIエンドポイント
+
+| API | パス | 説明 |
 | --- | --- | --- |
-| チャット補完 | `POST /v1/chat/completions` | 会話生成、ストリーミング対応 |
-| テキスト補完 | `POST /v1/completions` | 従来の補完エンドポイント |
-| 埋め込み | `POST /v1/embeddings` | テキストのベクトル化 |
-| 画像生成 | `POST /v1/images/generations` | テキストから画像 |
-| 音声認識 | `POST /v1/audio/transcriptions` | Whisper など |
-| 音声合成 | `POST /v1/audio/speech` | TTS |
-| リランク | `POST /v1/rerank` | ドキュメントの再ランク付け |
-| Responses API | `POST /v1/responses` | OpenAI Responses 形式 |
-| リアルタイム | `GET /v1/realtime`（WebSocket） | OpenAI Realtime API |
-| モデル一覧 | `GET /v1/models` | 利用可能なモデルの一覧 |
+| チャット補完 | `POST /v1/chat/completions` | OpenAI Chat Completions互換API。`model`と`messages`の提供が必要で、ストリーミングまたは通常の応答をサポートします。 |
+| プレイグラウンドチャット | `POST /pg/chat/completions` | ウェブプレイグラウンド専用API。ログインセッションを使用してグループとモデルを選択し、統一されたトラフィックルーティング、プロトコル変換、課金、再試行のリンクを再利用します。 |
+| テキスト補完 | `POST /v1/completions` | 従来のテキスト補完API。`prompt`と`model`の提供が必要です。 |
+| ベクトル埋め込み | `POST /v1/embeddings` | テキストまたはテキスト配列をベクトルに変換します。`input`の提供が必要で、チャネルアダプターによってアップストリーム形式に変換されます。 |
+| Gemini埋め込み互換API | `POST /v1/engines/{model}/embeddings` | 旧バージョンのGeminiスタイルの埋め込みパスと互換性があり、URL内のモデル名に基づいて埋め込みリクエストを処理します。 |
+| 画像生成 | `POST /v1/images/generations` | プロンプトに基づいて画像を生成します。具体的なモデル、サイズ、品質、数量は、リクエストパラメータと設定済みのチャネルによって異なります。 |
+| 画像編集 | `POST /v1/images/edits` | 入力画像とプロンプトに基づいて画像を編集します。JSONおよび`multipart/form-data`リクエストをサポートします。 |
+| 旧版編集API | `POST /v1/edits` | 互換性維持のために残されたパスで、コードは画像リレー処理に入ります。新しいクライアントは`/v1/images/edits`を優先して使用することをお勧めします。 |
+| 音声テキスト変換 | `POST /v1/audio/transcriptions` | 音声をテキストに変換し、OpenAI音声API形式に従って対応する音声認識チャネルに転送します。 |
+| 音声翻訳 | `POST /v1/audio/translations` | 音声内容を認識し、翻訳されたテキストを出力します。 |
+| テキスト音声変換 | `POST /v1/audio/speech` | 入力テキストを音声に変換します。 |
+| リランキング | `POST /v1/rerank` | `query`に基づいて候補`documents`の関連性を並べ替えます。クエリ内容とドキュメントリストが空でないことが必要です。 |
+| コンテンツモデレーション | `POST /v1/moderations` | テキストまたはその他の入力に対してコンテンツモデレーションを実行します。モデルが提供されていない場合は、デフォルトのモデレーションモデル候補が使用されます。 |
+| Responses API | `POST /v1/responses` | OpenAI Responses形式のAPI。入力、ツール、応答イベントなどの機能をサポートします。 |
+| Responses圧縮 | `POST /v1/responses/compact` | Responsesリクエストコンテキストに対して圧縮処理を実行します。 |
+| Codexウェブ検索 | `POST /v1/alpha/search` | Codex独立ウェブ検索形式のAPI。現在、この機能をサポートするSub2API、New API、Codex、および高度なカスタムチャネルのみが処理を許可されています。 |
+| Claude Messages | `POST /v1/messages` | Anthropic Claude Messages互換API。`model`とメッセージ内容の提供が必要で、必要に応じてNew APIによってアップストリームプロトコルに変換されます。 |
+| リアルタイム対話 | `GET /v1/realtime`（WebSocket） | OpenAI Realtimeスタイルの双方向リアルタイム通信API。モデルは通常クエリパラメータを介して渡され、APIキーはBearer TokenまたはWebSocketサブプロトコルを介して渡すことができます。 |
+| Geminiネイティブモデル呼び出し | `POST /v1beta/models/{model}:{action}` | Geminiネイティブ形式のAPI。`generateContent`、`streamGenerateContent`、埋め込み関連操作などのモデル操作パスをサポートします。 |
+| Gemini互換モデル呼び出し | `POST /v1/models/{model}:{action}` | `/v1`プレフィックスでGeminiスタイルのモデル操作リクエストを受け入れ、Gemini Relayが解析と変換を担当します。 |
+| モデルリスト | `GET /v1/models` | デフォルトではOpenAI形式のモデルリストを返します。Anthropicリクエストヘッダーを使用する場合はClaude形式、`x-goog-api-key`または`key`クエリパラメータを使用する場合はGemini形式を返します。 |
+| モデル詳細 | `GET /v1/models/{model}` | 単一のモデル情報を照会します。モデルが存在しない場合は`model_not_found`エラーオブジェクトを返します。 |
+| Geminiモデルリスト | `GET /v1beta/models` | Gemini形式で利用可能なモデルリストを返します。応答フィールドには`models`と`nextPageToken`が含まれます。 |
+| OpenAI形式モデルリスト | `GET /v1beta/openai/models` | Gemini互換ネームスペースの下で、OpenAI形式でモデルリストを返します。 |

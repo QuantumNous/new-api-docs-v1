@@ -1,0 +1,58 @@
+---
+title: Overview and Dashboard
+description: Use the overview page and dashboard to understand gateway status, usage, model calls, traffic splitting, and more.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Overview Page
+
+- After logging in, click the "Overview" button in the left navigation bar to enter the overview page `/dashboard/overview`.
+You can view cards such as Quick Start Guide, Usage and Health Status, API Information, Announcements, FAQ, and Uptime.
+
+### Quick Start Guide
+
+1. Click "Create API Key" to go to `/keys`.
+2. Add quota to your wallet (if billing is enabled).
+3. Open the playground or use your client to send the first request to verify the route.
+
+![快速开始页](/assets/guide/feature-guide/overview-get-started.png)
+
+### Usage and Health Status
+
+The page summarizes metrics such as balance, consumption, request count, success rate, latency, and throughput based on current account and instance data.
+
+![概览信息页1](/assets/guide/feature-guide/overview-info-1.png)
+
+### API Information, Announcements, FAQ, and Uptime
+
+The page displays information such as API Information, Announcements, FAQ, and Uptime.
+
+![概览信息页2](/assets/guide/feature-guide/overview-info-2.png)
+
+<Callout type="info">
+  These cards are configured by Root in "System Settings" → "Console Content".
+</Callout>
+
+## Dashboard
+
+- After logging in, click the "Dashboard" button in the left navigation bar to enter the dashboard page `/dashboard/models`.
+You can view model call analysis and traffic splitting; for user statistics, please go to `/dashboard/users` (Admin and Root users only).
+
+### Model Call Analysis
+
+View call counts, Token usage, consumption distribution, and performance metrics by time range, model, and group.
+
+![数据看板信息页1](/assets/guide/feature-guide/dashboard-info-1.png)
+
+### Traffic Splitting
+
+View request flow between users, API keys, groups, models, and channels.
+
+![数据看板信息页2](/assets/guide/feature-guide/dashboard-info-2.png)
+
+### User Statistics
+
+Only Admin and Root can access `/dashboard/users` to view user analysis; this section will not be displayed in the navigation for regular users.
+
+![数据看板信息页3](/assets/guide/feature-guide/dashboard-info-3.png)

@@ -1,65 +1,143 @@
 ---
-title: Personal Settings
-description: Manage account information, security settings, and third-party account bindings
+title: Profile and Security
+description: View or manage account information, binding details, notification and behavior preferences, security settings, 2FA management, Passkey management, login session management, and other personal settings.
 ---
 
-import { Callout } from 'fumadocs-ui/components/callout';
+- After logging in, click the "Profile" button in the left navigation bar to access the profile page `/profile`.
+Here you can view or manage account information, account bindings, notification and behavior preferences, interface language, personal sidebar, check-in, 2FA, Passkey, access tokens, and login sessions.
 
-Manage account information, security settings, and third-party account bindings. After logging in, click your avatar in the top-right corner and select "Personal Settings", or visit `/console/personal` directly.
+## View Account Information
 
-## Basic Information
+View account information, including name, user ID, remaining balance, total quota consumed, number of API requests, and other details.
 
-![Personal info page](/assets/guide/feature-guide/personal.png)
+![Personal Account Information Page](/assets/guide/feature-guide/personal.png)
 
-In the basic information section you can:
+## Manage Account Binding Information
 
-- **Change username**: Enter a new username and click "Save"
-- **Bind email**: Enter your email address, click "Send Code", enter the verification code, then click "Bind"
-- **Change password**: Enter your current password, new password, and confirm the new password, then click "Change Password"
+Manage account binding information, including email and third-party OAuth accounts.
 
-## Two-Factor Authentication (2FA)
+- Bind Email
+1. In the settings area, find "Account Binding" → "Email" → click "Bind".
+2. Enter the email address you want to bind.
+3. Click "Send" to get the verification code.
+4. Enter the verification code and click "Bind Email".
+![Bind Email Page](/assets/guide/feature-guide/personal-link-email.png)
 
-Enabling 2FA requires an additional dynamic code from an authenticator app at each login, effectively preventing unauthorized access.
+- Bind Third-party OAuth Account
 
-![2FA settings section](/assets/guide/feature-guide/2fa-section.png)
+1. In the settings area, find "Account Binding" → "Third-party OAuth Accounts".
+2. Click the "Bind" button corresponding to the third-party OAuth platform you want to bind.
+3. The page will redirect to the platform's authorization page; log in and click "Authorize".
+4. After authorization is complete, it will automatically redirect back, and the binding status will change to "Bound".
 
-Setup steps:
+![Bind Third-party OAuth Account Page](/assets/guide/feature-guide/personal-link-OAuth.png)
 
-1. Install an authenticator app on your phone (Google Authenticator or Microsoft Authenticator recommended)
-2. Find the "Two-Factor Authentication" section in Personal Settings and click "Enable 2FA"
-3. Scan the QR code shown on the page with your authenticator app — a 6-digit code will appear in the app
+## Set Notification and Behavior Preferences
 
-![2FA QR code dialog](/assets/guide/feature-guide/2fa-qrcode.png)
+This page is used to configure account notification methods and system usage preferences.
 
-4. Enter the 6-digit code from the app into the verification field and click "Confirm Enable"
-5. The system displays a set of backup codes — save them immediately by taking a screenshot or writing them down
+- Notification Settings
+1. **Notification Method**: Supports selecting Email, Webhook, Bark, or Gotify to receive system notifications.
+2. **Balance Warning Threshold**: Set the balance alert amount; when the account balance falls below this value, a notification will be sent.
+3. **Notification Email**: Specify the email address to receive notifications; if left blank, the account's bound email will be used by default.
+4. Enter the corresponding information, and after completing the configuration, click "Save Settings" for the changes to take effect.
+
+- Behavior Preference Settings
+1. **Receive Upstream Model Update Notifications**: When enabled, if scheduled model checks detect changes in upstream models or check failures, a summary notification will be sent via the selected notification method; this feature is only available to administrators.
+2. **Accept Unpriced Models**: When enabled, allows the use of models for which prices have not yet been configured. (Not recommended)
+3. **Record IP Addresses**: When enabled, records the IP addresses of users calling models and when requests encounter errors.
+4. Enter the corresponding information, and after completing the configuration, click "Save Settings" for the changes to take effect.
+
+![Notification and Behavior Preferences Page](/assets/guide/feature-guide/personal-notification-behavior-preferences.png)
 
 <Callout type="warn">
-  Backup codes are only shown once and cannot be viewed again after closing the dialog. If you lose your backup codes and cannot use the authenticator, you will need to contact an admin to reset 2FA.
+  Enabling "Accept Unpriced Models" may lead to unexpectedly high consumption. It is recommended to keep the default setting of "Accept Unpriced Models" disabled.
 </Callout>
 
-## Passkey Passwordless Login
+## Set Interface Language Preference
 
-Passkey supports login via device fingerprint, face recognition, or hardware security keys — no password required.
+You can set your interface language preference, which will be synchronized across all devices logged in with this account and will affect the API error message language.
 
-![Passkey settings section](/assets/guide/feature-guide/passkey-section.png)
+![Interface Language Preference Settings Page](/assets/guide/feature-guide/personal-language-preferences.png)
 
-Registration steps:
+## Personal Left Sidebar Settings for Personalized Display
 
-1. Scroll down in Personal Settings to find the "Passkey" section
-2. Click "Register Passkey"
-3. The browser shows a system verification prompt — complete fingerprint, face, or security key verification as prompted
-4. Once verified, Passkey registration is complete and can be used for future logins
+- This page is used to customize the functional modules displayed in the left sidebar. Users can enable or hide corresponding entries based on their personal usage habits.
 
-## Third-Party Account Binding
+![Personal Left Sidebar Settings Page](/assets/guide/feature-guide/personal-sidebar-settings.png)
 
-Binding a GitHub, Discord, or other third-party account allows you to log in directly with that account without entering a password.
+<Callout type="info">
+  This only changes the personal navigation display and does not grant new permissions or deactivate corresponding interfaces.
+</Callout>
 
-![Third-party account binding section](/assets/guide/feature-guide/oauth-bind-section.png)
+## Daily Check-in
 
-Binding steps:
+- Used to complete daily check-ins and view check-in records and rewards.
 
-1. Scroll down in Personal Settings to find the "Third-Party Account Binding" section
-2. Click "Bind" next to the platform you want to connect
-3. The page redirects to that platform's authorization page — log in and click "Authorize"
-4. After authorization, you are redirected back and the binding status changes to "Bound"
+1. Click "Check in now" to receive the day's random quota reward. (The random quota range is set by the platform system administrator) [View settings documentation →](/en/docs/guide/feature-guide/admin/settings-billing)
+2. The page displays cumulative check-in days, quota obtained this month, and cumulative quota obtained.
+3. You can only check in once per day. Rewards will be issued to your account balance, and there may be a slight delay in crediting.
+
+![Daily Check-in Page](/assets/guide/feature-guide/personal-check-in.png)
+
+## Security Settings
+
+- This page is used to manage account security configurations and account access permissions.
+1. **Change Password**: Used to update the account login password to enhance account security.
+2. **Access Tokens**: Used to generate and manage API access tokens, supporting external applications or services to access relevant interfaces via tokens.
+3. **Delete Account**: Used to permanently delete the current account and all its associated data. This operation is irreversible and should be carefully confirmed before execution.
+
+![Security Settings Page](/assets/guide/feature-guide/personal-security.png)
+
+<Callout type="info">
+    - If you suspect an API access token has been compromised, you can reset it:
+    1. On the profile page, find the "Security Settings" area.
+    2. Click "Access Tokens" → "Regenerate".
+    3. After confirming the operation, the system will generate a new API access token.
+    4. The old API access token will become invalid immediately, and all services using the old API access token will need to be reconfigured with a new one.
+</Callout>
+
+<Callout type="warn">
+  - Access tokens are used for account management interfaces and are different from API keys used for calling models; they should not be entered into third-party AI clients.
+  - After resetting an API access token, all existing API access tokens will become invalid, and new API access tokens will need to be recreated.
+</Callout>
+
+## Enable or Disable Two-Factor Authentication (2FA)
+
+- This page is used to enable or disable Two-Factor Authentication (2FA) for your account, adding an extra layer of security beyond your password.
+
+1. **Enable Two-Factor Authentication**: On the profile page, click the "Enable" button next to "Two-Factor Authentication".
+2. **Scan QR Code**: Use an authenticator app such as Google Authenticator or Microsoft Authenticator to scan the QR code on the page, or manually enter the key to bind.
+3. **Save Backup Codes**: Save the system-generated backup codes. Each code can typically be used only once to recover account access if the authenticator is unavailable.
+4. **Enter Verification Code**: Open your authenticator app and enter the currently generated 6-digit verification code.
+5. **Complete Enablement**: Click the "Enable 2FA" button. Once verified, the Two-Factor Authentication setup will be complete.
+6. **Regenerate Backup Codes or Disable 2FA**: Click the "Regenerate Backup Codes" button or the "Disable 2FA" button and follow the prompts to complete the corresponding action.
+
+![2FA Settings Page](/assets/guide/feature-guide/personal-2fa.png)
+
+<Callout type="warn">
+  Backup codes are displayed only once and cannot be viewed again after closing the pop-up. If backup codes are lost and the authenticator cannot be used, you need to contact an administrator for a reset.
+</Callout>
+
+## Enable or Disable Passkey Passwordless Login
+
+- You can enable or disable the Passkey login feature for this account. Once enabled, you can log in using your device's biometric, screen lock, or security key, without needing to enter a password.
+
+1. **Enable Passkey**: In the "Passkey Login" area, click "Enable Passkey".
+2. **Complete Security Verification**: As prompted, enter the 6-digit dynamic verification code generated by your authenticator app, or enter the 8-digit backup code and click "Verify".
+3. **Register Passkey**: The browser will display a system verification prompt. Follow the instructions to complete Passkey registration using your device's fingerprint, facial recognition, PIN, or other system verification methods.
+4. **View Status**: After successful registration, the page will display "Passkey Authentication · Enabled" and record the last used time.
+5. **Unbind Passkey**: To disable this feature, click "Unbind Passkey". After completing identity verification, the Passkey login for the current account will be removed.
+
+![Passkey Settings Page](/assets/guide/feature-guide/personal-passkey.png)
+
+## Login Session Management
+
+- Used to view and manage login sessions for the current account across different devices and browsers, helping users promptly detect and remove abnormal login states.
+
+1. **View Session Information**: View logged-in devices, operating systems, browsers, IP addresses, login methods, last active time, and session expiration time.
+2. **Log Out of Specific Session**: Click "Log Out" or "Revoke" on the right side of the corresponding login session to log that device out of the current account.
+3. **Log Out of Other Sessions**: Click "Log Out of Other Sessions" in the top right corner of the page to log out of all other logged-in devices except the current one.
+4. **Manage Login Status**: If you discover unfamiliar devices or unusual login records, immediately revoke the corresponding session and promptly change your account password.
+
+![Login Session Management Page](/assets/guide/feature-guide/personal-login-sessions.png)

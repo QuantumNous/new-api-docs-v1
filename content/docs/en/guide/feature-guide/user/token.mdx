@@ -1,37 +1,61 @@
 ---
-title: Token Management
-description: Tokens are API credentials — each token can have its own permission scope and quota limit
+title: API Keys
+description: API keys are credentials for calling New API. Create and manage each key by setting quotas, models, groups, and source restrictions.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
 
-Tokens are API credentials. Each token can be independently configured with its own permission scope and quota limit. Click "Tokens" in the left sidebar, or visit `/console/token` directly.
+Click 'API Keys' in the left navigation, or directly visit `/keys`. The page displays information such as key name, masked key, enabled status, quota usage, and group, and supports filtering, copying, editing, enabling/disabling, and batch deletion. The row menu also allows copying connection information, opening admin-configured chat presets, and sending the key to supported client integrations.
 
-![Token list page](/assets/guide/feature-guide/token-list.png)
+![API密钥信息页](/assets/guide/feature-guide/keys-info.png)
 
-The token list shows all created tokens with their name, status, used quota, remaining quota, and expiration time.
+## Create API Keys
 
-## Create a Token
+1.  Open 'API Keys' and click 'Create API Key'.
+2.  Fill in the key name to easily distinguish applications or environments.
+3.  Set quota, expiration time, model restrictions, IP restrictions, and groups as needed.
+4.  After saving, view and copy the complete key from the list.
 
-1. Click the "Create Token" button in the top-right of the token list page — a creation dialog appears
-2. Enter a token name (name it by purpose, e.g. "Production" or "Testing")
-3. Configure the following options as needed:
+![创建API密钥页](/assets/guide/feature-guide/create-key.png)
 
-![Create token dialog](/assets/guide/feature-guide/token-create.png)
+### Configuration Item Description
 
-| Option | Description |
+| Setting | Function |
 | --- | --- |
-| Expiration | Set an expiry date; leave blank or set to -1 for no expiration |
-| Remaining Quota | Limits the maximum quota this token can consume; auto-disabled when exceeded |
-| Unlimited Quota | When enabled, no quota limit applies (still subject to account total quota) |
-| Model Restrictions | Restrict this token to specific models; leave blank for no restriction |
-| IP Allowlist | Restrict allowed source IPs; leave blank for no restriction |
-| Group | Specify the channel group this token uses |
-
-4. Click "Submit" — the dialog shows the complete token key. **Copy and save it immediately**, as it cannot be viewed again after closing the dialog.
-
-![Token created successfully, showing full key](/assets/guide/feature-guide/token-created-key.png)
+| Name | API Key Name (recommended to name by purpose, e.g., "Production Environment", "Test Use") |
+| Group | Specify the channel group used by this token |
+| Auto Group Order | Only displayed when the group is `auto`; can inherit Root's global order, or set key-level order. |
+| Cross-Group Retry Switch | When enabled, if the current group channel fails, it will attempt the next group's channel in order. |
+| Expiration Time | Refuse to use this key after expiration |
+| Quantity | Multiple API keys can be created at once (a random suffix will be added to the name) |
+| Quota | Restrict the quota that this key can consume |
+| Unlimited Quota Switch | Enable unlimited quota for this API key when turned on |
+| Model Restrictions | Restrict this token to call only specified models; leave blank for no restrictions |
+| IP Whitelist | Supports filling in IP or CIDR line by line; leave blank for no restrictions; should be used with trusted reverse proxies/CDNs |
 
 <Callout type="warn">
-  The token key is only fully displayed once at creation. Copy and save it immediately. Token keys have full API call permissions — do not share them with others or commit them to code repositories.
+  API keys are equivalent to passwords. Do not submit the complete key to code repositories, screenshots, logs, or chat tools; if you suspect a leak, immediately delete it and create a new key.
+</Callout>
+
+## View and Copy API Keys
+
+In the API key list, click the masked key to view and copy the complete value as prompted on the page. The complete key is a sensitive credential, and viewing it may require additional security verification.
+
+'Copy Connection Info' will copy the key and platform address as application import information; click the target preset chat application in the left sidebar 'Chat', and the browser will attempt to launch the installed chat application and automatically jump to fill in the configuration information.
+![查看API密钥页](/assets/guide/feature-guide/view-key.png)
+
+## Edit API Keys
+
+In the API key list, find the target key, click the 'Edit' button on the right to modify the key's configuration options (excluding the API key itself).
+
+![编辑API密钥页](/assets/guide/feature-guide/edit-key.png)
+
+## Enable, Disable, and Delete API Keys
+
+You can enable, disable, or delete keys in the list row operations; multiple rows can be selected for batch deletion. Disabling retains the configuration and stops calls, while deleting is irreversible.
+
+![删除API密钥页](/assets/guide/feature-guide/delete-key.png)
+
+<Callout type="warn">
+  After deletion confirmation, the API key will immediately become invalid and cannot be recovered. Before deleting, please confirm the selected key to avoid accidentally deleting production keys.
 </Callout>

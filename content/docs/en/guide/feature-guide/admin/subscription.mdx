@@ -3,29 +3,35 @@ title: Subscription Plan Management
 description: Create and manage subscription plans
 ---
 
-Create and manage subscription plans, control which plans are visible to users, and manually activate subscriptions for users. Log in with an admin account and visit `/console/subscription` directly (the admin view differs from the user purchase view).
+Create and manage subscription plans, control which plans are visible to users, and manually activate subscriptions for users. After logging in with an administrator account, directly access `/console/subscription` (the administrator's view differs from the user's purchase interface).
 
-The plan list shows all created subscription plans with their name, price, duration, and status (published / unpublished).
+![Subscription Plan Management List](/assets/guide/feature-guide/sub-admin-list.png)
+
+The plan list displays all created subscription plans, including name, price, validity period, status (published / unpublished), and other information.
 
 ## Create a Plan
 
-1. Click the "Create Plan" button on the subscription management page — a creation dialog appears
+1. On the subscription management page, click the "Create Plan" button to open the creation pop-up window.
 
-2. Fill in the following:
-   - **Plan Name**: The name users see when purchasing
-   - **Price**: The plan's selling price
-   - **Duration Type**: Select daily / weekly / monthly / custom days
-   - **Included Quota**: The quota amount included in the plan
-3. Click "Submit" — the plan is created and defaults to unpublished status
+![Create Subscription Plan Pop-up](/assets/guide/feature-guide/sub-create.png)
+
+2. Fill in the following information:
+   - **Plan Name**: The name users see when purchasing.
+   - **Price**: The selling price of the plan.
+   - **Validity Period Type**: Select Year / Month / Day / Hour / Custom Duration (seconds).
+   - **Included Quota**: The amount of quota included in the plan.
+3. Click "Submit" to complete plan creation; the plan will be in an unpublished state by default.
 
 ## Publish / Unpublish a Plan
 
-1. Find the target plan in the list and click the "Publish" or "Unpublish" button on the right
+1. In the plan list, find the target plan and click the "Publish" or "Unpublish" button on the right.
 
-2. Published plans are visible and purchasable by users; unpublished plans are hidden from users but existing subscriptions are not affected
+![Publish/Unpublish Plan Operation](/assets/guide/feature-guide/sub-publish.png)
 
-## Manually Activate a Subscription for a User
+2. After publishing, users can see and purchase the plan on the subscription page; after unpublishing, the plan is not visible to users, but existing subscriptions are unaffected.
 
-1. Click the "Manual Bind" button on the subscription management page
-2. Enter the target user's username or email, then select the plan to activate
-3. Click "Confirm" — the system creates a subscription record for that user, effective immediately
+## Manually Activate Subscriptions for Users
+
+1. On the subscription management page, click the "Manual Binding" button.
+2. Enter the target username or email, and select the plan to activate.
+3. Click "Confirm", and the system will create a subscription record for the user, which takes effect immediately.

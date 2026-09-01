@@ -1,128 +1,81 @@
 ---
 title: Chat Application Integration
-description: Quickly import New API configuration into various AI chat applications
+description: Quickly import New API configurations into various AI chat applications
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
 
-New API supports quick configuration import to various AI chat applications for easy testing and daily use.
+- New API supports quickly importing configurations into various AI chat applications, facilitating testing and daily use.
 
-## One-Click Configuration Import
+## Chat Integration Methods
 
-You can import configuration to supported chat applications with one click from the Console → Token page.
+- New API offers three chat integration methods:
+1. **One-click import of chat presets**
+2. **One-click import of API key configurations**
+3. **Manually configure chat applications**
 
-![One-click import configuration](/assets/guide/import-chat-config.png)
+### Preparation Before Use
 
-### How to Use
-
-1. Find the token you want to use in the token list
-2. Click the "Import" or "Configure" button on the right side of the token
-3. Select the target chat application
-4. The system automatically redirects to the application and fills in the configuration
-
-## ChatGPT Next Web
-
-<Callout type="warn">
-  ChatGPT Next Web deployment is currently suspended
-</Callout>
-
-## Lobe Chat
+1. Log in to New API and create a key on the 'API Key' page.
+2. Ensure the key is enabled, has sufficient quota, is not expired, and that current IP, group, and model restrictions allow the call.
 
 <Callout type="info">
-  Lobe Chat is an open-source multimodal conversation application that supports multiple large language models (LLMs) and plugin extensions. It enables not only text conversations but also multimodal interactions with images and audio, suitable for personal assistants, knowledge Q&A, content creation, and more. Lobe Chat features a clean and intuitive interface with multi-device sync, allowing users to customize models and plugins to flexibly extend conversation capabilities. Whether you're a developer or regular user, you can easily get started and enjoy the efficient experience of intelligent conversations.
+  **For detailed steps on creating and using API keys, please refer to the [API Key](/en/docs/guide/feature-guide/user/token) page.**
 </Callout>
 
-<Callout type="warn">
-  Lobe Chat currently does not support one-click import from New API and requires manual configuration
-</Callout>
+### One-click Import of Chat Presets
 
-### Configuration Steps
+1. Click 'Chat' in the left sidebar to expand the platform's configured chat presets.
+2. Click the target chat preset.
+3. The browser will attempt to launch the installed external application in a new window.
+4. The system automatically jumps to the target application and populates the configuration information.
 
-1. Open the Lobe Chat application
-2. Go to settings and find the "Language Model" configuration area
-3. Fill in the configuration according to the following information:
+![聊天预设一键导入配置页](/assets/guide/feature-guide/chat-presets-configuration-import.png)
 
-![Lobe Chat configuration - Step 1](/assets/guide/lobechat-1.png)
-
-- **API Address**: Fill in the Base URL of the New API platform
-- **API Key**: Fill in the token created in New API
-
-![Lobe Chat configuration - Step 2](/assets/guide/lobechat-2.png)
-
-4. Click "Save" to complete the configuration
-5. You can now see all available models provided by New API in the model selection
-
-## AI as Workspace
 
 <Callout type="info">
-  AI as Workspace is an innovative way to integrate artificial intelligence capabilities into your workspace. By deeply combining AI assistants with daily office work, collaboration, knowledge management, and other scenarios, users can process information more efficiently, automate repetitive tasks, and receive intelligent suggestions to improve overall work efficiency and experience.
+  Root users can maintain and manage chat presets in 'System Settings' → 'Console Content' → 'Chat'.
 </Callout>
 
-<Callout type="info">
-  Supports one-click import from New API
-</Callout>
+### One-click Import of API Key Configurations
 
-### How to Use
+1. Click to enter 'API Key' in the left sidebar.
+2. Select the API key to use.
+3. Next to the selected key, click '...' → 'Chat' → 'Target Chat Application'.
+4. Quickly jump to the corresponding application and use the selected key to import the configuration with one click.
 
-1. Click "Import to AI as Workspace" on the New API token page
-2. The system automatically redirects to AI as Workspace and fills in the configuration
-3. Confirm the configuration and start using
+![API密钥一键导入配置页](/assets/guide/feature-guide/api-key-configuration-import.png)
 
-## AMA Q&A
+### Manually Configure Chat Applications
 
-<Callout type="info">
-  AMA Q&A is an intelligent Q&A assistant provided by New API, supporting multi-turn conversations and complex question answering. Users can communicate with AMA Q&A in natural language to obtain knowledge, technical support, or business consultation, improving communication efficiency and experience.
-</Callout>
+For applications that do not support one-click import, you can configure them manually:
 
-<Callout type="warn">
-  Requires installing the AMA Q&A app first
-</Callout>
+- Obtain the following configuration information from New API:<br/>
 
-### How to Use
-
-1. Download and install the AMA Q&A app from the app store
-2. Click "Import to AMA Q&A" on the New API token page
-3. The app automatically opens and completes the configuration
-4. Start conversing with the AI assistant
-
-## OpenCat
-
-<Callout type="info">
-  OpenCat is an open-source multi-platform AI chat client that supports multiple large language model integrations. Users can have natural language conversations with AI through a clean interface, suitable for daily communication, knowledge Q&A, content creation, and more. OpenCat supports multi-device sync with flexible configuration, suitable for individuals and teams.
-</Callout>
-
-<Callout type="warn">
-  Requires installing the OpenCat app first
-</Callout>
-
-### How to Use
-
-1. Download and install the OpenCat app from the app store
-2. Click "Import to OpenCat" on the New API token page
-3. The app automatically opens and completes the configuration
-4. Select a model in OpenCat and start conversing
-
-## Manual Configuration for Other Applications
-
-For applications that don't support one-click import, you can configure manually:
-
-### Configuration Information
-
-Get the following information from New API:
-
-| Configuration Item | Description | Where to Get |
+| Configuration Item | Description | Location to Obtain |
 | --- | --- | --- |
-| API Base URL | API endpoint address | Platform homepage or token page |
-| API Key | Token secret key | Displayed when creating token (only once) |
-| Available Models | List of supported models | Personal Settings → Available Models or Pricing page |
+| API Base URL | API Endpoint Address | New API address, e.g., `https://api.example.com/v1` |
+| API Key | API Key | API Key page |
+| Available Models | List of supported models | Filter and view available models under the key's group in the Model Marketplace |
 
-### General Configuration Steps
+- General Configuration Steps
 
-1. Find the "Settings" or "Configuration" entry in the target application
-2. Find the "Custom API" or "OpenAI Compatible Interface" configuration area
-3. Fill in the API Base URL and API Key
-4. Save the configuration and start using
+1. In the target application, find the 'Settings' or 'Configuration' entry.
+2. Locate the 'Custom API' or 'OpenAI Compatible Interface' configuration area.
+3. Fill in the API Base URL and API Key.
+4. Save the configuration to start using it.
 
 <Callout type="info">
-  Most applications that support OpenAI API can integrate with New API by filling in a custom API address
+  1. Most applications supporting OpenAI API compatible interfaces can integrate with New API by filling in a custom API address.
+  2. If the application requires a full endpoint, use `https://api.example.com/v1/chat/completions`; refer to the application's specific configuration instructions to supplement the path.
+  3. **For a list of currently verified supported AI applications and configuration guides, please refer to the [AI Applications](/en/docs/apps) page.**
 </Callout>
+
+## Frequently Asked Questions
+
+- **No chat presets in the sidebar**: Confirm that the 'Chat' module is enabled in 'Profile' → 'Left Sidebar Personal Settings'.
+- **No available key prompt**: Create or enable an API key, and check the quota, expiration time, model restrictions, and IP whitelist.
+- **Desktop application not launching**: First, install the target application and confirm that the operating system has registered the corresponding custom protocol; the browser may also ask for confirmation to open an external application.
+- **Web preset blank or refused to load**: The target site might prohibit iframes via CSP or `X-Frame-Options`. In this case, switch to manual configuration for that application.
+- **FluentRead key invalid after connection**: Confirm that the extension is installed and active on the current page; the current version might have key prefix compatibility differences, if it still fails, switch to manual configuration or another preset.
+- **Request returns unauthorized or forbidden access**: Check the authentication header format, model name, key status, group permissions, and IP restrictions; for Claude and Gemini requests, also confirm that the correct paths and request headers are used.

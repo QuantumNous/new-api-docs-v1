@@ -1,0 +1,58 @@
+---
+title: 概要とダッシュボード
+description: 概要ページとダッシュボードを使用して、ゲートウェイの状態、使用量、モデル呼び出し、トラフィック分散などを把握します。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## 概要ページ
+
+- ログイン後、左側のナビゲーションバーの「概要」ボタンをクリックして、概要ページ `/dashboard/overview` に移動します。
+クイックスタートガイド、使用量とヘルスステータス、API情報、お知らせ、FAQ、稼働時間などのカードを確認できます。
+
+### クイックスタートガイド
+
+1. 「APIキーの作成」をクリックして `/keys` に移動します。
+2. ウォレットにQuotaを追加します（課金が有効な場合）。
+3. プレイグラウンドを開くか、クライアントを使用して最初のリクエストを送信し、ルーティングを検証します。
+
+![快速开始页](/assets/guide/feature-guide/overview-get-started.png)
+
+### 使用量とヘルスステータス
+
+ページには、現在の口座とインスタンスデータに基づいて、残高、消費量、リクエスト数、成功率、遅延、スループットなどの指標がまとめられます。
+
+![概览信息页1](/assets/guide/feature-guide/overview-info-1.png)
+
+### API情報、お知らせ、FAQ、稼働時間
+
+ページでは、API情報、お知らせ、FAQ、稼働時間などの情報を確認できます。
+
+![概览信息页2](/assets/guide/feature-guide/overview-info-2.png)
+
+<Callout type="info">
+  これらのカードは、Rootユーザーが「システム設定」→「コンソールコンテンツ」で設定します。
+</Callout>
+
+## ダッシュボード
+
+- ログイン後、左側のナビゲーションバーの「ダッシュボード」ボタンをクリックして、ダッシュボードページ `/dashboard/models` に移動します。
+モデル呼び出し分析とトラフィック分散を確認できます。ユーザー統計は `/dashboard/users` にアクセスしてください（AdminおよびRootユーザーのみ）。
+
+### モデル呼び出し分析
+
+時間範囲、モデル、Groupごとに、呼び出し回数、Token、消費分布、パフォーマンス指標を表示します。
+
+![数据看板信息页1](/assets/guide/feature-guide/dashboard-info-1.png)
+
+### トラフィック分散
+
+ユーザー、APIキー、Group、モデル、Channel間のリクエストの流れを確認します。
+
+![数据看板信息页2](/assets/guide/feature-guide/dashboard-info-2.png)
+
+### ユーザー統計
+
+AdminおよびRootユーザーのみが `/dashboard/users` にアクセスしてユーザー分析を表示できます。一般ユーザーのナビゲーションにはこのセクションは表示されません。
+
+![数据看板信息页3](/assets/guide/feature-guide/dashboard-info-3.png)
