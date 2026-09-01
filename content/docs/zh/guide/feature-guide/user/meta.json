@@ -3,14 +3,13 @@
   "defaultOpen": false,
   "pages": [
     "auth",
+    "dashboard",
     "personal-setting",
     "token",
     "api",
     "chat-apps",
-    "pricing",
     "log",
-    "topup",
-    "subscription",
-    "task"
+    "wallet",
+    "pricing"
   ]
 }

@@ -1,0 +1,58 @@
+---
+title: 概览与数据看板
+description: 使用概览页和数据看板了解网关状态、用量、模型调用和分流等情况。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## 概览页
+
+- 登录后点击左侧导航栏按钮「概览」进入概览页 `/dashboard/overview`。
+可查看快速开始向导、用量与健康状态、API 信息、公告、FAQ 和运行时间等卡片。
+
+### 快速开始向导
+
+1. 点击「创建 API 密钥」进入 `/keys`。
+2. 在钱包中添加额度（如果启用了计费）。
+3. 打开游乐场或使用你的客户端发送第一个请求验证路由。
+
+![快速开始页](/assets/guide/feature-guide/overview-get-started.png)
+
+### 用量与健康状态
+
+页面会根据当前账户和实例数据汇总余额、消耗、请求数、成功率、延迟、吞吐量等指标。
+
+![概览信息页1](/assets/guide/feature-guide/overview-info-1.png)
+
+### API 信息、公告、FAQ 和运行时间
+
+页面可查看API 信息、公告、FAQ、运行时间等信息。
+
+![概览信息页2](/assets/guide/feature-guide/overview-info-2.png)
+
+<Callout type="info">
+  这些卡片由 Root 在「系统设置」 → 「控制台内容」中配置。
+</Callout>
+
+## 数据看板
+
+- 登录后点击左侧导航栏按钮「数据看板」进入数据看板页 `/dashboard/models`。
+可查看模型调用分析和分流；用户统计请前往 `/dashboard/users`（仅限 Admin 和 Root 用户）。
+
+### 模型调用分析
+
+按时间范围、模型和分组查看调用次数、Token、消耗分布和性能指标。
+
+![数据看板信息页1](/assets/guide/feature-guide/dashboard-info-1.png)
+
+### 分流
+
+查看用户、API 密钥、分组、模型和渠道之间的请求流向。
+
+![数据看板信息页2](/assets/guide/feature-guide/dashboard-info-2.png)
+
+### 用户统计
+
+仅Admin 和 Root 可进入 `/dashboard/users` 查看用户分析；普通用户的导航中不会显示此分区。
+
+![数据看板信息页3](/assets/guide/feature-guide/dashboard-info-3.png)

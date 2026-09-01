@@ -5,118 +5,60 @@ description: 快速将 New API 配置导入到各类 AI 聊天应用中
 
 import { Callout } from 'fumadocs-ui/components/callout';
 
-New API 支持快速导入配置到多种 AI 聊天应用，方便测试和日常使用。
+- New API 支持快速导入配置到多种 AI 聊天应用，方便测试和日常使用。
 
-## 一键导入配置
+## 聊天集成方式
 
-在控制台→令牌页面可以一键导入配置到支持的聊天应用中。
+- New API 的聊天集成有三种方式：
+1. **聊天预设一键导入配置**
+2. **API密钥一键导入配置**
+3. **手动配置聊天应用**
 
-![一键导入配置](/assets/guide/import-chat-config.png)
+### 使用前准备
 
-### 使用方法
-
-1. 在令牌列表页找到要使用的令牌
-2. 点击令牌右侧的「导入」或「配置」按钮
-3. 选择目标聊天应用
-4. 系统自动跳转到对应应用并填充配置信息
-
-## ChatGPT Next Web
-
-<Callout type="warn">
-  ChatGPT Next Web 目前暂停部署
-</Callout>
-
-## Lobe Chat
+1. 登录 New API，并在「API 密钥」页面创建一个密钥。
+2. 确认密钥处于启用状态，额度充足，密钥状态未过期，并且当前 IP、分组和模型限制允许本次调用。
 
 <Callout type="info">
-  Lobe Chat 是一款开源的多模态对话应用，支持多种大语言模型（LLM）和插件扩展。它不仅可以实现文本对话，还支持图片、音频等多模态交互，适用于个人助理、知识问答、内容创作等多种场景。Lobe Chat 拥有简洁直观的界面，支持多端同步，用户可以根据需求自定义模型和插件，灵活扩展对话能力。无论是开发者还是普通用户，都能轻松上手，享受智能对话带来的高效体验。
+  **创建和使用API密钥的具体步骤请参阅[API 密钥](/zh/docs/guide/feature-guide/user/token)页面。**
 </Callout>
 
-<Callout type="warn">
-  Lobe Chat 目前不支持从 New API 一键导入配置，需要手动填写
-</Callout>
+### 聊天预设一键导入配置
 
-### 配置步骤
+1. 点击左侧栏「聊天」展开平台已配置的聊天预设
+2. 点击目标聊天预设
+3. 浏览器会尝试在新窗口中启动已安装的外部应用
+4. 系统自动跳转到目标应用并填充配置信息
 
-1. 打开 Lobe Chat 应用
-2. 进入设置页面，找到「语言模型」配置区域
-3. 按照以下信息填写配置：
+![聊天预设一键导入配置页](/assets/guide/feature-guide/chat-presets-configuration-import.png)
 
-![Lobe Chat 配置填写 - 步骤1](/assets/guide/lobechat-1.png)
-
-- **API 地址**：填写 New API 平台的 Base URL
-- **API Key**：填写在 New API 创建的令牌
-
-![Lobe Chat 配置填写 - 步骤2](/assets/guide/lobechat-2.png)
-
-4. 点击「保存」完成配置
-5. 在模型选择中即可看到 New API 提供的所有可用模型
-
-## AI as Workspace
 
 <Callout type="info">
-  AI as Workspace 是一种将人工智能能力集成到工作空间中的创新方式。通过将 AI 助手与日常办公、协作、知识管理等场景深度结合，用户可以更高效地处理信息、自动化重复任务，并获得智能建议，提升整体工作效率和体验。
+  Root 可以在「系统设置」 → 「控制台内容」 → 「聊天」维护管理聊天预设。
 </Callout>
 
-<Callout type="info">
-  支持从 New API 一键导入配置
-</Callout>
+### API密钥一键导入配置
 
-### 使用方法
+1. 点击进入左侧栏「API 密钥」
+2. 选中需要使用的API密钥
+3. 在选中的密钥旁点击「 ... 」 → 「聊天」 → 「目标聊天应用」
+4. 快速跳转至对应应用并使用选中密钥一键导入配置
 
-1. 在 New API 令牌页面点击「导入到 AI as Workspace」
-2. 系统自动跳转到 AI as Workspace 并填充配置
-3. 确认配置信息后即可开始使用
+![API密钥一键导入配置页](/assets/guide/feature-guide/api-key-configuration-import.png)
 
-## AMA 问天
-
-<Callout type="info">
-  AMA 问天是 New API 提供的智能问答助手，支持多轮对话和复杂问题解答。用户可以通过自然语言与 AMA 问天进行交流，获取知识、技术支持或业务咨询，提升沟通效率和体验。
-</Callout>
-
-<Callout type="warn">
-  需要先安装 AMA 问天 app
-</Callout>
-
-### 使用方法
-
-1. 从应用商店下载并安装 AMA 问天应用
-2. 在 New API 令牌页面点击「导入到 AMA 问天」
-3. 应用自动打开并完成配置
-4. 开始与 AI 助手对话
-
-## OpenCat
-
-<Callout type="info">
-  OpenCat 是一款开源的多平台 AI 聊天客户端，支持多种大语言模型接入。用户可以通过简洁的界面与 AI 进行自然语言对话，适用于日常交流、知识问答和内容创作等多种场景。OpenCat 支持多端同步，配置灵活，适合个人和团队使用。
-</Callout>
-
-<Callout type="warn">
-  需要先安装 OpenCat app
-</Callout>
-
-### 使用方法
-
-1. 从应用商店下载并安装 OpenCat 应用
-2. 在 New API 令牌页面点击「导入到 OpenCat」
-3. 应用自动打开并完成配置
-4. 在 OpenCat 中选择模型开始对话
-
-## 手动配置其他应用
+### 手动配置聊天应用
 
 对于不支持一键导入的应用，可以手动配置：
 
-### 配置信息
-
-从 New API 获取以下信息：
+- 从 New API 获取以下配置信息：<br/>
 
 | 配置项 | 说明 | 获取位置 |
 | --- | --- | --- |
-| API Base URL | API 接口地址 | 平台首页或令牌页面 |
-| API Key | 令牌密钥 | 创建令牌时显示（仅一次） |
-| 可用模型 | 支持的模型列表 | 个人设置→可用模型 或 定价页面 |
+| API Base URL | API 接口地址 | New API地址，例如 `https://api.example.com/v1` |
+| API Key | API 密钥 | API 密钥页面 |
+| 可用模型 | 支持的模型列表 | 模型广场筛选查看密钥所在分组下的可用模型 |
 
-### 通用配置步骤
+- 通用配置步骤
 
 1. 在目标应用中找到「设置」或「配置」入口
 2. 找到「自定义 API」或「OpenAI 兼容接口」配置区域
@@ -124,5 +66,16 @@ New API 支持快速导入配置到多种 AI 聊天应用，方便测试和日�
 4. 保存配置后即可使用
 
 <Callout type="info">
-  大多数支持 OpenAI API 的应用都可以通过填写自定义 API 地址的方式接入 New API
+  1. 大多数支持 OpenAI API 兼容接口的应用都可以通过填写自定义 API 地址的方式接入 New API。
+  2. 如果应用要求完整端点，则使用 `https://api.example.com/v1/chat/completions`，看应用具体配置说明补充路径。
+  3. **目前已验证支持的AI应用列表及配置指南请参阅[AI应用](/zh/docs/apps)页面。**
 </Callout>
+
+## 常见问题
+
+- **侧边栏没有聊天预设**：在「个人资料」→「左侧边栏个人设置」区域确认「聊天」模块已启用。
+- **提示没有可用密钥**：创建或启用 API 密钥，并检查额度、过期时间、模型限制和 IP 白名单。
+- **桌面应用没有启动**：先安装目标应用，并确认操作系统已注册对应的自定义协议；浏览器可能还会要求确认是否打开外部应用。
+- **网页预设空白或拒绝加载**：目标站点可能通过 CSP 或 `X-Frame-Options` 禁止 iframe。此时改用该应用的手动配置方式。
+- **FluentRead 连接后密钥无效**：确认扩展已安装并在当前页面激活；当前版本可能存在密钥前缀兼容差异，仍失败时改用手动配置或其他预设。
+- **请求返回未授权或禁止访问**：检查认证头格式、模型名称、密钥状态、分组权限和 IP 限制；Claude、Gemini 请求还要确认使用了对应的路径和请求头。
