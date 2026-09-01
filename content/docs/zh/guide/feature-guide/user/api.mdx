@@ -22,7 +22,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 网关的 OpenAI 兼容地址通常为：
 
 ```text
-http://your-host/v1
+https://your-host/v1
 ```
 
 使用 API 密钥作为 Bearer Token：
@@ -34,7 +34,7 @@ Authorization: Bearer sk-your-api-key
 以聊天补全为例：
 
 ```bash
-curl http://your-host/v1/chat/completions \
+curl https://your-host/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"你好"}]}'
@@ -49,7 +49,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-xxxxxxxx",
-    base_url="http://your-host/v1",
+    base_url="https://your-host/v1",
 )
 
 response = client.chat.completions.create(

@@ -14,7 +14,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 1. 打开平台首页，点击右上角的「登录」按钮，或直接访问 `/sign-in`。
 2. 输入用户名或电子邮件和密码。
 3. 若页面显示 ​Cloudflare Turnstile，需要完成人机验证。
-4. 先点击已阅读并同意接受用户协议和隐私政策后，再点击再点击「登录」。
+4. 先点击已阅读并同意接受用户协议和隐私政策后，再点击「登录」。
 5. 账号启用 2FA 时，登录会额外需要输入一次性验证码或备份码。
 
 ![登录页](/assets/guide/feature-guide/login.png)
@@ -24,7 +24,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 登录页会显示平台已启用的 GitHub、Discord、LinuxDO 等第三方平台或Passkey图标。如需使用第三方账号或Passkey登录:
 1. 点击已阅读并同意接受用户协议和隐私政策。
 2. 点击页面下方对应平台的图标(GitHub、Discord、LinuxDO 等)或Passkey图标。
-3. 跳转至第三方授权页面完成授权后自动登录。
+3. 使用第三方账号时，跳转至第三方授权页面完成授权；使用 Passkey 时，按浏览器或设备提示完成验证。
 
 ![OAuth登录页](/assets/guide/feature-guide/login.png)
 
@@ -50,7 +50,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ### 登录会话管理
 
-登录成功后会建立独立会话。已登录用户可以点击右上角头像 → 「个人资料」 → 「登录会话」区域查看当前与其他设备的登录会话，撤销单个会话或一次退出其他会话；撤销当前会话后会返回登录页。
+登录成功后会建立独立会话。已登录用户可以点击左侧边栏「个人资料」 → 「登录会话」区域查看当前与其他设备的登录会话，撤销单个会话或一次退出其他会话；撤销当前会话后会返回登录页。
 
 ![登录会话页](/assets/guide/feature-guide/login-session.png)
 
