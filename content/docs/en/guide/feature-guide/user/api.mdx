@@ -1,35 +1,46 @@
 ---
-title: Using the API
-description: Replace OpenAI's base_url with the platform address and use your token as the api_key
+title: Using API and Playground
+description: Use the playground to test and experience AI models online, and call New API via OpenAI-compatible interfaces.
 ---
 
-Replace OpenAI's `base_url` with the platform address and use your platform-issued token as the `api_key` to start calling.
+import { Callout } from 'fumadocs-ui/components/callout';
 
 ## Playground
 
-Playground is a built-in online testing tool. You can chat with models directly without writing any code — ideal for quickly verifying that your token works.
+- The playground is used for simple online testing and experiencing AI models. Users can input questions or instructions, interact with the model, and view the generated results.
+​
+1. Select Group and Model: In the bottom right of the input box, select the available model group and specific model to confirm the model used for this conversation.
+2. Set Request Parameters: Click the parameter settings button to enable and adjust generation parameters such as Temperature, Top P, Frequency Penalty, Presence Penalty, and Max Tokens as needed.
+3. Fill in Conversation Content: Enter questions, instructions, or prompts in the bottom input box; search, upload files, upload photos, screenshot, and photo-taking functions are not yet implemented.
+4. Send Request: After confirming the model, parameters, and input content, click the "Send" button to submit the request.
+5. View Response Results: After the model finishes generating, you can view the returned content in the conversation area and continue to input new questions for multi-turn conversations.
 
-1. Click "Playground" in the left sidebar, or visit `/console/playground` directly
+![Playground Page](/assets/guide/feature-guide/playground.png)
 
-![Playground page](/assets/guide/feature-guide/playground.png)
+## API Address and Authentication
 
-2. Select the model you want to test from the left panel
-3. Type a message in the input box at the bottom and click Send
-4. The model's response appears in the conversation area on the right
+The OpenAI-compatible address for the gateway is typically:
 
-![Playground conversation example](/assets/guide/feature-guide/playground-chat.png)
+```text
+https://your-host/v1
+```
 
-## Get the API Address
+Use your API key as a Bearer Token:
 
-1. Visit the platform homepage
-2. Find the API Base URL display area in the middle of the page
-3. Click the copy button to copy the address to your clipboard
+```http
+Authorization: Bearer sk-your-api-key
+```
 
-![Homepage API address copy area](/assets/guide/feature-guide/api-address.png)
+For example, with chat completions:
 
-Use the copied address as `base_url` in your client or code, paired with your token.
+```bash
+curl https://your-host/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"你好"}]}'
+```
 
-## Code Examples
+## SDK Examples
 
 ### Python (OpenAI SDK)
 
@@ -37,13 +48,13 @@ Use the copied address as `base_url` in your client or code, paired with your to
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-xxxxxxxxxxxxxxxx",  # Your platform token
-    base_url="https://your-platform.com/v1"
+    api_key="sk-xxxxxxxx",
+    base_url="https://your-host/v1",
 )
 
 response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Hello!"}]
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": "你好"}],
 )
 print(response.choices[0].message.content)
 ```
@@ -66,18 +77,31 @@ curl "https://your-platform.com/v1beta/models/gemini-1.5-pro:generateContent?key
   -d '{"contents": [{"parts": [{"text": "Hello"}]}]}'
 ```
 
-## Supported Endpoints
+## Supported API Endpoints
 
-| Endpoint | Path | Description |
+| Interface | Path | Description |
 | --- | --- | --- |
-| Chat Completions | `POST /v1/chat/completions` | Conversational generation with streaming support |
-| Text Completions | `POST /v1/completions` | Legacy completions endpoint |
-| Embeddings | `POST /v1/embeddings` | Text vectorization |
-| Image Generation | `POST /v1/images/generations` | Text-to-image |
-| Image Editing | `POST /v1/images/edits` | Image editing |
-| Speech-to-Text | `POST /v1/audio/transcriptions` | Whisper and others |
-| Text-to-Speech | `POST /v1/audio/speech` | TTS |
-| Rerank | `POST /v1/rerank` | Document reranking |
-| Responses API | `POST /v1/responses` | OpenAI Responses format |
-| Realtime | `GET /v1/realtime` (WebSocket) | OpenAI Realtime API |
-| Models | `GET /v1/models` | List available models |
+| Chat Completions | `POST /v1/chat/completions` | OpenAI Chat Completions compatible interface, requires `model` and `messages`, supports streaming or regular responses. |
+| Playground Chat | `POST /pg/chat/completions` | Web playground specific interface, uses login session to select group and model, and reuses unified traffic splitting, protocol conversion, billing, and retry mechanisms. |
+| Text Completions | `POST /v1/completions` | Traditional text completions interface, requires `prompt` and `model`. |
+| Vector Embeddings | `POST /v1/embeddings` | Converts text or arrays of text into vectors, requires `input`, converted to upstream format by channel adapter. |
+| Gemini Embeddings Compatible Interface | `POST /v1/engines/{model}/embeddings` | Compatible with older Gemini-style embedding paths, processes embedding requests based on the model name in the URL. |
+| Image Generation | `POST /v1/images/generations` | Generates images based on prompts; specific model, size, quality, and quantity depend on request parameters and configured channels. |
+| Image Editing | `POST /v1/images/edits` | Edits images based on input image and prompt, supports JSON and `multipart/form-data` requests. |
+| Legacy Edit Interface | `POST /v1/edits` | Reserved compatible path, code enters image Relay processing; new clients are advised to prioritize using `/v1/images/edits`. |
+| Speech to Text | `POST /v1/audio/transcriptions` | Converts audio to text, forwards to corresponding speech recognition channel according to OpenAI audio interface format. |
+| Audio Translation | `POST /v1/audio/translations` | Recognizes audio content and outputs translated text. |
+| Text to Speech | `POST /v1/audio/speech` | Converts input text to audio. |
+| Rerank | `POST /v1/rerank` | Reranks candidate `documents` based on `query` for relevance, requires non-empty query content and document list. |
+| Content Moderation | `POST /v1/moderations` | Performs content moderation on text or other inputs; if no model is provided, a default moderation model candidate will be used. |
+| Responses API | `POST /v1/responses` | OpenAI Responses format interface, supports capabilities such as input, tools, and response events. |
+| Responses Compression | `POST /v1/responses/compact` | Performs compression processing on Responses request context. |
+| Codex Web Search | `POST /v1/alpha/search` | Codex independent web search format interface, currently only allows processing by Sub2API, New API, Codex, and advanced custom channels that support this capability. |
+| Claude Messages | `POST /v1/messages` | Anthropic Claude Messages compatible interface, requires `model` and message content, converted to upstream protocol by New API when necessary. |
+| Realtime Conversation | `GET /v1/realtime` (WebSocket) | OpenAI Realtime style bidirectional real-time communication interface, models are usually passed via query parameters, and API keys can be passed via Bearer Token or WebSocket subprotocol. |
+| Gemini Native Model Invocation | `POST /v1beta/models/{model}:{action}` | Gemini native format interface, supports model operation paths, such as `generateContent`, `streamGenerateContent`, and embedding-related operations. |
+| Gemini Compatible Model Invocation | `POST /v1/models/{model}:{action}` | Accepts Gemini-style model operation requests with the `/v1` prefix, parsed and converted by Gemini Relay. |
+| Model List | `GET /v1/models` | Returns OpenAI format model list by default; returns Claude format when using Anthropic request headers, and Gemini format when using `x-goog-api-key` or `key` query parameters. |
+| Model Details | `GET /v1/models/{model}` | Queries single model information; returns `model_not_found` error object if the model does not exist. |
+| Gemini Model List | `GET /v1beta/models` | Returns a list of available models in Gemini format, response fields include `models` and `nextPageToken`. |
+| OpenAI Format Model List | `GET /v1beta/openai/models` | Returns a model list in OpenAI format under the Gemini compatible namespace. |
