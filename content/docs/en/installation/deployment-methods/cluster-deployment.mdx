@@ -89,7 +89,7 @@ services:
       - TZ=Asia/Shanghai
       # Optional configuration
       - SYNC_FREQUENCY=60 # Cache synchronization frequency, in seconds
-      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # Frontend base URL for email notifications and other functions
+      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # Ignored on master nodes; only slave nodes use this
     volumes:
       - ./data:/data
       - ./logs:/app/logs
@@ -127,7 +127,7 @@ services:
       - SYNC_FREQUENCY=60 # Cache synchronization frequency, in seconds
       - TZ=Asia/Shanghai
       # Optional configuration
-      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # Must match the master
+      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # Redirects unmatched routes to this address
     volumes:
       - ./data:/data
       - ./logs:/app/logs
