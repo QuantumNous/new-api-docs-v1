@@ -88,7 +88,7 @@ services:
       - TZ=Asia/Shanghai
       # 以下はオプション設定
       - SYNC_FREQUENCY=60 # キャッシュ同期頻度（秒）
-      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # フロントエンドのベースURL、メール通知などの機能に使用
+      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # マスターノードでは無視されます。スレーブノードでのみ使用
     volumes:
       - ./data:/data
       - ./logs:/app/logs
@@ -125,7 +125,7 @@ services:
       - SYNC_FREQUENCY=60 # キャッシュ同期頻度（秒）
       - TZ=Asia/Shanghai
       # 以下はオプション設定
-      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # マスターノードと同じである必要があります
+      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # 未一致のルーティングをこのアドレスにリダイレクト
     volumes:
       - ./data:/data
       - ./logs:/app/logs

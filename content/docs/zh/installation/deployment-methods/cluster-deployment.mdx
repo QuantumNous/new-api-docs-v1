@@ -88,7 +88,7 @@ services:
       - TZ=Asia/Shanghai
       # 以下是可选配置
       - SYNC_FREQUENCY=60 # 同步频率，单位秒
-      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # 前端基础 URL，用于邮件通知等功能
+      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # 主节点上会被忽略，仅从节点使用
     volumes:
       - ./data:/data
       - ./logs:/app/logs
@@ -125,7 +125,7 @@ services:
       - SYNC_FREQUENCY=60 # 缓存同步频率，单位秒
       - TZ=Asia/Shanghai
       # 以下是可选配置
-      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # 需与主节点相同
+      # - FRONTEND_BASE_URL=https://<your-newapi-domain> # 将未匹配路由重定向到此地址
     volumes:
       - ./data:/data
       - ./logs:/app/logs
