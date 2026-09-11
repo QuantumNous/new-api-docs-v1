@@ -1,0 +1,127 @@
+---
+title: Release Specification
+description: Organize plugin versions, write release notes according to official repository conventions, and generate and verify market indexes.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Repository Structure
+
+The official plugin repository is [QuantumNous/new-api-plugins](https://github.com/QuantumNous/new-api-plugins). Currently, the `tasks` directory is used to organize task plugins:
+
+```text
+new-api-plugins/
+├── plugins/tasks/example/
+│   ├── icon.svg                 # Optional, icon.png can also be used
+│   └── 1.0.0/
+│       ├── plugin.js
+│       ├── CHANGELOG.md         # Required, complete English description
+│       └── CHANGELOG.zh-CN.md   # Optional Chinese description
+├── index.json                  # Tool generated
+└── tools/pluginindex/
+```
+
+The directory key and version must match the compiled `meta.key` and `meta.version` respectively. Market icons are stored next to the version directory by plugin key and referenced by the index's `iconFile`; do not embed image data into JavaScript source code.
+
+**Published version directories are immutable.** When modifying a plugin, add a new version directory, do not overwrite the old `plugin.js`, and do not alter immutable historical versions to backfill logs.
+
+## Release Notes Required for Every New Version
+
+Every new plugin or new version must provide an English `CHANGELOG.md` next to `plugin.js`, with no exception for the first release. When synchronizing plugins from other repositories, logs must also be synchronized; if the source lacks logs, new version descriptions should be backfilled based on verified changes.
+
+English specification files use UTF-8 Markdown, starting with YAML front matter on the first line:
+
+```markdown title="CHANGELOG.md"
+---
+changelogVersion: 1
+plugin: 'example'
+version: '1.0.0'
+locale: 'en'
+translations:
+  zh-CN: CHANGELOG.zh-CN.md
+---
+
+# Changelog
+
+## [1.0.0]
+
+### Added
+
+- Support task submission and status queries for the example model.
+```
+
+If `translations` is declared above, provide the corresponding file:
+
+```markdown title="CHANGELOG.zh-CN.md"
+---
+changelogVersion: 1
+plugin: 'example'
+version: '1.0.0'
+locale: 'zh-CN'
+---
+
+# Changelog
+
+## [1.0.0]
+
+### Added
+
+- 支持示例模型的任务提交和状态查询。
+```
+
+If there is no translation file, remove the `translations` mapping from the English file. The language filename must be `CHANGELOG.<locale>.md` in the same directory, not an external URL or cross-directory path.
+
+## Changelog Content Requirements
+
+Metadata keys, `# Changelog`, version titles, and category titles must always use the English structure specified in the specification; Chinese versions only translate the body text.
+
+Categories, when present, should follow this order: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`, `Migration`. Empty categories are omitted; each category uses an unordered list, and entries should not use tables, nested lists, or additional headings. At least one non-Migration category must contain actual changes.
+
+The plugin, version, and version title in the metadata must be consistent with the directory and source code. Chinese files use the same version and categories and are discovered through the translation mapping in the English file.
+
+### Billing or Configuration Changes Must Include Migration Notes
+
+When changes involve pricing, billing calculations, or necessary configurations, add `Migration`. Start by explaining:
+
+1. Whether it affects pricing or billing calculations.
+2. Whether administrators need to modify model prices, resolution tiers, billing modes, or expressions.
+3. Which models or configurations are affected, whether there is automatic migration, and the specific actions required.
+
+Only explicitly state "no price adjustment required" if the change truly does not necessitate reconfiguring prices. Other compatibility steps should follow the pricing explanation.
+
+Release notes describe actual capabilities, behavioral changes, fixes, and migrations. Test reports, validation scope, and general release processes are included in the PR description, not in the version changelog.
+
+## Generating Market Index
+
+`index.json` is compiled derived data, **do not edit manually**. The indexing tool relies on a sibling `new-api` checkout:
+
+```text
+workspace/
+├── new-api/
+└── new-api-plugins/
+```
+
+Execute from the plugin repository:
+
+```bash
+cd tools/pluginindex
+go run . generate ../..
+go run . check ../..
+```
+
+The generator extracts names, models, channel types, and display fields from compiled metadata, maintains version directories and the latest versions, and calculates source code SHA-256. During installation, the host still performs hash verification, compilation, and admission checks on the actual source code; the index is not a basis for trust.
+
+`path` is resolved relative to the index URL, so the same repository can be provided via the official website, GitHub raw, or a compliant mirror. `minApiVersion` is a display hint; final compatibility is determined by host validation.
+
+<Callout title="Changelog Requires Separate Verification">
+  `pluginindex check` checks source code and index, but not the changelog. Before committing, also verify YAML
+  metadata, categories, version titles, translation mappings, and migration notes.
+</Callout>
+
+## Submission Checklist
+
+- Execute plugin lint and fixtures in the target New API version, covering affected hooks and compatible scenarios.
+- Prepare source code, complete English changelog, and declared translation files for the new version.
+- Regenerate and verify the index, then submit these files together.
+- In the PR, describe actual changes, compatibility, billing implications, and validations performed.
+- After release, check if the versions, models, interfaces, and logs in the official market are consistent with the released content.

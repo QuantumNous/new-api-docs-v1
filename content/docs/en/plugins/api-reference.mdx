@@ -1,0 +1,206 @@
+---
+title: Task Plugin API v1 Reference
+description: Manifest, context, lifecycle, native routes, host protocols, usage, artifacts, and streaming capabilities of task plugins.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+<Callout title="Contract Status and Authoritative Sources">
+  This repository marks API v1 as a contract that has not yet been officially released. New capabilities may still use `apiVersion: 1`, and older hosts may reject unrecognized fields. The following is a Chinese reference; the complete signature and validation structure are subject to
+  [v1.d.ts](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.d.ts), [v1.schema.json](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.schema.json)
+  and the [original specification](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.md).
+</Callout>
+
+## Manifest: `meta`
+
+| Field                           | Type                 | Description                                                                 |
+| ------------------------------- | -------------------- | --------------------------------------------------------------------------- |
+| `apiVersion`                    | `1`                  | Contract version                                                            |
+| `key`                           | string               | Plugin identifier, max 30 characters, consistent with marketplace directory name |
+| `name`                          | string               | Display name                                                                |
+| `version`                       | string               | Semantic version, consistent with version directory                         |
+| `author`                        | `{ name, url? }`     | Author name is required, URL is HTTP(S) address; self-declared author information |
+| `models`                        | string[]             | Declares supported models                                                   |
+| `fetchMode`                     | `per_task` / `batch` | Single-task or batch polling                                                |
+| `description`                   | LocalizedText        | Plugin description                                                          |
+| `icon`                          | string               | LobeHub icon name or `text` / `text:<label>`, remote URLs or inline images are not accepted |
+| `website`                       | string               | Optional plugin official website, must be a valid HTTPS URL if not empty    |
+| `sortPriority`                  | integer              | Display sort order, larger value means higher priority; does not affect routing priority |
+| `baseUrl`                       | string               | Default upstream address usable by channel type 61                          |
+| `allowedHosts`                  | string[]             | Additional hosts allowed to access beyond channel host, can include port    |
+| `auth`                          | string / object      | `none`, `api_key`, `vertex_oauth` or authentication object defined by specification |
+| `channelTypes`                  | number[]             | Adaptable legacy channel types; third-party plugins typically use key binding for type 61 |
+| `routes`                        | NativeRoute[]        | Plugin's own native routes                                                  |
+| `protocols`                     | ProtocolClaim[]      | Host protocol declarations                                                  |
+| `usageSchema` / `usageExamples` | object / array       | Default usage fields and examples                                           |
+| `usageProfiles`                 | array                | Provides complete usage schema and examples per model                       |
+| `requiredCapabilities`          | string[]             | Versioned capabilities that must be supported by the host                   |
+| `submitResponseTypes`           | array                | Upstream submission response types, default `["json"]`, can declare `"sse"` |
+
+`baseUrl` must not contain credentials, query strings, or fragments, and must use an ASCII hostname; self-hosted HTTP or private addresses are allowed. `allowedHosts` uses `host` / `host:port`, without protocol or path, and the port will be part of the matching. The default address does not implicitly expand the set of allowed hosts.
+
+## Localized Text
+
+`LocalizedText` can use a string or a language map containing `en`. Strings will be normalized to an English map. The matching order is current language, primary language, English:
+
+```js
+description: {
+  en: "Video generation through the vendor API",
+  zh: "通过厂商接口生成视频",
+  "zh-TW": "透過廠商介面產生影片",
+}
+```
+
+Text in plugin data should not be used as translation keys for the management frontend. Model names, field keys, and raw enum values must remain stable.
+
+## Lifecycle Hooks
+
+| Export                     | Input                                   | Primary Return Content                            |
+| -------------------------- | --------------------------------------- | ------------------------------------------------- |
+| `buildSubmitRequest`       | `DriverContext`                         | HTTP request descriptor                           |
+| `parseSubmitResponse`      | ctx, `{ statusCode, headers, body }`    | `{ taskId, taskData?, immediate?, state? }`       |
+| `buildQueryRequest`        | `TaskQueryContext`                      | Single-task query descriptor, `per_task` is required |
+| `parseTaskResult`          | Query context, body, `{ status, headers }` | Standardized status, optional progress/reason/result, etc. |
+| `buildBatchQueryRequest`   | Batch context, task array               | Batch query descriptor, `batch` is required       |
+| `parseBatchResult`         | Batch context, body, HTTP info          | Array of results, each containing `taskId`, `batch` is required |
+
+All plugins must export `meta`, `buildSubmitRequest`, `parseSubmitResponse`, and `parseTaskResult`, including batch plugins.
+
+Standard statuses include `NOT_START`, `SUBMITTED`, `QUEUED`, `IN_PROGRESS`, `SUCCESS`, `FAILURE`, `UNKNOWN`. Unknown statuses return `UNKNOWN`; unknown results should not be defaulted to in-progress.
+
+HTTP status from upstream responses also participates in host determination: 404/410 leads to failure and refund; 401/403, 429, 5xx, and transport errors accumulate polling failures. After reaching `TASK_POLL_MAX_FAILURES` (default 20), failure cleanup is initiated, and the task timeout mechanism remains the outer deadline.
+
+## Request and Query Context
+
+`DriverContext` provides normalized `requestBody`, request headers, action, `model` / `upstreamModel`, channel `baseUrl`, authentication information, file references, public task ID, and optional `originTasks`.
+
+`TaskQueryContext` reconstructs from saved tasks:
+
+| Field                     | Meaning                                     |
+| ------------------------- | ------------------------------------------- |
+| `taskId`                  | Upstream task ID                            |
+| `publicTaskId`            | New API public task ID                      |
+| `model` / `upstreamModel` | User model name and upstream model name after channel mapping |
+| `action`                  | Persisted standardized operation            |
+| `data`                    | Current `Task.Data` snapshot                |
+| `state`                   | Plugin's private cross-polling state        |
+| `baseUrl` / Auth fields   | Currently used channel information          |
+
+The query side does not have `requestBody`. The saved field name is `data`, there is no `raw` alias. If the parsing hook omits `state`, the original state is retained; it is only updated if explicitly returned. Request and state inputs should be treated as read-only and not rely on module global variables to save task data.
+
+## HTTP Descriptors and Files
+
+Construction hooks return `{ url, method?, headers?, body?, ... }`, which are validated and sent by the host. JSON is the default body type, and multipart can also be constructed via `bodyType: "multipart"` and `parts`.
+
+Inbound body is uniformly parsed by the host into the following union type:
+
+```ts
+{
+  kind: ('json', value);
+}
+{
+  kind: ('form', fields);
+}
+{
+  kind: ('multipart', fields, files);
+}
+{
+  kind: 'none';
+}
+```
+
+Files are referenced into JavaScript only as `{ ref, field, filename, mimeType, size }`; plugins cannot directly read file bytes. Multipart outbound uses `parts[].fileRef`; JSON outbound can embed placeholders, which the host replaces with encoded content:
+
+```js
+{ __fileRef: "request_file:input_reference", encoding: "base64" }
+{ __fileRef: "request_file:input_reference", encoding: "dataUrl", mimeType: "image/png" }
+```
+
+Placeholders can optionally have `maxBytes`; the host will still perform file size limits and total volume checks. References must not be treated as file paths.
+
+## Native Routes and Host Protocols
+
+### Native Routes
+
+`meta.routes` defines plugin-specific URLs, where function names point to synchronous functions within the `native` object:
+
+```js
+routes: [
+  {
+    method: 'POST',
+    path: '/vendor/jobs',
+    type: 'submit',
+    decode: 'create',
+    render: 'created',
+  },
+  {
+    method: 'GET',
+    path: '/vendor/jobs/:task_id',
+    type: 'query',
+    render: 'status',
+  },
+];
+```
+
+- `submit` / `dynamic` must specify `decode` and `render`; query only specifies `render` and cannot declare a decoder.
+- The default task parameter name for query is `task_id`, which can be specified via `taskIdParam`.
+- Decoders return `{ kind: "submit", model, action?, requestBody?, originTaskIds? }` or a query intent.
+- `routes[].models` can restrict top-level models for submit/dynamic, but not for query; when models are nested within the vendor body, the decoder should determine them.
+- The host is responsible for authentication, ownership, and task persistence; renderers only handle external responses. Error messages thrown by hooks may be returned to the caller and should use readable error text without sensitive data.
+
+`originTaskIds` uses public task IDs. After the host checks ownership and channel consistency, `originTasks` containing internal upstream IDs are injected into the driver; they are not passed to external renderers.
+
+### Host Protocols
+
+`meta.protocols` declares protocol paths uniformly managed by the host and should not duplicate these paths in `meta.routes`:
+
+| Protocol           | Host Path                                                                      | Plugin Export                                      |
+| ------------------ | ------------------------------------------------------------------------------ | -------------------------------------------------- |
+| `openai_video`     | `POST /v1/videos`, `GET /v1/videos/{id}`, `GET / HEAD /v1/videos/{id}/content` | `protocols.openai_video.decodeRequest` and `render` |
+| `openai_responses` | `POST /v1/responses`, `GET /v1/responses/{id}`                                 | `decodeRequest`, and pattern-matching render hooks |
+
+Responses must explicitly declare `supports` as an object: `stream` requires `renderEvents`, `sync` or `background` requires `renderFinal`. Missing required hooks, or exporting hooks not used by any declared pattern, will result in rejection.
+
+Decoders may execute multiple times after candidate filtering and channel selection, and should remain deterministic. Multiple plugins can share models under the same protocol; the actual plugin is determined by the selected channel.
+
+Video render must return a JSON object; the host overrides standard ID, model, status, and time fields, and preserves compliant vendor extensions. Successful results of Responses reference artifacts via `ctx.artifacts[key].url` injected by the host.
+
+## Usage Hooks
+
+Optional exports `extractUsage`, `extractUsageOnSubmit`, and `extractUsageOnComplete` extract usage from requests, submission results, or completion results, respectively. Only facts conforming to the selected schema are returned, not prices or quotas.
+
+`usageProfiles` provides a complete schema for listed models, replacing the default definition; unmatched models use the default schema. When model mapping is involved, the runtime selects the usage definition according to the upstream model of the ultimately executed plugin. For configuration details, see [Usage and Billing](/en/docs/plugins/billing).
+
+## Artifacts and Content Requests
+
+Artifact hooks must be exported in pairs:
+
+- `listArtifacts(task)`: Projects a stable list of `{ key, type, mimeType? }` from persisted data, without returning a second persisted record or temporary download URL.
+- `buildContentRequest(ctx)`: Constructs the read descriptor for this request based on the selected artifact key, data, production version, upstream task ID, channel information, and secure Range/conditional request headers.
+
+Content requests with channel credentials can only access channel hosts or `allowedHosts`. Public dynamic CDNs can use `credentialless: true`; in this case, only GET/HEAD is allowed, no plugin headers or body can be attached, and the host will check the initial address and redirects.
+
+Host artifact links use `TaskPublicAddress`, falling back to `ServerAddress` by default. Multi-node setups require a shared valid `CRYPTO_SECRET`; rotating it will invalidate issued addresses.
+
+## Immediate Completion, SSE, and Host Capabilities
+
+`parseSubmitResponse` can return an `immediate` final state result, allowing the host to complete persistence and settlement during the submission phase; these tasks will not continue polling.
+
+When upstream submission uses SSE, declare `submitResponseTypes: ["json", "sse"]` and select `responseType: "sse"` in the descriptor:
+
+| Mode        | Required Declarations and Exports                                           | Data Flow                                                                                              |
+| ----------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Snapshot    | `parseSubmitEvent`                                                          | Each event returns `{ state, done }`, and the complete state after completion serves as the body of `parseSubmitResponse` |
+| Incremental | `requiredCapabilities: ["submit-sse-delta@1"]`, `parseSubmitEventDelta` | Returns `{ changes, state, done }`, the host applies `set` / `append` / `appendText`, and the body is formed upon completion |
+
+SSE mode does not directly pass upstream events to the client. The plugin interprets event semantics and termination conditions, while the host manages connections, frame parsing, size limits, and timeouts; read failures after successfully accepting upstream SSE will not automatically retry submission, to avoid creating duplicate billing tasks.
+
+`json-clone@1` provides a synchronous `utils.json.clone(value)` for creating mutable, independent JSON snapshots. Other utilities include time, UUID, Base64, HMAC, JWT, and Volc signature tools; see type declarations for full signatures. `requiredCapabilities` must declare the exact version; unknown or unsupported capabilities will be rejected at load time.
+
+## Management and Diagnostic Interfaces
+
+The Root management interface is located at `/api/plugin/task`, including upload, version activation, status switching, deletion, marketplace source, dry run, and `/runtime/status`. These management operations are not part of the same permission system as `/v1/tasks` accessed with an API key.
+
+The runtime is published atomically as a complete generation. Requests consistently use one generation, while background polling may use updated plugins. Multi-node troubleshooting should compare database override revisions, not directly compare the auto-incrementing generation numbers of each node.
+
+For debugging steps, see [Development Guide](/en/docs/plugins/development); for release checks, see [Publishing Specification](/en/docs/plugins/publishing).

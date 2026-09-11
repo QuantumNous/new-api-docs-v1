@@ -1,0 +1,86 @@
+---
+title: FAQ
+description: Troubleshooting issues with task plugin permissions, import, compatibility, routing, channels, billing, and artifacts.
+---
+
+## Why can't I see the task plugin page, or why does it return 403?
+
+The plugin management page `/task-plugins` and the `/api/plugin/task` management API require Root privileges. Having a regular administrator role or a model API key is not sufficient. You also need to confirm that your deployment version includes the task plugin functionality.
+
+Administrators selecting plugins in a channel use independent plugin binding permissions. See [Channel Configuration](/en/docs/plugins/configuration).
+
+## What if the documentation site marketplace fails to load?
+
+Click "Reload". Marketplace data is read from the corresponding official website based on the documentation domain: `.pro` uses `www.newapi.pro`, `.ai` uses `www.newapi.ai`, and local preview defaults to `.ai`. The Chinese language itself does not switch the data source.
+
+If the site is temporarily unable to read data, installation and development tutorials are still available. Administrators deploying the documentation site should check the network connectivity from the server to the corresponding official website, and whether the public `/api/v1/plugins` interface is reachable.
+
+## Why does URL import fail?
+
+Confirm that you've pasted the complete `plugin.js` address, rather than an HTML marketplace page or a GitHub `blob` page. Check if your browser can read the address, if the origin server allows cross-origin requests, and if the source code exceeds 1 MiB.
+
+Using the copy button on the [Documentation Site Marketplace](/en/plugins) can provide the official website hosted address. If clipboard permissions are insufficient, a manually selectable address will be displayed after the copy fails.
+
+## What if SHA-256 is inconsistent?
+
+Do not bypass verification and proceed with installation. Refresh the marketplace directory and re-read the source code, check if the origin server is publishing, or if the mirror has cached an unmatched version. Marketplace publishers should ensure that the source code is published along with the generated index, and that published versions are not overwritten.
+
+Manual uploads and regular URL imports should not be described as having completed marketplace index hash verification. See [Installation and Management](/en/docs/plugins/installation) for the complete process.
+
+## Why is `apiVersion: 1` still incompatible?
+
+API v1 may introduce `usageProfiles`, `unitLabel`, `requiredCapabilities`, or SSE capabilities. Older hosts will reject unsupported fields and capabilities, even if the version number is also 1.
+
+First, read the release notes, then upgrade to a host that supports these capabilities; or choose a plugin version compatible with the current host. Do not simply remove capability declarations to bypass verification.
+
+## What if there's a channel type or routing conflict during installation?
+
+Check the other plugin indicated in the error, and verify both parties' `channelTypes` and native routes. Ownership of old channel types must be unique, and native routes cannot register conflicting HTTP methods and path patterns.
+
+Sharing models under the same host protocol is allowed, and there's no need to remove a plugin just because the model names are the same. First, confirm the actual type of conflict, then adjust the version or plugin configuration.
+
+## Why can't I call it after successful installation?
+
+Check the following in order:
+
+1.  Whether the task plugin master switch is enabled and whether the target version is activated.
+2.  Whether the corresponding channel is enabled and whether the Task Plugin channel is bound to the correct key.
+3.  Whether the model name, channel model mapping, group, and API key permissions match.
+4.  Whether the entry point used for the request is declared by the plugin and whether the Responses request pattern is supported.
+5.  Whether the Base URL, authentication information, and billing settings for this model are correct.
+
+Installing a plugin does not automatically create available channels, nor does it decide prices for administrators.
+
+## What if there's a `model_price_error` or usage mismatch?
+
+Check the schema declared by the actually executing plugin for the current model. Different providers of shared models may report different fields; if the model's default expression is incompatible, save a separate expression for this plugin.
+
+When an upgrade causes changes in usage fields or profiles, old expressions will not be automatically migrated. Modify relevant prices according to the Migration, see [Usage and Billing](/en/docs/plugins/billing) for details.
+
+## What if a task is stuck in processing for a long time or polling fails?
+
+Check task logs, upstream authentication, and response status. 404/410 will result in failed refunds; 401/403, 429, 5xx, or network failures will accumulate polling failures. Unknown task statuses are also considered failures and should not be forcibly converted to `IN_PROGRESS` by the plugin.
+
+The host defaults to marking a task as failed after 20 consecutive polling failures and is also constrained by the task timeout mechanism controlled by `TASK_TIMEOUT_MINUTES`. First, locate upstream errors or parsing issues; do not just increase the number of failures.
+
+## What if different nodes behave inconsistently after an upgrade?
+
+Root can read `GET /api/plugin/task/runtime/status` for each node to view the current generation, database override revision, most recent rebuild results, and plugin-level errors.
+
+Generation is a node-local number; database revisions should be compared between different nodes. If the database is temporarily unreadable, the interface will still return the node's existing status along with a `database_error`. New versions must also continue to parse data for in-progress tasks, because background polling might use the newly activated version.
+
+## How to view plugin debug logs?
+
+Start New API with `DEBUG=true` and filter logs by `task_plugin` to view registration, routing, channel selection, submission, polling, and protocol observation events. Request-related events include a request ID; background events may be marked as `SYSTEM`.
+
+Plugin `console.log` may also be forwarded in DEBUG mode. Do not output keys, authentication headers, request bodies, full upstream payloads, or private URLs. Verification of individual hooks can be done using the [sandbox and fixture in the Development Guide](/en/docs/plugins/development).
+
+## Why is the artifact link inaccessible?
+
+First, confirm that the task was successful and the plugin implemented the artifact hook, then use the actually returned artifact key or `content_url`. Check `TaskPublicAddress`; if not set, the host falls back to `ServerAddress`.
+
+Multi-node deployments require sharing a valid `CRYPTO_SECRET`. Issued artifact access links do not have an expiration time, but rotating the key will invalidate old links; requests still need to be able to load the task and corresponding plugin. Do not publicly disseminate artifact links with access credentials.
+
+## Why is the plugin still active after disabling the override version?
+
+If a built-in plugin with the same key exists, disabling or deleting a custom override version will restore the built-in implementation. Built-in plugins cannot be deleted or disabled individually; closing the master switch will stop the entire plugin system, including other plugins.

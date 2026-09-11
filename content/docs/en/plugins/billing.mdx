@@ -1,0 +1,77 @@
+---
+title: Usage and Billing
+description: Understand plugin usage fields, model usage grouping, billing expressions, and plugin-level price overrides.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Plugins Report Usage, Host Determines Price
+
+Task plugins report seconds, counts, tokens, credits, or enum conditions via usage hooks. Actual pricing, pre-deduction, post-deduction, settlement, and refunds are handled by the New API host.
+
+**Usage examples in the marketplace are not official price lists.** After installing a plugin, you still need to configure appropriate prices in your instance's model price settings and confirm channel and grouping rules.
+
+## Viewing Usage Fields
+
+View "Usage Fields" in the plugin details on the [Plugin Marketplace](/en/plugins). Field definitions come from `usageSchema` or the `usageProfiles` corresponding to the current model.
+
+| Type    | Declaration Method                                              | Purpose                                      |
+| ------- | --------------------------------------------------------------- | -------------------------------------------- |
+| Numeric | `type: "number"`, unit `second`, `count`, `token`, or `credit` | Duration, product quantity, token, or upstream billing unit |
+| Boolean | `type: "boolean"`                                               | Whether conditions like audio are enabled    |
+| Enum    | `enum: [...]`                                                   | Resolution, quality tier, or task type       |
+
+The `count` field can use `unitLabel` to display unit names like "sheets" or "songs"; it does not change the field key, unit type, or billing logic. Field descriptions and enum display names also do not change the original values referenced by expressions.
+
+## Configuring Prices for Models
+
+1. Find the target model in the system settings' model price configuration.
+2. View the plugins and usage fields used by this model, and select an appropriate billing mode.
+3. Use the task usage price editor, or fill in billing expressions that match these fields.
+4. Use the usage examples provided by the plugin to check the results; after saving, call the model and verify the actual logs and settlement.
+
+For example, the following example is only meaningful if the plugin actually declares and reports the `seconds` field:
+
+```text
+tier("standard", u("seconds") * 0.02)
+```
+
+It means that in the `standard` tier, the calculation is based on `seconds` multiplied by the example unit price. `0.02` is only used to illustrate the syntax and is not a suggested price for any official plugin. Prices in the original expression use USD; the final deduction is also affected by rules such as the instance's grouping and request ratio.
+
+<Callout title="Fields Must Come from the Plugin">
+  Do not treat fields like `seconds`, `duration`, `video_tokens` as interchangeable. The
+  `u("field_name")`
+  in the expression must match the fields reported by the current plugin and model. Task usage expressions also cannot directly copy all functions from text token
+  billing expressions.
+</Callout>
+
+## Differentiating Usage Configuration by Model
+
+The same plugin can use `meta.usageProfiles` to declare its own complete schema and examples for different models, for instance, image models billed by sheet, video models billed by second.
+
+- Models matching a profile use that profile's complete field definition and **do not merge or inherit** the default `usageSchema`.
+- Models not matching a profile use the plugin's default schema and examples.
+- A model can belong to at most one profile; the model name uses the declared name in `meta.models`.
+- Updating usage profiles does not automatically migrate saved billing expressions.
+
+## Plugin-Level Price Overrides for the Same Model
+
+Different plugins may support the same model but report different fields or incur different costs. The model price page can display each plugin provider and save billing expressions separately.
+
+Plugin-level expressions are saved in `billing_setting.plugin_billing_expr`, with the key `<pluginKey>::<model>`. When an override exists, the override value is used; otherwise, the model-level expression is inherited. Providers without overrides need to be compatible with the model expression.
+
+For shared models, if the literal `u()` field in the actual expression is not in the schema selected by that provider, the provider will be considered unconfigured and return `model_price_error`. The model's default expression should be corrected or a separate expression configured for that plugin.
+
+Saved overrides remain effective even if only one provider remains. When a plugin is unavailable or no longer declares a model, the old override will be marked as `stale`; it can retain its original value or be explicitly removed, but cannot be treated as a new valid binding. Plugin-level overrides are not automatically distributed with model price synchronization.
+
+## Pre-deduction and Final Settlement
+
+Estimated usage can be extracted during the submission phase, and actual usage reported during the completion phase. The host calculates and processes the difference based on the billing configuration frozen for the task; plugins must not return host quota or perform settlement themselves.
+
+Missing usage or parsing anomalies do not equate to free usage. Do not write unknown usage as zero to mask errors; plugin logs and host records should be checked. Legitimate explicit zero values, however, should be retained.
+
+## Checks During Upgrade
+
+Before upgrading, read the Migration section of the version's update log, focusing on checking field renaming, billing units, resolution tiers, default parameters, model profiles, and provider overrides. When reconfiguring prices is necessary, complete the configuration before opening traffic.
+
+For development specifications, see [API v1 Reference](/en/docs/plugins/api-reference); for billing migration requirements during publishing, see [Publishing Specifications](/en/docs/plugins/publishing).
