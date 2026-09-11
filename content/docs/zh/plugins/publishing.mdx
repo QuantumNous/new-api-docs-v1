@@ -1,0 +1,127 @@
+---
+title: 发布规范
+description: 按官方仓库约定组织插件版本、编写发布说明，并生成和校验市场索引。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## 仓库结构
+
+官方插件仓库为 [QuantumNous/new-api-plugins](https://github.com/QuantumNous/new-api-plugins)。目前使用 `tasks` 目录组织任务插件：
+
+```text
+new-api-plugins/
+├── plugins/tasks/example/
+│   ├── icon.svg                 # 可选，也可使用 icon.png
+│   └── 1.0.0/
+│       ├── plugin.js
+│       ├── CHANGELOG.md         # 必需，完整英文说明
+│       └── CHANGELOG.zh-CN.md   # 可选中文说明
+├── index.json                  # 工具生成
+└── tools/pluginindex/
+```
+
+目录 key、version 必须分别匹配编译后 `meta.key` 和 `meta.version`。市场图标按插件 key 存放在版本目录旁，由索引的 `iconFile` 引用；不要将图片数据塞进 JavaScript 源码。
+
+**已经发布的版本目录不可变。** 修改插件时新增版本目录，不覆盖旧 `plugin.js`，也不为补写日志而改动不可变的历史版本。
+
+## 每个新版本都需要发布说明
+
+每个新插件或新版本必须在 `plugin.js` 旁提供英文 `CHANGELOG.md`，首次发布也不例外。同步其他仓库的插件时要同步日志；来源缺少日志时，应根据已验证的变化补写新版本说明。
+
+英文规范文件使用 UTF-8 Markdown，首行开始 YAML front matter：
+
+```markdown title="CHANGELOG.md"
+---
+changelogVersion: 1
+plugin: 'example'
+version: '1.0.0'
+locale: 'en'
+translations:
+  zh-CN: CHANGELOG.zh-CN.md
+---
+
+# Changelog
+
+## [1.0.0]
+
+### Added
+
+- Support task submission and status queries for the example model.
+```
+
+若声明了上面的 `translations`，同时提供对应文件：
+
+```markdown title="CHANGELOG.zh-CN.md"
+---
+changelogVersion: 1
+plugin: 'example'
+version: '1.0.0'
+locale: 'zh-CN'
+---
+
+# Changelog
+
+## [1.0.0]
+
+### Added
+
+- 支持示例模型的任务提交和状态查询。
+```
+
+没有翻译文件时，删除英文文件中的 `translations` 映射。语言文件名必须是同目录下的 `CHANGELOG.<locale>.md`，不能是外部 URL 或跨目录路径。
+
+## 日志内容要求
+
+元数据键、`# Changelog`、版本标题和分类标题始终使用规范规定的英文结构，中文版本只翻译正文。
+
+分类在出现时遵循此顺序：`Added`、`Changed`、`Deprecated`、`Removed`、`Fixed`、`Security`、`Migration`。空分类省略；每个分类使用无序列表，条目中不使用表格、嵌套列表或附加标题。至少有一个非 Migration 分类包含实际变化。
+
+元数据中的插件、版本及版本标题必须与目录和源码一致。中文文件使用相同的版本与分类，并通过英文文件的翻译映射被发现。
+
+### 计费或配置变化必须说明迁移
+
+当变化涉及价格、计费计算或必要配置时，添加 `Migration`。开头先说明：
+
+1. 是否影响价格或计费计算。
+2. 管理员是否需要修改模型价格、分辨率档位、计费模式或表达式。
+3. 哪些模型或配置受到影响，是否有自动迁移，以及需要执行的具体操作。
+
+只有变化确实不要求重新配置价格时，才明确写“不需要调整价格”。其他兼容步骤放在价格说明之后。
+
+发布说明描述实际能力、行为变化、修复与迁移。测试报告、验证范围和通用发布流程放在 PR 描述中，不放进版本日志。
+
+## 生成市场索引
+
+`index.json` 是编译后的派生数据，**不要手动编辑**。索引工具依赖同级的 `new-api` checkout：
+
+```text
+workspace/
+├── new-api/
+└── new-api-plugins/
+```
+
+从插件仓库执行：
+
+```bash
+cd tools/pluginindex
+go run . generate ../..
+go run . check ../..
+```
+
+生成器从编译后的元数据提取名称、模型、渠道类型和显示字段，维护版本目录与最新版本，并计算源码 SHA-256。安装时仍由宿主对实际源码进行哈希验证、编译和准入校验；索引不是信任依据。
+
+`path` 相对于索引 URL 解析，所以相同仓库可以通过官网、GitHub raw 或符合规则的镜像提供。`minApiVersion` 是展示提示，最终兼容性由宿主校验决定。
+
+<Callout title="日志需要单独校验">
+  `pluginindex check` 检查源码与索引，不检查 changelog。提交前还需核对 YAML
+  元数据、分类、版本标题、翻译映射和迁移说明。
+</Callout>
+
+## 提交检查
+
+- 在目标 New API 版本中执行插件 lint 和 fixture，覆盖变化影响的钩子与兼容场景。
+- 为新版本准备源码、完整英文日志及声明的翻译文件。
+- 重新生成并校验索引，将这些文件一起提交。
+- 在 PR 中说明实际变化、兼容和计费影响，以及运行过的验证。
+- 发布后检查官网市场中的版本、模型、接口和日志是否与发布内容一致。

@@ -14,6 +14,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
   const url = baseUrl.origin;
 
+  entries.push({
+    url: `${url}/zh/plugins`,
+    changeFrequency: 'daily',
+    priority: 0.9,
+    alternates: { languages: { zh: `${url}/zh/plugins` } },
+  });
+
   function toDate(input: unknown): Date | null {
     if (!input) return null;
     if (input instanceof Date)

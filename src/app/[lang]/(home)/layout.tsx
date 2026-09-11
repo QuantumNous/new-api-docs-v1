@@ -18,6 +18,7 @@ import {
   FileCode,
   BookOpen,
   Puzzle,
+  Blocks,
   type LucideIcon,
 } from 'lucide-react';
 import { getLocalePath } from '@/lib/i18n';
@@ -135,6 +136,17 @@ export default async function Layout({
   const texts = getTexts(lang);
   const docsUrl = getLocalePath(lang, 'docs');
   const navItems = buildNavItems(lang, docsUrl);
+  const pluginNavText = (
+    <span className="inline-flex items-center gap-1.5">
+      插件
+      <span
+        aria-hidden="true"
+        className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-white"
+      >
+        New
+      </span>
+    </span>
+  );
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -159,6 +171,17 @@ export default async function Layout({
             url: `${docsUrl}/skills`,
             icon: <Puzzle />,
           },
+          ...(lang === 'zh'
+            ? [
+                {
+                  type: 'main' as const,
+                  on: 'menu' as const,
+                  text: pluginNavText,
+                  url: '/zh/plugins',
+                  icon: <Blocks />,
+                },
+              ]
+            : []),
           {
             type: 'main',
             on: 'menu',
@@ -219,15 +242,22 @@ export default async function Layout({
             children: (
               <Link
                 href={`${docsUrl}/skills`}
-                className="inline-flex items-center gap-1.5 text-sm text-fd-muted-foreground transition-colors hover:text-fd-foreground"
+                className="text-fd-muted-foreground hover:text-fd-foreground inline-flex items-center gap-1.5 text-sm transition-colors"
               >
                 {texts.skills.text}
-                <span className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
-                  New
-                </span>
               </Link>
             ),
           },
+          ...(lang === 'zh'
+            ? [
+                {
+                  type: 'main' as const,
+                  on: 'nav' as const,
+                  text: pluginNavText,
+                  url: '/zh/plugins',
+                },
+              ]
+            : []),
           {
             type: 'main',
             on: 'nav',

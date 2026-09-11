@@ -1,0 +1,141 @@
+---
+title: 调用指南
+description: 使用实例 API 密钥提交任务、查询状态和读取产物，了解插件原生路由与 Video、Responses 协议。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## 调用前确认
+
+管理员需要先[安装插件](/zh/docs/plugins/installation)、[配置渠道](/zh/docs/plugins/configuration)和[设置价格](/zh/docs/plugins/billing)。调用者使用**自己 New API 实例的 API 密钥**，并确认密钥可访问相应模型和分组。
+
+本页中的 `https://your-newapi.example` 是实例地址占位符，不是官网。官网用于浏览和下载插件；实际生成请求发往你配置的实例。
+
+在[插件市场](/zh/plugins)详情中查看插件支持的端点与模型。并非每个插件都支持下面列出的全部协议。
+
+## 通用任务接口
+
+| 方法       | 路径                                                 | 作用               |
+| ---------- | ---------------------------------------------------- | ------------------ |
+| POST       | `/v1/tasks/{pluginKey}`                              | 提交任务           |
+| GET        | `/v1/tasks/{taskId}`                                 | 查询自己的任务     |
+| GET        | `/v1/tasks/{taskId}/artifacts`                       | 列出任务产物       |
+| GET / HEAD | `/v1/tasks/{taskId}/artifacts/{artifactKey}/content` | 读取或检查产物内容 |
+
+### 提交任务
+
+```bash
+curl 'https://your-newapi.example/v1/tasks/<plugin-key>' \
+  -H 'Authorization: Bearer <NEW_API_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "<model>",
+    "prompt": "一只小猫在窗边看雨"
+  }'
+```
+
+替换 `<plugin-key>`、`<model>` 和 `<NEW_API_KEY>`。`model` 是必填项，其余字段由所选插件的请求构造逻辑决定。上面是请求结构示意，具体插件可能要求图片、视频、时长或其他字段；不是任意插件都接受仅有 `prompt` 的请求。
+
+通用提交响应包含 New API 生成的公开任务 ID，例如：
+
+```json
+{
+  "id": "<public-task-id>",
+  "task_id": "<public-task-id>",
+  "status": "queued",
+  "model": "<model>",
+  "created_at": 1780000000
+}
+```
+
+保存返回的 `task_id`。后续查询使用这个公开 ID，而不是上游厂商返回的内部任务 ID。
+
+### 查询状态
+
+```bash
+curl 'https://your-newapi.example/v1/tasks/<public-task-id>' \
+  -H 'Authorization: Bearer <NEW_API_KEY>'
+```
+
+查询响应直接包含 `task_id`、`platform`、`status`、`progress`、`fail_reason`、`created_at` 和 `finished_at`。任务可能经过 `NOT_START`、`SUBMITTED`、`QUEUED`、`IN_PROGRESS`，最终进入 `SUCCESS` 或 `FAILURE`。
+
+按合理间隔查询，终态后停止轮询；不要假定通用查询响应会返回原始上游 payload 或产物 URL。失败原因见 `fail_reason`，必要时联系实例管理员检查任务日志。
+
+### 获取产物
+
+```bash
+curl 'https://your-newapi.example/v1/tasks/<public-task-id>/artifacts' \
+  -H 'Authorization: Bearer <NEW_API_KEY>'
+```
+
+插件支持产物时，响应的 `artifacts` 数组包含稳定的 `key`、`type`、可选 `mime_type` 和 `content_url`。使用实际返回的 key，不要假设所有插件都使用 `video`。
+
+可以读取返回的 `content_url`，也可以通过带 API 密钥的内容接口下载：
+
+```bash
+curl 'https://your-newapi.example/v1/tasks/<public-task-id>/artifacts/<artifact-key>/content' \
+  -H 'Authorization: Bearer <NEW_API_KEY>' \
+  --output result.bin
+```
+
+<Callout title="产物地址">
+  `content_url`
+  可能包含宿主签发的访问凭据，持有该链接的人可以读取对应产物。按敏感链接保管。链接签发依赖实例的公开地址和密钥配置，具体见[常见问题](/zh/docs/plugins/faq)。
+</Callout>
+
+## 插件原生路由
+
+插件可通过 `meta.routes` 提供厂商风格的原生接口。使用市场详情列出的**实际路径、HTTP 方法和请求结构**，仍然向自己的 New API 实例发送请求并提供实例 API 密钥。
+
+原生路由的响应封装由插件决定，不能把上面的通用任务响应字段直接套用到所有原生接口。查询路由由宿主先验证任务所有权；提交和动态路由还会根据声明检查模型范围。
+
+## OpenAI Video 兼容接口
+
+只有声明 `openai_video` 的插件才会参与此协议的路由。
+
+```bash
+curl 'https://your-newapi.example/v1/videos' \
+  -H 'Authorization: Bearer <NEW_API_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "<supported-video-model>",
+    "prompt": "海边日出，缓慢向前移动的镜头"
+  }'
+
+curl 'https://your-newapi.example/v1/videos/<video-id>' \
+  -H 'Authorization: Bearer <NEW_API_KEY>'
+```
+
+协议入口支持 JSON 或 multipart，具体字段和格式仍取决于插件的解码逻辑。产物内容接口为 `GET /v1/videos/{video-id}/content`，也支持 HEAD。
+
+Video 查询可以保留插件提供的扩展字段，标准的 ID、模型、状态和时间字段由宿主统一投影。查询读取已保存的任务快照，不代表每次都会实时查询上游。
+
+## Responses 兼容接口
+
+声明 `openai_responses` 的插件会明确公布支持的请求模式：
+
+| 模式         | 请求参数                       | 行为                              |
+| ------------ | ------------------------------ | --------------------------------- |
+| `sync`       | 不设置 `stream` / `background` | 等待任务终态后返回结果            |
+| `stream`     | `stream: true`                 | 使用宿主管理的 SSE 响应           |
+| `background` | `background: true`             | 先返回待处理的 Response，随后查询 |
+
+下面以支持 `background` 的插件为例：
+
+```bash
+curl 'https://your-newapi.example/v1/responses' \
+  -H 'Authorization: Bearer <NEW_API_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "<supported-responses-model>",
+    "input": "生成一幅山间日出的插画",
+    "background": true
+  }'
+
+curl 'https://your-newapi.example/v1/responses/<response-id>' \
+  -H 'Authorization: Bearer <NEW_API_KEY>'
+```
+
+请求内容必须符合该插件的 `decodeRequest` 约定。未声明的模式会在渠道选择阶段被拒绝，不会因为都属于 Responses 协议就自动获得流式或后台能力。查询已创建 Response 是独立操作，不是第四种模式。
+
+Responses 中的媒体产物使用宿主生成的产物地址。上游采用 SSE 提交接口，也不意味着上游事件会直接透传给客户端。

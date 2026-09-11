@@ -1,0 +1,17 @@
+{
+  "title": "插件",
+  "description": "任务插件的安装、配置与开发",
+  "icon": "Blocks",
+  "root": true,
+  "pages": [
+    "index",
+    "installation",
+    "configuration",
+    "billing",
+    "usage",
+    "development",
+    "api-reference",
+    "publishing",
+    "faq"
+  ]
+}

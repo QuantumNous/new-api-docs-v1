@@ -1,0 +1,207 @@
+---
+title: Task Plugin API v1 参考
+description: 任务插件的 Manifest、上下文、生命周期、原生路由、宿主协议、用量、产物与流式能力。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+<Callout title="契约状态与权威来源">
+  当前仓库将 API v1 标记为尚未正式发布的契约。新增能力仍可能沿用 `apiVersion:
+  1`，旧宿主会拒绝不认识的字段。以下为中文参考，完整签名与校验结构以
+  [v1.d.ts](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.d.ts)、[v1.schema.json](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.schema.json)
+  和[原始规范](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.md)为准。
+</Callout>
+
+## Manifest：`meta`
+
+| 字段                            | 类型                 | 说明                                                                |
+| ------------------------------- | -------------------- | ------------------------------------------------------------------- |
+| `apiVersion`                    | `1`                  | 契约版本                                                            |
+| `key`                           | string               | 插件标识，最多 30 个字符，与市场目录名一致                          |
+| `name`                          | string               | 显示名称                                                            |
+| `version`                       | string               | 语义化版本，与版本目录一致                                          |
+| `author`                        | `{ name, url? }`     | 作者名称必填，URL 为 HTTP(S) 地址；属于作者自述信息                 |
+| `models`                        | string[]             | 声明支持的模型                                                      |
+| `fetchMode`                     | `per_task` / `batch` | 单任务或批量轮询                                                    |
+| `description`                   | LocalizedText        | 插件简介                                                            |
+| `icon`                          | string               | LobeHub 图标名或 `text` / `text:<label>`，不接受远程 URL 或内联图片 |
+| `website`                       | string               | 可选插件官网，非空时为有效 HTTPS URL                                |
+| `sortPriority`                  | integer              | 展示排序，值越大越靠前；不影响路由优先级                            |
+| `baseUrl`                       | string               | 类型 61 渠道可使用的默认上游地址                                    |
+| `allowedHosts`                  | string[]             | 渠道主机之外允许访问的额外主机，可带端口                            |
+| `auth`                          | string / object      | `none`、`api_key`、`vertex_oauth` 或规范定义的认证对象              |
+| `channelTypes`                  | number[]             | 可适配的旧渠道类型；第三方插件通常使用类型 61 的 key 绑定           |
+| `routes`                        | NativeRoute[]        | 插件自有原生路由                                                    |
+| `protocols`                     | ProtocolClaim[]      | 宿主协议声明                                                        |
+| `usageSchema` / `usageExamples` | object / array       | 默认用量字段与示例                                                  |
+| `usageProfiles`                 | array                | 按模型提供完整的用量 schema 和示例                                  |
+| `requiredCapabilities`          | string[]             | 必须由宿主支持的版本化能力                                          |
+| `submitResponseTypes`           | array                | 上游提交响应类型，默认 `["json"]`，可声明 `"sse"`                   |
+
+`baseUrl` 不得包含凭据、查询串或片段，必须使用 ASCII 主机名；允许自托管的 HTTP 或私有地址。`allowedHosts` 使用 `host` / `host:port`，不包含协议或路径，端口会参与匹配。默认地址不会隐式扩大允许访问的主机集合。
+
+## 本地化文本
+
+`LocalizedText` 可使用字符串或含 `en` 的语言映射。字符串会规范化为英文映射。匹配顺序为当前语言、主语言、英文：
+
+```js
+description: {
+  en: "Video generation through the vendor API",
+  zh: "通过厂商接口生成视频",
+  "zh-TW": "透過廠商介面產生影片",
+}
+```
+
+插件数据中的文案不应作为管理前端的翻译键使用。模型名、字段 key 和枚举原始值必须保持稳定。
+
+## 生命周期钩子
+
+| 导出                     | 输入                                    | 主要返回内容                                |
+| ------------------------ | --------------------------------------- | ------------------------------------------- |
+| `buildSubmitRequest`     | `DriverContext`                         | HTTP 请求描述符                             |
+| `parseSubmitResponse`    | ctx、`{ statusCode, headers, body }`    | `{ taskId, taskData?, immediate?, state? }` |
+| `buildQueryRequest`      | `TaskQueryContext`                      | 单任务查询描述符，`per_task` 必需           |
+| `parseTaskResult`        | 查询上下文、body、`{ status, headers }` | 标准化状态、可选进度/原因/结果等            |
+| `buildBatchQueryRequest` | 批量上下文、任务数组                    | 批量查询描述符，`batch` 必需                |
+| `parseBatchResult`       | 批量上下文、body、HTTP 信息             | 每项含 `taskId` 的结果数组，`batch` 必需    |
+
+所有插件必须导出 `meta`、`buildSubmitRequest`、`parseSubmitResponse` 和 `parseTaskResult`，包括批量插件。
+
+标准状态包括 `NOT_START`、`SUBMITTED`、`QUEUED`、`IN_PROGRESS`、`SUCCESS`、`FAILURE`、`UNKNOWN`。未知状态返回 `UNKNOWN`；不能把未知结果默认视为处理中。
+
+上游响应的 HTTP 状态也参与宿主判定：404/410 导致失败和退款；401/403、429、5xx 和传输异常累计轮询失败。达到 `TASK_POLL_MAX_FAILURES`（默认 20）后进入失败清理，任务超时机制仍是外层截止条件。
+
+## 请求与查询上下文
+
+`DriverContext` 提供规范化的 `requestBody`、请求头、action、`model` / `upstreamModel`、渠道 `baseUrl`、认证信息、文件引用、公开任务 ID 和可选 `originTasks`。
+
+`TaskQueryContext` 从已保存的任务重建：
+
+| 字段                      | 含义                               |
+| ------------------------- | ---------------------------------- |
+| `taskId`                  | 上游任务 ID                        |
+| `publicTaskId`            | New API 公开任务 ID                |
+| `model` / `upstreamModel` | 用户模型名与渠道映射后的上游模型名 |
+| `action`                  | 已持久化的标准化操作               |
+| `data`                    | 当前 `Task.Data` 快照              |
+| `state`                   | 插件私有的跨轮询状态               |
+| `baseUrl` / 认证字段      | 当前使用的渠道信息                 |
+
+查询侧没有 `requestBody`。保存的字段名是 `data`，不存在 `raw` 别名。解析钩子省略 `state` 时保留原状态；显式返回它才更新。请求和状态输入应视为只读，不依赖模块全局变量保存任务数据。
+
+## HTTP 描述符与文件
+
+构造钩子返回 `{ url, method?, headers?, body?, ... }`，由宿主验证和发送。JSON 是默认 body 类型，也可通过 `bodyType: "multipart"` 与 `parts` 构造 multipart。
+
+入站 body 由宿主统一解析为以下联合类型：
+
+```ts
+{
+  kind: ('json', value);
+}
+{
+  kind: ('form', fields);
+}
+{
+  kind: ('multipart', fields, files);
+}
+{
+  kind: 'none';
+}
+```
+
+文件只以 `{ ref, field, filename, mimeType, size }` 引用进入 JavaScript，插件无法直接读取文件字节。multipart 出站使用 `parts[].fileRef`；JSON 出站可嵌入占位符，由宿主替换为编码内容：
+
+```js
+{ __fileRef: "request_file:input_reference", encoding: "base64" }
+{ __fileRef: "request_file:input_reference", encoding: "dataUrl", mimeType: "image/png" }
+```
+
+占位符可选 `maxBytes`，宿主仍会执行文件大小上限和总量检查。不得把引用当作文件路径。
+
+## 原生路由与宿主协议
+
+### 原生路由
+
+`meta.routes` 定义插件自有 URL，函数名指向 `native` 对象中的同步函数：
+
+```js
+routes: [
+  {
+    method: 'POST',
+    path: '/vendor/jobs',
+    type: 'submit',
+    decode: 'create',
+    render: 'created',
+  },
+  {
+    method: 'GET',
+    path: '/vendor/jobs/:task_id',
+    type: 'query',
+    render: 'status',
+  },
+];
+```
+
+- `submit` / `dynamic` 必须指定 `decode` 和 `render`；query 只指定 `render`，不能声明 decoder。
+- query 的任务参数名默认是 `task_id`，可通过 `taskIdParam` 指定。
+- 解码器返回 `{ kind: "submit", model, action?, requestBody?, originTaskIds? }` 或 query intent。
+- `routes[].models` 可限制 submit/dynamic 的顶层模型，不能用于 query；模型嵌套在厂商 body 内时应由 decoder 判断。
+- 宿主负责认证、所有权和任务持久化，呈现器只处理对外响应。钩子抛出的错误信息可能返回调用者，应使用可读且不含敏感数据的错误文本。
+
+`originTaskIds` 使用公开任务 ID，宿主检查所有权与渠道一致性后，将包含内部上游 ID 的 `originTasks` 注入 driver；不会把它交给对外呈现器。
+
+### 宿主协议
+
+`meta.protocols` 声明使用宿主统一管理的协议路径，不应复制这些路径到 `meta.routes`：
+
+| 协议               | 宿主路径                                                                       | 插件导出                                           |
+| ------------------ | ------------------------------------------------------------------------------ | -------------------------------------------------- |
+| `openai_video`     | `POST /v1/videos`、`GET /v1/videos/{id}`、`GET / HEAD /v1/videos/{id}/content` | `protocols.openai_video.decodeRequest` 与 `render` |
+| `openai_responses` | `POST /v1/responses`、`GET /v1/responses/{id}`                                 | `decodeRequest`，以及与模式匹配的渲染钩子          |
+
+Responses 必须以对象形式明确声明 `supports`：`stream` 要求 `renderEvents`，`sync` 或 `background` 要求 `renderFinal`。缺少所需钩子，或导出没有任何声明模式使用的钩子，都会被拒绝。
+
+解码器可能在候选筛选和选中渠道后多次执行，应保持确定性。多个插件可共享同协议下的模型，实际插件由所选渠道决定。
+
+Video render 必须返回 JSON 对象；宿主覆盖标准 ID、模型、状态与时间字段，并保留符合规则的厂商扩展。Responses 的成功结果通过宿主注入的 `ctx.artifacts[key].url` 引用产物。
+
+## 用量钩子
+
+可选导出 `extractUsage`、`extractUsageOnSubmit` 和 `extractUsageOnComplete`，分别从请求、提交结果或完成结果中提取用量。只返回符合所选 schema 的事实，不返回价格或 quota。
+
+`usageProfiles` 为所列模型提供完整 schema，替代默认定义；未匹配模型使用默认 schema。涉及模型映射时，运行时按照最终执行插件的上游模型选择用量定义。配置说明见[用量与计费](/zh/docs/plugins/billing)。
+
+## 产物与内容请求
+
+产物钩子必须成对导出：
+
+- `listArtifacts(task)`：从持久化数据投影稳定的 `{ key, type, mimeType? }` 列表，不返回第二份持久化记录或临时下载 URL。
+- `buildContentRequest(ctx)`：根据所选 artifact key、数据、生产版本、上游任务 ID、渠道信息及安全的 Range/条件请求头构造本次读取描述符。
+
+带渠道凭据的内容请求只能访问渠道主机或 `allowedHosts`。公共动态 CDN 可使用 `credentialless: true`；这时只允许 GET/HEAD，不能附带插件 headers 或 body，宿主会检查初始地址和重定向。
+
+宿主产物链接使用 `TaskPublicAddress`，缺省回退到 `ServerAddress`。多节点需要共享有效 `CRYPTO_SECRET`；轮换它会使已签发地址失效。
+
+## 即时完成、SSE 与宿主能力
+
+`parseSubmitResponse` 可返回 `immediate` 终态结果，让宿主在提交阶段完成持久化和结算；这些任务不会继续轮询。
+
+上游提交使用 SSE 时，声明 `submitResponseTypes: ["json", "sse"]`，并在描述符中选择 `responseType: "sse"`：
+
+| 模式 | 必要声明与导出                                                          | 数据流                                                                                     |
+| ---- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| 快照 | `parseSubmitEvent`                                                      | 每个事件返回 `{ state, done }`，结束后完整 state 作为 `parseSubmitResponse` 的 body        |
+| 增量 | `requiredCapabilities: ["submit-sse-delta@1"]`、`parseSubmitEventDelta` | 返回 `{ changes, state, done }`，宿主应用 `set` / `append` / `appendText`，完成后形成 body |
+
+SSE 模式不会直接透传上游事件给客户端。插件解释事件语义和结束条件，宿主管理连接、帧解析、大小限制及超时；成功接受上游 SSE 后的读取失败不会自动重试提交，避免重复创建计费任务。
+
+`json-clone@1` 提供同步的 `utils.json.clone(value)`，用于创建可修改的独立 JSON 快照。其他工具包括时间、UUID、Base64、HMAC、JWT 和 Volc 签名工具；完整签名见类型声明。`requiredCapabilities` 必须声明准确版本，未知或不支持的能力会在加载时拒绝。
+
+## 管理与诊断接口
+
+Root 管理接口位于 `/api/plugin/task`，包括上传、版本激活、状态切换、删除、市场源、dry run 和 `/runtime/status`。这些管理操作与使用 API 密钥访问的 `/v1/tasks` 不是同一权限体系。
+
+运行时以完整 generation 原子发布。请求固定使用一个 generation，后台轮询可能使用更新后的插件。多节点排查应比较数据库 override revision，不能直接比较各节点自增的 generation 编号。
+
+调试步骤见[开发指南](/zh/docs/plugins/development)，发布检查见[发布规范](/zh/docs/plugins/publishing)。

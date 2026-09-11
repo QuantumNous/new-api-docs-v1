@@ -1,0 +1,211 @@
+---
+title: 开发指南
+description: 编写一个完整的最小任务插件，验证请求构造、提交响应和轮询状态，并使用 fixture 与沙盒调试。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## 开发前了解
+
+插件是单文件、同步的 ECMAScript 模块。不能使用 `import`、`require`、`async`、`await`、`fetch`、文件系统或环境变量。请求网络、解析认证、保存任务和结算由宿主完成。
+
+当前插件 API v1 仍在演进。以[类型声明](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.d.ts)和 [JSON Schema](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.schema.json)为契约依据，并在目标宿主版本中验证。
+
+## 最小完整示例
+
+将下面的代码保存为 `plugin.js`。它演示一个名为 `demo-task` 的任务插件：提交到 `/jobs`，读取返回的 `id`，再通过 `/jobs/{id}` 查询状态。
+
+<Callout title="示例上游">
+  `api.example.com`
+  和这里的请求、响应格式用于演示，不是可直接调用的真实服务。接入实际厂商时需要替换上游地址、认证和协议处理，并配置渠道与价格。
+</Callout>
+
+```js title="plugin.js"
+export const meta = {
+  apiVersion: 1,
+  key: 'demo-task',
+  name: 'Demo Task',
+  version: '1.0.0',
+  author: { name: 'Example Author' },
+  description: {
+    en: 'A minimal asynchronous task adapter',
+    zh: '最小异步任务适配示例',
+  },
+  models: ['demo-model'],
+  fetchMode: 'per_task',
+  baseUrl: 'https://api.example.com',
+  auth: 'api_key',
+  usageSchema: {
+    requests: {
+      type: 'number',
+      unit: 'count',
+      description: { en: 'Number of generation requests', zh: '生成请求数量' },
+    },
+  },
+  usageExamples: [{ label: 'One request', facts: { requests: 1 } }],
+};
+
+export function buildSubmitRequest(ctx) {
+  const input = ctx.requestBody || {};
+  if (typeof input.prompt !== 'string' || !input.prompt.trim()) {
+    throw new Error('prompt must be a non-empty string');
+  }
+  return {
+    url: ctx.baseUrl.replace(/\/$/, '') + '/jobs',
+    method: 'POST',
+    headers: {
+      Authorization: ctx.authHeader,
+      'Content-Type': 'application/json',
+    },
+    body: {
+      model: ctx.upstreamModel || ctx.model,
+      prompt: input.prompt,
+    },
+  };
+}
+
+export function parseSubmitResponse(ctx, response) {
+  if (response.statusCode < 200 || response.statusCode >= 300) {
+    throw new Error('The upstream service rejected the task');
+  }
+  const body = response.body;
+  if (!body || typeof body.id !== 'string' || !body.id) {
+    throw new Error('The upstream response has no task id');
+  }
+  return { taskId: body.id, taskData: body };
+}
+
+export function buildQueryRequest(ctx) {
+  return {
+    url:
+      ctx.baseUrl.replace(/\/$/, '') +
+      '/jobs/' +
+      encodeURIComponent(ctx.taskId),
+    method: 'GET',
+    headers: { Authorization: ctx.authHeader },
+  };
+}
+
+export function parseTaskResult(ctx, body, response) {
+  const statuses = {
+    queued: 'QUEUED',
+    running: 'IN_PROGRESS',
+    succeeded: 'SUCCESS',
+    failed: 'FAILURE',
+  };
+  const status =
+    body && Object.hasOwn(statuses, body.status)
+      ? statuses[body.status]
+      : 'UNKNOWN';
+  return { status };
+}
+
+export function extractUsage(ctx) {
+  return { requests: 1 };
+}
+```
+
+此示例通过通用接口 `POST /v1/tasks/demo-task` 提交，JSON body 包含 `model: "demo-model"` 和 `prompt`。它没有声明原生路由、Video/Responses 协议或产物钩子，这些能力需要在实际插件中按需实现。
+
+## 生命周期与数据
+
+1. 宿主认证并选择渠道，将标准化请求传给 `buildSubmitRequest`。
+2. 宿主验证描述符的 URL，发送 HTTP 请求，再调用 `parseSubmitResponse`。
+3. 插件返回上游任务 ID 和可持久化数据；宿主生成公开任务 ID 并保存任务。
+4. 宿主周期性调用 `buildQueryRequest` 和 `parseTaskResult`，直到任务终态或失败清理。
+5. 宿主读取用量事实，按保存的计费配置完成结算。
+
+`TaskQueryContext.taskId` 是上游 ID，`publicTaskId` 是 New API 公开 ID；轮询上下文没有 `requestBody`。需要跨轮询保留的数据使用 `state`，不能依赖模块全局变量。
+
+`Task.Data` 保存最近一次上游快照；每轮成功解析会更新它。未知状态返回 `UNKNOWN`，不要默认成 `IN_PROGRESS`，否则异常任务可能持续占用资源。
+
+## 编译与 fixture 测试
+
+使用包含插件 CLI 的 New API 可执行文件验证源码：
+
+```bash
+new-api plugin lint plugin.js
+new-api plugin test plugin.js --fixture golden.json
+```
+
+将下面内容保存为 `golden.json`，覆盖模型映射、无效输入和未知状态：
+
+```json title="golden.json"
+{
+  "cases": [
+    {
+      "name": "mapped model is sent upstream",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "public-alias",
+          "upstreamModel": "demo-model",
+          "baseUrl": "https://api.example.com",
+          "authHeader": "Bearer example-key",
+          "requestBody": { "prompt": "A quiet garden" }
+        }
+      ],
+      "expected": {
+        "url": "https://api.example.com/jobs",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer example-key",
+          "Content-Type": "application/json"
+        },
+        "body": { "model": "demo-model", "prompt": "A quiet garden" }
+      }
+    },
+    {
+      "name": "reject an empty prompt",
+      "hook": "buildSubmitRequest",
+      "args": [{ "requestBody": { "prompt": " " } }],
+      "expectedError": "prompt must be a non-empty string"
+    },
+    {
+      "name": "preserve the upstream task id",
+      "hook": "parseSubmitResponse",
+      "args": [{}, { "statusCode": 200, "body": { "id": "vendor-123" } }],
+      "expected": { "taskId": "vendor-123", "taskData": { "id": "vendor-123" } }
+    },
+    {
+      "name": "unknown status is not in progress",
+      "hook": "parseTaskResult",
+      "args": [
+        {},
+        { "status": "unexpected" },
+        { "status": 200, "headers": {} }
+      ],
+      "expected": { "status": "UNKNOWN" }
+    }
+  ]
+}
+```
+
+fixture 只执行确定性的同步钩子，不向上游发请求。正式插件还应覆盖提交错误、成功与失败终态、轮询上下文、批量行为、用量零值、协议渲染和产物读取。
+
+## 在管理页面调试
+
+Root 可以在已安装插件详情的「沙盒」（Sandbox）中选择钩子并输入参数 JSON 数组。例如，调试 `buildSubmitRequest` 时输入：
+
+```json
+[
+  {
+    "model": "demo-model",
+    "baseUrl": "https://api.example.com",
+    "authHeader": "Bearer example-key",
+    "requestBody": { "prompt": "A quiet garden" }
+  }
+]
+```
+
+沙盒调用只运行所选同步函数，不执行它返回的 HTTP 请求描述符。因此成功输出只能说明钩子行为符合输入，不能证明上游请求一定成功。
+
+## 扩展能力
+
+- **批量查询**：声明 `fetchMode: "batch"` 并实现批量构造和解析钩子；每项结果必须带对应任务 ID。
+- **原生接口**：通过 `meta.routes` 和 `native` 解码器、呈现器实现厂商风格的入口。
+- **宿主协议**：声明 `meta.protocols`，为 Video 或 Responses 实现协议钩子。
+- **产物**：成对实现 `listArtifacts` 和 `buildContentRequest`。
+- **提交即完成或上游 SSE**：按能力声明实现即时终态、SSE 快照或增量事件钩子。
+
+详细约束见 [API v1 参考](/zh/docs/plugins/api-reference)。准备发布时，按[发布规范](/zh/docs/plugins/publishing)添加版本、日志并生成索引。
