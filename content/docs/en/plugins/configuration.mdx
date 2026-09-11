@@ -1,0 +1,67 @@
+---
+title: Channel Configuration
+description: Configure channels, upstream addresses, keys, models, and groups for task plugins, and understand model mapping and compatibility with old channels.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Creating Task Plugin Channels
+
+After installing and enabling the plugin, open "Channel" management in your New API instance and add a channel:
+
+1. Select **Task Plugin (Type 61)**.
+2. Select a registered plugin.
+3. Fill in the upstream Base URL and the authentication information required by the plugin.
+4. Select models supported by the plugin, and configure available groups, priority, and weight.
+5. Save the channel, then [set prices](/en/docs/plugins/billing) for relevant models.
+
+Channels are bound to plugins via `setting.task_plugin_key`. The plugin must be in an available state, and the models should match the names actually declared by the plugin. The channel's groups must also match the available groups of the calling user or API key.
+
+Plugin management is performed by Root; administrators binding plugin channels require `task_plugin:bind` permission and corresponding channel management permissions.
+
+## Meaning of Base URL
+
+**The Base URL is the upstream service address, not the download address for `plugin.js`.** The installation address is used for importing code, while the channel address is used for actually initiating generation requests.
+
+| Configuration                         | Behavior                                                              |
+| ------------------------------------- | --------------------------------------------------------------------- |
+| Explicitly fill in Base URL           | Save and use the address filled in by the administrator               |
+| Leave blank and plugin declares `meta.baseUrl` | For Task Plugin channels, the host writes the plugin's default address into the channel configuration |
+| Leave blank and plugin has no default address | Requires providing the actual upstream address used by the plugin; cannot assume the host knows the vendor's address |
+| Plugin subsequently changes `meta.baseUrl` | Saved channels continue to use the original address; administrators need to decide whether to modify it |
+
+The plugin's default address is only used for Type 61 channels. Existing channel types continue to follow the address configuration rules for their respective types.
+
+## Authentication and Allowed Hosts
+
+Fill in the API Key or corresponding authentication configuration according to the plugin documentation; authentication methods may vary for different plugins. `meta.auth` can declare API Key, no authentication, or host-managed OAuth authentication methods; OAuth credential parsing is the responsibility of the host.
+
+Access to the host where the channel's Base URL resides is allowed by default. When requesting other hosts, the plugin must declare additional `host` or `host:port` in `meta.allowedHosts`. This list does not accept protocols, paths, or query parameters.
+
+<Callout title="Changing Upstream Address">
+  After changing the channel domain, the plugin's original default domain will not be automatically added to the allowed list. If the plugin still constructs requests pointing to the old domain, the host will reject it. You should check how the plugin uses
+  `ctx.baseUrl` instead of arbitrarily expanding the range of allowed hosts.
+</Callout>
+
+## Models and Model Mapping
+
+First, check the supported models from the details on the [Plugin Marketplace](/en/plugins), then configure the channel model list. When a plugin declares protocols or native routes, it may further restrict the model scope for a particular entry point.
+
+If channel model mapping is used, the plugin will receive two model identifiers:
+
+- `ctx.model`: The model name requested by the user, used for billing and external display, which may be an alias.
+- `ctx.upstreamModel`: The mapped upstream model name. This value is used when requesting upstream and selecting model usage configuration; if not mapped, it is consistent with the original model.
+
+When developing plugins, `ctx.upstreamModel || ctx.model` is typically used to construct the upstream body. You should not arbitrarily change the top-level `model` in the request descriptor to the upstream name.
+
+## Existing Channel Types and Shared Models
+
+Some official plugins support existing channel types via `meta.channelTypes`, such as OpenAI, Gemini, or vendor-specific types. Their supported scope is based on marketplace details, and existing channels do not all need to be changed to Type 61.
+
+The same old channel type can only be owned by one plugin; conflicts are checked upon activation. Multiple plugins can declare the same model on the same host protocol, and the choice of which plugin to use is ultimately determined by the selected channel: old channels by channel type, and Type 61 channels by plugin key.
+
+Shared models do not imply identical usage fields or prices. You should check the [billing configuration](/en/docs/plugins/billing) corresponding to each plugin.
+
+## Post-Configuration Verification
+
+Using an API key with access to that group and model, initiate a small-scale test according to the [Usage Guide](/en/docs/plugins/usage) to confirm that task creation, status queries, and artifact retrieval all meet expectations, then check the model and usage in the task logs.

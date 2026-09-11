@@ -1,0 +1,206 @@
+---
+title: タスクプラグイン API v1 リファレンス
+description: タスクプラグインのマニフェスト、コンテキスト、ライフサイクル、ネイティブルート、ホストプロトコル、使用量、成果物、ストリーミング機能。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+<Callout title="契約ステータスと信頼できる情報源">
+  現在のリポジトリでは、API v1 はまだ正式にリリースされていない契約としてマークされています。新しい機能は引き続き `apiVersion:
+  1` を使用する可能性がありますが、古いホストは認識しないフィールドを拒否します。以下は日本語のリファレンスです。完全なシグネチャと検証構造は、
+  [v1.d.ts](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.d.ts)、[v1.schema.json](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.schema.json)、および[元の仕様](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.md)を参照してください。
+</Callout>
+
+## マニフェスト：`meta`
+
+| フィールド                    | 型                 | 説明                                                                |
+| ------------------------------- | -------------------- | ------------------------------------------------------------------- |
+| `apiVersion`                    | `1`                  | 契約バージョン                                                            |
+| `key`                           | string               | プラグイン識別子、最大30文字、マーケットプレイスのディレクトリ名と一致          |
+| `name`                          | string               | 表示名                                                            |
+| `version`                       | string               | セマンティックバージョン、バージョンディレクトリと一致                                          |
+| `author`                        | `{ name, url? }`     | 著者名は必須、URLはHTTP(S)アドレス；著者自己申告情報                 |
+| `models`                        | string[]             | サポートするモデルを宣言                                                      |
+| `fetchMode`                     | `per_task` / `batch` | 単一タスクまたはバッチポーリング                                                    |
+| `description`                   | LocalizedText        | プラグイン概要                                                            |
+| `icon`                          | string               | LobeHubアイコン名または `text` / `text:<label>`、リモートURLやインライン画像は不可 |
+| `website`                       | string               | オプションのプラグイン公式サイト、空でない場合は有効なHTTPS URL                                |
+| `sortPriority`                  | integer              | 表示順序、値が大きいほど上位；ルーティングの優先順位には影響しない                            |
+| `baseUrl`                       | string               | タイプ61チャネルが使用できるデフォルトのアップストリームアドレス                                |
+| `allowedHosts`                  | string[]             | チャネルホスト以外にアクセスを許可する追加ホスト、ポート指定可能                            |
+| `auth`                          | string / object      | `none`、`api_key`、`vertex_oauth` または仕様で定義された認証オブジェクト              |
+| `channelTypes`                  | number[]             | 適応可能な古いチャネルタイプ；サードパーティプラグインは通常、タイプ61のキーバインディングを使用           |
+| `routes`                        | NativeRoute[]        | プラグイン独自のネイティブルート                                                    |
+| `protocols`                     | ProtocolClaim[]      | ホストプロトコル宣言                                                              |
+| `usageSchema` / `usageExamples` | object / array       | デフォルトの使用量フィールドと例                                                  |
+| `usageProfiles`                 | array                | モデルごとに完全な使用量スキーマと例を提供                                  |
+| `requiredCapabilities`          | string[]             | ホストがサポートする必要があるバージョン管理された機能                                          |
+| `submitResponseTypes`           | array                | アップストリーム送信応答タイプ、デフォルトは `["json"]`、`"sse"` も宣言可能                   |
+
+`baseUrl`には資格情報、クエリ文字列、フラグメントを含めることはできません。ASCIIホスト名を使用する必要があります。自己ホスト型HTTPまたはプライベートアドレスも許可されます。`allowedHosts`は `host` / `host:port` を使用し、プロトコルやパスは含みません。ポートもマッチングに参加します。デフォルトアドレスは、アクセスを許可するホストの集合を暗黙的に拡大することはありません。
+
+## ローカライズされたテキスト
+
+`LocalizedText`は文字列または `en` を含む言語マッピングを使用できます。文字列は英語マッピングに正規化されます。マッチング順序は、現在の言語、主要言語、英語です。
+
+```js
+description: {
+  en: "Video generation through the vendor API",
+  zh: "通过厂商接口生成视频",
+  "zh-TW": "透過廠商介面產生影片",
+}
+```
+
+プラグインデータ内のテキストは、管理フロントエンドの翻訳キーとして使用すべきではありません。モデル名、フィールドキー、および列挙型の生の値は安定している必要があります。
+
+## ライフサイクル フック
+
+| エクスポート                     | 入力                                    | 主な戻り値                                |
+| ------------------------ | --------------------------------------- | ------------------------------------------- |
+| `buildSubmitRequest`     | `DriverContext`                         | HTTPリクエスト記述子                             |
+| `parseSubmitResponse`    | ctx、`{ statusCode, headers, body }`    | `{ taskId, taskData?, immediate?, state? }` |
+| `buildQueryRequest`      | `TaskQueryContext`                      | 単一タスククエリ記述子、`per_task` の場合は必須           |
+| `parseTaskResult`        | クエリコンテキスト、body、`{ status, headers }` | 標準化されたステータス、オプションの進捗/理由/結果など            |
+| `buildBatchQueryRequest` | バッチコンテキスト、タスク配列                    | バッチクエリ記述子、`batch` の場合は必須                |
+| `parseBatchResult`       | バッチコンテキスト、ボディ、HTTP情報             | 各項目に `taskId` を含む結果配列、`batch` の場合は必須    |
+
+すべてのプラグインは、バッチプラグインを含め、`meta`、`buildSubmitRequest`、`parseSubmitResponse`、および `parseTaskResult` をエクスポートする必要があります。
+
+標準ステータスには、`NOT_START`、`SUBMITTED`、`QUEUED`、`IN_PROGRESS`、`SUCCESS`、`FAILURE`、`UNKNOWN` が含まれます。不明なステータスは `UNKNOWN` を返します。不明な結果をデフォルトで処理中と見なすことはできません。
+
+アップストリーム応答のHTTPステータスもホストの判定に関与します。404/410は失敗と返金につながり、401/403、429、5xx、および転送エラーはポーリング失敗として累積されます。`TASK_POLL_MAX_FAILURES`（デフォルト20）に達すると失敗クリーンアップに入り、タスクタイムアウトメカニズムは依然として外側の期限条件です。
+
+## リクエストとクエリコンテキスト
+
+`DriverContext`は、正規化された `requestBody`、リクエストヘッダー、アクション、`model` / `upstreamModel`、チャネル `baseUrl`、認証情報、ファイル参照、公開タスクID、およびオプションの `originTasks` を提供します。
+
+`TaskQueryContext`は、保存されたタスクから再構築されます。
+
+| フィールド                      | 意味                               |
+| ------------------------- | ---------------------------------- |
+| `taskId`                  | アップストリームタスクID                        |
+| `publicTaskId`            | New API 公開タスクID                |
+| `model` / `upstreamModel` | ユーザーモデル名とチャネルマッピング後のアップストリームモデル名 |
+| `action`                  | 永続化された標準化操作               |
+| `data`                    | 現在の `Task.Data` スナップショット              |
+| `state`                   | プラグイン固有のポーリング間ステータス               |
+| `baseUrl` / 認証フィールド      | 現在使用中のチャネル情報                 |
+
+クエリ側には `requestBody` がありません。保存されるフィールド名は `data` であり、`raw` エイリアスは存在しません。解析フックが `state` を省略した場合、元の状態が保持されます。明示的に返された場合にのみ更新されます。リクエストとステータス入力は読み取り専用と見なすべきであり、モジュールグローバル変数にタスクデータを保存することに依存すべきではありません。
+
+## HTTP記述子とファイル
+
+構築フックは `{ url, method?, headers?, body?, ... }` を返し、ホストによって検証および送信されます。JSONはデフォルトのボディタイプですが、`bodyType: "multipart"` と `parts` を使用してマルチパートを構築することもできます。
+
+インバウンドボディはホストによって以下の結合型に統一的に解析されます。
+
+```ts
+{
+  kind: ('json', value);
+}
+{
+  kind: ('form', fields);
+}
+{
+  kind: ('multipart', fields, files);
+}
+{
+  kind: 'none';
+}
+```
+
+ファイルは `{ ref, field, filename, mimeType, size }` としてのみJavaScriptに参照として渡され、プラグインはファイルのバイトを直接読み取ることはできません。マルチパートのアウトバウンドでは `parts[].fileRef` を使用します。JSONのアウトバウンドではプレースホルダーを埋め込むことができ、ホストによってエンコードされたコンテンツに置き換えられます。
+
+```js
+{ __fileRef: "request_file:input_reference", encoding: "base64" }
+{ __fileRef: "request_file:input_reference", encoding: "dataUrl", mimeType: "image/png" }
+```
+
+プレースホルダーはオプションで `maxBytes` を指定できます。ホストは引き続きファイルサイズの上限と総量チェックを実行します。参照をファイルパスとして扱うことはできません。
+
+## ネイティブルートとホストプロトコル
+
+### ネイティブルート
+
+`meta.routes`はプラグイン独自のURLを定義し、関数名は `native` オブジェクト内の同期関数を指します。
+
+```js
+routes: [
+  {
+    method: 'POST',
+    path: '/vendor/jobs',
+    type: 'submit',
+    decode: 'create',
+    render: 'created',
+  },
+  {
+    method: 'GET',
+    path: '/vendor/jobs/:task_id',
+    type: 'query',
+    render: 'status',
+  },
+];
+```
+
+- `submit` / `dynamic` は `decode` と `render` を指定する必要があります。queryは `render` のみを指定し、デコーダを宣言することはできません。
+- queryのタスクパラメータ名はデフォルトで `task_id` ですが、`taskIdParam` で指定できます。
+- デコーダは `{ kind: "submit", model, action?, requestBody?, originTaskIds? }` またはクエリインテントを返します。
+- `routes[].models` はsubmit/dynamicのトップレベルモデルを制限できますが、queryには使用できません。モデルがベンダーボディ内にネストされている場合は、デコーダが判断すべきです。
+- ホストは認証、所有権、タスクの永続化を担当し、レンダラーは外部応答のみを処理します。フックがスローするエラーメッセージは呼び出し元に返される可能性があるため、読みやすく機密データを含まないエラーテキストを使用すべきです。
+
+`originTaskIds`は公開タスクIDを使用します。ホストは所有権とチャネルの一貫性をチェックした後、内部アップストリームIDを含む `originTasks` をドライバーに注入します。これは外部レンダラーには渡されません。
+
+### ホストプロトコル
+
+`meta.protocols`はホストによって一元管理されるプロトコルパスを宣言します。これらのパスを `meta.routes` にコピーすべきではありません。
+
+| プロトコル               | ホストパス                                                                       | プラグインエクスポート                                           |
+| ------------------ | ------------------------------------------------------------------------------ | -------------------------------------------------- |
+| `openai_video`     | `POST /v1/videos`、`GET /v1/videos/{id}`、`GET / HEAD /v1/videos/{id}/content` | `protocols.openai_video.decodeRequest` と `render` |
+| `openai_responses` | `POST /v1/responses`、`GET /v1/responses/{id}`                                 | `decodeRequest`、およびパターンにマッチするレンダリングフック          |
+
+Responsesは、オブジェクト形式で `supports` を明示的に宣言する必要があります。`stream` は `renderEvents` を要求し、`sync` または `background` は `renderFinal` を要求します。必要なフックが不足している場合、または宣言されたパターンで使用されていないフックをエクスポートしている場合、いずれも拒否されます。
+
+デコーダは候補のフィルタリングとチャネル選択後に複数回実行される可能性があるため、決定性を維持する必要があります。複数のプラグインが同じプロトコル下のモデルを共有できますが、実際のプラグインは選択されたチャネルによって決定されます。
+
+ビデオレンダラーはJSONオブジェクトを返す必要があります。ホストは標準のID、モデル、ステータス、時間フィールドを上書きし、ルールに準拠するベンダー拡張を保持します。Responsesの成功結果は、ホストが注入する `ctx.artifacts[key].url` を介して成果物を参照します。
+
+## 使用量フック
+
+オプションで `extractUsage`、`extractUsageOnSubmit`、および `extractUsageOnComplete` をエクスポートできます。これらはそれぞれ、リクエスト、送信結果、または完了結果から使用量を抽出します。選択されたスキーマに合致する事実のみを返し、価格やクォータは返しません。
+
+`usageProfiles`は、リストされたモデルに完全なスキーマを提供し、デフォルトの定義を置き換えます。一致しないモデルはデフォルトのスキーマを使用します。モデルマッピングが関与する場合、実行時には最終的に実行されるプラグインのアップストリームモデルに従って使用量定義が選択されます。設定については、[使用量と課金](/ja/docs/plugins/billing)を参照してください。
+
+## 成果物とコンテンツリクエスト
+
+成果物フックはペアでエクスポートする必要があります。
+
+- `listArtifacts(task)`：永続化されたデータから安定した `{ key, type, mimeType? }` のリストを投影します。2つ目の永続化レコードや一時的なダウンロードURLは返しません。
+- `buildContentRequest(ctx)`：選択された成果物キー、データ、プロダクションバージョン、アップストリームタスクID、チャネル情報、および安全なRange/条件付きリクエストヘッダーに基づいて、今回の読み取り記述子を構築します。
+
+チャネル資格情報付きのコンテンツリクエストは、チャネルホストまたは `allowedHosts` にのみアクセスできます。公開動的CDNは `credentialless: true` を使用できます。この場合、GET/HEADのみが許可され、プラグインヘッダーやボディを添付することはできません。ホストは初期アドレスとリダイレクトをチェックします。
+
+ホストの成果物リンクは `TaskPublicAddress` を使用し、デフォルトでは `ServerAddress` にフォールバックします。マルチノードは有効な `CRYPTO_SECRET` を共有する必要があります。これをローテーションすると、発行済みのすべてのアドレスが無効になります。
+
+## 即時完了、SSE、およびホスト機能
+
+`parseSubmitResponse`は `immediate` 最終状態の結果を返すことができ、ホストが送信段階で永続化と決済を完了できるようにします。これらのタスクはポーリングを継続しません。
+
+アップストリーム送信でSSEを使用する場合、`submitResponseTypes: ["json", "sse"]` を宣言し、記述子で `responseType: "sse"` を選択します。
+
+| モード       | 必要な宣言とエクスポート                                                          | データフロー                                                                                     |
+| ---- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| スナップショット | `parseSubmitEvent`                                                      | 各イベントは `{ state, done }` を返し、終了後、完全なstateが `parseSubmitResponse` のボディとして使用されます        |
+| インクリメンタル | `requiredCapabilities: ["submit-sse-delta@1"]`、`parseSubmitEventDelta` | `{ changes, state, done }` を返し、ホストは `set` / `append` / `appendText` を適用し、完了後にボディを形成します |
+
+SSEモードは、アップストリームイベントをクライアントに直接透過的に渡しません。プラグインはイベントのセマンティクスと終了条件を解釈し、ホストは接続、フレーム解析、サイズ制限、タイムアウトを管理します。アップストリームSSEの受け入れに成功した後の読み取り失敗は、自動的に送信を再試行せず、重複する課金タスクの作成を回避します。
+
+`json-clone@1` は、変更可能な独立したJSONスナップショットを作成するための同期的な `utils.json.clone(value)` を提供します。その他のツールには、時間、UUID、Base64、HMAC、JWT、およびVolc署名ツールが含まれます。完全なシグネチャは型宣言を参照してください。`requiredCapabilities` は正確なバージョンを宣言する必要があります。不明またはサポートされていない機能は、ロード時に拒否されます。
+
+## 管理および診断インターフェース
+
+ルート管理インターフェースは `/api/plugin/task` にあり、アップロード、バージョンアクティベーション、ステータス切り替え、削除、マーケットプレイスソース、ドライラン、および `/runtime/status` を含みます。これらの管理操作は、APIキーを使用してアクセスする `/v1/tasks` とは異なる権限体系です。
+
+ランタイムは完全な世代としてアトミックに公開されます。リクエストは固定の世代を使用し、バックグラウンドポーリングは更新されたプラグインを使用する可能性があります。マルチノードのトラブルシューティングでは、データベースのオーバーライドリビジョンを比較すべきであり、各ノードの自動インクリメントされる世代番号を直接比較することはできません。
+
+デバッグ手順については[開発ガイド](/ja/docs/plugins/development)を、リリースチェックについては[公開仕様](/ja/docs/plugins/publishing)を参照してください。

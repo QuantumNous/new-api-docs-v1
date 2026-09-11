@@ -1,0 +1,83 @@
+---
+title: Plugins
+description: Extend New API's image, video, music, and other task capabilities through task plugins. Learn about installation, configuration, and development processes.
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Blocks, Download, Settings, Code2 } from 'lucide-react';
+
+## What are Task Plugins
+
+Task plugins are single-file JavaScript modules running within the New API gateway, used to interface with upstream task submission, result parsing, polling, and artifact downloading. Administrators can extend generative capabilities for images, videos, music, etc., through plugins, without recompiling the gateway for each upstream.
+
+Plugins are responsible for converting requests and responses into a unified data structure. The New API host is responsible for authentication, channel selection, HTTP requests, task persistence, retries, polling, and billing settlement. Plugins only report usage facts and do not independently determine the price users should pay.
+
+<Callout title="Version Status">
+  The current plugin repository still marks Task Plugin API v1
+  as a contract not yet officially released. This document is written based on the current plugin repository and New API
+  implementation; before installation, please confirm that your gateway version supports the fields and capabilities declared by the plugin. Compatibility cannot be judged solely by
+  `apiVersion: 1`.
+</Callout>
+
+## Get Started
+
+<Cards>
+  <Card
+    icon={<Blocks />}
+    title="Plugin Marketplace"
+    description="Search for official plugins, view models, interfaces, usage, and update logs, and copy the installation address from the official website."
+    href="/en/plugins"
+  />
+  <Card
+    icon={<Download />}
+    title="Installation & Management"
+    description="Install plugins, import official website addresses, upgrade or switch existing versions."
+    href="/en/docs/plugins/installation"
+  />
+  <Card
+    icon={<Settings />}
+    title="Channels & Billing"
+    description="Bind plugin channels, configure models, groups, keys, and usage prices."
+    href="/en/docs/plugins/configuration"
+  />
+  <Card
+    icon={<Code2 />}
+    title="Develop Plugins"
+    description="Start with a complete minimal example to write and validate your own task plugins."
+    href="/en/docs/plugins/development"
+  />
+</Cards>
+
+## Built-in Plugins and Custom Versions
+
+| Type                 | Source                    | Management Method                                             |
+| -------------------- | ----------------------- | ---------------------------------------------------- |
+| Built-in Plugin (Factory)  | Provided with New API program     | Cannot be deleted or disabled individually; can be overridden by a custom version with the same key      |
+| Override Version | Installed or uploaded plugin with the same key | Overrides the built-in version when enabled; built-in plugin is restored after disabling or deleting the override version |
+| Third-party Plugin           | Installed or uploaded plugin with a new key | After disabling or deleting, the corresponding plugin capabilities become unavailable                     |
+
+The master switch for task plugins controls the entire plugin system, including built-in plugins. Turning it off immediately stops plugin services, and ongoing tasks are subsequently handled by timeout cleanup. Before upgrading, disabling, or deleting, associated channels and unfinished tasks should be checked.
+
+## Who Can Use
+
+- **Root (Super Administrator)**: Install, upload, upgrade, enable/disable, delete, configure marketplace sources, and run debugging.
+- **Administrators with plugin binding permissions**: Select available plugins and bind channels in channel management; this is not equivalent to plugin management permissions.
+- **API Users**: Use their instance's API key to call open models and interfaces, without needing plugin management permissions.
+
+Task plugins extend the gateway itself. For extensions used by AI coding assistants, see [Skills](/en/docs/skills).
+
+## Recommended Configuration Order
+
+1. View plugin models, interfaces, latest versions, and migration instructions in the [Plugin Marketplace](/en/plugins).
+2. [Install plugins](/en/docs/plugins/installation), then [bind channels](/en/docs/plugins/configuration).
+3. [Configure usage and billing](/en/docs/plugins/billing) according to the fields reported by the plugin.
+4. Submit tasks according to the [Calling Guide](/en/docs/plugins/usage), and check status and artifacts.
+
+## Specifications & Source Code
+
+- [Official Plugin Repository](https://github.com/QuantumNous/new-api-plugins)
+- [Task Plugin API v1](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/README.md)
+- [Marketplace Index and Release Notes Specification](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/marketplace.md)
+
+The specific plugin version, supported models, and update records are subject to real-time marketplace data.

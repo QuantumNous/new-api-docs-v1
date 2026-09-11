@@ -1,0 +1,80 @@
+---
+title: Installation and Management
+description: Import task plugins using the plugin marketplace or official installation URL, and manage their enabled status, versions, and market sources.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { OfficialPluginLinks } from '@/components/plugins/official-links';
+
+## Preparation
+
+Log in to your New API instance as **Root (Super Administrator)**, open "Task Plugins" (`/task-plugins`). Confirm that your deployment version includes the task plugin feature, and enable the main task plugin switch at the top of the page.
+
+Regular API keys are used for model calls and cannot be used to install plugins. If the page is not visible or returns 403, please check your account role and deployment version first.
+
+<Callout title="Pre-installation Check">
+  Plugins can use the credentials of the current channel to construct upstream requests. During installation, you should check the source code, version differences, default Base URL, and allowed extra hosts; successful compilation or hash consistency does not mean the code has undergone a security review.
+</Callout>
+
+## Install via the In-Instance Plugin Marketplace
+
+1. Open "Marketplace" within "Task Plugins".
+2. Select a market source, search for the target plugin, and view supported models and interfaces.
+3. Select the version to install, read the update logs and migration instructions; when upgrading, check the source code differences from the currently installed version.
+4. Wait for the plugin source code download and SHA-256 verification to complete, then confirm and select "Install and Enable".
+5. Return to the installed list, check the actually effective version; then [configure channels](/en/docs/plugins/configuration) and [billing](/en/docs/plugins/billing).
+
+Marketplace installation uses the hash declared in the index to verify the source code, and the server then recompiles, verifies metadata, and checks for conflicts. If channel type or routing conflicts occur, the installation will be rejected; resolve the conflicts before retrying.
+
+## Copy Official Installation URL from Documentation Site
+
+1. Open the [documentation site plugin marketplace](/en/plugins).
+2. Click "Copy Installation URL" on the plugin card or details page.
+3. Return to your New API instance, select "Upload Plugin", paste the URL in "Import from URL" and read the source code.
+4. After checking the plugin information and source code, save it and confirm that the plugin is enabled.
+
+What is copied is the `plugin.js` URL hosted by the official website. `docs.newapi.pro` uses `www.newapi.pro`, `docs.newapi.ai` uses `www.newapi.ai`; language does not affect domain selection.
+
+The installation URL format is:
+
+```text
+https://www.newapi.pro/api/v1/plugins/<plugin-key>/plugin.js
+https://www.newapi.ai/api/v1/plugins/<plugin-key>/plugin.js
+```
+
+These unfixed-version URLs retrieve the current latest version from the official website upon import, and **will not automatically update already installed plugins**. When a specific version is required, prioritize selecting the version within the instance's marketplace; viewing historical update logs will not change the latest version URL provided by the documentation site's copy button.
+
+You can also select a local `.js` file or paste the source code directly. Manual URL import is not equivalent to integrity verification based on the market index; when verification based on the index hash is required, use the marketplace installation process.
+
+## Manage Market Sources
+
+The instance defaults to providing two sources: official website and GitHub. A market source must point to an `index.json` file conforming to the index v1 format, not an official website HTML page.
+
+<OfficialPluginLinks />
+
+The above official market source addresses will be selected based on the current documentation site domain. The general GitHub source is:
+
+```text
+https://raw.githubusercontent.com/QuantumNous/new-api-plugins/main/index.json
+```
+
+When adding a third-party source, ensure that the index and its referenced plugin files are accessible. Browser import also requires the source site to allow cross-origin reading; if unable to download, check network, CORS, and file size. The current plugin source code limit is **1 MiB**.
+
+## Upgrade and Rollback
+
+- Each plugin is identified by `key + version`. The same key/version cannot upload different source code; modifying a plugin requires using a new version.
+- After installing a new version, check the currently effective version in the installed list. You can also activate a saved version from the version list in the plugin details to complete an upgrade or rollback.
+- Before upgrading, read the Migration notes, verify model names, Base URLs, usage fields, and prices. Changes to the plugin's default Base URL will not automatically modify existing channels.
+- Requests already in processing will consistently use the plugin version active at that time; background polling might use a newly activated version. New versions must be compatible with data from tasks not yet completed, and this should be considered for both upgrades and rollbacks.
+
+## Deactivation and Deletion
+
+First, check associated channels and ongoing tasks, and handle references as prompted on the management page. Do not treat forced operations as routine upgrade steps.
+
+Built-in plugins cannot be deactivated or deleted individually. For custom versions that override built-in plugins, deactivating or removing the override will restore the built-in version; third-party independent plugins will no longer provide corresponding capabilities after deactivation or deletion.
+
+<Callout type="warn" title="Main Task Plugin Switch">
+  Turning off the main switch will stop the entire task plugin system, including built-in plugins. Ongoing tasks will be handled by timeout cleanup and the main switch should not be treated as a deactivation button for a single plugin.
+</Callout>
+
+For installation failures, version conflicts, or inconsistent runtime node status, refer to [FAQ](/en/docs/plugins/faq).
