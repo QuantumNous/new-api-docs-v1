@@ -51,7 +51,7 @@ const socialLinks: { name: string; href: string; icon: React.ReactNode }[] = [
     icon: DockerIcon,
   },
   {
-    name: 'QQ',
+    name: 'Discord',
     href: 'docs/support/community-interaction',
     icon: <MessageCircle className="size-4" />,
   },
