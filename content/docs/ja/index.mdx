@@ -1,89 +1,93 @@
 ---
 title: クイックスタート
-description: お客様のニーズに最適なデプロイ方法を選択してください
+description: New API をデプロイし、モデルのチャネルとトークンを設定して、最初の AI API を呼び出します。
 ---
 
-import {
-  Server,
-  Network,
-  Code2,
-  Headphones,
-  Bot,
-  Handshake,
-  Container,
-  Boxes,
-} from 'lucide-react';
+import { BookOpen, Bot, Boxes, Code2, Container, Handshake, Headphones, KeyRound, Network, Puzzle } from 'lucide-react';
 
-## デプロイ方法の選択
+New API は、オープンソースの AI ゲートウェイおよびモデル API 管理システムです。デプロイからアプリの接続まで、順番に進めましょう。
 
-お客様の環境と技術要件に基づいて、適切なデプロイ方法を選択してください。
+## New API を使い始める
+
+<Cards className="sm:grid-cols-3">
+  <Card
+    icon={<Boxes />}
+    title="1. インスタンスをデプロイ"
+    description="Docker、管理パネル、またはクラスターで起動します。"
+    href="/ja/docs/installation"
+  />
+  <Card
+    icon={<Network />}
+    title="2. チャネルを設定"
+    description="プロバイダー、認証情報、利用するモデルを追加します。"
+    href="/ja/docs/guide/console/channel-management"
+  />
+  <Card
+    icon={<KeyRound />}
+    title="3. API トークンを作成"
+    description="アプリ用のトークンを作成し、統一 API を呼び出します。"
+    href="/ja/docs/guide/console/api-token"
+  />
+</Cards>
+
+## デプロイ方法を選ぶ
 
 <Cards>
   <Card
     icon={<Boxes />}
-    title="Docker Compose デプロイ"
-    description="Docker Compose を使用して複数のサービスをオーケストレーションします。本番環境や MySQL、Redis などの依存関係が必要なシナリオに適しています。"
+    title="Docker Compose"
+    description="New API と MySQL、Redis などのサービスを起動します。"
     href="/ja/docs/installation/deployment-methods/docker-compose-installation"
   />
   <Card
     icon={<Container />}
-    title="Docker 単一コンテナデプロイ"
-    description="Docker イメージを使用して New API を迅速にデプロイします。個人利用や小規模なアプリケーションシナリオに適しています。"
+    title="Docker 単一コンテナ"
+    description="Docker イメージを使って試用や小規模な環境を構築します。"
     href="/ja/docs/installation/deployment-methods/docker-installation"
-  />
-  <Card
-    icon={<Server />}
-    title="1Panel パネルデプロイ"
-    description="1Panel パネルのグラフィカルインターフェースを通じて迅速にデプロイします。コマンドラインに不慣れなユーザーに適しています。"
-    href="/ja/docs/installation/deployment-methods/1panel-installation"
-  />
-  <Card
-    icon={<Server />}
-    title="宝塔パネルデプロイ"
-    description="宝塔パネルのグラフィカルインターフェースを通じて迅速にデプロイします。コマンドラインに不慣れなユーザーに適しています。"
-    href="/ja/docs/installation/deployment-methods/bt-docker-installation"
-  />
-  <Card
-    icon={<Network />}
-    title="クラスターデプロイモード"
-    description="マルチノード分散デプロイにより、高可用性、ロードバランシング、水平スケーリングを実現します。大規模なアプリケーションやエンタープライズシナリオに適しています。"
-    href="/ja/docs/installation/deployment-methods/cluster-deployment"
-  />
-  <Card
-    icon={<Code2 />}
-    title="ローカル開発デプロイ"
-    description="開発者によるコード貢献やカスタム開発に適しており、完全なローカル開発環境設定ガイドを提供します。"
-    href="/ja/docs/installation/deployment-methods/local-development"
   />
 </Cards>
 
-## ドキュメントを閲覧する
+管理パネル、クラスター、ローカル開発については、[すべてのデプロイ方法](/ja/docs/installation)をご覧ください。
 
-New API の強力な機能を最大限に活用するための包括的なガイドとリソースを探ります。
+## ドキュメントを探す
 
 <Cards>
   <Card
+    icon={<BookOpen />}
+    title="ユーザーガイド"
+    description="インスタンス、チャネル、トークン、モデルの管理。"
+    href="/ja/docs/guide/home"
+  />
+  <Card
     icon={<Code2 />}
-    title="APIドキュメント"
-    description="包括的なAPIインターフェースの説明と呼び出し例。"
+    title="API リファレンス"
+    description="パラメーター、レスポンス、呼び出し例。"
     href="/ja/docs/api"
   />
   <Card
     icon={<Bot />}
-    title="AIアプリケーション"
-    description="New API をベースに開発された様々なAIアプリケーションの例を探ります。"
+    title="AI アプリの接続"
+    description="AI クライアントや開発ツールとの連携。"
     href="/ja/docs/apps"
   />
   <Card
+    icon={<Puzzle />}
+    title="Skills"
+    description="AI コーディングエージェントで New API を利用・管理。"
+    href="/ja/docs/skills"
+  />
+  <Card
     icon={<Headphones />}
-    title="ヘルプ＆サポート"
-    description="よくある質問とコミュニティ交流。"
+    title="ヘルプとサポート"
+    description="よくある質問、問題の解決、コミュニティ。"
     href="/ja/docs/support"
   />
   <Card
     icon={<Handshake />}
     title="ビジネス提携"
-    description="私たちと提携し、AIエコシステムとビジネスチャンスを共に開拓しましょう。"
+    description="コラボレーションと商用サービス。"
     href="/ja/docs/business"
   />
 </Cards>
+
+プロジェクトとエコシステムについては、[New API 公式サイト（newapi.ai）](https://www.newapi.ai/) または [New API 公式サイト（newapi.pro）](https://www.newapi.pro/) をご覧ください。

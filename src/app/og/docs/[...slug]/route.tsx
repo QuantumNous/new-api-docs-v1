@@ -2,6 +2,7 @@ import { getPageImage, source } from '@/lib/source';
 import { notFound } from 'next/navigation';
 import { ImageResponse } from 'next/og';
 import { generate as DefaultImage } from 'fumadocs-ui/og';
+import { i18n } from '@/lib/i18n';
 
 export const revalidate = false;
 
@@ -10,7 +11,10 @@ export async function GET(
   { params }: { params: Promise<{ slug: string[] }> }
 ) {
   const { slug } = await params;
-  const page = source.getPage(slug.slice(0, -1));
+  // Preserve old unlocalized image URLs; new metadata uses the page's language.
+  const localized = i18n.languages.some((lang) => lang === slug[0]);
+  const lang = localized ? slug[0] : i18n.defaultLanguage;
+  const page = source.getPage(slug.slice(localized ? 1 : 0, -1), lang);
   if (!page) notFound();
 
   return new ImageResponse(
@@ -30,7 +34,6 @@ export async function GET(
 
 export function generateStaticParams() {
   return source.getPages().map((page) => ({
-    lang: page.locale,
     slug: getPageImage(page).segments,
   }));
 }

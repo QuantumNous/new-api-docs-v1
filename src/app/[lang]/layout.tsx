@@ -2,8 +2,9 @@ import { defineI18nUI } from 'fumadocs-ui/i18n';
 import { i18n } from '@/lib/i18n';
 import { Provider } from '@/components/provider';
 import '../global.css';
-import type { Metadata } from 'next';
-import { createMetadata, baseUrl } from '@/lib/metadata';
+import type { Metadata, Viewport } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google';
+import { createMetadata, siteMetadata } from '@/lib/metadata';
 import { notFound } from 'next/navigation';
 
 const { provider } = defineI18nUI(i18n, {
@@ -38,28 +39,13 @@ const { provider } = defineI18nUI(i18n, {
   },
 });
 
-const titleMap: Record<
-  string,
-  { default: string; template: string; description: string }
-> = {
-  en: {
-    default: 'New API - The Foundation of Your AI Universe',
-    template: '%s | New API',
-    description:
-      'Connect all AI providers, manage your AI assets, and build the future on a unified infrastructure platform. Deploy in minutes, scale effortlessly.',
-  },
-  zh: {
-    default: 'New API - AI 基座',
-    template: '%s | New API',
-    description:
-      '承载所有 AI 应用，管理你的数字资产，连接未来的统一基础设施平台。快速部署，轻松扩展。',
-  },
-  ja: {
-    default: 'New API - あなたの AI ユニバースの基盤',
-    template: '%s | New API',
-    description:
-      'すべての AI プロバイダーを接続し、AI アセットを管理し、統一されたインフラストラクチャプラットフォームで未来を構築。数分でデプロイ、簡単にスケール。',
-  },
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' },
+    { media: '(prefers-color-scheme: light)', color: '#fff' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export async function generateMetadata({
@@ -67,51 +53,13 @@ export async function generateMetadata({
 }: {
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
-  const lang = (await params).lang;
-  const titles = titleMap[lang] || titleMap.en;
-
+  const { lang } = await params;
+  const content = siteMetadata[lang] || siteMetadata.en;
   return createMetadata({
-    metadataBase: baseUrl,
-    title: {
-      default: titles.default,
-      template: titles.template,
-    },
-    description: titles.description,
-    keywords: [
-      'AI Infrastructure',
-      'AI Gateway',
-      'AI Asset Management',
-      'API Orchestration',
-      'AI Application Platform',
-      'Multi-Model Integration',
-      'Enterprise AI',
-      'AI Ecosystem',
-      'Unified AI Interface',
-      'Intelligent API Management',
-    ],
-    authors: [
-      { name: 'New API Team', url: 'https://github.com/QuantumNous/new-api' },
-    ],
+    title: { default: content.title, template: `%s | ${content.title}` },
+    description: content.description,
+    authors: [{ name: 'New API Team', url: 'https://www.newapi.ai/' }],
     creator: 'New API Team',
-    alternates: {
-      languages: {
-        en: '/en',
-        zh: '/zh',
-        ja: '/ja',
-      },
-    },
-    openGraph: {
-      type: 'website',
-      locale: lang,
-      title: titles.default,
-      description: titles.description,
-      siteName: 'New API',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: titles.default,
-      description: titles.description,
-    },
   });
 }
 
@@ -134,8 +82,15 @@ export default async function RootLayout({
   }
 
   return (
-    <Provider i18n={provider(lang)} lang={lang}>
-      {children}
-    </Provider>
+    <html lang={lang === 'zh' ? 'zh-CN' : lang} suppressHydrationWarning>
+      <body>
+        <Provider i18n={provider(lang)} lang={lang}>
+          {children}
+        </Provider>
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
+      </body>
+    </html>
   );
 }

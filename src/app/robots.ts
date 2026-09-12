@@ -9,10 +9,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: [
-          '/api/', // API routes (internal endpoints)
-          '/og/', // Open Graph image generation
-        ],
+        disallow: ['/api/'],
       },
     ],
     sitemap: sitemapUrl,

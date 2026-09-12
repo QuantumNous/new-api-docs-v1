@@ -22,6 +22,28 @@ Build the application for production:
 bun run build
 ```
 
+## SEO and canonical domain
+
+The canonical documentation origin defaults to `https://docs.newapi.ai`, including
+local builds and preview deployments. Set `SITE_URL` **before building** to choose
+another canonical domain, for example `SITE_URL=https://docs.newapi.pro`.
+Use a full HTTP(S) origin without a path, query, or fragment.
+
+All page canonicals, language alternates, sharing metadata, structured data,
+`sitemap.xml`, and `robots.txt` use that origin. When one build is served on both
+domains, both use the same canonical origin to consolidate duplicate pages.
+Official website links to `www.newapi.ai` and `www.newapi.pro` remain visible on
+the homepage, quick start pages, and shared footer.
+
+SEO browser checks run against a production build:
+
+```bash
+bunx next build
+bun run test:seo:browser
+```
+
+Use `PLUGIN_TEST_BROWSER_CHANNEL=chrome` for installed Chrome, as below.
+
 ## Plugin marketplace checks
 
 ```bash

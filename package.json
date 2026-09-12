@@ -11,6 +11,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:plugins": "node --import tsx --test tests/plugins/*.test.ts",
+    "test:seo:browser": "playwright test --config playwright.seo.config.ts",
     "test:plugins:browser": "playwright test --config playwright.plugins.config.ts",
     "translate": "bun scripts/translate-docs.ts",
     "translate:all": "bun scripts/translate-docs.ts",

@@ -1,89 +1,93 @@
 ---
 title: Quick Start
-description: Choose the deployment method that best suits your needs
+description: Deploy New API, configure model channels and tokens, and make your first AI API call.
 ---
 
-import {
-  Server,
-  Network,
-  Code2,
-  Headphones,
-  Bot,
-  Handshake,
-  Container,
-  Boxes,
-} from 'lucide-react';
+import { BookOpen, Bot, Boxes, Code2, Container, Handshake, Headphones, KeyRound, Network, Puzzle } from 'lucide-react';
 
-## Deployment Method Selection
+New API is an open-source AI gateway and model API management system. Follow these steps to go from deployment to application integration.
 
-Choose the appropriate deployment method based on your environment and technical requirements.
+## Start using New API
+
+<Cards className="sm:grid-cols-3">
+  <Card
+    icon={<Boxes />}
+    title="1. Deploy your instance"
+    description="Start New API with Docker, a management panel, or a cluster."
+    href="/en/docs/installation"
+  />
+  <Card
+    icon={<Network />}
+    title="2. Configure a channel"
+    description="Add a model provider, credentials, and available models."
+    href="/en/docs/guide/console/channel-management"
+  />
+  <Card
+    icon={<KeyRound />}
+    title="3. Create an API token"
+    description="Create a token for your application and call the unified AI API."
+    href="/en/docs/guide/console/api-token"
+  />
+</Cards>
+
+## Choose a deployment method
 
 <Cards>
   <Card
     icon={<Boxes />}
-    title="Docker Compose Deployment"
-    description="Orchestrate multiple services with Docker Compose, suitable for production environments or scenarios requiring dependencies like MySQL and Redis."
+    title="Docker Compose"
+    description="Run New API alongside services such as MySQL and Redis."
     href="/en/docs/installation/deployment-methods/docker-compose-installation"
   />
   <Card
     icon={<Container />}
-    title="Docker Single Container Deployment"
-    description="Quickly deploy New API using a Docker image, suitable for personal use or small-scale applications."
+    title="Docker single container"
+    description="Get started with a Docker image for evaluation or small deployments."
     href="/en/docs/installation/deployment-methods/docker-installation"
-  />
-  <Card
-    icon={<Server />}
-    title="1Panel Deployment"
-    description="Rapid deployment via the 1Panel graphical interface, suitable for users unfamiliar with the command line."
-    href="/en/docs/installation/deployment-methods/1panel-installation"
-  />
-  <Card
-    icon={<Server />}
-    title="Baota Panel Deployment"
-    description="Rapid deployment via the Baota Panel graphical interface, suitable for users unfamiliar with the command line."
-    href="/en/docs/installation/deployment-methods/bt-docker-installation"
-  />
-  <Card
-    icon={<Network />}
-    title="Cluster Deployment Mode"
-    description="Multi-node distributed deployment for high availability, load balancing, and horizontal scalability, suitable for large-scale applications and enterprise-level scenarios."
-    href="/en/docs/installation/deployment-methods/cluster-deployment"
-  />
-  <Card
-    icon={<Code2 />}
-    title="Local Development Deployment"
-    description="Suitable for developers contributing code and custom development, providing a complete guide to local development environment setup."
-    href="/en/docs/installation/deployment-methods/local-development"
   />
 </Cards>
 
-## Browse Our Documentation
+Need a management panel, cluster, or local development environment? See [all deployment methods](/en/docs/installation).
 
-Explore comprehensive guides and resources to fully leverage the powerful features of New API.
+## Explore the documentation
 
 <Cards>
   <Card
+    icon={<BookOpen />}
+    title="User guide"
+    description="Manage your instance, channels, tokens, and models."
+    href="/en/docs/guide/home"
+  />
+  <Card
     icon={<Code2 />}
-    title="API Documentation"
-    description="Comprehensive API interface descriptions and call examples."
+    title="API reference"
+    description="Find request parameters, response formats, and examples."
     href="/en/docs/api"
   />
   <Card
     icon={<Bot />}
-    title="AI Applications"
-    description="Explore various AI application examples developed based on New API."
+    title="AI applications"
+    description="Connect AI clients and development tools."
     href="/en/docs/apps"
   />
   <Card
+    icon={<Puzzle />}
+    title="Skills"
+    description="Use and manage New API with AI coding agents."
+    href="/en/docs/skills"
+  />
+  <Card
     icon={<Headphones />}
-    title="Help & Support"
-    description="Frequently asked questions and community communication."
+    title="Help & support"
+    description="Find answers, troubleshoot, and join the community."
     href="/en/docs/support"
   />
   <Card
     icon={<Handshake />}
-    title="Business Cooperation"
-    description="Partner with us to jointly explore the AI ecosystem and business opportunities."
+    title="Business cooperation"
+    description="Learn about collaboration and commercial services."
     href="/en/docs/business"
   />
 </Cards>
+
+Explore the project and ecosystem on the [New API official website (newapi.ai)](https://www.newapi.ai/) or [New API official website (newapi.pro)](https://www.newapi.pro/).

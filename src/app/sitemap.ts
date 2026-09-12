@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { source } from '@/lib/source';
 import { i18n } from '@/lib/i18n';
-import { baseUrl } from '@/lib/metadata';
+import { baseUrl, getLanguageAlternates } from '@/lib/metadata';
 import { getLocalePath } from '@/lib/i18n';
 
 /**
@@ -18,7 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${url}/zh/plugins`,
     changeFrequency: 'daily',
     priority: 0.9,
-    alternates: { languages: { zh: `${url}/zh/plugins` } },
+    alternates: { languages: getLanguageAlternates('plugins', ['zh']) },
   });
 
   function toDate(input: unknown): Date | null {
@@ -33,24 +33,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     return slugKey ? `docs/${slugKey}` : 'docs';
   }
 
-  // Helper to generate hreflang alternates for a path, only for existing languages.
-  function generateAlternates(
-    langs: string[],
-    path: string
-  ): Record<string, string> {
-    const alternates: Record<string, string> = {};
-    for (const lang of langs) {
-      alternates[lang] = `${url}${getLocalePath(lang, path)}`;
-    }
-    const defaultLang = langs.includes(i18n.defaultLanguage)
-      ? i18n.defaultLanguage
-      : langs[0];
-    if (defaultLang) {
-      alternates['x-default'] = `${url}${getLocalePath(defaultLang, path)}`;
-    }
-    return alternates;
-  }
-
   // Track lastModified per language for homepages (more meaningful than "now")
   const latestModifiedByLang = new Map<string, Date>();
 
@@ -61,7 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 1.0,
       alternates: {
-        languages: generateAlternates(i18n.languages, ''),
+        languages: getLanguageAlternates(''),
       },
     });
   }
@@ -94,8 +76,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Backfill homepage lastModified with latest docs update per language (if any)
   for (const entry of entries) {
-    // entry.url is always like `${url}/${lang}` here
-    const match = entry.url.replace(url, '').split('/').filter(Boolean)[0];
+    const parts = new URL(entry.url).pathname.split('/').filter(Boolean);
+    if (parts.length !== 1) continue;
+    const match = parts[0];
     if (!match) continue;
     const lm = latestModifiedByLang.get(match);
     if (lm) entry.lastModified = lm;
@@ -113,7 +96,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       // Determine priority based on page depth
       const depth = page.slugs.length;
       let priority: number;
-      if (depth === 1) {
+      if (depth <= 1) {
         priority = 0.9; // Top-level pages (e.g., /docs/guide)
       } else if (depth === 2) {
         priority = 0.8; // Second-level pages
@@ -133,7 +116,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency,
         priority,
         alternates: {
-          languages: generateAlternates(availableLangs, docsPath),
+          languages: getLanguageAlternates(docsPath, availableLangs),
         },
       });
     }

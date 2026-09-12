@@ -1,5 +1,5 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { i18n } from '@/lib/i18n';
+import { getLocalePath, i18n } from '@/lib/i18n';
 import Image from 'next/image';
 import type { LinkItemType } from 'fumadocs-ui/layouts/docs';
 
@@ -59,6 +59,7 @@ export function baseOptions(locale: string): BaseLayoutProps {
   return {
     i18n,
     nav: {
+      url: getLocalePath(locale),
       title: (
         <>
           {logo}

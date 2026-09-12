@@ -149,14 +149,21 @@ export function Hero() {
 
   return (
     <>
-      {/* Lightweight fallback while shader bundle loads */}
+      {/* CSS theme variants keep the first render consistent during hydration. */}
       <div
-        className="absolute inset-0"
+        aria-hidden
+        className="absolute inset-0 dark:hidden"
         style={{
           background:
-            resolvedTheme === 'dark'
-              ? 'radial-gradient(1200px 800px at 20% 15%, rgba(6,182,212,.28), transparent 60%), radial-gradient(1000px 700px at 70% 25%, rgba(139,92,246,.24), transparent 55%), radial-gradient(900px 700px at 55% 70%, rgba(236,72,153,.18), transparent 60%)'
-              : 'radial-gradient(1200px 800px at 20% 15%, rgba(34,211,238,.25), transparent 60%), radial-gradient(1000px 700px at 70% 25%, rgba(167,139,250,.22), transparent 55%), radial-gradient(900px 700px at 55% 70%, rgba(249,168,212,.18), transparent 60%)',
+            'radial-gradient(1200px 800px at 20% 15%, rgba(34,211,238,.25), transparent 60%), radial-gradient(1000px 700px at 70% 25%, rgba(167,139,250,.22), transparent 55%), radial-gradient(900px 700px at 55% 70%, rgba(249,168,212,.18), transparent 60%)',
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 hidden dark:block"
+        style={{
+          background:
+            'radial-gradient(1200px 800px at 20% 15%, rgba(6,182,212,.28), transparent 60%), radial-gradient(1000px 700px at 70% 25%, rgba(139,92,246,.24), transparent 55%), radial-gradient(900px 700px at 55% 70%, rgba(236,72,153,.18), transparent 60%)',
         }}
       />
 

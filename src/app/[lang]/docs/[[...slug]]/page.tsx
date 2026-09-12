@@ -13,6 +13,7 @@ import { Feedback } from '@/components/feedback';
 import { LLMCopyButton, ViewOptions } from '@/components/page-actions';
 import { onRateAction } from '@/lib/github';
 import { i18n } from '@/lib/i18n';
+import { createPageMetadata } from '@/lib/metadata';
 
 // GitHub repository info for source links
 const owner = 'QuantumNous';
@@ -103,9 +104,14 @@ export async function generateMetadata(props: {
     return {};
   if (!page) notFound();
 
-  return {
+  return createPageMetadata({
+    lang,
+    path: ['docs', ...page.slugs].join('/'),
     title: page.data.title,
     description: page.data.description,
-    openGraph: { images: getPageImage(page).url },
-  };
+    languages: i18n.languages.filter(
+      (language) => !!source.getPage(page.slugs, language)
+    ),
+    image: getPageImage(page).url,
+  });
 }

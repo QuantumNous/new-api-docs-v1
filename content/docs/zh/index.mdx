@@ -1,89 +1,95 @@
-﻿---
+---
 title: 快速开始
-description: 选择最适合您需求的部署方式
+description: 部署 New API，配置模型渠道与令牌，完成第一次 AI API 调用。
 ---
 
-import {
-  Server,
-  Network,
-  Code2,
-  Headphones,
-  Bot,
-  Handshake,
-  Container,
-  Boxes,
-} from 'lucide-react';
+import { Blocks, BookOpen, Bot, Boxes, Code2, Container, Headphones, KeyRound, Network, Puzzle } from 'lucide-react';
 
-## 部署方式选择
+New API 是开源的 AI 网关与大模型接口管理系统。按照下面的路径，完成从部署到应用接入。
 
-根据您的环境和技术要求选择合适的部署方式。
+## 开始使用 New API
+
+<Cards className="sm:grid-cols-3">
+  <Card
+    icon={<Boxes />}
+    title="1. 部署实例"
+    description="选择 Docker、面板或集群部署，启动你的 New API。"
+    href="/zh/docs/installation"
+  />
+  <Card
+    icon={<Network />}
+    title="2. 配置模型渠道"
+    description="添加上游服务商，配置密钥与可用模型。"
+    href="/zh/docs/guide/console/channel-management"
+  />
+  <Card
+    icon={<KeyRound />}
+    title="3. 创建 API 令牌"
+    description="为应用创建访问令牌，开始调用统一 AI 接口。"
+    href="/zh/docs/guide/console/api-token"
+  />
+</Cards>
+
+## 选择部署方式
 
 <Cards>
   <Card
     icon={<Boxes />}
     title="Docker Compose 部署"
-    description="使用 Docker Compose 编排多个服务，适合生产环境或需要 MySQL、Redis 等依赖的场景。"
+    description="编排 New API、MySQL 与 Redis 等服务。"
     href="/zh/docs/installation/deployment-methods/docker-compose-installation"
   />
   <Card
     icon={<Container />}
     title="Docker 单容器部署"
-    description="使用 Docker 镜像快速部署 New API，适合个人使用或小规模应用场景。"
+    description="使用 Docker 镜像快速启动，适合体验与小规模使用。"
     href="/zh/docs/installation/deployment-methods/docker-installation"
-  />
-  <Card
-    icon={<Server />}
-    title="1Panel 面板部署"
-    description="通过 1Panel 面板图形化界面快速部署，适合不熟悉命令行的用户。"
-    href="/zh/docs/installation/deployment-methods/1panel-installation"
-  />
-  <Card
-    icon={<Server />}
-    title="宝塔面板部署"
-    description="通过宝塔面板图形化界面快速部署，适合不熟悉命令行的用户。"
-    href="/zh/docs/installation/deployment-methods/bt-docker-installation"
-  />
-  <Card
-    icon={<Network />}
-    title="集群部署模式"
-    description="多节点分布式部署，实现高可用、负载均衡和水平扩展，适合大规模应用和企业级场景。"
-    href="/zh/docs/installation/deployment-methods/cluster-deployment"
-  />
-  <Card
-    icon={<Code2 />}
-    title="本地开发部署"
-    description="适合开发者进行代码贡献和功能定制，提供完整的本地开发环境设置指南。"
-    href="/zh/docs/installation/deployment-methods/local-development"
   />
 </Cards>
 
-## 浏览我们的文档
+需要图形化面板、集群或本地开发？查看[全部部署方式](/zh/docs/installation)。
 
-探索全面的指南和资源，充分利用 New API 的强大功能。
+## 继续探索
 
 <Cards>
   <Card
+    icon={<BookOpen />}
+    title="使用指南"
+    description="了解控制台、渠道、令牌与模型管理。"
+    href="/zh/docs/guide/home"
+  />
+  <Card
     icon={<Code2 />}
-    title="接口文档"
-    description="全面的 API 接口说明和调用示例。"
+    title="API 参考"
+    description="查阅接口参数、响应格式和调用示例。"
     href="/zh/docs/api"
   />
   <Card
     icon={<Bot />}
-    title="AI 应用"
-    description="探索基于 New API 开发的各类 AI 应用示例。"
+    title="AI 应用接入"
+    description="连接 AI 客户端与开发工具。"
     href="/zh/docs/apps"
+  />
+  <Card
+    icon={<Puzzle />}
+    title="Skills"
+    description="在 AI 编程助手中使用和管理 New API。"
+    href="/zh/docs/skills"
+  />
+  <Card
+    icon={<Blocks />}
+    title="任务插件"
+    description="安装与开发图片、视频、音乐生成插件。"
+    href="/zh/docs/plugins"
   />
   <Card
     icon={<Headphones />}
     title="帮助支持"
-    description="常见问题解答和社区交流。"
+    description="常见问题、故障排查与社区交流。"
     href="/zh/docs/support"
   />
-  <Card
-    icon={<Handshake />}
-    title="商务合作"
-    description="与我们合作，共同开拓 AI 生态与商业机会。"
-    href="/zh/docs/business"
-  />
 </Cards>
+
+你也可以[浏览插件市场](/zh/plugins)或了解[商务合作](/zh/docs/business)。
+
+项目与生态信息请访问 [New API 官网（newapi.ai）](https://www.newapi.ai/) 或 [New API 官网（newapi.pro）](https://www.newapi.pro/)。
