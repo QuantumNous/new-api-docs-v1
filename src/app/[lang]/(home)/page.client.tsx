@@ -190,7 +190,7 @@ export function Hero({ children }: { children: ReactNode }) {
           <div className="hidden size-72 lg:block">
             {mounted && (
               <Image
-                src="/assets/newapi.png"
+                src="/assets/newapi.svg"
                 alt="logo"
                 width={288}
                 height={288}
@@ -202,6 +202,7 @@ export function Hero({ children }: { children: ReactNode }) {
                 )}
                 onLoad={() => setLogoReady(true)}
                 priority
+                unoptimized
               />
             )}
           </div>
