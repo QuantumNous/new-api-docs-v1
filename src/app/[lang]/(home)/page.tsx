@@ -241,16 +241,15 @@ export default async function Page({
       />
       <div
         aria-labelledby="home-title"
-        className="text-landing-foreground relative mx-auto flex h-[70vh] max-h-[900px] min-h-[600px] w-full max-w-[1400px] overflow-hidden rounded-2xl border bg-origin-border"
+        className="text-landing-foreground relative mx-auto flex min-h-[clamp(600px,70vh,900px)] w-full max-w-[1400px] overflow-hidden rounded-2xl border bg-origin-border"
       >
-        <Hero />
-        <div className="z-2 flex size-full flex-col px-4 max-md:items-center max-md:text-center md:p-12">
-          <p className="border-brand/50 text-brand mt-12 w-fit rounded-full border p-2 text-xs font-medium">
+        <Hero>
+          <p className="border-brand/50 text-brand w-fit rounded-full border p-2 text-xs font-medium">
             {content.badge}
           </p>
           <h1
             id="home-title"
-            className="leading-tighter my-8 text-4xl font-medium xl:mb-12 xl:text-5xl"
+            className="leading-tighter my-8 text-4xl font-medium text-balance xl:mb-12 xl:text-5xl"
           >
             {content.title}
             <br />
@@ -284,7 +283,7 @@ export default async function Page({
               AtomGit
             </a>
           </div>
-        </div>
+        </Hero>
       </div>
 
       <div className="bg-fd-card/40 mt-5 rounded-2xl border px-6 py-5 backdrop-blur-sm">

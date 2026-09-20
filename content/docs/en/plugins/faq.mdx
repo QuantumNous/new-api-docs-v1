@@ -29,7 +29,7 @@ Manual uploads and regular URL imports should not be described as having complet
 
 ## Why is `apiVersion: 1` still incompatible?
 
-API v1 may introduce `usageProfiles`, `unitLabel`, `requiredCapabilities`, or SSE capabilities. Older hosts will reject unsupported fields and capabilities, even if the version number is also 1.
+API v1 may introduce `upstreams`, `retainResult`, `openai_image`, `usageProfiles`, `unitLabel`, `requiredCapabilities`, or SSE capabilities. Older hosts will reject unsupported fields and capabilities, even if the version number is also 1.
 
 First, read the release notes, then upgrade to a host that supports these capabilities; or choose a plugin version compatible with the current host. Do not simply remove capability declarations to bypass verification.
 

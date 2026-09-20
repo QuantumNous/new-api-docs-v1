@@ -6,7 +6,7 @@ description: Manifest, context, lifecycle, native routes, host protocols, usage,
 import { Callout } from 'fumadocs-ui/components/callout';
 
 <Callout title="Contract Status and Authoritative Sources">
-  This repository marks API v1 as a contract that has not yet been officially released. New capabilities may still use `apiVersion: 1`, and older hosts may reject unrecognized fields. The following is a Chinese reference; the complete signature and validation structure are subject to
+  This repository marks API v1 as a contract that has not yet been officially released. New capabilities may still use `apiVersion: 1`, and older hosts may reject unrecognized fields. This page summarizes the contract; the complete signature and validation structure are subject to
   [v1.d.ts](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.d.ts), [v1.schema.json](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.schema.json)
   and the [original specification](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.md).
 </Callout>
@@ -28,6 +28,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `sortPriority`                  | integer              | Display sort order, larger value means higher priority; does not affect routing priority |
 | `baseUrl`                       | string               | Default upstream address usable by channel type 61                          |
 | `allowedHosts`                  | string[]             | Additional hosts allowed to access beyond channel host, can include port    |
+| `upstreams` | `("vendor" \| "new_api")[]` | Optional upstream kinds; vendor support is implied, while `new_api` enables binding to type-60 New API channels |
 | `auth`                          | string / object      | `none`, `api_key`, `vertex_oauth` or authentication object defined by specification |
 | `channelTypes`                  | number[]             | Adaptable legacy channel types; third-party plugins typically use key binding for type 61 |
 | `routes`                        | NativeRoute[]        | Plugin's own native routes                                                  |
@@ -88,6 +89,15 @@ HTTP status from upstream responses also participates in host determination: 404
 
 The query side does not have `requestBody`. The saved field name is `data`, there is no `raw` alias. If the parsing hook omits `state`, the original state is retained; it is only updated if explicitly returned. Request and state inputs should be treated as read-only and not rely on module global variables to save task data.
 
+### Upstream kinds and gateway connections
+
+`meta.upstreams` accepts unique `vendor` and `new_api` values. Every plugin implicitly supports `vendor`; `new_api` means the driver also addresses an upstream New API gateway with the same plugin installed. Type-60 channels bind plugins through `setting.task_plugin_key` / `setting.task_extend_plugin_keys`. Neither 60 nor 61 may appear in `channelTypes`, and each legacy channel type still belongs to only one plugin.
+
+The host supplies `ctx.upstream` on `DriverContext`, `TaskQueryContext`, `BatchQueryContext`, and the `buildContentRequest` context as `{ kind: "vendor" }` or `{ kind: "new_api" }`. Treat a missing field as `vendor`. For `new_api`, construct the plugin's own native paths, such as `/doubao/api/v3/...` or `/ali/api/v1/...`, instead of copying vendor paths. No prefix change is needed when the paths already match native routes or the plugin uses only host protocols.
+
+For type-60 channels, the host has already set `authHeader` to `Bearer <channel key>` and `apiKey` to the channel key; vendor OAuth/JWT authentication is not run. Submission parsers must accept the upstream plugin's native presentation, and queries use the public task ID returned by that gateway. `upstreams` is an additive API v1 extension: older hosts reject the unknown field, so upgrade the host before installation.
+
+
 ## HTTP Descriptors and Files
 
 Construction hooks return `{ url, method?, headers?, body?, ... }`, which are validated and sent by the host. JSON is the default body type, and multipart can also be constructed via `bodyType: "multipart"` and `parts`.
@@ -95,18 +105,15 @@ Construction hooks return `{ url, method?, headers?, body?, ... }`, which are va
 Inbound body is uniformly parsed by the host into the following union type:
 
 ```ts
-{
-  kind: ('json', value);
-}
-{
-  kind: ('form', fields);
-}
-{
-  kind: ('multipart', fields, files);
-}
-{
-  kind: 'none';
-}
+type RequestBody =
+  | { kind: 'json'; value: unknown }
+  | { kind: 'form'; fields: Record<string, readonly string[]> }
+  | {
+      kind: 'multipart';
+      fields: Record<string, readonly string[]>;
+      files: readonly FileReference[];
+    }
+  | { kind: 'none' };
 ```
 
 Files are referenced into JavaScript only as `{ ref, field, filename, mimeType, size }`; plugins cannot directly read file bytes. Multipart outbound uses `parts[].fileRef`; JSON outbound can embed placeholders, which the host replaces with encoded content:
@@ -117,6 +124,8 @@ Files are referenced into JavaScript only as `{ ref, field, filename, mimeType, 
 ```
 
 Placeholders can optionally have `maxBytes`; the host will still perform file size limits and total volume checks. References must not be treated as file paths.
+
+A repeated field such as `image[]` can contain several files. Each file has its own `ref`: `request_file:<field>` for the first, then `request_file:<field>#<index>` (zero-based, so the second file uses `#1`). Copy the corresponding `files[].ref` into `parts[].fileRef` or the JSON placeholder; do not construct references by hand or collapse all files in one field into a single reference.
 
 ## Native Routes and Host Protocols
 
@@ -150,6 +159,12 @@ routes: [
 
 `originTaskIds` uses public task IDs. After the host checks ownership and channel consistency, `originTasks` containing internal upstream IDs are injected into the driver; they are not passed to external renderers.
 
+### Result retention
+
+`routes[].retainResult` is an optional boolean for submit/dynamic routes, defaults to `true`, and is prohibited on query routes. Set it to `false` only when every successful submission completes immediately. An immediate terminal result does not persist `task.data`; native queries, Responses/Video retrieval, and artifact listing/content subsequently cannot find the task. The task record remains for billing and logs. The submit presenter still receives the full in-memory data, and completion usage hooks run before that data is discarded.
+
+If a route declaring `false` returns an asynchronous task, the host retains the result and logs a warning. Responses and Video always retain results. Image returns immediate terminal results inline without retaining result data; results completed by in-request polling retain the poller's snapshot. When a discarded result is referenced, `originTasks[].data` is `null`. Older hosts reject the `retainResult` field.
+
 ### Host Protocols
 
 `meta.protocols` declares protocol paths uniformly managed by the host and should not duplicate these paths in `meta.routes`:
@@ -158,6 +173,7 @@ routes: [
 | ------------------ | ------------------------------------------------------------------------------ | -------------------------------------------------- |
 | `openai_video`     | `POST /v1/videos`, `GET /v1/videos/{id}`, `GET / HEAD /v1/videos/{id}/content` | `protocols.openai_video.decodeRequest` and `render` |
 | `openai_responses` | `POST /v1/responses`, `GET /v1/responses/{id}`                                 | `decodeRequest`, and pattern-matching render hooks |
+| `openai_image` | `POST /v1/images/generations`, `POST /v1/images/edits` | `protocols.openai_image.decodeRequest` and `render` |
 
 Responses must explicitly declare `supports` as an object: `stream` requires `renderEvents`, `sync` or `background` requires `renderFinal`. Missing required hooks, or exporting hooks not used by any declared pattern, will result in rejection.
 
@@ -165,11 +181,21 @@ Decoders may execute multiple times after candidate filtering and channel select
 
 Video render must return a JSON object; the host overrides standard ID, model, status, and time fields, and preserves compliant vendor extensions. Successful results of Responses reference artifacts via `ctx.artifacts[key].url` injected by the host.
 
+### OpenAI Image protocol
+
+Declare `"openai_image"` or `{ name: "openai_image", models: [...] }` without `supports`. Like `openai_video`, it defines no request modes; both allow string claims or objects with model restrictions. Generation accepts JSON; editing accepts JSON or multipart. The host pins `ctx.model` and provides `ctx.operation: "generate" | "edit"`.
+
+Export `decodeRequest` and `render`. A synchronous upstream returns a terminal `immediate` from `parseSubmitResponse`; an asynchronous upstream returns a task ID, and the host waits within the client request using the ordinary query hooks. `TASK_PLUGIN_PROTOCOL_TIMEOUT_SECONDS` defaults to 600 seconds; a timeout returns 504 `task_timeout`. After a timeout or client disconnect, the submitted task still completes and settles through background polling. Terminal task failure returns 400 with the failure reason.
+
+On success, `render(ctx, task)` returns an object with a `data` array of `{ url }` or `{ b64_json }` entries, optionally including `revised_prompt`. The host adds `created` when absent. For `response_format: "b64_json"`, it downloads image URLs and adds Base64 while preserving the URLs; failed downloads produce a warning and leave the URLs. This hook receives no `ctx.artifacts`; image URLs come from the upstream result.
+
 ## Usage Hooks
 
 Optional exports `extractUsage`, `extractUsageOnSubmit`, and `extractUsageOnComplete` extract usage from requests, submission results, or completion results, respectively. Only facts conforming to the selected schema are returned, not prices or quotas.
 
-`usageProfiles` provides a complete schema for listed models, replacing the default definition; unmatched models use the default schema. When model mapping is involved, the runtime selects the usage definition according to the upstream model of the ultimately executed plugin. For configuration details, see [Usage and Billing](/en/docs/plugins/billing).
+`usageProfiles` supplies complete schemas and examples for its models, replacing defaults without merging or inheritance. Runtime selection first matches the final upstream model. If that name has no profile (for example, it is mapped to a vendor endpoint ID), it falls back to the client-facing model, then to the plugin defaults. Saved prices are not automatically migrated. See [Usage and Billing](/en/docs/plugins/billing).
+
+Numeric field descriptions name the billing subject and unit price, such as `Image generation unit price` / `图片生成单价`; the actual field value remains a usage quantity. Put units in `unit`, count display words in `unitLabel`, and enum display names in `enumLabels`. Action, boolean, and enum descriptions name the action, the state represented by `true`, and the condition, respectively. Keep translations equivalent, without numeric prices, protocol details, or trailing punctuation.
 
 ## Artifacts and Content Requests
 

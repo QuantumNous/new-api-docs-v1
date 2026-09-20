@@ -39,7 +39,7 @@ export const meta = {
     requests: {
       type: 'number',
       unit: 'count',
-      description: { en: 'Number of generation requests', zh: '生成请求数量' },
+      description: { en: 'Generation request unit price', zh: '生成请求单价' },
     },
   },
   usageExamples: [{ label: 'One request', facts: { requests: 1 } }],
@@ -105,7 +105,7 @@ export function extractUsage(ctx) {
 }
 ```
 
-This example submits via the generic interface `POST /v1/tasks/demo-task`, with a JSON body containing `model: "demo-model"` and `prompt`. It does not declare native routes, Video/Responses protocols, or artifact hooks, which need to be implemented as needed in actual plugins.
+This example submits via the generic interface `POST /v1/tasks/demo-task`, with a JSON body containing `model: "demo-model"` and `prompt`. It does not declare native routes, Image/Video/Responses protocols, or artifact hooks, which need to be implemented as needed in actual plugins.
 
 ## Lifecycle and Data
 
@@ -204,8 +204,9 @@ Sandbox calls only run the selected synchronous function and do not execute the 
 
 - **Batch Query**: Declare `fetchMode: "batch"` and implement batch construction and parsing hooks; each result must include the corresponding task ID.
 - **Native Interface**: Implement vendor-specific entry points via `meta.routes` and `native` decoders and renderers.
-- **Host Protocol**: Declare `meta.protocols` and implement protocol hooks for Video or Responses.
+- **Host Protocol**: Declare `meta.protocols` and implement protocol hooks for Image, Video, or Responses.
 - **Artifacts**: Implement `listArtifacts` and `buildContentRequest` in pairs.
 - **Submit-and-Complete or Upstream SSE**: Implement immediate final states, SSE snapshots, or incremental event hooks according to capability declarations.
+- **Gateway connections**: Implement vendor and New API paths, submission parsing, and querying before declaring `upstreams: ["new_api"]`; cover both `ctx.upstream.kind` values and the missing-field fallback.
 
 For detailed constraints, see [API v1 Reference](/en/docs/plugins/api-reference). When preparing for release, add versions, logs, and generate an index according to the [Publishing Specification](/en/docs/plugins/publishing).

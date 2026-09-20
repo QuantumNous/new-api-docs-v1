@@ -54,6 +54,8 @@ The same plugin can use `meta.usageProfiles` to declare its own complete schema 
 - A model can belong to at most one profile; the model name uses the declared name in `meta.models`.
 - Updating usage profiles does not automatically migrate saved billing expressions.
 
+At runtime, the upstream model profile takes precedence. If the mapped name has no profile, selection falls back to the client-facing model, then to the defaults. This also applies to background and batch polling.
+
 ## Plugin-Level Price Overrides for the Same Model
 
 Different plugins may support the same model but report different fields or incur different costs. The model price page can display each plugin provider and save billing expressions separately.
@@ -69,6 +71,12 @@ Saved overrides remain effective even if only one provider remains. When a plugi
 Estimated usage can be extracted during the submission phase, and actual usage reported during the completion phase. The host calculates and processes the difference based on the billing configuration frozen for the task; plugins must not return host quota or perform settlement themselves.
 
 Missing usage or parsing anomalies do not equate to free usage. Do not write unknown usage as zero to mask errors; plugin logs and host records should be checked. Legitimate explicit zero values, however, should be retained.
+
+## Image protocol usage
+
+`openai_image` follows the ordinary task billing contract: `extractUsage` reports the requested count. Immediate results report actual counts through `extractUsageOnSubmit` for legacy pricing; task expressions use `extractUsageOnComplete` for immediate and polled results. When facts contain `image_count`, the consume log records the billed count in `other.image_count`.
+
+Count actual images, not entries containing only text, prompts, or empty payloads. A timeout while waiting for images or a client disconnect does not cancel a submitted upstream task; it still settles on background completion. A missing create response does not mean the task was free and is not a reason to immediately resubmit it.
 
 ## Checks During Upgrade
 

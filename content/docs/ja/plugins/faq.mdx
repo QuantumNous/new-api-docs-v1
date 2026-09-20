@@ -29,7 +29,7 @@ description: タスクプラグインの権限、インポート、互換性、�
 
 ## `apiVersion: 1` なのに互換性がないのはなぜですか？
 
-API v1では、`usageProfiles`、`unitLabel`、`requiredCapabilities`、またはSSE機能が追加される可能性があります。古いホストは、バージョン番号が同じ1であっても、サポートされていないフィールドと機能を拒否します。
+API v1では、`upstreams`、`retainResult`、`openai_image`、`usageProfiles`、`unitLabel`、`requiredCapabilities`、またはSSE機能が追加される可能性があります。古いホストは、バージョン番号が同じ1であっても、サポートされていないフィールドと機能を拒否します。
 
 まずリリースログを読み、これらの機能をサポートするホストにアップグレードするか、現在のホストと互換性のあるプラグインバージョンを選択してください。検証を回避するために機能宣言を単純に削除しないでください。
 

@@ -1,6 +1,6 @@
 ---
 title: Calling Guide
-description: Submit tasks, query status, and read artifacts using your instance API key, and understand plugin native routing with Video and Responses protocols.
+description: Submit tasks, query status, and retrieve artifacts with your instance API key using native routes and Image, Video, and Responses protocols.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
@@ -87,6 +87,39 @@ curl 'https://your-newapi.example/v1/tasks/<public-task-id>/artifacts/<artifact-
 Plugins can provide vendor-style native interfaces via `meta.routes`. Use the **actual path, HTTP method, and request structure** listed in the marketplace details, still sending requests to your own New API instance and providing your instance API key.
 
 The response encapsulation for native routes is determined by the plugin; the general task response fields above cannot be directly applied to all native interfaces. Query routes are first validated for task ownership by the host; submission and dynamic routes will also check model scope based on declarations.
+
+Native paths may include a plugin prefix, such as `/doubao/api/v3/...` or `/ali/api/v1/...`; do not use the vendor path as the gateway path without checking it. For an immediate-completion route declaring `retainResult: false`, save the result from the create response. Later result queries and artifact endpoints are unavailable, while billing and task logs remain.
+
+## OpenAI Image compatible interface
+
+Plugins declaring `openai_image` can handle generation and editing for supported models. Both operations wait for results within the current request. They do not return a task handle for polling through the image protocol or declare the Responses `stream` / `sync` / `background` modes. Generation accepts JSON; editing accepts JSON or multipart, with fields determined by the plugin.
+
+```bash
+curl 'https://your-newapi.example/v1/images/generations' \
+  -H 'Authorization: Bearer <NEW_API_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "<supported-image-model>",
+    "prompt": "A kitten by the window",
+    "n": 1,
+    "response_format": "b64_json"
+  }'
+
+curl 'https://your-newapi.example/v1/images/edits' \
+  -H 'Authorization: Bearer <NEW_API_KEY>' \
+  --form-string 'model=<supported-image-model>' \
+  -F 'prompt=Combine the two reference images into an illustration' \
+  -F 'image[]=@reference-1.png' \
+  -F 'image[]=@reference-2.png'
+```
+
+Replace the model, key, and local image paths. Use repeated `image[]` fields only if the plugin and model support editing multiple images. Let curl generate the multipart Content-Type and boundary.
+
+A successful response contains `created` and `data`; image entries may include `url`, `b64_json`, and optional `revised_prompt`. For `response_format: "b64_json"`, the host attempts to download images and add Base64. A failed download may leave only the URL, which clients should handle.
+
+For asynchronous upstream tasks, the host polls within the request. Waiting beyond `TASK_PLUGIN_PROTOCOL_TIMEOUT_SECONDS` (600 seconds by default) returns 504 `task_timeout`; a failed task returns 400 with its failure reason. Disconnecting or timing out does not cancel a submitted task: background processing and settlement continue. Check task logs before retrying.
+
+Immediate terminal image results are not retained for later retrieval, so save the images from the response. Tasks completed through in-request polling retain the saved snapshot; the Image protocol itself provides no image retrieval endpoint.
 
 ## OpenAI Video Compatible Interface
 

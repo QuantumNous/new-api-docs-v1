@@ -29,6 +29,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `sortPriority`                  | integer              | 展示排序，值越大越靠前；不影响路由优先级                            |
 | `baseUrl`                       | string               | 类型 61 渠道可使用的默认上游地址                                    |
 | `allowedHosts`                  | string[]             | 渠道主机之外允许访问的额外主机，可带端口                            |
+| `upstreams` | `("vendor" \| "new_api")[]` | 可选上游类型；默认支持厂商，声明 `new_api` 才能绑定类型 60 New API 渠道 |
 | `auth`                          | string / object      | `none`、`api_key`、`vertex_oauth` 或规范定义的认证对象              |
 | `channelTypes`                  | number[]             | 可适配的旧渠道类型；第三方插件通常使用类型 61 的 key 绑定           |
 | `routes`                        | NativeRoute[]        | 插件自有原生路由                                                    |
@@ -89,6 +90,15 @@ description: {
 
 查询侧没有 `requestBody`。保存的字段名是 `data`，不存在 `raw` 别名。解析钩子省略 `state` 时保留原状态；显式返回它才更新。请求和状态输入应视为只读，不依赖模块全局变量保存任务数据。
 
+### 上游类型与网关互联
+
+`meta.upstreams` 只允许不重复的 `vendor` 和 `new_api`。所有插件默认支持 `vendor`；声明 `new_api` 表示驱动也能访问安装了同一插件的上游 New API 网关。类型 60 渠道可通过 `setting.task_plugin_key` / `setting.task_extend_plugin_keys` 绑定插件；`channelTypes` 不能声明 60 或 61，同一旧渠道类型仍只能由一个插件拥有。
+
+宿主在 `DriverContext`、`TaskQueryContext`、`BatchQueryContext` 和 `buildContentRequest` 上下文中提供 `ctx.upstream`，值为 `{ kind: "vendor" }` 或 `{ kind: "new_api" }`；字段缺失时按 `vendor` 处理。对于 `new_api`，驱动使用插件自己的原生路由，例如 `/doubao/api/v3/...`、`/ali/api/v1/...`，不能直接照搬厂商路径。已有路径与原生路由相同或只使用宿主协议时，无需添加前缀。
+
+类型 60 渠道的 `authHeader` 已由宿主设为 `Bearer <channel key>`，`apiKey` 为渠道密钥，不执行厂商的 OAuth/JWT 认证流程。提交解析器需要接受上游插件原生呈现器的响应，查询使用上游网关返回的公开任务 ID。`upstreams` 是 API v1 的增量扩展，旧宿主会拒绝未知字段，安装前应先升级宿主。
+
+
 ## HTTP 描述符与文件
 
 构造钩子返回 `{ url, method?, headers?, body?, ... }`，由宿主验证和发送。JSON 是默认 body 类型，也可通过 `bodyType: "multipart"` 与 `parts` 构造 multipart。
@@ -96,18 +106,15 @@ description: {
 入站 body 由宿主统一解析为以下联合类型：
 
 ```ts
-{
-  kind: ('json', value);
-}
-{
-  kind: ('form', fields);
-}
-{
-  kind: ('multipart', fields, files);
-}
-{
-  kind: 'none';
-}
+type RequestBody =
+  | { kind: 'json'; value: unknown }
+  | { kind: 'form'; fields: Record<string, readonly string[]> }
+  | {
+      kind: 'multipart';
+      fields: Record<string, readonly string[]>;
+      files: readonly FileReference[];
+    }
+  | { kind: 'none' };
 ```
 
 文件只以 `{ ref, field, filename, mimeType, size }` 引用进入 JavaScript，插件无法直接读取文件字节。multipart 出站使用 `parts[].fileRef`；JSON 出站可嵌入占位符，由宿主替换为编码内容：
@@ -118,6 +125,8 @@ description: {
 ```
 
 占位符可选 `maxBytes`，宿主仍会执行文件大小上限和总量检查。不得把引用当作文件路径。
+
+同一字段可以上传多个文件，例如 `image[]`。每个文件都有独立的 `ref`：首个为 `request_file:<field>`，后续为 `request_file:<field>#<index>`（索引从 0 开始，第二个文件为 `#1`）。在 `parts[].fileRef` 或 JSON 占位符中直接使用对应的 `files[].ref`，不要自行拼接或把同字段的多个文件合并成一个引用。
 
 ## 原生路由与宿主协议
 
@@ -151,6 +160,12 @@ routes: [
 
 `originTaskIds` 使用公开任务 ID，宿主检查所有权与渠道一致性后，将包含内部上游 ID 的 `originTasks` 注入 driver；不会把它交给对外呈现器。
 
+### 结果保留
+
+`routes[].retainResult` 是 submit/dynamic 路由可选的布尔字段，默认 `true`，query 路由禁止声明。只有所有成功提交都会立即完成的接口才应设置 `false`。即时终态结果不保存 `task.data`，后续原生查询、Responses/Video 查询及产物列表和内容接口均找不到该任务；任务记录仍保留用于计费与日志。提交呈现器仍能读取完整内存数据，完成用量钩子也在丢弃数据前执行。
+
+若声明 `false` 的路由实际返回异步任务，宿主仍保留结果并记录警告。Responses 和 Video 协议始终保留结果；Image 协议的即时终态结果直接随创建响应返回，不保留结果数据，通过请求内轮询完成的结果则保留轮询快照。引用已丢弃结果的任务时，`originTasks[].data` 为 `null`。旧宿主会拒绝 `retainResult` 字段。
+
 ### 宿主协议
 
 `meta.protocols` 声明使用宿主统一管理的协议路径，不应复制这些路径到 `meta.routes`：
@@ -159,6 +174,7 @@ routes: [
 | ------------------ | ------------------------------------------------------------------------------ | -------------------------------------------------- |
 | `openai_video`     | `POST /v1/videos`、`GET /v1/videos/{id}`、`GET / HEAD /v1/videos/{id}/content` | `protocols.openai_video.decodeRequest` 与 `render` |
 | `openai_responses` | `POST /v1/responses`、`GET /v1/responses/{id}`                                 | `decodeRequest`，以及与模式匹配的渲染钩子          |
+| `openai_image` | `POST /v1/images/generations`、`POST /v1/images/edits` | `protocols.openai_image.decodeRequest` 与 `render` |
 
 Responses 必须以对象形式明确声明 `supports`：`stream` 要求 `renderEvents`，`sync` 或 `background` 要求 `renderFinal`。缺少所需钩子，或导出没有任何声明模式使用的钩子，都会被拒绝。
 
@@ -166,11 +182,21 @@ Responses 必须以对象形式明确声明 `supports`：`stream` 要求 `render
 
 Video render 必须返回 JSON 对象；宿主覆盖标准 ID、模型、状态与时间字段，并保留符合规则的厂商扩展。Responses 的成功结果通过宿主注入的 `ctx.artifacts[key].url` 引用产物。
 
+### OpenAI Image 协议
+
+使用 `"openai_image"` 或 `{ name: "openai_image", models: [...] }` 声明，不设置 `supports`。它与 `openai_video` 一样没有请求模式；两者都可使用字符串或带模型范围的对象声明。图片生成接收 JSON，编辑接收 JSON 或 multipart。宿主固定 `ctx.model`，并提供 `ctx.operation: "generate" | "edit"`。
+
+插件导出 `decodeRequest` 和 `render`。同步上游通过 `parseSubmitResponse` 返回 `immediate` 终态；异步上游返回任务 ID，由宿主在当前客户端请求中使用普通查询钩子等待完成。超时由 `TASK_PLUGIN_PROTOCOL_TIMEOUT_SECONDS` 控制，默认 600 秒，返回 504 `task_timeout`；客户端断开或等待超时后，已提交任务仍由后台轮询完成并结算。任务终态失败返回 400 和失败原因。
+
+成功时 `render(ctx, task)` 返回含 `data` 数组的对象，每项为 `{ url }` 或 `{ b64_json }`，可带 `revised_prompt`。宿主在缺失时补充 `created`。请求 `response_format: "b64_json"` 时，宿主下载图片 URL 并补充 Base64，保留原 URL；下载失败时记录警告并保留 URL。此钩子不接收 `ctx.artifacts`，图片地址来自上游结果。
+
 ## 用量钩子
 
 可选导出 `extractUsage`、`extractUsageOnSubmit` 和 `extractUsageOnComplete`，分别从请求、提交结果或完成结果中提取用量。只返回符合所选 schema 的事实，不返回价格或 quota。
 
-`usageProfiles` 为所列模型提供完整 schema，替代默认定义；未匹配模型使用默认 schema。涉及模型映射时，运行时按照最终执行插件的上游模型选择用量定义。配置说明见[用量与计费](/zh/docs/plugins/billing)。
+`usageProfiles` 为所列模型提供完整 schema 和示例，替代默认定义，不合并或继承。运行时先匹配最终上游模型；若上游名称没有 profile（例如被映射为厂商端点 ID），回退到客户端模型的 profile；两者均不匹配时使用插件默认定义。更新 profile 不会自动迁移已保存的计费表达式。配置说明见[用量与计费](/zh/docs/plugins/billing)。
+
+数值字段的 `description` 用“计费对象 + 单价”命名，例如 `Image generation unit price` / `图片生成单价`；实际字段值仍是用量。单位放在 `unit`，计数显示词放在 `unitLabel`，枚举显示词放在 `enumLabels`。动作、布尔和枚举说明分别描述动作、`true` 对应状态和条件；译文等义，不含数字价格、协议细节或句末标点。
 
 ## 产物与内容请求
 

@@ -38,7 +38,7 @@ export const meta = {
     requests: {
       type: 'number',
       unit: 'count',
-      description: { en: 'Number of generation requests', zh: '生成请求数量' },
+      description: { en: 'Generation request unit price', zh: '生成请求单价' },
     },
   },
   usageExamples: [{ label: 'One request', facts: { requests: 1 } }],
@@ -104,7 +104,7 @@ export function extractUsage(ctx) {
 }
 ```
 
-この例は、汎用インターフェース `POST /v1/tasks/demo-task` を介して送信され、JSONボディには `model: "demo-model"` と `prompt` が含まれます。ネイティブルート、Video/Responses プロトコル、または成果物フックは宣言されていません。これらの機能は、実際のプラグインで必要に応じて実装されます。
+この例は、汎用インターフェース `POST /v1/tasks/demo-task` を介して送信され、JSONボディには `model: "demo-model"` と `prompt` が含まれます。ネイティブルート、Image/Video/Responses プロトコル、または成果物フックは宣言されていません。これらの機能は、実際のプラグインで必要に応じて実装されます。
 
 ## ライフサイクルとデータ
 
@@ -203,8 +203,9 @@ Rootは、インストール済みのプラグイン詳細の「サンドボッ�
 
 - **バッチクエリ**：`fetchMode: "batch"` を宣言し、バッチ構築および解析フックを実装します。各結果には対応するタスクIDを含める必要があります。
 - **ネイティブインターフェース**：`meta.routes` と `native` デコーダー、レンダラーを介してベンダー固有のエントリポイントを実装します。
-- **ホストプロトコル**：`meta.protocols` を宣言し、Video または Responses のプロトコルフックを実装します。
+- **ホストプロトコル**：`meta.protocols` を宣言し、Image、Video、Responses のプロトコルフックを実装します。
 - **成果物**：`listArtifacts` と `buildContentRequest` をペアで実装します。
 - **即時完了またはアップストリームSSE**：機能宣言に従って、即時最終状態、SSEスナップショット、または増分イベントフックを実装します。
+- **ゲートウェイ間接続**：ベンダーと New API のパス、送信結果解析、照会を実装してから `upstreams: ["new_api"]` を宣言します。`ctx.upstream.kind` の両方の値と、フィールドがない場合のフォールバックを検証します。
 
 詳細な制約については、[API v1 リファレンス](/ja/docs/plugins/api-reference)を参照してください。公開準備の際には、[公開仕様](/ja/docs/plugins/publishing)に従ってバージョン、ログを追加し、インデックスを生成してください。

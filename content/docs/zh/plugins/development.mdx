@@ -39,7 +39,7 @@ export const meta = {
     requests: {
       type: 'number',
       unit: 'count',
-      description: { en: 'Number of generation requests', zh: '生成请求数量' },
+      description: { en: 'Generation request unit price', zh: '生成请求单价' },
     },
   },
   usageExamples: [{ label: 'One request', facts: { requests: 1 } }],
@@ -105,7 +105,7 @@ export function extractUsage(ctx) {
 }
 ```
 
-此示例通过通用接口 `POST /v1/tasks/demo-task` 提交，JSON body 包含 `model: "demo-model"` 和 `prompt`。它没有声明原生路由、Video/Responses 协议或产物钩子，这些能力需要在实际插件中按需实现。
+此示例通过通用接口 `POST /v1/tasks/demo-task` 提交，JSON body 包含 `model: "demo-model"` 和 `prompt`。它没有声明原生路由、Image/Video/Responses 协议或产物钩子，这些能力需要在实际插件中按需实现。
 
 ## 生命周期与数据
 
@@ -204,8 +204,9 @@ Root 可以在已安装插件详情的「沙盒」（Sandbox）中选择钩子�
 
 - **批量查询**：声明 `fetchMode: "batch"` 并实现批量构造和解析钩子；每项结果必须带对应任务 ID。
 - **原生接口**：通过 `meta.routes` 和 `native` 解码器、呈现器实现厂商风格的入口。
-- **宿主协议**：声明 `meta.protocols`，为 Video 或 Responses 实现协议钩子。
+- **宿主协议**：声明 `meta.protocols`，为 Image、Video 或 Responses 实现协议钩子。
 - **产物**：成对实现 `listArtifacts` 和 `buildContentRequest`。
 - **提交即完成或上游 SSE**：按能力声明实现即时终态、SSE 快照或增量事件钩子。
+- **网关互联**：实现厂商与 New API 上游路径、提交解析和查询后，再声明 `upstreams: ["new_api"]`；覆盖 `ctx.upstream.kind` 的两种取值和缺失字段回退。
 
 详细约束见 [API v1 参考](/zh/docs/plugins/api-reference)。准备发布时，按[发布规范](/zh/docs/plugins/publishing)添加版本、日志并生成索引。

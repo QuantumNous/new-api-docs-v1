@@ -29,7 +29,7 @@ description: 排查任务插件的权限、导入、兼容、路由、渠道、�
 
 ## `apiVersion: 1` 为什么仍然不兼容？
 
-API v1 中可能增加 `usageProfiles`、`unitLabel`、`requiredCapabilities` 或 SSE 能力。旧宿主会拒绝不支持的字段和能力，即使版本号同为 1。
+API v1 中可能增加 `upstreams`、`retainResult`、`openai_image`、`usageProfiles`、`unitLabel`、`requiredCapabilities` 或 SSE 能力。旧宿主会拒绝不支持的字段和能力，即使版本号同为 1。
 
 先阅读发布日志，再升级到支持这些能力的宿主；或者选用与当前宿主兼容的插件版本。不要简单删除能力声明来绕过校验。
 

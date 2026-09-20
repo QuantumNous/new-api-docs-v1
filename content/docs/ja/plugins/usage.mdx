@@ -1,6 +1,6 @@
 ---
 title: 呼び出しガイド
-description: インスタンスのAPIキーを使用してタスクを送信し、ステータスを照会し、アーティファクトを読み取る方法、およびプラグインのネイティブルーティングとVideo、Responsesプロトコルについて学びます。
+description: インスタンスの API キーでタスク送信、状態照会、成果物取得を行い、ネイティブルートと Image、Video、Responses プロトコルを利用します。
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
@@ -87,6 +87,39 @@ curl 'https://your-newapi.example/v1/tasks/<public-task-id>/artifacts/<artifact-
 プラグインは `meta.routes` を介してベンダー形式のネイティブインターフェースを提供できます。マーケット詳細に記載されている**実際のパス、HTTPメソッド、リクエスト構造**を使用し、引き続き自身のNew APIインスタンスにリクエストを送信し、インスタンスAPIキーを提供します。
 
 ネイティブルーティングの応答のラッピングはプラグインによって決定されるため、上記の共通タスク応答フィールドをすべてのネイティブインターフェースに直接適用することはできません。照会ルーティングは、ホストが最初にタスクの所有権を検証します。送信および動的ルーティングは、宣言に基づいてモデル範囲もチェックします。
+
+ネイティブパスには `/doubao/api/v3/...` や `/ali/api/v1/...` のようなプラグイン固有のプレフィックスが含まれる場合があります。ベンダーのパスを確認せずそのままゲートウェイに使わないでください。`retainResult: false` を宣言する即時完了ルートでは作成応答の結果を保存します。その後の結果照会や成果物取得は利用できませんが、課金とタスクログは残ります。
+
+## OpenAI Image 互換インターフェース
+
+`openai_image` を宣言するプラグインは対応モデルの画像生成と編集を処理できます。どちらも現在のリクエスト内で結果を待ち、画像プロトコルでポーリングするためのタスクハンドルは返しません。Responses の `stream` / `sync` / `background` モードも宣言しません。生成は JSON、編集は JSON または multipart を使い、具体的なフィールドはプラグインによって決まります。
+
+```bash
+curl 'https://your-newapi.example/v1/images/generations' \
+  -H 'Authorization: Bearer <NEW_API_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "<supported-image-model>",
+    "prompt": "窓辺にいる子猫",
+    "n": 1,
+    "response_format": "b64_json"
+  }'
+
+curl 'https://your-newapi.example/v1/images/edits' \
+  -H 'Authorization: Bearer <NEW_API_KEY>' \
+  --form-string 'model=<supported-image-model>' \
+  -F 'prompt=2 枚の参照画像を組み合わせてイラストを作成' \
+  -F 'image[]=@reference-1.png' \
+  -F 'image[]=@reference-2.png'
+```
+
+モデル名、キー、ローカル画像のパスを置き換えてください。繰り返しの `image[]` はプラグインとモデルが複数画像の編集に対応する場合にのみ使用します。multipart の Content-Type と boundary は curl に生成させます。
+
+成功応答には `created` と `data` が含まれ、画像要素は `url`、`b64_json`、任意の `revised_prompt` を持ちます。`response_format: "b64_json"` ではホストが画像を取得して Base64 を追加します。取得失敗時には URL のみが残る場合もあるため、クライアント側で対応してください。
+
+上流が非同期の場合、ホストがリクエスト内でポーリングします。`TASK_PLUGIN_PROTOCOL_TIMEOUT_SECONDS`（既定 600 秒）を超えると 504 `task_timeout`、タスク失敗時は理由とともに 400 を返します。切断やタイムアウトで送信済みタスクは取り消されず、バックグラウンド処理と精算が続きます。再送前にタスクログを確認してください。
+
+即時終端の画像結果は後から取得するために保持されないので、応答から画像を保存してください。リクエスト内のポーリングで完了したタスクは保存済みスナップショットを保持しますが、Image プロトコル自体には画像照会エンドポイントはありません。
 
 ## OpenAI Video互換インターフェース
 

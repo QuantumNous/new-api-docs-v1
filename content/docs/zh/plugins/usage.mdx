@@ -1,6 +1,6 @@
 ---
 title: 调用指南
-description: 使用实例 API 密钥提交任务、查询状态和读取产物，了解插件原生路由与 Video、Responses 协议。
+description: 使用实例 API 密钥提交任务、查询状态和读取产物，了解插件原生路由与 Image、Video、Responses 协议。
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
@@ -88,6 +88,39 @@ curl 'https://your-newapi.example/v1/tasks/<public-task-id>/artifacts/<artifact-
 插件可通过 `meta.routes` 提供厂商风格的原生接口。使用市场详情列出的**实际路径、HTTP 方法和请求结构**，仍然向自己的 New API 实例发送请求并提供实例 API 密钥。
 
 原生路由的响应封装由插件决定，不能把上面的通用任务响应字段直接套用到所有原生接口。查询路由由宿主先验证任务所有权；提交和动态路由还会根据声明检查模型范围。
+
+原生路径可能包含插件前缀，例如 `/doubao/api/v3/...` 或 `/ali/api/v1/...`，不能把厂商原始路径直接当作网关路径。对于声明 `retainResult: false` 的即时完成路由，请保存创建响应中的结果；后续结果查询和产物接口不可用，计费与任务日志仍会保留。
+
+## OpenAI Image 兼容接口
+
+声明 `openai_image` 的插件可接管支持模型的图片生成与编辑。两种操作都在当前请求中等待结果，不返回供图片协议轮询的任务句柄，也不声明 Responses 的 `stream` / `sync` / `background` 模式。生成使用 JSON；编辑可使用 JSON 或 multipart，具体字段由插件决定。
+
+```bash
+curl 'https://your-newapi.example/v1/images/generations' \
+  -H 'Authorization: Bearer <NEW_API_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "<supported-image-model>",
+    "prompt": "窗边的一只小猫",
+    "n": 1,
+    "response_format": "b64_json"
+  }'
+
+curl 'https://your-newapi.example/v1/images/edits' \
+  -H 'Authorization: Bearer <NEW_API_KEY>' \
+  --form-string 'model=<supported-image-model>' \
+  -F 'prompt=将两张参考图片组合成一幅插画' \
+  -F 'image[]=@reference-1.png' \
+  -F 'image[]=@reference-2.png'
+```
+
+替换模型名、密钥和本地图片路径；只有插件和模型支持多图编辑时，才使用重复的 `image[]`。不要手动设置 multipart 的 Content-Type，curl 会生成正确的 boundary。
+
+成功响应包含 `created` 和 `data`，图片条目可含 `url`、`b64_json` 和可选 `revised_prompt`。请求 `response_format: "b64_json"` 时，宿主会尝试下载并补充 Base64；下载失败时可能只保留 URL，调用方应处理这种情况。
+
+上游是异步任务时，宿主在请求内轮询。等待超过 `TASK_PLUGIN_PROTOCOL_TIMEOUT_SECONDS`（默认 600 秒）返回 504 `task_timeout`；任务失败返回 400 和失败原因。客户端断开或等待超时不会取消已提交任务，后台仍继续处理和结算，重试前应先核对任务日志。
+
+即时终态图片结果不会保留用于后续查询，应保存本次响应中的图片。通过请求内轮询完成的任务保留轮询快照；Image 协议本身没有图片查询端点。
 
 ## OpenAI Video 兼容接口
 

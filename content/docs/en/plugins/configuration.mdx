@@ -19,6 +19,12 @@ Channels are bound to plugins via `setting.task_plugin_key`. The plugin must be 
 
 Plugin management is performed by Root; administrators binding plugin channels require `task_plugin:bind` permission and corresponding channel management permissions.
 
+## Connecting to another New API gateway
+
+When the upstream is also New API, select **New API (Type 60)**, enter the upstream gateway URL and its API key, and bind plugins supporting the `new_api` upstream kind. Both gateways must have the same plugin installed and enabled, with versions supporting the required contract. A plugin cannot bind to this channel unless `meta.upstreams` declares `new_api`.
+
+Type 60 supports multiple plugins through `setting.task_extend_plugin_keys` and also accepts `setting.task_plugin_key`. If several bound plugins support a model, the first eligible candidate in ascending plugin-key order executes. The host sends the upstream gateway key as Bearer credentials; the plugin constructs its native paths according to `ctx.upstream.kind`. Vendor API keys or OAuth credentials are not upstream gateway keys.
+
 ## Meaning of Base URL
 
 **The Base URL is the upstream service address, not the download address for `plugin.js`.** The installation address is used for importing code, while the channel address is used for actually initiating generation requests.
@@ -53,6 +59,8 @@ If channel model mapping is used, the plugin will receive two model identifiers:
 - `ctx.upstreamModel`: The mapped upstream model name. This value is used when requesting upstream and selecting model usage configuration; if not mapped, it is consistent with the original model.
 
 When developing plugins, `ctx.upstreamModel || ctx.model` is typically used to construct the upstream body. You should not arbitrarily change the top-level `model` in the request descriptor to the upstream name.
+
+Usage profile selection first checks `ctx.upstreamModel`, falls back to `ctx.model` if the upstream name has no profile, and uses the plugin default schema only if neither matches. Mapping a model to a vendor endpoint ID therefore preserves its client-facing usage profile.
 
 ## Existing Channel Types and Shared Models
 

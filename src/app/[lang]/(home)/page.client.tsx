@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
@@ -87,7 +87,7 @@ function detectShaderProfile(): ShaderProfile {
   };
 }
 
-export function Hero() {
+export function Hero({ children }: { children: ReactNode }) {
   const { resolvedTheme } = useTheme();
   const [showShaders, setShowShaders] = useState(false);
   const [imageReady, setImageReady] = useState(false);
@@ -182,49 +182,54 @@ export function Hero() {
         />
       )}
 
-      {/* Logo */}
-      {mounted && (
-        <div
-          className={cn(
-            'absolute hidden lg:top-[10%] lg:right-[10%] lg:block',
-            logoReady
-              ? 'animate-in fade-in zoom-in-95 duration-700'
-              : 'invisible'
-          )}
-        >
-          <Image
-            src="/assets/newapi.svg"
-            alt="logo"
-            width={288}
-            height={288}
-            className="size-32 drop-shadow-2xl sm:size-40 md:size-56 lg:size-72"
-            onLoad={() => setLogoReady(true)}
-            priority
-          />
+      <div className="relative z-2 flex w-full flex-col">
+        <div className="grid items-center gap-8 px-4 pt-12 md:px-12 md:pt-24 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-12">
+          <div className="flex min-w-0 flex-col max-md:items-center max-md:text-center">
+            {children}
+          </div>
+          <div className="hidden size-72 lg:block">
+            {mounted && (
+              <Image
+                src="/assets/newapi.png"
+                alt="logo"
+                width={288}
+                height={288}
+                className={cn(
+                  'size-72 drop-shadow-2xl',
+                  logoReady
+                    ? 'animate-in fade-in zoom-in-95 duration-700'
+                    : 'invisible'
+                )}
+                onLoad={() => setLogoReady(true)}
+                priority
+              />
+            )}
+          </div>
         </div>
-      )}
 
-      {mounted && (
-        <Image
-          src={
-            resolvedTheme === 'dark'
-              ? '/assets/dashboard-dark.png'
-              : '/assets/dashboard-light.png'
-          }
-          alt="dashboard-preview"
-          width={1200}
-          height={800}
-          className={cn(
-            'absolute top-[460px] left-[20%] max-w-[1200px] rounded-xl border-2',
-            'lg:top-[400px]',
-            imageReady ? 'animate-in fade-in duration-400' : 'invisible'
+        <div className="relative mt-12 min-h-[240px] flex-1">
+          {mounted && (
+            <Image
+              src={
+                resolvedTheme === 'dark'
+                  ? '/assets/dashboard-dark.png'
+                  : '/assets/dashboard-light.png'
+              }
+              alt="dashboard-preview"
+              width={1200}
+              height={800}
+              className={cn(
+                'absolute top-0 left-[20%] max-w-[1200px] rounded-xl border-2',
+                imageReady ? 'animate-in fade-in duration-400' : 'invisible'
+              )}
+              onLoad={() => setImageReady(true)}
+              loading="lazy"
+              fetchPriority="low"
+              sizes="(min-width: 1024px) 1200px, 100vw"
+            />
           )}
-          onLoad={() => setImageReady(true)}
-          loading="lazy"
-          fetchPriority="low"
-          sizes="(min-width: 1024px) 1200px, 100vw"
-        />
-      )}
+        </div>
+      </div>
     </>
   );
 }

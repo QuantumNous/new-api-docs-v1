@@ -28,6 +28,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `sortPriority`                  | integer              | 表示順序、値が大きいほど上位；ルーティングの優先順位には影響しない                            |
 | `baseUrl`                       | string               | タイプ61チャネルが使用できるデフォルトのアップストリームアドレス                                |
 | `allowedHosts`                  | string[]             | チャネルホスト以外にアクセスを許可する追加ホスト、ポート指定可能                            |
+| `upstreams` | `("vendor" \| "new_api")[]` | 任意の上流種別。vendor は暗黙に対応し、`new_api` の宣言によりタイプ 60 の New API チャネルに紐付け可能 |
 | `auth`                          | string / object      | `none`、`api_key`、`vertex_oauth` または仕様で定義された認証オブジェクト              |
 | `channelTypes`                  | number[]             | 適応可能な古いチャネルタイプ；サードパーティプラグインは通常、タイプ61のキーバインディングを使用           |
 | `routes`                        | NativeRoute[]        | プラグイン独自のネイティブルート                                                    |
@@ -88,6 +89,15 @@ description: {
 
 クエリ側には `requestBody` がありません。保存されるフィールド名は `data` であり、`raw` エイリアスは存在しません。解析フックが `state` を省略した場合、元の状態が保持されます。明示的に返された場合にのみ更新されます。リクエストとステータス入力は読み取り専用と見なすべきであり、モジュールグローバル変数にタスクデータを保存することに依存すべきではありません。
 
+### 上流種別とゲートウェイ間接続
+
+`meta.upstreams` には重複しない `vendor` と `new_api` を指定できます。すべてのプラグインは暗黙に `vendor` に対応し、`new_api` は同じプラグインを導入した上流 New API ゲートウェイへの対応を示します。タイプ 60 は `setting.task_plugin_key` / `setting.task_extend_plugin_keys` でプラグインを紐付けます。`channelTypes` に 60 と 61 は指定できず、各従来型チャネルの所有権は引き続き単一プラグインに限られます。
+
+ホストは `DriverContext`、`TaskQueryContext`、`BatchQueryContext`、`buildContentRequest` のコンテキストに `{ kind: "vendor" }` または `{ kind: "new_api" }` の `ctx.upstream` を渡します。フィールドがない場合は `vendor` として扱います。`new_api` ではベンダーのパスをそのまま使わず、`/doubao/api/v3/...` や `/ali/api/v1/...` など、プラグイン自身のネイティブパスを構築します。既にパスが一致する場合やホストプロトコルのみを使う場合、プレフィックスの変更は不要です。
+
+タイプ 60 では、ホストが `authHeader` を `Bearer <channel key>`、`apiKey` をチャネルキーに設定済みで、ベンダーの OAuth/JWT 認証処理は実行しません。送信結果の解析は上流プラグインのネイティブ応答に対応し、照会にはそのゲートウェイが返す公開タスク ID を使います。`upstreams` は API v1 の追加拡張です。古いホストは未知のフィールドを拒否するため、導入前にホストを更新してください。
+
+
 ## HTTP記述子とファイル
 
 構築フックは `{ url, method?, headers?, body?, ... }` を返し、ホストによって検証および送信されます。JSONはデフォルトのボディタイプですが、`bodyType: "multipart"` と `parts` を使用してマルチパートを構築することもできます。
@@ -95,18 +105,15 @@ description: {
 インバウンドボディはホストによって以下の結合型に統一的に解析されます。
 
 ```ts
-{
-  kind: ('json', value);
-}
-{
-  kind: ('form', fields);
-}
-{
-  kind: ('multipart', fields, files);
-}
-{
-  kind: 'none';
-}
+type RequestBody =
+  | { kind: 'json'; value: unknown }
+  | { kind: 'form'; fields: Record<string, readonly string[]> }
+  | {
+      kind: 'multipart';
+      fields: Record<string, readonly string[]>;
+      files: readonly FileReference[];
+    }
+  | { kind: 'none' };
 ```
 
 ファイルは `{ ref, field, filename, mimeType, size }` としてのみJavaScriptに参照として渡され、プラグインはファイルのバイトを直接読み取ることはできません。マルチパートのアウトバウンドでは `parts[].fileRef` を使用します。JSONのアウトバウンドではプレースホルダーを埋め込むことができ、ホストによってエンコードされたコンテンツに置き換えられます。
@@ -117,6 +124,8 @@ description: {
 ```
 
 プレースホルダーはオプションで `maxBytes` を指定できます。ホストは引き続きファイルサイズの上限と総量チェックを実行します。参照をファイルパスとして扱うことはできません。
+
+同じフィールド（例：`image[]`）に複数のファイルを送信できます。各ファイルの `ref` は独立しており、最初は `request_file:<field>`、以降は `request_file:<field>#<index>` です（0 起点なので 2 番目は `#1`）。`parts[].fileRef` や JSON プレースホルダーには対応する `files[].ref` をそのまま使い、手作業で参照を組み立てたり、同じフィールドの複数ファイルを一つの参照にまとめたりしないでください。
 
 ## ネイティブルートとホストプロトコル
 
@@ -150,6 +159,12 @@ routes: [
 
 `originTaskIds`は公開タスクIDを使用します。ホストは所有権とチャネルの一貫性をチェックした後、内部アップストリームIDを含む `originTasks` をドライバーに注入します。これは外部レンダラーには渡されません。
 
+### 結果の保持
+
+`routes[].retainResult` は submit/dynamic ルートの任意の真偽値で、既定値は `true` です。query ルートには指定できません。成功する送信がすべて即時完了する場合のみ `false` にします。即時終端結果では `task.data` を永続化せず、その後のネイティブ照会、Responses/Video 取得、成果物一覧・コンテンツ取得ではタスクが見つかりません。課金とログ用のタスク記録は残り、送信プレゼンターはメモリ内の完全なデータを受け取ります。完了時の使用量フックもデータ破棄前に実行されます。
+
+`false` を宣言したルートが非同期タスクを返した場合、ホストは結果を保持して警告を記録します。Responses と Video は常に結果を保持します。Image の即時終端結果は作成応答に直接含まれ、結果データは保持されませんが、リクエスト内のポーリングで完了した結果は保存済みスナップショットを保持します。破棄済み結果を参照する場合、`originTasks[].data` は `null` です。古いホストは `retainResult` を拒否します。
+
 ### ホストプロトコル
 
 `meta.protocols`はホストによって一元管理されるプロトコルパスを宣言します。これらのパスを `meta.routes` にコピーすべきではありません。
@@ -158,6 +173,7 @@ routes: [
 | ------------------ | ------------------------------------------------------------------------------ | -------------------------------------------------- |
 | `openai_video`     | `POST /v1/videos`、`GET /v1/videos/{id}`、`GET / HEAD /v1/videos/{id}/content` | `protocols.openai_video.decodeRequest` と `render` |
 | `openai_responses` | `POST /v1/responses`、`GET /v1/responses/{id}`                                 | `decodeRequest`、およびパターンにマッチするレンダリングフック          |
+| `openai_image` | `POST /v1/images/generations`、`POST /v1/images/edits` | `protocols.openai_image.decodeRequest` と `render` |
 
 Responsesは、オブジェクト形式で `supports` を明示的に宣言する必要があります。`stream` は `renderEvents` を要求し、`sync` または `background` は `renderFinal` を要求します。必要なフックが不足している場合、または宣言されたパターンで使用されていないフックをエクスポートしている場合、いずれも拒否されます。
 
@@ -165,11 +181,21 @@ Responsesは、オブジェクト形式で `supports` を明示的に宣言す�
 
 ビデオレンダラーはJSONオブジェクトを返す必要があります。ホストは標準のID、モデル、ステータス、時間フィールドを上書きし、ルールに準拠するベンダー拡張を保持します。Responsesの成功結果は、ホストが注入する `ctx.artifacts[key].url` を介して成果物を参照します。
 
+### OpenAI Image プロトコル
+
+`"openai_image"` または `{ name: "openai_image", models: [...] }` を宣言し、`supports` は指定しません。`openai_video` と同様にリクエストモードはなく、どちらも文字列またはモデル制限付きのオブジェクトで宣言できます。生成は JSON、編集は JSON または multipart を受け付けます。ホストは `ctx.model` を固定し、`ctx.operation: "generate" | "edit"` を渡します。
+
+`decodeRequest` と `render` を実装します。同期上流は `parseSubmitResponse` から終端の `immediate` を返します。非同期上流はタスク ID を返し、ホストがクライアントのリクエスト内で通常の照会フックを使って完了を待ちます。`TASK_PLUGIN_PROTOCOL_TIMEOUT_SECONDS` の既定値は 600 秒で、超過すると 504 `task_timeout` を返します。タイムアウトやクライアント切断後も、送信済みタスクはバックグラウンドで完了・精算されます。終端失敗は理由とともに 400 を返します。
+
+成功時の `render(ctx, task)` は `data` 配列を持つオブジェクトを返します。各要素は `{ url }` または `{ b64_json }` で、`revised_prompt` を追加できます。ホストは未指定の `created` を補います。`response_format: "b64_json"` では画像 URL を取得して Base64 を追加し、元の URL も保持します。取得に失敗した場合は警告を記録し、URL を残します。このフックに `ctx.artifacts` は渡されず、画像 URL は上流結果から取得します。
+
 ## 使用量フック
 
 オプションで `extractUsage`、`extractUsageOnSubmit`、および `extractUsageOnComplete` をエクスポートできます。これらはそれぞれ、リクエスト、送信結果、または完了結果から使用量を抽出します。選択されたスキーマに合致する事実のみを返し、価格やクォータは返しません。
 
-`usageProfiles`は、リストされたモデルに完全なスキーマを提供し、デフォルトの定義を置き換えます。一致しないモデルはデフォルトのスキーマを使用します。モデルマッピングが関与する場合、実行時には最終的に実行されるプラグインのアップストリームモデルに従って使用量定義が選択されます。設定については、[使用量と課金](/ja/docs/plugins/billing)を参照してください。
+`usageProfiles` はモデルごとの完全なスキーマと例を提供し、既定値とのマージや継承は行いません。実行時は最終的な上流モデルを優先します。その名前に profile がない場合（ベンダーのエンドポイント ID にマッピングされた場合など）はクライアント側モデルに、さらにプラグインの既定値にフォールバックします。保存済み価格は自動移行されません。詳しくは[使用量と課金](/ja/docs/plugins/billing)を参照してください。
+
+数値フィールドの `description` は課金対象と単価を表す名称（例：`Image generation unit price` / `图片生成单价`）にします。実際の値は引き続き使用量です。単位は `unit`、個数の表示単位は `unitLabel`、列挙値の表示名は `enumLabels` に入れます。動作・真偽値・列挙型の説明はそれぞれ動作、`true` が表す状態、条件を示します。翻訳は同じ意味とし、具体的な価格、プロトコルの詳細、文末の句読点を含めません。
 
 ## 成果物とコンテンツリクエスト
 
