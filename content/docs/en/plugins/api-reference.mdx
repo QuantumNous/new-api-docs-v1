@@ -89,6 +89,16 @@ HTTP status from upstream responses also participates in host determination: 404
 
 The query side does not have `requestBody`. The saved field name is `data`, there is no `raw` alias. If the parsing hook omits `state`, the original state is retained; it is only updated if explicitly returned. Request and state inputs should be treated as read-only and not rely on module global variables to save task data.
 
+### Hook arguments and results
+
+Treat all hook arguments as read-only, including nested objects and arrays. Plain JSON inputs are passed without copying and converted when first read; other values are normalized through the host JSON codec. Assignments inside a hook affect only that call's view. Return the value the host should use, and declare `json-clone@1` to use `utils.json.clone(value)` when a mutable, independent copy is needed.
+
+Never keep arguments or their nested values in module variables after a hook returns. Runtimes are pooled across requests: retained references can expose data to a later request and keep the original data alive. Use returned `state` for data that must survive polling.
+
+Host integrations must also treat passed values as immutable. Returning an input unchanged may return the original Go value; copy it before modifying it, including before replacing file placeholders. Concurrent mutation of a shared Go map can terminate the process. JavaScript-created integers return as `int64`, other numbers as `float64`; unchanged host values retain their Go types, so numeric consumers must accept all supported number types.
+
+Optional usage and artifact hooks are detected once when the plugin loads. An export that is `undefined` at load time stays absent even if assigned later. Existing callable bindings remain live.
+
 ### Upstream kinds and gateway connections
 
 `meta.upstreams` accepts unique `vendor` and `new_api` values. Every plugin implicitly supports `vendor`; `new_api` means the driver also addresses an upstream New API gateway with the same plugin installed. Type-60 channels bind plugins through `setting.task_plugin_key` / `setting.task_extend_plugin_keys`. Neither 60 nor 61 may appear in `channelTypes`, and each legacy channel type still belongs to only one plugin.
@@ -191,9 +201,11 @@ On success, `render(ctx, task)` returns an object with a `data` array of `{ url 
 
 ## Usage Hooks
 
-Optional exports `extractUsage`, `extractUsageOnSubmit`, and `extractUsageOnComplete` extract usage from requests, submission results, or completion results, respectively. Only facts conforming to the selected schema are returned, not prices or quotas.
+Optional exports `extractUsage`, `extractUsageOnSubmit`, and `extractUsageOnComplete` extract usage from requests, submission results, or completion results, respectively. Return usage facts, never prices or quotas. Facts declared by the selected schema must satisfy its validation rules.
 
 `usageProfiles` supplies complete schemas and examples for its models, replacing defaults without merging or inheritance. Runtime selection first matches the final upstream model. If that name has no profile (for example, it is mapped to a vendor endpoint ID), it falls back to the client-facing model, then to the plugin defaults. Saved prices are not automatically migrated. See [Usage and Billing](/en/docs/plugins/billing).
+
+When removing a field from a model's profile, keep reporting its released key with a value that preserves existing charges: `0`, `false`, or the first declared enum value. Saved single-plugin expressions can therefore continue to use those facts. Editing an expression must follow the current schema; shared models still require provider-specific field compatibility.
 
 Numeric field descriptions name the billing subject and unit price, such as `Image generation unit price` / `图片生成单价`; the actual field value remains a usage quantity. Put units in `unit`, count display words in `unitLabel`, and enum display names in `enumLabels`. Action, boolean, and enum descriptions name the action, the state represented by `true`, and the condition, respectively. Keep translations equivalent, without numeric prices, protocol details, or trailing punctuation.
 
@@ -218,6 +230,10 @@ When upstream submission uses SSE, declare `submitResponseTypes: ["json", "sse"]
 | ----------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | Snapshot    | `parseSubmitEvent`                                                          | Each event returns `{ state, done }`, and the complete state after completion serves as the body of `parseSubmitResponse` |
 | Incremental | `requiredCapabilities: ["submit-sse-delta@1"]`, `parseSubmitEventDelta` | Returns `{ changes, state, done }`, the host applies `set` / `append` / `appendText`, and the body is formed upon completion |
+
+The host passes returned SSE `state` to the next event as `previousState`. Mutating `previousState` without returning the new state does not preserve the change. Non-plain JSON state, such as a typed array, is normalized through JSON encoding. Every event's state is checked against its actual encoded size, including an intermediate state later replaced by a smaller one.
+
+Cancellation callbacks finish before a runtime returns to the pool, and the engine releases references to the completed call's arguments. Values retained in module variables still keep their data alive. No JavaScript execution slot is held while waiting for upstream events.
 
 SSE mode does not directly pass upstream events to the client. The plugin interprets event semantics and termination conditions, while the host manages connections, frame parsing, size limits, and timeouts; read failures after successfully accepting upstream SSE will not automatically retry submission, to avoid creating duplicate billing tasks.
 

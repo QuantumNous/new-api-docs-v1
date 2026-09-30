@@ -56,6 +56,8 @@ The same plugin can use `meta.usageProfiles` to declare its own complete schema 
 
 At runtime, the upstream model profile takes precedence. If the mapped name has no profile, selection falls back to the client-facing model, then to the defaults. This also applies to background and batch polling.
 
+For a model served by a single plugin, an unchanged stored expression and an unchanged plugin override remain saveable after the model's profile narrows. New or edited expressions must use the current schema. Plugins keep reporting removed fields with neutral values (`0`, `false`, or the first declared enum value) that preserve existing charges; the pricing editor displays only the remaining fields. Shared models still enforce compatibility for every provider using an expression.
+
 ## Plugin-Level Price Overrides for the Same Model
 
 Different plugins may support the same model but report different fields or incur different costs. The model price page can display each plugin provider and save billing expressions separately.

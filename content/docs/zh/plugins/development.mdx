@@ -119,6 +119,8 @@ export function extractUsage(ctx) {
 
 `Task.Data` 保存最近一次上游快照；每轮成功解析会更新它。未知状态返回 `UNKNOWN`，不要默认成 `IN_PROGRESS`，否则异常任务可能持续占用资源。
 
+将钩子参数及其嵌套值视为只读，显式返回更新后的值；需要可修改副本时，声明 `json-clone@1` 并使用 `utils.json.clone`。不要在模块全局变量中保留请求参数。可选用量钩子和产物钩子必须在加载时就已定义，详见[钩子参数与返回值](/zh/docs/plugins/api-reference#钩子参数与返回值)。
+
 ## 编译与 fixture 测试
 
 使用包含插件 CLI 的 New API 可执行文件验证源码：

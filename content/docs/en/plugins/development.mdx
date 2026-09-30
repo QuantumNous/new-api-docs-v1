@@ -119,6 +119,8 @@ This example submits via the generic interface `POST /v1/tasks/demo-task`, with 
 
 `Task.Data` saves the most recent upstream snapshot; it is updated with each successful parsing round. Unknown statuses should return `UNKNOWN`, not default to `IN_PROGRESS`, otherwise abnormal tasks might continuously occupy resources.
 
+Treat hook arguments and nested values as read-only. Return updated values explicitly, use `utils.json.clone` with `json-clone@1` for a mutable copy, and never keep request arguments in module globals. Optional usage and artifact hooks must already be defined at load time. See [hook arguments and results](/en/docs/plugins/api-reference#hook-arguments-and-results).
+
 ## Compilation and Fixture Testing
 
 Validate the source code using the New API executable that includes the plugin CLI:
