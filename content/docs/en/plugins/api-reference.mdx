@@ -67,9 +67,11 @@ Text in plugin data should not be used as translation keys for the management fr
 
 All plugins must export `meta`, `buildSubmitRequest`, `parseSubmitResponse`, and `parseTaskResult`, including batch plugins.
 
+For submission, the host accepts every upstream 2xx status, including `200`, `201 Created`, and `202 Accepted`, then calls `parseSubmitResponse` with `{ statusCode, headers, body }`. Any other status fails submission with the upstream status and body before the hook runs.
+
 Standard statuses include `NOT_START`, `SUBMITTED`, `QUEUED`, `IN_PROGRESS`, `SUCCESS`, `FAILURE`, `UNKNOWN`. Unknown statuses return `UNKNOWN`; unknown results should not be defaulted to in-progress.
 
-HTTP status from upstream responses also participates in host determination: 404/410 leads to failure and refund; 401/403, 429, 5xx, and transport errors accumulate polling failures. After reaching `TASK_POLL_MAX_FAILURES` (default 20), failure cleanup is initiated, and the task timeout mechanism remains the outer deadline.
+During polling, upstream HTTP status also participates in host determination: 404/410 leads to failure and refund; 401/403, 429, 5xx, and transport errors accumulate polling failures. After reaching `TASK_POLL_MAX_FAILURES` (default 20), failure cleanup is initiated, and the task timeout mechanism remains the outer deadline.
 
 ## Request and Query Context
 

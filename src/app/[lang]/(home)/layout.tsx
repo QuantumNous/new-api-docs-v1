@@ -19,9 +19,11 @@ import {
   BookOpen,
   Puzzle,
   Blocks,
+  ShieldCheck,
   type LucideIcon,
 } from 'lucide-react';
 import { getLocalePath } from '@/lib/i18n';
+import { privacyGatewayUrl } from '@/lib/ecosystem';
 
 // Navigation items configuration
 const NAV_ITEMS = [
@@ -41,6 +43,7 @@ const i18nText: Record<
     title: { text: 'Documentation', desc: '' },
     apiDocs: { text: 'Apifox Playground', desc: '' },
     skills: { text: 'Skills', desc: '' },
+    privacyGateway: { text: 'Privacy Gateway', desc: '' },
     start: {
       text: 'Getting Started',
       desc: 'Learn how to deploy and configure New API.',
@@ -63,6 +66,7 @@ const i18nText: Record<
     title: { text: '文档', desc: '' },
     apiDocs: { text: 'Apifox 操练场', desc: '' },
     skills: { text: 'Skills', desc: '' },
+    privacyGateway: { text: '隐私网关', desc: '' },
     start: { text: '快速开始', desc: '学习如何部署和配置 New API。' },
     install: { text: '部署安装', desc: '多种部署方式和安装指南。' },
     support: { text: '帮助支持', desc: '常见问题和社区支持。' },
@@ -73,6 +77,7 @@ const i18nText: Record<
     title: { text: 'ドキュメント', desc: '' },
     apiDocs: { text: 'Apifox プレイグラウンド', desc: '' },
     skills: { text: 'Skills', desc: '' },
+    privacyGateway: { text: 'プライバシーゲートウェイ', desc: '' },
     start: { text: 'はじめに', desc: 'New API のデプロイと設定方法を学ぶ。' },
     install: {
       text: 'インストール',
@@ -136,9 +141,9 @@ export default async function Layout({
   const texts = getTexts(lang);
   const docsUrl = getLocalePath(lang, 'docs');
   const navItems = buildNavItems(lang, docsUrl);
-  const pluginNavText = (
+  const privacyGatewayNavText = (
     <span className="inline-flex items-center gap-1.5">
-      插件
+      {texts.privacyGateway.text}
       <span
         aria-hidden="true"
         className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-white"
@@ -176,12 +181,20 @@ export default async function Layout({
                 {
                   type: 'main' as const,
                   on: 'menu' as const,
-                  text: pluginNavText,
+                  text: '插件',
                   url: '/zh/plugins',
                   icon: <Blocks />,
                 },
               ]
             : []),
+          {
+            type: 'main',
+            on: 'menu',
+            text: privacyGatewayNavText,
+            url: privacyGatewayUrl(lang),
+            icon: <ShieldCheck />,
+            external: true,
+          },
           {
             type: 'main',
             on: 'menu',
@@ -253,11 +266,18 @@ export default async function Layout({
                 {
                   type: 'main' as const,
                   on: 'nav' as const,
-                  text: pluginNavText,
+                  text: '插件',
                   url: '/zh/plugins',
                 },
               ]
             : []),
+          {
+            type: 'main',
+            on: 'nav',
+            text: privacyGatewayNavText,
+            url: privacyGatewayUrl(lang),
+            external: true,
+          },
           {
             type: 'main',
             on: 'nav',

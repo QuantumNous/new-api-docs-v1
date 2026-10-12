@@ -110,7 +110,7 @@ export function extractUsage(ctx) {
 ## 生命周期与数据
 
 1. 宿主认证并选择渠道，将标准化请求传给 `buildSubmitRequest`。
-2. 宿主验证描述符的 URL，发送 HTTP 请求，再调用 `parseSubmitResponse`。
+2. 宿主验证描述符的 URL 并发送 HTTP 请求。上游所有 2xx 响应（包括 `201`、`202`）的状态码、响应头和响应体都会传给 `parseSubmitResponse`；其他状态码会在钩子执行前使提交失败。
 3. 插件返回上游任务 ID 和可持久化数据；宿主生成公开任务 ID 并保存任务。
 4. 宿主周期性调用 `buildQueryRequest` 和 `parseTaskResult`，直到任务终态或失败清理。
 5. 宿主读取用量事实，按保存的计费配置完成结算。

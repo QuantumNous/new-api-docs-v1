@@ -68,9 +68,11 @@ description: {
 
 所有插件必须导出 `meta`、`buildSubmitRequest`、`parseSubmitResponse` 和 `parseTaskResult`，包括批量插件。
 
+提交时，宿主接受上游所有 2xx 状态码，包括 `200`、`201 Created` 和 `202 Accepted`，随后将 `{ statusCode, headers, body }` 传给 `parseSubmitResponse`。其他状态码会在钩子执行前使提交失败，错误携带上游状态码和响应体。
+
 标准状态包括 `NOT_START`、`SUBMITTED`、`QUEUED`、`IN_PROGRESS`、`SUCCESS`、`FAILURE`、`UNKNOWN`。未知状态返回 `UNKNOWN`；不能把未知结果默认视为处理中。
 
-上游响应的 HTTP 状态也参与宿主判定：404/410 导致失败和退款；401/403、429、5xx 和传输异常累计轮询失败。达到 `TASK_POLL_MAX_FAILURES`（默认 20）后进入失败清理，任务超时机制仍是外层截止条件。
+轮询时，上游响应的 HTTP 状态也参与宿主判定：404/410 导致失败和退款；401/403、429、5xx 和传输异常累计轮询失败。达到 `TASK_POLL_MAX_FAILURES`（默认 20）后进入失败清理，任务超时机制仍是外层截止条件。
 
 ## 请求与查询上下文
 

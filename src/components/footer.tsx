@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { OfficialSites } from '@/components/official-sites';
 import { Github, MessageCircle } from 'lucide-react';
 import { getLocalePath } from '@/lib/i18n';
+import { astrlinkUrl, moejsRepoUrl } from '@/lib/ecosystem';
 
 interface FooterProps {
   lang: string;
@@ -122,10 +123,24 @@ interface FooterTranslation {
       userGuide: string;
       apiDocs: string;
     };
+    ecosystem: {
+      title: string;
+      astrlink: string;
+      moejs: string;
+    };
     relatedProjects: string;
     friendshipLinks: string;
   };
   copyright: string;
+}
+
+interface FooterLink {
+  label: string;
+  href: string;
+  external?: boolean;
+  tagline?: string;
+  // Ecosystem projects get the referrer so they can see visits come from here.
+  keepReferrer?: boolean;
 }
 
 const translations: Record<string, FooterTranslation> = {
@@ -142,6 +157,11 @@ const translations: Record<string, FooterTranslation> = {
         installation: '安装部署',
         userGuide: '使用指南',
         apiDocs: 'API 文档',
+      },
+      ecosystem: {
+        title: '生态',
+        astrlink: '本机 AI 隐私网关',
+        moejs: '微秒级调用的纯 Go JS 插件运行时',
       },
       relatedProjects: '相关项目',
       friendshipLinks: '友情链接',
@@ -162,6 +182,11 @@ const translations: Record<string, FooterTranslation> = {
         userGuide: 'User Guide',
         apiDocs: 'API Docs',
       },
+      ecosystem: {
+        title: 'Ecosystem',
+        astrlink: 'On-device AI privacy gateway',
+        moejs: 'Pure-Go JS plugin runtime with microsecond calls',
+      },
       relatedProjects: 'Related Projects',
       friendshipLinks: 'Friendship Links',
     },
@@ -181,6 +206,11 @@ const translations: Record<string, FooterTranslation> = {
         userGuide: 'ユーザーガイド',
         apiDocs: 'APIドキュメント',
       },
+      ecosystem: {
+        title: 'エコシステム',
+        astrlink: 'ローカル AI プライバシーゲートウェイ',
+        moejs: 'マイクロ秒で呼び出せる純 Go 製 JS プラグインランタイム',
+      },
       relatedProjects: '関連プロジェクト',
       friendshipLinks: '友好リンク',
     },
@@ -191,7 +221,10 @@ const translations: Record<string, FooterTranslation> = {
 // ============================================
 // Build sections from translations
 // ============================================
-function buildSections(t: FooterTranslation) {
+function buildSections(
+  t: FooterTranslation,
+  lang: string
+): { title: string; links: FooterLink[] }[] {
   return [
     {
       title: t.sections.about.title,
@@ -216,6 +249,21 @@ function buildSections(t: FooterTranslation) {
       ],
     },
     {
+      title: t.sections.ecosystem.title,
+      links: [
+        {
+          label: 'AstrLink',
+          href: astrlinkUrl(lang),
+          tagline: t.sections.ecosystem.astrlink,
+        },
+        {
+          label: 'moejs',
+          href: moejsRepoUrl,
+          tagline: t.sections.ecosystem.moejs,
+        },
+      ].map((p) => ({ ...p, external: true, keepReferrer: true })),
+    },
+    {
       title: t.sections.relatedProjects,
       links: relatedProjects.map((p) => ({ ...p, external: true })),
     },
@@ -231,7 +279,7 @@ function buildSections(t: FooterTranslation) {
 // ============================================
 export function Footer({ lang }: FooterProps) {
   const t = translations[lang] || translations.en;
-  const sections = buildSections(t);
+  const sections = buildSections(t, lang);
 
   return (
     <footer className="border-fd-border bg-fd-card/30 mt-auto border-t backdrop-blur-sm">
@@ -240,7 +288,7 @@ export function Footer({ lang }: FooterProps) {
           <OfficialSites lang={lang} />
         </div>
         {/* Top: Links Grid */}
-        <div className="grid grid-cols-2 gap-x-8 gap-y-10 pb-10 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-12">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 pb-10 md:grid-cols-3 lg:grid-cols-5 lg:gap-x-12">
           {sections.map((section) => (
             <div key={section.title}>
               <h3 className="text-fd-foreground mb-4 text-sm font-semibold">
@@ -249,14 +297,21 @@ export function Footer({ lang }: FooterProps) {
               <ul className="space-y-3">
                 {section.links.map((link) => (
                   <li key={link.href}>
-                    {'external' in link && link.external ? (
+                    {link.external ? (
                       <a
                         href={link.href}
                         target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-fd-muted-foreground hover:text-fd-foreground text-sm transition-colors"
+                        rel={
+                          link.keepReferrer ? 'noopener' : 'noopener noreferrer'
+                        }
+                        className="group text-fd-muted-foreground hover:text-fd-foreground text-sm transition-colors"
                       >
                         {link.label}
+                        {link.tagline && (
+                          <span className="text-fd-muted-foreground/80 group-hover:text-fd-muted-foreground mt-0.5 block text-xs leading-5">
+                            {link.tagline}
+                          </span>
+                        )}
                       </a>
                     ) : (
                       <Link

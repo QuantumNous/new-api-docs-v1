@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Hero } from './page.client';
 import {
   ArrowRight,
+  ArrowUpRight,
   BookOpen,
   Boxes,
   Code2,
@@ -17,6 +18,7 @@ import { OfficialSites } from '@/components/official-sites';
 import { getLocalePath, i18n } from '@/lib/i18n';
 import Image from 'next/image';
 import { AntifraudDialog } from '@/components/antifraud-dialog';
+import { astrlinkRepoUrl, astrlinkUrl } from '@/lib/ecosystem';
 
 const AtomGitIcon = () => (
   <svg role="img" viewBox="0 0 24 24" fill="currentColor" className="size-4">
@@ -63,6 +65,13 @@ const contentMap = {
         'Find answers, troubleshoot issues, and join the community.',
       ],
     ],
+    astrlink: {
+      label: 'AstrLink · New API ecosystem',
+      title: 'Secrets stay local. Agents keep working.',
+      description:
+        'Secrets, phone numbers and names are swapped for placeholders on your machine, then restored when the reply arrives.',
+      website: 'Visit astrlink.com',
+    },
     partnersTitle: 'Our Partners & Clients',
     partnersSubtitle: 'In no particular order',
     sponsorPartnersTitle: 'Sponsor Partners',
@@ -88,6 +97,13 @@ const contentMap = {
       ['Skills', '让 AI 编程助手在工作流中使用和管理 New API。'],
       ['帮助与支持', '查找常见问题、排查故障，参与社区交流。'],
     ],
+    astrlink: {
+      label: 'AstrLink · New API 生态',
+      title: '过滤敏感信息，Agent 照样能干活',
+      description:
+        '密钥、手机号、人名先在本机换成占位符再发出，回复到达后自动还原。',
+      website: '访问 AstrLink 官网',
+    },
     partnersTitle: '合作伙伴与客户',
     partnersSubtitle: '排名不分先后',
     sponsorPartnersTitle: '赞助合作伙伴',
@@ -113,6 +129,13 @@ const contentMap = {
       ['Skills', 'AI コーディングエージェントで New API を活用。'],
       ['ヘルプとサポート', 'よくある質問、問題の解決、コミュニティ。'],
     ],
+    astrlink: {
+      label: 'AstrLink · New API エコシステム',
+      title: '機密情報は手元に、エージェントはそのまま動く',
+      description:
+        'API キー、電話番号、氏名を手元でプレースホルダーに置き換えて送信し、返信が届くと自動で元に戻します。',
+      website: 'AstrLink 公式サイト',
+    },
     partnersTitle: 'パートナーとお客様',
     partnersSubtitle: '順不同',
     sponsorPartnersTitle: 'スポンサーパートナー',
@@ -357,6 +380,48 @@ export default async function Page({
             </div>
           </div>
         )}
+        <div className="from-brand/8 to-fd-background mt-4 flex flex-wrap items-center justify-between gap-5 rounded-2xl border bg-gradient-to-r p-6">
+          <div className="flex items-start gap-4">
+            <Image
+              src="/assets/astrlink/logo.svg"
+              alt=""
+              width={40}
+              height={40}
+              className="size-10 shrink-0"
+              loading="lazy"
+              unoptimized
+            />
+            <div>
+              <p className="text-fd-muted-foreground text-xs font-medium">
+                {content.astrlink.label}
+              </p>
+              <h3 className="mt-1 font-semibold">{content.astrlink.title}</h3>
+              <p className="text-fd-muted-foreground mt-2 text-sm leading-6">
+                {content.astrlink.description}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-4 text-sm font-medium">
+            {/* rel omits noreferrer so AstrLink can see visits come from the docs. */}
+            <a
+              href={astrlinkUrl(lang)}
+              target="_blank"
+              rel="noopener"
+              className="text-brand inline-flex items-center gap-2"
+            >
+              {content.astrlink.website}
+              <ArrowUpRight className="size-4" aria-hidden />
+            </a>
+            <a
+              href={astrlinkRepoUrl}
+              target="_blank"
+              rel="noopener"
+              className="hover:text-brand"
+            >
+              GitHub
+            </a>
+          </div>
+        </div>
       </section>
 
       {/* Partners Section */}

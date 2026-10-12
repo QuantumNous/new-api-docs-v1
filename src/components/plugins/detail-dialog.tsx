@@ -35,12 +35,14 @@ function Endpoint({
   children?: ReactNode;
 }) {
   return (
-    <li className="bg-fd-muted/50 flex flex-wrap items-center gap-2 rounded-lg p-3">
-      <span className="bg-fd-primary/10 text-fd-primary rounded px-1.5 py-1 font-mono text-[10px] font-semibold">
-        {method}
-      </span>
-      <code className="min-w-0 flex-1 text-xs break-all">{path}</code>
-      {children}
+    <li className="bg-fd-muted/50 space-y-2 rounded-lg p-3">
+      <div className="flex items-start gap-2">
+        <span className="bg-fd-primary/10 text-fd-primary shrink-0 rounded px-1.5 py-1 font-mono text-[10px] font-semibold">
+          {method}
+        </span>
+        <code className="min-w-0 flex-1 py-1 text-xs break-all">{path}</code>
+      </div>
+      {children && <div className="flex flex-wrap gap-2">{children}</div>}
     </li>
   );
 }
