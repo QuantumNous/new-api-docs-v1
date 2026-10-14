@@ -1,0 +1,127 @@
+---
+title: GPUStack
+description: GPUStack integration guide — connect self-hosted LLMs, embeddings, rerank, and speech models served by GPUStack to New API as a channel, aggregating them into a unified OpenAI-compatible API gateway.
+---
+
+<Callout type="info" title="Project Introduction">
+  GPUStack is an open-source GPU cluster manager for running AI models. It unifies multiple GPU hosts, lets you self-host LLMs, multimodal models, embeddings, rerank, speech-to-text (STT), and text-to-speech (TTS) models, and exposes standard OpenAI-compatible and Anthropic-compatible APIs.
+  ![gpustack-v2-architecture](/assets/gpustack/gpustack-v2-architecture.png)
+  By integrating GPUStack into New API, you can aggregate locally/privately deployed models into the New API gateway, and combine them with grouping, billing, tokens, and rate limiting to provide a unified model access entry point for enterprises and teams.
+
+  - Official homepage: [https://gpustack.ai](https://gpustack.ai)
+  - Repository: [https://github.com/gpustack/gpustack](https://github.com/gpustack/gpustack)
+  - Official docs: [https://docs.gpustack.ai](https://docs.gpustack.ai)
+</Callout>
+
+<Callout type="info" title="How the Integration Works">
+  GPUStack exposes standard OpenAI-compatible / Anthropic-compatible endpoints, so in New API you simply add GPUStack as an **upstream channel** to bring GPUStack-deployed models under New API's unified management and distribution. The overall flow is:
+
+  1. Deploy models in GPUStack
+  2. Create an API Key in GPUStack
+  3. Add a GPUStack channel in New API with the information above
+  4. Create a token in New API and verify the call
+</Callout>
+
+## Prerequisites
+
+<Callout type="info" title="Before You Start">
+  - A deployed and reachable GPUStack service (you can obtain its access URL or domain name)
+  - A deployed and reachable New API service
+  - Network connectivity between New API and GPUStack (if both run in containers, mind the cross-container networking)
+</Callout>
+
+## 1. Deploy Models in GPUStack
+
+1. Log in to the GPUStack console, go to the `Deployments` page, and click `Deploy Model` to deploy the models you need. Example models:
+
+- `qwen3-8b`
+- `qwen2.5-vl-3b-instruct`
+- `bge-m3` (Embedding)
+- `bge-reranker-v2-m3` (Rerank)
+
+![gpustack-deploy-models](/assets/gpustack/gpustack-deploy-models.png)
+
+2. In the model's `Operations`, open `API Access Info` to view how to call the model and its endpoint path. The model name you later fill in New API must match the name here.
+
+![gpustack-api-access-info](/assets/gpustack/gpustack-api-access-info.png)
+
+## 2. Create an API Key in GPUStack
+
+1. Go to `Access Control` → `API Keys` in GPUStack, then click `New API Key`.
+
+2. Fill in a name and click `Save`.
+
+3. Copy the generated API Key and keep it safe — you will need it when configuring the channel in New API.
+
+![gpustack-create-api-key](/assets/gpustack/gpustack-create-api-key.png)
+
+## 3. Add a GPUStack Channel in New API
+
+1. Log in to the New API management console, go to `Channels` in the left sidebar, and click `Add Channel`.
+
+2. Configure the channel parameters as follows:
+
+| **Parameter**   | **Configuration**                                                                                                                                                            |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**        | Select `OpenAI` (or `Custom`). GPUStack provides standard OpenAI-compatible and Anthropic-compatible endpoints                                                                |
+| **Name**        | A custom channel name; associating it with the model is recommended for clarity, e.g., `gpustack-qwen3-8b`                                                                    |
+| **Base URL**    | The GPUStack access URL or domain, e.g., `http://your-gpustack-url`. **Do not append `/v1`** — New API adds it automatically. If GPUStack enables TLS, use `https`             |
+| **Key**         | The API Key you created and copied from GPUStack in the previous step                                                                                                         |
+| **Models**      | Enter or select the exact model names deployed in GPUStack (e.g., `qwen3-8b`, `bge-m3`, `bge-reranker-v2-m3`); they must match GPUStack's deployment names exactly            |
+
+<Callout type="warn" title="Notes on the Base URL">
+  - **Do not use `localhost` or `127.0.0.1`**: if New API runs inside a Docker container, `localhost` refers to the container itself and cannot reach GPUStack on the host or another container. Use the host IP, an internal network address, or a domain name.
+  - **Do not manually append `/v1` to the Base URL**: New API completes the endpoint path automatically; a duplicate `/v1` results in an incorrect request path.
+  - If GPUStack starts with TLS/HTTPS, use the `https://` prefix for the Base URL.
+</Callout>
+
+![newapi-add-channel](/assets/gpustack/newapi-add-channel-01.png)
+
+![newapi-add-channel](/assets/gpustack/newapi-add-channel-02.png)
+
+![newapi-add-channel](/assets/gpustack/newapi-add-channel-03.png)
+
+![newapi-add-channel](/assets/gpustack/newapi-add-channel-04.png)
+
+3. Configure model pricing (billing ratio).
+
+![newapi-channel-pricing](/assets/gpustack/newapi-channel-pricing-01.png)
+
+![newapi-channel-pricing](/assets/gpustack/newapi-channel-pricing-02.png)
+
+![newapi-channel-pricing](/assets/gpustack/newapi-channel-pricing-03.png)
+
+4. After saving, click `Test` in the channel list to verify connectivity between New API and GPUStack.
+
+![newapi-channel-test](/assets/gpustack/newapi-channel-test.png)
+
+## 4. Verify and Use
+
+1. Go to the `Tokens` page in New API and click `Add Token` to create a new token.
+
+<Callout type="warn" title="Group Must Match">
+  The **group** selected for the token must match the **group** configured for the channel; otherwise you will not be able to access the corresponding models.
+</Callout>
+
+2. Copy the newly generated New API token (starts with `sk-`).
+
+3. You can now access all GPUStack-backed models through New API's unified endpoint:
+
+- **Unified Base URL**: `http://your-newapi-url/v1`
+- **Unified API Key**: `sk-xxxxxx` (your New API token)
+
+Example request using `curl`:
+
+```bash
+curl http://your-newapi-url/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-your-newapi-token" \
+  -d '{
+    "model": "qwen3-8b",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'
+```
+
+<Callout type="info" title="Embedding / Rerank and More">
+  Besides chat models, embedding and rerank models deployed in GPUStack can also be called through New API's unified endpoints (e.g., `/v1/embeddings`, `/v1/rerank`) using their corresponding model names — just make sure the model names are added to the channel.
+</Callout>
