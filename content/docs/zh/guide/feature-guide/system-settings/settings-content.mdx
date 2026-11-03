@@ -13,7 +13,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 | 分区 | 路径 | 职责 |
 | --- | --- | --- |
-| [数据仪表板](#数据仪表板) | `/system-settings/content`（默认进入） | 数据导出开关、聚合间隔与默认粒度。 |
+| [数据仪表板](#数据仪表板) | `/system-settings/content/dashboard`（默认进入） | 数据导出开关、聚合间隔与默认粒度。 |
 | [公告](#公告) | `/system-settings/content/announcements` | 公告列表与分区开关。 |
 | [API 地址](#api-地址) | `/system-settings/content/api-info` | 可复制 / 测速的 API 接入地址列表。 |
 | [常见问答](#常见问答) | `/system-settings/content/faq` | FAQ 问答列表。 |
@@ -23,29 +23,37 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 配置分区
 
-安全与限制域下有七个独立分区：
+控制台内容域下有七个独立分区：
 
 ### 数据仪表板
+
+- 控制台内容-数据仪表板
+
+![控制台内容-数据仪表板页面](/assets/guide/feature-guide/system-settings-console-content-data-dashboard.png)
 
 「数据仪表板」分区只包含数据导出的三项设置，用于后台用量数据聚合：
 
 | 字段 | 校验/默认 | 说明 |
 | --- | --- | --- |
 | 启用数据仪表板 | 默认开启（后端） | 控制后台用量数据的定时聚合与落盘。 |
-| 导出间隔（分钟） | 整数，1–1440 | 后台用量数据聚合间隔；保持此值大于 1 分钟以避免数据库负载过重。 |
-| 默认粒度 | `hour` / `day` / `week` | 数据看板默认展示粒度；**仅影响 UI 展示，数据仍按小时聚合**。 |
-
-- 控制台内容-数据仪表板
-
-![控制台内容-数据仪表板页面](/assets/guide/feature-guide/system-settings-console-content-data-dashboard.png)
+| 刷新间隔 (分钟) | 整数，1–1440 | 后台用量数据聚合间隔；保持此值大于 1 分钟以避免数据库负载过重。 |
+| 默认时间粒度 | 小时 / 天 / 本周，默认小时 | **仅影响 UI 展示，数据仍按小时聚合**。 |
 
 <Callout type="info">
-数据仪表板分区**不**配置看板上的各模块开关：快速开始、用量、健康、公告、FAQ、Uptime、API 地址等面板的可见性：
+数据仪表板分区**不**配置看板上的各模块开关：设置引导、用量概览、性能健康、公告、FAQ、Uptime、API 地址等面板的可见性：
 1. 公告 / API 地址 / FAQ / Uptime 面板：由它们**所在分区**的启用开关控制；
-2. 快速开始、用量、健康等面板：由站点与品牌的顶部导航 / 侧边栏模块等配置控制（见[站点与品牌配置](./settings-site)）。
+2. 设置引导、用量概览、性能健康等面板：没有单独开关（性能健康仅管理员可见）；整个「概览」与「数据看板」入口由[站点与品牌配置](./settings-site#侧边栏模块)中侧边栏模块的「数据看板」开关控制。
 </Callout>
 
 ### 公告
+
+- 控制台内容-公告
+
+![控制台内容-公告页面](/assets/guide/feature-guide/system-settings-console-content-announcement.png)
+
+- 控制台内容-添加公告
+
+![控制台内容-添加公告页面](/assets/guide/feature-guide/system-settings-console-content-add-announcement.png)
 
 「公告」管理控制台与通知中心的**公告列表**，与[站点与品牌配置](./settings-site)中的单段「系统公告（Notice）」是两套系统，不应互相替代。
 
@@ -56,45 +64,20 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 内容 | 必填，≤500 字符 | 公告正文，支持 Markdown 和 HTML。 |
 | 发布日期 | 必填（ISO/RFC3339） | 此公告应显示的日期和时间；列表按此倒序展示。 |
 | 类型 | `default` / `ongoing` / `success` / `warning` / `error` | 公告类型，用于展示样式。 |
-| 额外信息 | 可选，≤100 字符 | 额外说明。 |
+| 额外备注（可选） | 可选，≤100 字符 | 额外说明。 |
 
 - 操作流程
 
 1. 打开分区，点击「添加公告」。
-2. 填写内容、发布日期、类型与额外信息。
-3. 保存（整段数组），并确认分区启用开关已开启。
+2. 填写内容、发布日期、类型与额外备注。
+3. 点击「保存设置」（整段数组写入），并确认分区「已启用」开关已开启。
 4. 回到控制台数据看板或通知中心「时间线」标签页验证展示与未读状态。
-
-- 控制台内容-公告
-
-![控制台内容-公告页面](/assets/guide/feature-guide/system-settings-console-content-announcement.png)
-
-- 控制台内容-添加公告
-
-![控制台内容-添加公告页面](/assets/guide/feature-guide/system-settings-console-content-add-announcement.png)
 
 <Callout type="info">
   已读状态由**客户端**记录（按公告 id 或内容哈希）。
 </Callout>
 
 ### API 地址
-
-「API 地址」配置在控制台数据看板中展示的API链接信息。每个API链接信息操作面板有**复制 URL、测试延迟、外部速度测试、在新标签页打开**的功能。
-
-- 字段说明
-
-| 字段 | 校验 | 说明 |
-| --- | --- | --- |
-| API URL | 必填，http(s) URL，≤500 | 接入API地址入口。 |
-| 路由描述 | 必填，≤100 | 描述路由/节点。 |
-| 说明信息 | 必填，≤200 | 链接信息说明；会做危险内容（脚本/iframe 等）检查。 |
-| 颜色 | 必填 | 标签点颜色。 |
-
-- 操作流程
-
-1. 添加API链接信息，填写API URL、路由描述、说明与颜色。
-2. 保存（整段数组）并开启分区开关。
-3. 回到数据看板查看API链接信息展示，验证测试延迟、外部速度测试、复制URL、在新标签页打开的面板功能。
 
 - 控制台内容-API 地址
 
@@ -104,11 +87,36 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![控制台内容-添加 API 地址页面](/assets/guide/feature-guide/system-settings-console-content-add-api-address.png)
 
+「API 地址」配置在控制台数据看板中展示的API链接信息。每个API链接信息操作面板有**复制 URL、测试延迟、外部速度测试、在新标签页中打开**的功能。
+
+- 字段说明
+
+| 字段 | 校验 | 说明 |
+| --- | --- | --- |
+| API URL | 必填，http(s) URL，≤500 | 接入API地址入口。 |
+| 路由描述 | 必填，≤100 | 描述路由/节点。 |
+| 说明信息 | 必填，≤200 | 链接信息说明；会做危险内容（脚本/iframe 等）检查。 |
+| 徽章颜色 | 必填，默认蓝色 | 条目前的颜色圆点。 |
+
+- 操作流程
+
+1. 添加API链接信息，填写API URL、路由描述、说明信息与徽章颜色。
+2. 点击「保存设置」（整段数组写入），并开启分区「已启用」开关。
+3. 回到数据看板查看API链接信息展示，验证测试延迟、外部速度测试、复制URL、在新标签页中打开的面板功能。
+
 <Callout type="info">
 - 上限：**50 条**。
 </Callout>
 
 ### 常见问答
+
+- 控制台内容-常见问答
+
+![控制台内容-常见问答页面](/assets/guide/feature-guide/system-settings-console-content-frequently-asked-questions.png)
+
+- 控制台内容-添加常见问答
+
+![控制台内容-添加常见问答页面](/assets/guide/feature-guide/system-settings-console-content-add-frequently-asked-questions.png)
 
 「常见问答」配置控制台 FAQ 面板的问答列表。
 
@@ -119,30 +127,12 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 问题 | 必填，≤200 | 问题文本。 |
 | 答案 | 必填，≤1000 | 答案文本。支持 Markdown 和 HTML。|
 
-- 控制台内容-常见问答
-
-![控制台内容-常见问答页面](/assets/guide/feature-guide/system-settings-console-content-frequently-asked-questions.png)
-
-- 控制台内容-添加常见问答
-
-![控制台内容-添加常见问答页面](/assets/guide/feature-guide/system-settings-console-content-add-frequently-asked-questions.png)
-
 <Callout type="info">
 - 上限：**100 条**。
 - 展示顺序 = 数组中的顺序。
 </Callout>
 
 ### Uptime Kuma
-
-「Uptime Kuma」配置用于展示在控制台的Uptime Kuma监控状态页面分组。
-
-- 字段说明
-
-| 字段 | 校验 | 说明 |
-| --- | --- | --- |
-| 分类名称 | 必填，唯一，≤50 | 此监控分组的显示名称。 |
-| Uptime Kuma URL | 必填，http(s)，≤500 | 您的 Uptime Kuma 实例的基础 URL。 |
-| 页面状态Slug | 必填，`^[a-zA-Z0-9_-]+$`，≤100 | 分组标识,别名将附加到 URL: \{url\}/status/\{slug\}。 |
 
 - 控制台内容-Uptime Kuma
 
@@ -152,35 +142,57 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![控制台内容-添加 Uptime Kuma 页面](/assets/guide/feature-guide/system-settings-console-content-add-uptime-kuma.png)
 
+「Uptime Kuma」配置用于展示在控制台的Uptime Kuma监控状态页面分组。
+
+- 字段说明
+
+| 字段 | 校验 | 说明 |
+| --- | --- | --- |
+| 分类名称 | 必填，唯一，≤50 | 此监控分组的显示名称。 |
+| Uptime Kuma URL | 必填，http(s)，≤500 | 您的 Uptime Kuma 实例的基础 URL。 |
+| 状态页面 Slug | 必填，`^[a-zA-Z0-9_-]+$`，≤100 | 分组标识，别名将附加到 URL: \{url\}/status/\{slug\}。 |
+
 <Callout type="info">
 - 上限：**20 组**。
 </Callout>
 
 ### 聊天预设
 
-「聊天预设」配置聊天应用一键导入所需的客户端深链模板（`Chats` 选项）。每条为一个**单键值对** `{"应用名": "URL 模板"}`；URL 模板可嵌入 `{key}`、`{address}`、`{cherryConfig}`、`{aqbotConfig}` 等占位符，导入时由客户端替换。
+- 控制台内容-聊天预设（可视化）
 
-默认内置 10 个常用客户端（Cherry Studio、AionUI、流畅阅读、CC Switch、DeepChat、AQBot、Lobe Chat、AI as Workspace、AMA 问天、OpenCat），可通过可视化表格或 JSON 模式增删改。
+![控制台内容-聊天预设可视化页面](/assets/guide/feature-guide/system-settings-console-content-chat-presets-visual.png)
 
-- 操作流程
+- 控制台内容-聊天预设（JSON）
 
-1. 打开分区，在「可视化」标签添加/编辑聊天预设（应用名 + URL），或切换到「JSON」直接编辑。
-2. 保存：以归一化的 JSON 数组写入 `Chats`。
-3. 在控制台「聊天应用集成」入口验证对应客户端可一键导入。
-
-- 控制台内容-聊天预设
-
-![控制台内容-聊天预设页面](/assets/guide/feature-guide/system-settings-console-content-chat-presets.png)
+![控制台内容-聊天预设 JSON 页面](/assets/guide/feature-guide/system-settings-console-content-chat-presets-json.png)
 
 - 控制台内容-添加聊天预设
 
 ![控制台内容-添加聊天预设页面](/assets/guide/feature-guide/system-settings-console-content-add-chat-presets.png)
 
+- 控制台内容-编辑聊天预设
+
+![控制台内容-编辑聊天预设页面](/assets/guide/feature-guide/system-settings-console-content-edit-chat-presets.png)
+
+「聊天预设」配置聊天应用一键导入所需的客户端深链模板（`Chats` 选项）。每条为一个**单键值对** `{"应用名": "URL 模板"}`；URL 模板可嵌入 `{key}`、`{address}`、`{cherryConfig}`、`{aqbotConfig}` 等占位符，用户打开预设时由控制台替换为当前 API 密钥和服务地址。
+
+默认内置 10 个常用客户端（Cherry Studio、AionUI、流畅阅读、CC Switch、DeepChat、AQBot、Lobe Chat 官方示例、AI as Workspace、AMA 问天、OpenCat），可通过可视化表格或 JSON 模式增删改。
+
+- 操作流程
+
+1. 打开分区，在「可视化」标签添加/编辑聊天预设（应用名 + URL），或切换到「JSON」直接编辑。
+2. 点击「保存聊天设置」：以归一化的 JSON 数组写入 `Chats`。
+3. 在侧边栏「聊天」或「API 密钥」列表操作菜单的「聊天」中，验证对应客户端可一键导入（见[聊天应用集成](/zh/docs/guide/feature-guide/user/chat-apps)）。
+
 <Callout type="info">
-  聊天预设的 URL 不做格式校验。占位符在导入时由客户端解析，填入错误或不支持占位符时只有到客户端导入时才会暴露。占位符使用 `{key}`（API 密钥）、`{address}`（服务地址）等，与具体客户端的模板约定一致时才能正确导入。
+  聊天预设的 URL 不做格式校验。占位符在用户打开预设时由控制台替换；填错或不受支持的占位符不会报错，只有打开链接、在目标应用中导入时才会暴露。占位符使用 `{key}`（API 密钥）、`{address}`（服务地址）等，与具体客户端的模板约定一致时才能正确导入。
 </Callout>
 
 ### 绘图
+
+- 控制台内容-绘图
+
+![控制台内容-绘图页面](/assets/guide/feature-guide/system-settings-console-content-drawing.png)
 
 「绘图」配置的是绘图（Midjourney 中转）相关的**行为开关**，共 6 个布尔项。**Midjourney 上游的 API 地址、端点与密钥在渠道层配置，不在本页**。
 
@@ -189,13 +201,9 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 启用绘制功能 | 向终端用户开放 MjProxy 风格的图像生成。 |
 | 允许上游回调 | 启用时，接受 MjProxy 回调 (会泄露服务器 IP)。 |
 | 允许 accountFilter 参数 | 如果需要为不同上游账户代理请求，请保持启用。 |
-| 自动将上游回调 URL 替换为服务器地址。 | 自动将上游回调 URL 替换为服务器地址。 |
+| 将回调 URL 重写到本地服务器 | 自动将上游回调 URL 替换为服务器地址。 |
 | 在提示中清除模式标志 | 从用户提示中移除 MjProxy 参数，如 --fast、--relax 和 --turbo。 |
 | 在后续操作前要求任务成功 | 用户必须等待成功的绘图完成，才能进行放大或变体。 |
-
-- 控制台内容-绘图
-
-![控制台内容-绘图页面](/assets/guide/feature-guide/system-settings-console-content-drawing.png)
 
 <Callout type="warn">
   绘图分区只有开关。上游 Base URL、端点、密钥、账号过滤值等请到[渠道管理](/zh/docs/guide/feature-guide/admin/channel)的 Midjourney 渠道配置。
@@ -203,37 +211,40 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 保存与生效
 
-保存方式、生效与多实例同步规则见[系统设置概览](./system-setting#生效范围与多实例同步)。
+保存方式见[系统设置概览](./system-setting#保存方式)，生效与多实例同步规则见[生效范围与多实例同步](./system-setting#生效范围与多实例同步)。本域另需注意：
+
+- 公告、API 地址、常见问答和 Uptime Kuma：「已启用」开关切换后立即保存并提示「设置已保存」；列表的新增、编辑、删除只修改页面数据，点击卡片内的「保存设置」后整段写入。
+- 数据仪表板、聊天预设、绘图：使用页头的「保存更改」「保存聊天设置」「保存绘图设置」按钮保存。
 
 <Callout type="info">
-  公告、API 地址、FAQ、Uptime 等展示效果需回到数据看板/通知中心等实际入口验证，且这些面板受分区启用开关与站点导航配置双重影响。
+  公告、API 地址、FAQ、Uptime 等展示效果需回到数据看板/通知中心等实际入口验证，且这些面板受各自分区启用开关控制；整个数据看板入口还受侧边栏模块「数据看板」控制。
 </Callout>
 
 ## 注意事项
 
-- **数据仪表板**：只含数据导出三元组；面板可见性由各自分区启用开关控制，不要在此处寻找面板开关。
-- **公告**：公告上限 100；已读由客户端记录，编辑保留 id 不变未读；与站点「公告（Notice）」是两套。
+- **数据仪表板**：只含数据导出三元组；面板可见性由各自分区启用开关控制，整个数据看板入口还受侧边栏模块「数据看板」控制，不要在此处寻找面板开关。
+- **公告**：公告上限 100；已读由浏览器按公告 id 记录，编辑后 id 不变，不会重新变为未读；与站点与品牌的「系统公告」是两套。
 - **API 地址**：上限 50；颜色需在服务端白名单；任意项不合规会整段被拒。
 - **常见问答**：上限 100；无排序字段（数组顺序即展示顺序）。
-- **Uptime Kuma**：上限 20；`description` 后端存在但界面不可编辑；状态经 `/api/uptime_kuma/status` 拉取。
-- **聊天预设**：单键值对数组；无 URL 校验；占位符在客户端替换。
+- **Uptime Kuma**：上限 20；`description` 后端存在但界面不可编辑；状态经 `/api/uptime/status` 由服务端拉取。
+- **聊天预设**：单键值对数组；无 URL 校验；占位符在用户打开预设时由控制台替换。
 - **绘图**：只是 6 个开关；上游配置在渠道层。
 
 ## 常见问题
 
-- **面板不显示**：确认对应分区启用开关已开启；公告/API/FAQ/Uptime 面板还受该分区开关与站点导航配置影响；保存后刷新或重新进入看板。
+- **面板不显示**：确认对应分区启用开关已开启；整个数据看板入口还受侧边栏模块「数据看板」控制；保存后刷新或重新进入看板。
 - **保存被拒绝**：数组任一项不合规（URL 非法、颜色不在白名单、超限、必填缺失）会导致整段保存失败；查看提示并修正后重试。
-- **公告显示未读**：公告按 id 或内容哈希记录已读；新增或内容变化会重新未读；打开通知中心/公告标签可标记已读。
+- **公告显示未读**：公告按 id 记录已读（无 id 时按内容哈希）；新增公告显示为未读，编辑已有公告不会重新变为未读；打开通知中心的「时间线」标签即标记已读。
 - **FAQ 顺序不对**：当前无排序字段，按数组顺序展示；调整数组顺序后保存。
-- **Uptime Kuma 不显示**：确认分区启用、URL 可公开访问、`/api/uptime_kuma/status` 可返回；分组数不超过 20。
+- **Uptime Kuma 不显示**：确认分区启用、New API 服务器能访问该 Uptime Kuma 地址、`/api/uptime/status` 可返回；分组数不超过 20。
 - **聊天导入不生效**：确认应用名与客户端模板一致、URL 支持对应占位符；填入错误或占位符不支持时只有客户端导入时才发现。
 - **绘图行为未生效**：确认对应开关已开启并保存；上游地址/密钥在 Midjourney 渠道层，需同时确认渠道配置正确。
-- **保存后状态未更新**：`console_setting.*` 可能不在自动失效集；刷新页面或重新进入对应入口。
+- **保存后状态未更新**：保存后当前浏览器中已打开的看板面板和侧边栏「聊天」不会自动更新；刷新页面或重新进入对应入口。
 
 ## 相关文档
 
 - [系统设置概览](./system-setting)：系统设置的生效机制、多实例同步、敏感配置与变更验证要求。
-- [站点与品牌配置](./settings-site)：站点公告（Notice）、顶部导航与侧边栏模块。
+- [站点与品牌配置](./settings-site)：系统公告、顶部导航与侧边栏模块。
 - [渠道管理](/zh/docs/guide/feature-guide/admin/channel)：Midjourney 等绘图渠道的上游配置。
 - [API 密钥](/zh/docs/guide/feature-guide/user/token)：API 接入地址的密钥使用。
 - [用户指南 · 聊天应用集成](/zh/docs/guide/feature-guide/user/chat-apps)：客户端一键导入流程。

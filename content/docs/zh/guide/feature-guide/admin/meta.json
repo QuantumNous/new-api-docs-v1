@@ -4,6 +4,7 @@
   "pages": [
     "channel",
     "model",
+    "billing-expression",
     "user",
     "redemption",
     "subscription",
