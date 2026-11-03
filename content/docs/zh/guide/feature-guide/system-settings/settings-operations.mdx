@@ -1,6 +1,6 @@
 ---
 title: 运维配置
-description: Root 配置系统模式、额度告警、SMTP、Worker、日志维护、性能保护和版本检查。
+description: Root 配置系统模式、模型性能指标、邮件发送（SMTP / Resend）与余额提醒、Worker、日志维护、性能保护和版本检查。
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
@@ -9,19 +9,19 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 运维配置简介
 
-该工作区包含「系统行为」「监控与警报」「SMTP 邮箱」「Worker 代理」「日志维护」「性能」和「系统维护」七个分区。用于配置系统模式、额度告警、SMTP、Worker、日志维护、性能保护和版本检查。
+该工作区包含「系统行为」「模型性能指标」「邮件与通知」「Worker 代理」「日志维护」「性能」和「系统维护」七个分区。用于配置系统模式、模型性能指标、邮件发送与余额提醒、Worker、日志维护、性能保护和版本检查。
 
 <div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 分区 | 入口 | 主要用途 |
 | --- | --- | --- |
-| [系统行为]| `/system-settings/operations/behavior` | 侧边栏默认偏好、演示站与自用模式。 |
-| [监控与警报] | `/system-settings/operations/alerts` | 额度提醒与模型性能指标。 |
-| [SMTP 邮箱]| `/system-settings/operations/email` | 系统邮件的发送与认证。 |
-| [Worker 代理] | `/system-settings/operations/worker` | 指定下载与通知链路的外部代理。 |
-| [日志维护] | `/system-settings/operations/logs` | 消费日志开关、数据库日志与服务器文件清理。 |
-| [性能] | `/system-settings/operations/performance` | 请求体缓存、资源保护和进程统计。 |
-| [系统维护] | `/system-settings/operations/update-checker` | 版本信息与更新检查。 |
+| [系统行为](#系统行为) | `/system-settings/operations/behavior` | 侧边栏默认偏好、演示站与自用模式。 |
+| [模型性能指标](#模型性能指标) | `/system-settings/operations/alerts` | 模型性能指标的记录、刷库与保留。 |
+| [邮件与通知](#邮件与通知) | `/system-settings/operations/email` | 邮件发送方式（SMTP / Resend）与余额不足提醒。 |
+| [Worker 代理](#worker-代理) | `/system-settings/operations/worker` | 指定下载与通知链路的外部代理。 |
+| [日志维护](#日志维护) | `/system-settings/operations/logs` | 消费日志开关、用户日志导出与查询范围、数据库日志与服务器文件清理。 |
+| [性能](#性能) | `/system-settings/operations/performance` | 请求体缓存、资源保护和进程统计。 |
+| [系统维护](#系统维护) | `/system-settings/operations/update-checker` | 版本信息与更新检查。 |
 
 </div>
 
@@ -35,32 +35,27 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ### 系统行为
 
+- 运维-系统行为配置
+
+![系统行为配置](/assets/guide/feature-guide/system-settings-operations-system-behavior.png)
+
 系统行为分区包含三个开关：
 
 <div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值 | 实际作用与边界 |
 | --- | --- | --- | --- |
-| 默认折叠侧边栏 | `DefaultCollapseSidebar` | `false` | 默认情况下为新用户折叠侧边栏。 |
-| 演示站模式 | `DemoSiteEnabled` | `false` | 启用功能受限的演示模式。 |
-| 自用模式 | `SelfUseModeEnabled` | `false` | 优化系统以适应自托管单用户使用。 |
+| 默认折叠侧边栏 | `DefaultCollapseSidebar` | `false` | 界面说明为「默认情况下为新用户折叠侧边栏」。**已知问题（当前版本）**：前端不读取该值，开关不影响侧边栏，见[常见问题](#常见问题)。 |
+| 演示站点模式 | `DemoSiteEnabled` | `false` | 界面说明为「启用功能受限的演示模式」。**已知问题（当前版本）**：后端不限制任何功能，该值只写入公开状态，并在未自定义页脚时让首页页脚显示默认链接栏；保护演示实例的方法见[常见问题](#常见问题)。 |
+| 自用模式 | `SelfUseModeEnabled` | `false` | 未设置价格的模型按默认倍率 `37.5` 计费并出现在模型列表中，不再因未定价被拒绝；登录页隐藏「注册」链接，但不关闭注册接口。 |
 
 </div>
 
-- 运维-系统行为配置
+### 模型性能指标
 
-![系统行为配置](/assets/guide/feature-guide/system-settings-operations-system-behavior.png)
+- 运维-模型性能指标配置
 
-### 监控与警报
-
-该分区包含用户剩余额度提醒和模型性能指标配置。
-
-- 额度提醒
-
-「额度提醒阈值」使用内部 quota／Token 单位，配置键为 `QuotaRemindThreshold`。Relay 结算链路会分别检查钱包和订阅额度：钱包按 `UserQuota - (quota + preConsumedQuota)` 比较，订阅按订阅总额减已使用量比较。
-
-
-- 模型性能指标
+![模型性能指标配置](/assets/guide/feature-guide/system-settings-operations-model-performance-metrics.png)
 
 模型性能指标从 Relay 请求完成和计费链路收集模型、分组、请求耗时、首 Token 时间、成功率、输出 Token 和生成耗时，用于模型广场等性能展示。
 
@@ -68,31 +63,36 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 | 页面字段 | 配置键 | 默认值 | 行为与边界 |
 | --- | --- | --- | --- |
-| 启用模型性能指标 | `perf_metrics_setting.enabled` | `true` | 控制是否继续记录 Relay 性能样本。关闭后不会新增样本，刷盘循环也会跳过写库和过期清理；已有数据库记录与关闭前的内存聚合桶不会立即清空。 |
-| 刷盘间隔（分钟） | `perf_metrics_setting.flush_interval` | `5` | 最小值为 `1`，控制把已完成的内存聚合桶写入数据库以及执行过期数据清理的循环周期，不是前端图表刷新频率。 |
+| 启用模型性能指标 | `perf_metrics_setting.enabled` | `true` | 控制是否继续记录 Relay 性能样本。关闭后不会新增样本，刷库循环也会跳过写库和过期清理；已有数据库记录与关闭前的内存聚合桶不会立即清空。 |
+| 刷库间隔（分钟） | `perf_metrics_setting.flush_interval` | `5` | 最小值为 `1`，控制把已完成的内存聚合桶写入数据库以及执行过期数据清理的循环周期，不是前端图表刷新频率。 |
 | 聚合时间桶 | `perf_metrics_setting.bucket_time` | `hour` | 可选 1 分钟、5 分钟和 1 小时；修改后只影响后续样本的分桶。 |
-| 保留天数 | `perf_metrics_setting.retention_days` | `0` | `0` 表示永久保留；正数会在刷盘循环中清理更早的性能指标。 |
+| 保留天数 | `perf_metrics_setting.retention_days` | `0` | `0` 表示永久保留；正数会在刷库循环中清理更早的性能指标。 |
 
 </div>
 
 操作流程：
-1. 根据额度单位设置提醒阈值，并确认测试用户的通知方式和个人阈值。
-2. 按数据量选择是否记录模型性能指标、刷盘间隔、聚合时间桶与保留天数，然后保存。
-3. 用测试账号验证通知；性能指标应在聚合桶完成并刷盘后再检查，不能用保存后的即时空图判断失败。
-
-- 运维-监控与警报配置
-
-![监控与警报配置](/assets/guide/feature-guide/system-settings-operations-monitoring-alerts.png)
+1. 按数据量选择是否记录模型性能指标、刷库间隔、聚合时间桶与保留天数，然后保存。
+2. 检查性能指标时注意：处理查询的实例会直接合并其内存中尚未刷库的数据，但多实例部署时，其他实例的样本要等其刷库后才可见，模型广场还会缓存约 1 分钟；不能用保存后的即时空图判断失败。
 
 <Callout type="info">
-- 低于阈值时异步发送额度不足通知。用户个人设置中非零的提醒阈值会优先于此全局值。
-- 通知方式由用户设置决定，可以是邮件、Webhook、Bark 或 Gotify；未选择时默认使用邮件。通知失败会写入系统错误日志。
-- 选择较细的桶或较短的刷盘间隔会增加内存、数据库和后台写入负载，应结合模型数量、分组数量和请求量评估。
+选择较细的桶或较短的刷库间隔会增加内存、数据库和后台写入负载，应结合模型数量、分组数量和请求量评估。
 </Callout>
 
-### SMTP 邮箱
+### 邮件与通知
 
-SMTP 用于注册验证码、密码重置、用户通知和其他系统邮件。主要配置键如下：
+- 运维-邮件与通知配置
+
+![邮件与通知配置（SMTP 方式）](/assets/guide/feature-guide/system-settings-operations-email-and-notifications.png)
+
+系统邮件用于注册验证码、密码重置、用户通知和其他系统邮件，可通过 SMTP 或 Resend API 发送；本分区还包含余额不足提醒。
+
+- 邮件发送方式
+
+「邮件发送方式」（`EmailProvider`，默认 `smtp`）可选 SMTP 或 Resend API。只用所选方式发送邮件，另一种方式的配置会保留；所选方式发送失败时不会改用另一种。页面只显示所选方式的字段，保存时最后才写入发送方式，同一次保存中其他配置写入失败时不会切换。
+
+- SMTP
+
+选择 SMTP 时，主要配置键如下：
 
 <div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
@@ -105,13 +105,13 @@ SMTP 用于注册验证码、密码重置、用户通知和其他系统邮件。
 | 密码 / 访问令牌 | `SMTPToken` | 不回显 | 留空以保留现有凭证。 |
 | SMTP 加密方式 | `SMTPSSLEnabled`、`SMTPStartTLSEnabled` | 均关闭 | 选择一种 SMTP 传输加密方式；可选'无加密'、'SSL/TLS'、'STARTTLS'。 |
 | 强制 AUTH LOGIN | `SMTPForceAuthLogin` | `false` | 强制使用 AUTH LOGIN 方法进行 SMTP 认证。 |
-| 发件地址 | `SMTPFrom` | 空 | 用于发送消息的显示名称和电子邮件。 |
+| 发件地址 | `SMTPFrom` | 空；只能是邮箱地址或留空 | 只填纯邮箱地址，例如 `noreply@example.com`；留空时使用「用户名」。收件人看到的发件人名称固定为系统名称，不能在此设置。 |
 
 </div>
 
-- 运维-SMTP 邮箱配置
-
-![SMTP 邮箱配置](/assets/guide/feature-guide/system-settings-operations-smtp-email.png)
+<Callout type="warn">
+**已知问题（当前版本）**：「发件地址」的说明为「用于发送消息的显示名称和电子邮件」，占位符按字面显示为 `New API &lt;noreply@example.com&gt;`。按占位符填写 `名称 <邮箱>` 会被拒绝并提示「请输入有效的邮箱地址或留空」；发件人名称固定取系统名称。请只填纯邮箱地址；需要修改发件人名称时，在[站点与品牌配置](./settings-site#系统信息)中修改「系统名称」，这也会改变站点标题等处显示的名称。
+</Callout>
 
 - 传输加密模式
 
@@ -121,18 +121,60 @@ SMTP 用于注册验证码、密码重置、用户通知和其他系统邮件。
 | SSL/TLS | 建立隐式 TLS 连接。即使没有显式选择，端口为 `465` 且未启用 STARTTLS 时，当前后端也会使用隐式 TLS。 |
 | STARTTLS | 先建立普通 SMTP 连接，再要求服务器支持并升级到 STARTTLS；服务器未声明 STARTTLS 时发信失败。 |
 
+- Resend API
+
+选择 Resend API 时显示以下字段：
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 页面字段 | 配置键 | 默认值或格式 | 说明 |
+| --- | --- | --- | --- |
+| 发件邮箱地址 | `ResendFrom`（地址部分） | 空；必须是有效邮箱 | 域名须已在 Resend 完成验证。 |
+| 发件人名称 | `ResendFrom`（名称部分） | 空 | 收件人看到的发件人名称，留空时使用「系统名称」；不能包含换行。保存时与地址合并为 `"名称" <地址>` 存入 `ResendFrom`。 |
+| Resend API 密钥 | `ResendApiKey` | 不回显 | 留空以保留现有密钥；从未配置过密钥时必须填写，否则提示「请先配置 Resend API 密钥，再启用 Resend」。 |
+
+</div>
+
+Resend 为当前发送方式时，后端会拒绝把密钥或发件地址改成无效值。
+
 <Callout type="info">
-SMTP 连接由后端直接建立，不经过 Worker 代理或 URL SSRF 校验。生产环境应确认 DNS、端口、证书、认证、SPF、DKIM、DMARC 和发件人策略。
+SMTP 连接和 Resend 请求（`https://api.resend.com/emails`）都由后端直接发出，不经过 Worker 代理或 URL SSRF 校验；Resend 拒绝发送时，具体原因只写入服务端日志。生产环境应确认 DNS、端口、证书、认证、SPF、DKIM、DMARC 和发件人策略。
 </Callout>
 
 - 配置与验证
 
-1. 从邮件服务商获取 SMTP 主机、端口、认证账号和授权码或密码；不要把 Web 邮箱登录地址填入主机字段。
-2. 按服务商要求选择 SSL/TLS 或 STARTTLS，填写纯邮箱发件地址。除已评估的内部场景外，不启用跳过证书验证。
+1. 选择发送方式。SMTP 需从邮件服务商获取主机、端口、认证账号和授权码或密码，不要把 Web 邮箱登录地址填入主机字段；Resend 需准备已在 Resend 完成验证的发件域名和 API 密钥。
+2. 使用 SMTP 时，按服务商要求选择 SSL/TLS 或 STARTTLS，填写纯邮箱发件地址。除已评估的内部场景外，不启用跳过证书验证。
 3. 填写新 Token 并保存；不轮换凭证时保留输入框为空。切换安全模式后刷新页面，确认相关开关均已保存。
 4. 使用测试账号请求验证码、密码重置邮件或额度通知，检查投递结果与服务端错误日志；保存成功本身不代表连接成功。
 
+- 余额不足提醒
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 页面字段 | 配置键 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| 余额不足提醒 | `QuotaRemindEnabled` | `true` | 界面说明为「用户余额低于阈值时，通过其选择的通知方式提醒」，实际只在一次扣费跨过阈值时提醒（见下文）。关闭后全站不发送余额提醒。 |
+| 默认提醒阈值 (USD) | `QuotaRemindThreshold` | `1000`（内部 quota） | 仅在开关开启时显示。括号内随「显示模式」变为 USD、CNY、自定义符号或 Tokens；按显示金额输入，保存时换算为内部 quota 单位。例如默认值 `1000` quota 在 USD 显示下为 `0.002`。 |
+
+</div>
+
+Relay 结算链路会分别检查钱包和订阅额度：钱包按 `UserQuota - (quota + preConsumedQuota)` 比较，订阅按订阅总额减已使用量比较。只有本次扣费使余额从阈值及以上降到阈值以下时才提醒一次；余额已低于阈值时不再重复提醒，充值回到阈值及以上后才可能再次提醒。
+
+操作流程：
+1. 根据[计费与支付配置](./settings-billing#货币与展示)中的「显示模式」设置默认提醒阈值，并确认测试用户的通知方式和个人阈值。
+2. 用测试账号验证通知。
+
+<Callout type="info">
+- 异步发送余额不足通知。用户在[个人设置](/zh/docs/guide/feature-guide/user/personal-setting#设置通知和行为偏好)中关闭「余额不足提醒」时不发送；用户设置的非零提醒阈值优先于此全局值。
+- 通知方式由用户设置决定，可以是邮件、Webhook、Bark 或 Gotify；未选择时默认使用邮件。通知失败会写入系统错误日志。
+</Callout>
+
 ### Worker 代理
+
+- 运维-Worker 代理配置
+
+![Worker 代理配置](/assets/guide/feature-guide/system-settings-operations-worker-proxy.png)
 
 Worker 代理用于源码中明确接入的服务端外部请求链路，例如远程文件或图片下载、用户 Webhook，以及 Bark 和 Gotify 通知。它不是渠道 Relay、支付、OAuth 或所有出站流量的通用代理。
 
@@ -142,19 +184,15 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 | --- | --- | --- | --- |
 | Worker URL | `WorkerUrl` | 空；非空时必须以 `http://` 或 `https://` 开头 | 保存时移除末尾 `/`；非空时请求将被转发到此 Worker。 |
 | Worker 访问密钥 | `WorkerValidKey` | 不回显 | 随 Worker 请求发送，用于与 Worker 进行身份验证。留空以保留现有密钥。 |
-| 允许 HTTP 图片请求 | `WorkerAllowHttpImageRequestEnabled` | `false` | 当代理通过 HTTP 获取图像的 worker 时启用。 |
+| 允许 HTTP 图像请求 | `WorkerAllowHttpImageRequestEnabled` | `false` | 界面说明为「当代理通过 HTTP 获取图像的 worker 时启用」。**已知问题（当前版本）**：该开关实际作用于所有经 Worker 的请求，关闭时目标地址不以 `https` 开头的请求一律被拒绝；因此启用 Worker 且本开关保持关闭（默认）时，`http://` 的 Webhook、Bark 和 Gotify 通知也会失败，只在服务端日志中留下记录。需要这类通知时，改用 `https` 地址，或开启本开关（开启后经 Worker 的请求不再按协议拦截）。 |
 
 </div>
-
-- 运维-Worker 代理配置
-
-![Worker 代理配置](/assets/guide/feature-guide/system-settings-operations-worker-proxy.png)
 
 - 配置与停用
 
 1. 准备受控的 Worker 服务，确认其接受 New API 的请求格式并校验访问密钥，再填写 URL 与密钥。
 2. 按目标资源的协议决定是否允许 HTTP，点击「保存 Worker 设置」，分别验证实际使用的下载或通知链路。
-3. 停用时清空 Worker URL；需要同时删除保存的访问密钥时，将密钥输入框也留空后保存。仅清空密钥输入框但保留 URL，不会清除旧密钥。
+3. 停用时清空 Worker URL 并保存，已保存的访问密钥会一并清除；若同时在密钥框输入了新值，则保存为该新值。仅清空密钥输入框但保留 URL，不会清除旧密钥。
 
 
 <Callout type="info">
@@ -169,18 +207,35 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 
 ### 日志维护
 
-日志维护分为记录配额使用量、清理历史日志和服务器日志管理。三者影响不同的数据源。
+- 运维-日志维护配置
+
+![日志维护配置](/assets/guide/feature-guide/system-settings-operations-log-maintenance.png)
+
+日志维护分为记录配额使用量、日志查询与导出、清理历史日志和服务器日志管理。两种清理影响不同的数据源。
 
 - 记录配额使用量
 
 1. 「记录配额使用量」对应 `LogConsumeEnabled`，默认开启。
 2. 它控制是否创建逐请求的消费日志，包括普通 Relay 和异步任务结算产生的消费记录。
-3. 关闭后会减少数据库写入，但使用日志、消费统计和依赖这些记录的分析将缺少新数据。
+3. 关闭后会减少数据库写入，但使用日志、消费统计、数据看板统计和依赖这些记录的分析将缺少新数据。
 4. 调整开关后点击「保存日志设置」。
 
 <Callout type="info">
 该开关不会停止错误、充值、管理审计、系统、退款或登录日志，也不会关闭服务器文本日志、Midjourney 任务表或异步任务表。
 </Callout>
+
+- 日志查询与导出
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 页面字段 | 配置键 | 默认值或校验 | 行为与边界 |
+| --- | --- | --- | --- |
+| 允许用户导出日志 | `log_setting.user_export_enabled` | `true` | 用户可以在使用日志页面下载自己的日志。管理员始终可以导出。关闭后普通用户的导出请求会被拒绝。 |
+| 日志最长时间范围（天） | `log_setting.max_range_days` | `365`；整数，最小 `1` | 用户在日志和数据看板中一次最多能查看的时间范围，也是每次导出的最长时间范围。未指定开始时间时按该范围回溯，超出时报错。每次导出都受此限制，管理员查询日志不受限。 |
+
+</div>
+
+两项与「记录配额使用量」共用「保存日志设置」按钮。
 
 - 清理历史日志
 
@@ -208,16 +263,18 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 服务器日志管理只在配置了日志目录时可用，并且只扫描该目录下名称匹配 `oneapi-*.log` 的文件。<br/>
 可查看服务器日志目录、日志文件数、日志总大小和时间范围；服务器日志提供两种清理方式：
 
-1. 按数量：保留最近 N 个文件，删除修改时间早于最近第 N 个文件之前的日志文件。
+1. 按数量：按文件名（含时间戳）从新到旧保留最近 N 个文件，删除其余日志文件。
 2. 按天数：保留最近 N 天，删除修改时间早于 N 天前的日志文件。
-
-![日志维护配置](/assets/guide/feature-guide/system-settings-operations-log-maintenance.png)
 
 <Callout type="warn">
   数据库日志和服务器日志文件的删除不可恢复。清理前确认审计、争议处理、支付、合规和故障排查所需的留存周期，并完成必要的数据库或日志归档。
 </Callout>
 
 ### 性能
+
+- 运维-性能配置
+
+![性能配置](/assets/guide/feature-guide/system-settings-operations-performance.png)
 
 性能分区同时管理请求体磁盘缓存、请求体内存缓存和系统性能监控。
 
@@ -238,22 +295,22 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 
 - 系统性能监控
 
-系统性能监控默认开启。后台约每 5 秒采集 CPU、虚拟内存和缓存目录所在磁盘的使用率。当某个阈值大于 `0` 且最近快照的整数使用率严格高于阈值时，新 Relay 请求会被拒绝并返回 HTTP `503`。
+系统性能监控默认开启。后台约每 5 秒采集 CPU、内存和缓存目录所在磁盘的使用率；CPU 和内存优先按容器 cgroup 配额计算，取不到时使用宿主机数值。当某个阈值大于 `0`，且连续 3 次采样（约 15 秒）的整数使用率都严格高于阈值时，新 Relay 请求会被拒绝并返回 HTTP `503`；任一次采样回落即恢复。关闭监控或调高阈值后立即放行，采样超过 30 秒未更新时也不拒绝。
 
 <div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-| 页面字段 | 配置键 | 校验 |
+| 页面字段 | 配置键 | 默认值或校验 |
 | --- | --- | --- |
-| 启用性能监控 | `performance_setting.monitor_enabled` | `true`or`flase` |
-| CPU 阈值 | `performance_setting.monitor_cpu_threshold` | `90`；前端最小值 `0`，没有前端最大值限制 |
-| 内存阈值 | `performance_setting.monitor_memory_threshold` | `90`；`0–100` |
-| 磁盘阈值 | `performance_setting.monitor_disk_threshold` | `95`；`0–100` |
+| 启用性能监控 | `performance_setting.monitor_enabled` | `true` |
+| CPU 阈值 (%) | `performance_setting.monitor_cpu_threshold` | `90`；前端最小值 `0`，没有前端最大值限制 |
+| 内存阈值 (%) | `performance_setting.monitor_memory_threshold` | `90`；`0–100` |
+| 磁盘阈值 (%) | `performance_setting.monitor_disk_threshold` | `95`；`0–100` |
 
 </div>
 
 <Callout type="info">
 - 资源保护使用周期性快照，不是排队或自动扩容系统。启用后通常每 5 秒更新一次；
-- 资源保护中间件挂载在 Playground、`/v1`、Gemini、Midjourney 和 Suno 等 Relay 路径，不影响登录、普通管理 API 或全部后台任务。
+- 资源保护中间件挂载在 Playground、`/v1`（含视频生成）、Gemini（`/v1beta`）、Midjourney 和任务插件等 Relay 路径，不影响登录、普通管理 API 或全部后台任务。
 </Callout>
 
 - 性能统计与操作
@@ -278,23 +335,21 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 3. 先使用「刷新统计」观察用量，再按需要单独执行「清理不活跃缓存」「重置统计」或「执行 GC」，核对提示和刷新后的数据。
 4. 多实例部署要分别检查目标节点。缓存清理不可恢复，重置命中次数也不能代替释放缓存或清理日志。
 
-- 运维-性能配置
-
-![性能配置](/assets/guide/feature-guide/system-settings-operations-performance.png)
-
 ### 系统维护
-
-系统维护分区展示 `/api/status` 返回的当前版本和进程启动时间，并允许浏览器检查 GitHub Release。
-
-点击「检查更新」时，浏览器直接请求：
-
-```text
-https://api.github.com/repos/Calcium-Ion/new-api/releases/latest
-```
 
 - 运维-系统维护配置
 
 ![系统维护配置](/assets/guide/feature-guide/system-settings-operations-system-maintenance.png)
+
+系统维护分区展示 `/api/status` 返回的当前版本和进程启动时间，并允许浏览器检查 GitHub Release。
+
+点击「检查更新」打开「系统更新」对话框，浏览器直接请求：
+
+```text
+https://api.github.com/repos/QuantumNous/new-api/releases?per_page=100
+```
+
+请求超时为 10 秒。页面忽略草稿和无法解析版本号的标签，按版本号（同一版本号下从低到高依次为 alpha、beta、rc、正式版、patch）选出最新的一个，预发布版也参与比较并标注「预发布版」；只有最新版本高于当前版本、且该版本未被忽略时，才显示「可更新」。对话框可「重新检查」「忽略该版本提醒」（只记录在当前浏览器）或「前往 GitHub」。Admin 及以上角色登录后，页头的版本号也是同一入口，页面可见且在线时浏览器每小时自动检查一次。
 
 <Callout type="warn">
   更新检查不会下载代码、验证升级兼容性、替换二进制、拉取镜像、迁移数据库、重建容器、重启服务或自动回滚。查看 Release 后，应按照实际部署方式制定备份、测试、升级和恢复流程。
@@ -302,11 +357,11 @@ https://api.github.com/repos/Calcium-Ion/new-api/releases/latest
 
 ## 变更后验证
 
-1. 每保存一个多字段分区后刷新页面，逐项确认是否存在部分成功；在多实例环境中为配置同步预留时间。
+1. 通用的保存确认、刷新核对和多实例同步等待见[系统设置概览](./system-setting#变更前记录与验证)。
 2. 检查公开状态是否包含默认侧边栏偏好，并用当前新版前端确认它仍由 `sidebar_state` Cookie 控制；再分别使用普通用户和 Root 验证演示站、自用模式及实际角色权限。
-3. 用测试用户把余额降到阈值以下，分别验证邮件、Webhook、Bark 或 Gotify；确认通知失败不会改变结算结果。
-4. 产生可控的 Relay 请求，等待至少一个性能指标刷盘周期，再检查模型广场中的延迟、成功率和分组数据。
-5. 通过验证码或测试通知验证 SMTP 的 DNS、端口、TLS、认证、发件人和投递；轮换凭证后确认旧凭证已失效。
+3. 确认「余额不足提醒」已开启，用测试用户的一次扣费把余额从阈值以上降到阈值以下，分别验证邮件、Webhook、Bark 或 Gotify；确认通知失败不会改变结算结果。
+4. 产生可控的 Relay 请求，等待至少一个性能指标刷库周期，再检查模型广场中的延迟、成功率和分组数据。
+5. 通过验证码或测试通知验证所选发送方式：SMTP 的 DNS、端口、TLS、认证、发件人和投递，或 Resend 的发件域名、API 密钥和投递；轮换凭证后确认旧凭证已失效。
 6. 对每条使用 Worker 的下载或通知链路分别测试 HTTPS、目标拒绝、Worker 密钥错误和超时，确认请求没有意外绕过网络策略。
 7. 在备份或测试数据上执行数据库与服务器日志清理，核对删除阈值、任务进度、保留文件和失败列表。
 8. 使用超过磁盘缓存阈值的测试请求验证内存／磁盘选择，并模拟资源超过阈值时的 Relay `503`；同时确认管理页面仍可访问。
@@ -315,18 +370,18 @@ https://api.github.com/repos/Calcium-Ion/new-api/releases/latest
 ## 常见问题
 
 - **修改默认侧边栏后当前前端没有变化**：该值已发布到公开状态，但当前新版前端只读取 `sidebar_state` Cookie，尚未消费该设置；清除 Cookie 只会回到前端自身的默认展开状态。该配置主要供兼容客户端使用。
-- **开启演示站后危险操作仍可执行**：演示模式不是完整的权限或只读策略。应使用角色权限、网络边界、只读数据副本和外部访问控制保护演示实例。
+- **开启演示站点模式后危险操作仍可执行**：当前版本的演示站点模式不限制任何功能（见[系统行为](#系统行为)）。应使用角色权限、网络边界、只读数据副本和外部访问控制保护演示实例。
 - **开启自用模式后仍能注册或看到多个用户**：该开关不会关闭多用户与注册接口；要限制注册请在[身份验证配置](./settings-auth)中关闭对应能力。
-- **额度已低于阈值但没有通知**：检查用户是否设置了个人阈值和通知方式，再检查 SMTP、Webhook、Bark、Gotify、Worker、SSRF 与服务端错误日志。
-- **模型性能指标没有立即出现**：样本先进入聚合桶，已完成的桶按刷盘周期写库。检查总开关、模型名、分组、桶时间和保留设置，并等待完整周期。
-- **SMTP 保存后仍无法发信**：页面不测试连接。核对主机、端口、安全模式、证书、账号、Token、发件地址和服务商限制；端口 `465` 还会触发隐式 TLS 行为。
+- **额度已低于阈值但没有通知**：提醒只在一次扣费跨过阈值时发送，余额原本已低于阈值时不会再提醒。检查站点「余额不足提醒」开关、用户是否关闭了个人提醒、个人阈值和通知方式，再检查所选邮件发送方式（SMTP 或 Resend）、Webhook、Bark、Gotify、Worker（含「允许 HTTP 图像请求」）、SSRF 与服务端错误日志。
+- **模型性能指标没有立即出现**：查询时只合并数据库中已刷库的数据和处理本次查询的实例的内存聚合桶。多实例部署时，其他实例的样本要等其刷库后才可见；模型广场的数据还会在页面缓存约 1 分钟。检查总开关、模型名、分组（只统计分组倍率中存在的分组和 `auto`）、桶时间和保留设置。
+- **保存后仍无法发信**：页面不测试连接。先确认「邮件发送方式」选的是已配置的方式，系统不会改用另一种。SMTP 核对主机、端口、安全模式、证书、账号、Token、发件地址（只能填纯邮箱）和服务商限制，端口 `465` 还会触发隐式 TLS 行为；Resend 核对发件域名是否已验证、API 密钥是否有效，具体拒绝原因见服务端日志。
 - **Worker 已配置但渠道请求仍直连上游**：Worker 只用于明确接入的下载和通知链路，不是模型渠道的通用网络代理。
 - **清理数据库日志后看板历史数据仍存在**：日志任务只删除 `logs` 表，不会删除 `quota_data` 聚合、性能指标或任务记录。
 - **日志清理一直等待或只完成了一部分**：检查主节点运行器、任务错误和日志库连接；任务失败不会回滚已删除的数据，重新提交前应再次确认截止时间。
 - **清理服务器日志后仍保留一个旧文件**：当前活动日志始终跳过；按数量清理还会保留指定的最新文件数。
 - **磁盘缓存达到上限后请求失败了吗**：系统通常改用内存；部分流式读取链路在磁盘创建失败且 Reader 已消费时可能直接报错。上限也不是磁盘配额保证。
-- **资源使用率达到阈值但请求没有被拒绝**：比较条件是严格高于阈值，并使用最近一次采样的整数值；阈值为 `0` 时该维度不检查。
-- **检查更新显示的版本并不比当前版本新**：页面只判断标签字符串是否相等，不做语义版本排序。请打开 Release 并人工核对版本、分支和升级路径。
+- **资源使用率达到阈值但请求没有被拒绝**：比较条件是严格高于阈值，使用采样的整数值，且需连续 3 次采样（约 15 秒）都超过阈值；采样超过 30 秒未更新时不拒绝；阈值为 `0` 时该维度不检查。在容器中，CPU 和内存按 cgroup 配额计算，可能与宿主机监控数值不同。
+- **检查更新提示的版本不符合预期**：页面按版本号比较，预发布版（如 `rc`）也参与比较，无法解析的标签会被忽略；当前版本为开发构建（`v0.0.0`）时无法比较。请打开 Release 并人工核对版本、分支和升级路径。
 
 ## 相关文档
 
@@ -334,7 +389,8 @@ https://api.github.com/repos/Calcium-Ion/new-api/releases/latest
 - [站点与品牌配置](./settings-site)：公开站点内容、导航和任务地址。
 - [身份验证配置](./settings-auth)：注册、OAuth、Passkey 和邮箱验证。
 - [计费与支付配置](./settings-billing)：额度、定价、支付合规和签到奖励。
-- [模型与路由配置](./settings-models)：协议适配、重试、路由可靠性和模型部署。
-- [安全与限制配置](./settings-security)：限流、敏感词、SSRF 和令牌数量限制。
+- [模型配置](./settings-models)：全局模型行为、供应商适配和模型部署。
+- [请求策略配置](./settings-request-policies)：请求文本过滤、会话保持与重试、渠道健康检查与自动禁用。
+- [安全与限制配置](./settings-security)：限流、SSRF 和令牌数量限制。
 - [控制台内容配置](./settings-content)：数据看板、公告、FAQ、API 地址和客户端内容。
 - [系统信息](/zh/docs/guide/feature-guide/admin/system-info)：系统任务、节点状态和其他 Root 运维信息。

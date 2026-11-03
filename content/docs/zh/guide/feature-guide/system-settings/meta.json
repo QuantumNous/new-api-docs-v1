@@ -7,6 +7,7 @@
     "settings-auth",
     "settings-billing",
     "settings-models",
+    "settings-request-policies",
     "settings-security",
     "settings-content",
     "settings-operations"

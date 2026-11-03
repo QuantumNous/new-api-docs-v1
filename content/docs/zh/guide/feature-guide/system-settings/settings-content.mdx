@@ -35,8 +35,6 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 导出间隔（分钟） | 整数，1–1440 | 后台用量数据聚合间隔；保持此值大于 1 分钟以避免数据库负载过重。 |
 | 默认粒度 | `hour` / `day` / `week` | 数据看板默认展示粒度；**仅影响 UI 展示，数据仍按小时聚合**。 |
 
-
-
 - 控制台内容-数据仪表板
 
 ![控制台内容-数据仪表板页面](/assets/guide/feature-guide/system-settings-console-content-data-dashboard.png)
@@ -205,10 +203,10 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 保存与生效
 
-- 配置写入后当前进程更新内存值；多实例按 `SYNC_FREQUENCY` 周期（默认约 60 秒）重新载入。部分配置需保存后重新刷新页面确认。
+保存方式、生效与多实例同步规则见[系统设置概览](./system-setting#生效范围与多实例同步)。
 
 <Callout type="info">
-  页面显示「保存成功」只表示配置已写入。公告、API 地址、FAQ、Uptime 等展示效果需回到数据看板/通知中心等实际入口验证，且这些面板受分区启用开关与站点导航配置双重影响。
+  公告、API 地址、FAQ、Uptime 等展示效果需回到数据看板/通知中心等实际入口验证，且这些面板受分区启用开关与站点导航配置双重影响。
 </Callout>
 
 ## 注意事项
