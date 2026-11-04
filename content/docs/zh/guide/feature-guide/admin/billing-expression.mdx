@@ -5,23 +5,31 @@ description: Root 使用计费表达式为模型定价：编辑器与预设、�
 
 import { Callout } from 'fumadocs-ui/components/callout';
 
-- 计费表达式在「系统设置 › 计费与支付 › 模型定价」中添加或编辑模型价格时使用；也可在「模型」列表中点击某个模型的「定价」，或在模型编辑抽屉中切换到「定价」标签，打开同一个编辑器。
-- 仅 Root 可以查看和修改模型价格；Admin 在「定价」标签中只看到「模型定价由超级管理员管理。」
-- 添加、编辑和保存模型价格的整体流程见[计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing#模型价格)。
-
 ## 计费表达式简介
 
-一条计费表达式完整定义一个模型的计价：Token 单价、阶梯条件、缓存 / 图片 / 音频的区分、按次价格和请求规则倍率都写在同一条表达式中，不再叠加旧的模型倍率、补全倍率等配置；分组倍率照常生效。
+- 一条计费表达式完整定义一个模型的计价：Token 单价、阶梯条件、缓存 / 图片 / 音频的区分、按次价格和请求规则倍率都写在同一条表达式中，不再叠加旧的模型倍率、补全倍率等配置；分组倍率照常生效。
+- 计费表达式在定价编辑器中配置，有三种方式可以打开：<br/>「系统设置 → 计费与支付 → 模型定价」、「模型」列表中某个模型的「定价」页，模型编辑抽屉的「定价」标签。
+- 仅 Root 可以查看和修改模型价格。
 
-- **单位**：Token 系数为美元 / 百万 Token，`p * 2.5` 表示输入每百万 Token 2.5 美元；`fixed(0.01)` 表示每次请求 0.01 美元。
-- **换算**：额度 = 表达式结果 ÷ 1,000,000 × 每美元额度（默认 500,000）× 分组倍率，四舍五入。例如 `tier("base", p * 2 + c * 8)`，输入 1,000、输出 500 Token、分组倍率 1 时，结果为 6,000，即 0.006 美元，按默认每美元额度扣 3,000 额度。`fixed()` 的金额在内部同样乘以 1,000,000 计入结果，因此同样条件下 `fixed(0.01)` 每次扣 5,000 额度。
-- **版本前缀**：表达式可以 `v1:` 开头，不写时按 v1 处理。
-- **内置表达式**：`gpt-image-2`、`gpt-6-astra`、`deepseek-v4-pro` 等模型自带计费表达式。该模型已配置旧的模型倍率或按次价格时以旧配置为准；保存了表达式后以保存的表达式为准。
-- **旧模式**：「按 Token（已弃用）」「按次（已弃用）」仍可运行，转换方法见[从旧模式转换](#从旧模式转换)。
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 项目 | 说明 |
+| --- | --- |
+| 单位 | Token 系数为美元 / 百万 Token，`p * 2.5` 表示输入每百万 Token 2.5 美元；`fixed(0.01)` 表示每次请求 0.01 美元。 |
+| 换算 | 额度 = 表达式结果 ÷ 1,000,000 × 每美元额度（默认 500,000）× 分组倍率，四舍五入。<br/>例如 `tier("base", p * 2 + c * 8)`，输入 1,000、输出 500 Token、分组倍率 1 时，结果为 6,000，即 0.006 美元，按默认每美元额度扣 3,000 额度。`fixed()` 的金额在内部同样乘以 1,000,000 计入结果，因此同样条件下 `fixed(0.01)` 每次扣 5,000 额度。 |
+| 版本前缀 | 表达式可以 `v1:` 开头，不写时按 v1 处理。 |
+| 内置表达式 | `gpt-image-2`、`gpt-6-astra`、`deepseek-v4-pro` 等模型自带计费表达式。 |
+| 旧模式 | 「按 Token（已弃用）」「按次（已弃用）」仍可运行，转换方法见[从旧模式转换](#从旧模式转换)。 |
+
+</div>
 
 ## 编辑器
 
 ### 编辑器结构
+
+- 计费表达式-表达式编辑器
+
+![表达式编辑器](/assets/guide/feature-guide/billing-expression-expression-editor.png)
 
 - 计费表达式-可视化编辑器（单一默认档位）
 
@@ -121,6 +129,96 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 推荐使用 LLM 辅助设计计费表达式。「LLM 辅助设计提示词」只在「表达式编辑器」模式出现；内置提示词为英文，末尾会自动附上当前模型名。
 
+<div className="[&_pre]:w-full [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_[role=region]]:max-h-[400px]">
+
+```text title="复制以下提示词发送给 LLM（如 ChatGPT / Claude），让它帮你设计计费表达式"
+You are an AI API billing expression design assistant. The user needs help designing a billing expression for an AI API gateway.
+
+## Expression Language
+
+Expressions are based on standard arithmetic with ternary operators.
+
+### Token Variables
+
+Input side:
+- p — input token count (for pricing). Automatically excludes sub-categories priced separately (e.g., if cr is used, cache tokens are deducted from p)
+- len — total input context length (for condition checks). Not affected by auto-exclusion; always reflects the full input length. Use in tier conditions
+- cr — cache-hit (read) token count
+- cc — cache-create token count (Claude 5-min TTL, OpenAI 30-min TTL)
+- cc1h — cache-create token count (1-hour TTL, Claude-specific)
+- cc12h — cache-create token count (12-hour TTL, OpenAI-specific)
+- img — image input token count
+- ai — audio input token count
+
+Output side:
+- c — output token count. Also auto-excludes sub-categories priced separately
+- img_o — image output token count
+- img_cr — image cache input tokens; deducted from img and cr only when the upstream reports a valid image cache breakdown
+- ao — audio output token count
+
+### p/c Auto-exclusion
+
+p and c are fallback variables representing all tokens not separately priced in the expression. If the expression uses a sub-category variable (e.g., cr), those tokens are deducted from p to avoid double-billing. Unused sub-category tokens remain in p/c at base price.
+
+Important: len is NOT affected by auto-exclusion. Tier conditions should use len instead of p to prevent cache hits from lowering p and misidentifying the tier.
+
+### Built-in Functions
+
+- tier(name, value) — labels the billing tier; must wrap the cost expression
+- fixed(amount) — a finite non-negative USD price per request, used only as tier("name", fixed(0.01)); replaces token charges in that leaf. Other leaves may still use token prices. Group/request multipliers and existing tool surcharges still apply. Unsupported for task usage expressions and Realtime.
+- max(a, b), min(a, b) — maximum/minimum
+- ceil(x), floor(x), abs(x) — ceiling, floor, absolute value
+- header(name) — reads a request header
+- param(path) — reads a request body JSON path (gjson syntax)
+- has(source, substr) — substring check
+- hour(tz), minute(tz), weekday(tz), month(tz), day(tz) — time functions, tz is a timezone like "Asia/Shanghai"
+
+### Price Coefficients
+
+Numbers in the expression are $/1M tokens prices. For example, p * 2.5 means input $2.50/1M tokens.
+
+## Expression Examples
+
+Simple pricing:
+tier("base", p * 2.5 + c * 15)
+
+With cache:
+tier("base", p * 2.5 + c * 15 + cr * 0.25)
+
+Multi-tier (use len for conditions):
+len <= 200000
+  ? tier("standard", p * 3 + c * 15 + cr * 0.3 + cc * 3.75 + cc1h * 6)
+  : tier("long_context", p * 6 + c * 22.5 + cr * 0.6 + cc * 7.5 + cc1h * 12)
+
+Image model:
+tier("base", p * 2 + c * 8 + img * 2.5)
+
+Multimodal with audio:
+tier("base", p * 0.43 + c * 3.06 + img * 0.78 + ai * 3.81 + ao * 15.11)
+
+Three-tier example:
+len <= 128000
+  ? tier("standard", p * 1.1 + c * 4.4)
+  : (len <= 1000000
+    ? tier("medium", p * 2.2 + c * 8.8)
+    : tier("long", p * 4.4 + c * 17.6))
+
+## Rules
+
+1. Every leaf branch must be wrapped in tier("name", cost_expr)
+2. Use English tier names, e.g. "base", "standard", "long_context"
+3. Use len for tier conditions (not p), supports <, <=, >, >=
+4. Multi-tier uses nested ternary: cond1 ? tier(...) : (cond2 ? tier(...) : tier(...))
+5. Price coefficients are the provider's official $/1M tokens prices
+6. If cache/image/audio don't need separate pricing, omit those variables; their tokens are included in p/c automatically
+
+Please generate a billing expression based on the model information and pricing requirements provided.
+
+Current model: claude-opus-5-5
+```
+
+</div>
+
 1. 打开辅助面板；在计价配置中选择“表达式编辑器”，点击“LLM 辅助设计提示词”；展开后可查看内置提示词。
 2. 复制提示词；点击面板右侧的“复制提示词”； 出现复制成功提示后，提示词已写入剪贴板；若复制失败，可选中文本手动复制。
 3. 粘贴到 LLM；打开 ChatGPT、Claude 等工具，将提示词粘贴到对话输入框；保留内置的语法说明，便于模型按系统支持的格式设计表达式。
@@ -129,6 +227,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 6. 核对并粘贴；检查价格、变量、条件边界和倍率，将表达式复制回输入框；只粘贴表达式正文，不包含 Markdown 代码围栏、解释文字或测试数据。
 7. 验证结果；在 Token 估算器填写用量；涉及请求或时间条件时，再使用“请求模拟”；检查费用和命中档位，并测试阈值前、阈值上、阈值后，以及字段缺失等场景。请求模拟不包含分组倍率。
 8. 修正并保存；如果结果不符，将表达式、报错或测试输入、实际结果、期望结果反馈给 LLM；验证通过后在价格配置界面保存；复制提示词或修改模拟样例不会自动保存计价配置。
+
+
 
 ## 表达式语法
 

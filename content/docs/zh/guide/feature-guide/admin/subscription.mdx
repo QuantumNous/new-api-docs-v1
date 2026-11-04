@@ -115,7 +115,8 @@ EPay 没有套餐级产品 ID。启用全局 EPay、配置至少一种支付方�
 </Callout>
 
 <Callout type="warn">
-  Stripe 和 Creem 下单时分别以套餐的外部 Price ID 或 Product ID 为准，实际扣款金额与币种由第三方产品决定；New API 列表展示和订单记录使用本地「套餐价格」。发布前必须确保外部产品与本地价格完全一致。修改一端不会自动同步另一端。
+  - Stripe 和 Creem 下单时分别以套餐的外部 Price ID 或 Product ID 为准，实际扣款金额与币种由第三方产品决定；New API 列表展示和订单记录使用本地「套餐价格」。发布前必须确保外部产品与本地价格完全一致。修改一端不会自动同步另一端。
+  - Stripe 套餐使用 `subscription` 模式创建周期性订阅。Stripe 会按所选 Price 的周期自动续费，直到订阅被取消。本页未说明续费事件如何更新本地订阅；上线前请在 Stripe 后台确认取消方式，并告知用户续费规则。
 </Callout>
 
 #### 创建 Waffo Pancake 产品
