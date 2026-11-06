@@ -45,8 +45,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 | 页面字段 | 配置键 | 默认值 | 实际作用与边界 |
 | --- | --- | --- | --- |
-| 默认折叠侧边栏 | `DefaultCollapseSidebar` | `false` | 界面说明为「默认情况下为新用户折叠侧边栏」。**已知问题（当前版本）**：前端不读取该值，开关不影响侧边栏，见[常见问题](#常见问题)。 |
-| 演示站点模式 | `DemoSiteEnabled` | `false` | 界面说明为「启用功能受限的演示模式」。**已知问题（当前版本）**：后端不限制任何功能，该值只写入公开状态，并在未自定义页脚时让首页页脚显示默认链接栏；保护演示实例的方法见[常见问题](#常见问题)。 |
+| 默认折叠侧边栏 | `DefaultCollapseSidebar` | `false` | 界面说明为「默认情况下为新用户折叠侧边栏」。 |
+| 演示站点模式 | `DemoSiteEnabled` | `false` | 界面说明为「启用功能受限的演示模式」。 |
 | 自用模式 | `SelfUseModeEnabled` | `false` | 未设置价格的模型按默认倍率 `37.5` 计费并出现在模型列表中，不再因未定价被拒绝；登录页隐藏「注册」链接，但不关闭注册接口。 |
 
 </div>
@@ -108,10 +108,6 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 发件地址 | `SMTPFrom` | 空；只能是邮箱地址或留空 | 只填纯邮箱地址，例如 `noreply@example.com`；留空时使用「用户名」。收件人看到的发件人名称固定为系统名称，不能在此设置。 |
 
 </div>
-
-<Callout type="warn">
-**已知问题（当前版本）**：「发件地址」的说明为「用于发送消息的显示名称和电子邮件」，占位符按字面显示为 `New API &lt;noreply@example.com&gt;`。按占位符填写 `名称 <邮箱>` 会被拒绝并提示「请输入有效的邮箱地址或留空」；发件人名称固定取系统名称。请只填纯邮箱地址；需要修改发件人名称时，在[站点与品牌配置](./settings-site#系统信息)中修改「系统名称」，这也会改变站点标题等处显示的名称。
-</Callout>
 
 - 传输加密模式
 
@@ -184,7 +180,7 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 | --- | --- | --- | --- |
 | Worker URL | `WorkerUrl` | 空；非空时必须以 `http://` 或 `https://` 开头 | 保存时移除末尾 `/`；非空时请求将被转发到此 Worker。 |
 | Worker 访问密钥 | `WorkerValidKey` | 不回显 | 随 Worker 请求发送，用于与 Worker 进行身份验证。留空以保留现有密钥。 |
-| 允许 HTTP 图像请求 | `WorkerAllowHttpImageRequestEnabled` | `false` | 界面说明为「当代理通过 HTTP 获取图像的 worker 时启用」。**已知问题（当前版本）**：该开关实际作用于所有经 Worker 的请求，关闭时目标地址不以 `https` 开头的请求一律被拒绝；因此启用 Worker 且本开关保持关闭（默认）时，`http://` 的 Webhook、Bark 和 Gotify 通知也会失败，只在服务端日志中留下记录。需要这类通知时，改用 `https` 地址，或开启本开关（开启后经 Worker 的请求不再按协议拦截）。 |
+| 允许 HTTP 图像请求 | `WorkerAllowHttpImageRequestEnabled` | `false` | 界面说明为「当代理通过 HTTP 获取图像的 worker 时启用」。 |
 
 </div>
 

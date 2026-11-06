@@ -21,6 +21,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 模型资料、供应商、预填充分组和模型部署，Admin 与 Root 都可以管理；模型定价只有 Root 可以修改。
 
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
 | 位置 | Root | Admin |
 | --- | --- | --- |
 | 「同步价格」按钮 | 显示 | 不显示 |
@@ -29,9 +31,13 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 编辑抽屉「定价」标签 | 可编辑并保存 | 只显示「模型定价由超级管理员管理。」 |
 | 删除时「同时移除定价」 | 可勾选 | 不可勾选 |
 
+</div>
+
 ### 列表字段
 
 除已有模型资料的记录外，列表还会列出渠道（含已禁用渠道）模型列表中出现、但没有精确同名资料的模型名称。这类行标为「缺元数据」，只能「补充资料」或复制名称。列表不支持按列排序：已有资料的记录按 ID 倒序，之后是「缺元数据」行按名称排序；默认每页 20 条。
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 列 | 说明 |
 | --- | --- |
@@ -42,6 +48,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 标签 | 第一个标签和其余数量。 |
 | 同步策略 | 「允许更新」或「保留本地」，对应抽屉中的「允许资料同步」开关。 |
 | 操作 | 见[行操作与批量操作](#行操作与批量操作)。 |
+
+</div>
 
 右上角「查看」可显示或隐藏列；ID、供应商、匹配类型、说明信息、自定义端点、创建时间、更新时间默认隐藏。
 
@@ -78,6 +86,9 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 勾选行后，列表底部显示批量操作：
 
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
 | 操作 | 说明 |
 | --- | --- |
 | 设置供应商 | 为所选模型选择供应商，预览后应用。 |
@@ -85,6 +96,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 在模型广场显示所选模型 / 从模型广场隐藏所选模型 | 批量修改「广场展示」开关。 |
 | 复制模型名称列表 | 以英文逗号分隔复制到剪贴板。 |
 | 删除选定的模型 | 打开删除确认，见[删除模型](#删除模型)。 |
+
+</div>
 
 选中项中有「缺元数据」行时，只能复制模型名称；其他操作会提示「请先为所有选中模型补充元数据。」
 
@@ -105,6 +118,9 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-编辑模型-模型资料页面](/assets/guide/feature-guide/model-management-edit-model-model-information.png)
 
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
 | 字段 | 默认值 | 校验 | 说明 |
 | --- | --- | --- | --- |
 | 模型名称 | 空（补充资料时带入） | 必填，最长 128 个字符，不能与已有记录重名 | 模型的唯一标识。修改名称不会重命名渠道中的模型，也不会迁移定价，已有价格仍归原名称。 |
@@ -116,6 +132,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 端点配置 | 空 | 保存时由后端校验格式 | 见[端点配置](#端点配置)。 |
 | 广场展示 | 开启 | — | 允许在模型广场展示；还需有可用渠道并满足用户分组访问条件。不影响 API 访问权限。 |
 | 允许资料同步 | 开启 | — | 允许「同步资料」在预览确认后覆盖所选字段；关闭后同步向导显示「已禁止资料同步」，不会修改此模型。开启时也不会自动同步，需手动运行「同步资料」。 |
+
+</div>
 
 点击「保存资料」保存；失败原因显示在抽屉底部。定价有未保存的修改时不能修改模型名称，需先保存或放弃定价修改。
 
@@ -167,10 +185,15 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 在行「⋯」菜单中点击「删除」删除单个模型，或勾选后点击「删除选定的模型」批量删除（一次 1–1000 个）。「缺元数据」行没有模型资料，不能删除。确认框「删除模型？」中有两个可选项，默认都不勾选：
 
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
 | 选项 | 说明 |
 | --- | --- |
 | 同时从所有渠道移除 | 从每个渠道的模型列表中删除该名称，并同步更新渠道能力。所选模型中有非完全匹配规则时不可用（显示「仅精确匹配可用」）。 |
 | 同时移除定价 | 删除该模型名称的自定义价格，勾选后提示「内置定价可能恢复生效。」仅 Root 可勾选。 |
+
+</div>
 
 - 两项都不勾选时，只删除模型资料；渠道中的模型名称、能力和价格都保留。只要启用的渠道仍引用该名称，它会重新出现在列表的「缺元数据」行和「缺失的模型」中。
 - 删除后可以重新创建同名模型资料。
@@ -312,12 +335,16 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-创建预填充组页面](/assets/guide/feature-guide/model-management-prefilled-groups-create-group.png)
 
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
 | 字段 | 默认值 | 校验 | 说明 |
 | --- | --- | --- | --- |
 | 分组名称 | 空 | 必填，最长 64 个字符，不能与已有分组重名 | 便于识别的名称。 |
 | 说明信息 | 空 | 最长 255 个字符 | 可选。 |
 | Group Type | Model Group | 三选一 | 决定条目格式和使用位置，见上表。 |
 | 项目 | 空 | — | Model Group、Tag Group：输入值并按回车键逐个添加。Endpoint Group：按行填写「提供商」与「端点配置」，或切换「JSON 模式」；「填入模板」可插入常用端点。 |
+
+</div>
 
 ## 供应商
 
@@ -363,10 +390,14 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ### 合并与删除供应商
 
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
 | 操作 | 入口 | 结果 |
 | --- | --- | --- |
 | 合并供应商 | 勾选多个供应商 →「合并供应商」，在「保留此供应商」中选择要保留的一个 | 其他所选供应商的模型改为归属保留的供应商，然后删除其他供应商；保留供应商的资料不变。 |
 | 删除供应商 | 行「⋯ → 删除」或勾选后「删除供应商」 | 删除所选供应商记录。仍有关联模型的供应商不能删除，需先转移或清除这些模型的供应商归属。 |
+
+</div>
 
 - 设置供应商、清除供应商归属、合并和删除都要先「预览更改」，核对来源供应商、目标供应商和受影响的记录后再「应用更改」；一次最多 1000 条。
 - 这些操作只修改供应商归属，定价、渠道和模型名称保持原值。
@@ -395,6 +426,9 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 模型部署服务启用后，点击右上角「创建部署」，填写后点击「新建」。
 
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
 | 分组 | 字段 | 默认值 | 校验与说明 |
 | --- | --- | --- | --- |
 | 基本配置 | 容器名称 | 空 | 必填；输入后实时检查「名称可用」或「名称不可用」。 |
@@ -410,9 +444,14 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 高级配置 | 环境变量 (JSON)、密钥环境变量 (JSON) | 空 | 可选，JSON 对象。 |
 | 高级配置 | 注册表用户名、注册表密钥 | 空 | 可选，私有镜像仓库凭证。 |
 
+</div>
+
 可用硬件、位置和价格以 io.net 为准，不要把页面默认值当作所有实例的固定规格。
 
 ### 查看与管理部署
+
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 操作 | 说明 |
 | --- | --- |
@@ -423,11 +462,16 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 重命名部署 | 输入新名称，实时检查名称是否可用。 |
 | 删除 | 确认后向 io.net 请求终止部署，状态依次变为「终止请求」「已销毁」；不可撤销。 |
 
+</div>
+
 <Callout type="warn">
   如果渠道 Base URL 或高级自定义路由指向某个部署，终止或修改部署前必须先切换到其他可用渠道，并验证模型路由。部署属于外部资源，New API 不会因为部署状态变化而修正渠道配置。
 </Callout>
 
 ## 故障排查
+
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 现象 | 建议检查 |
 | --- | --- |
@@ -443,6 +487,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 供应商无法删除 | 仍有关联模型；先在「关联模型」中设置或清除这些模型的供应商，或改用「合并供应商」。 |
 | 「部署」显示未启用或连接失败 | 请 Root 在「系统设置 → 模型 → 模型部署」检查开关和 API Key，然后点击「重试」。 |
 | 部署终止或容器异常 | 查看部署详情、容器状态和日志，并检查是否仍有渠道指向该地址。 |
+
+</div>
 
 ## 相关文档
 
