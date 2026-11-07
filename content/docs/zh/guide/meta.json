@@ -15,6 +15,7 @@
     "---功能指南---",
     "feature-guide/index",
     "feature-guide/user",
-    "feature-guide/admin"
+    "feature-guide/admin",
+    "feature-guide/system-settings"
   ]
 }

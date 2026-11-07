@@ -1,0 +1,312 @@
+---
+title: 身份验证配置
+description: Root 配置密码登录与注册、邮箱验证与域名限制、密码传输加密、Turnstile 机器人保护、OAuth、Passkey 与自定义 OAuth。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+- 身份验证配置位于 `/system-settings/auth`，仅 Root 可访问。
+
+
+## 身份验证配置简介
+
+身份验证域下有五个独立分区：
+
+| 分区 | 路径 | 职责 |
+| --- | --- | --- |
+| [基本身份验证](#基本身份验证) | `/system-settings/auth/basic-auth`（默认进入） | 密码登录、注册、邮箱验证与域名限制。 |
+| [OAuth 集成](#oauth-集成) | `/system-settings/auth/oauth` | 内置第三方身份提供方。 |
+| [通行密钥认证](#通行密钥认证) | `/system-settings/auth/passkey` | WebAuthn / Passkey。 |
+| [机器人保护](#机器人保护) | `/system-settings/auth/bot-protection` | Cloudflare Turnstile。 |
+| [自定义 OAuth](#自定义-oauth) | `/system-settings/auth/custom-oauth` | 自定义身份提供方。 |
+
+## 配置分区
+
+### 基本身份验证
+
+- 身份验证-基本身份验证
+
+![身份验证-基本身份验证页面](/assets/guide/feature-guide/system-settings-authentication-basic-authentication.png)
+
+- 开关与字段
+
+| 字段 | 作用与边界 |
+| --- | --- |
+| 密码登录 | 控制是否允许使用用户名和密码登录。 |
+| 注册已启用 | 控制是否允许新用户注册。 |
+| 密码注册 | 控制是否允许使用密码注册。它受「注册已启用」共同约束。 |
+| 电子邮件验证 | 要求通过密码注册的新账户必须验证邮件；配置此项前应先在[运维配置](./settings-operations#邮件与通知)的「邮件与通知」中完成发信设置（SMTP 或 Resend）。 |
+| 电子邮件域限制 | 启用后只接受白名单中的邮箱域名。 |
+| 电子邮件别名限制 | 启用后拒绝 @ 前含 `+` 或 `.` 的邮箱，例如 `user+test@example.com`、`first.last@example.com`。 |
+| 电子邮件域白名单 | 每行一个域名 (仅在启用域名限制时使用) |
+
+<Callout type="info">
+- 用户名最长 20 个字符，邮箱最长 50 个字符，密码长度为 8–128 个字符。
+- 新注册用户创建为普通用户；管理员角色应在[用户管理](/zh/docs/guide/feature-guide/admin/user)中由有权限的管理员创建或调整。
+</Callout>
+
+<Callout type="info">
+当前代码在发送密码注册验证码和已登录用户绑定邮箱时，都会检查域名白名单和邮箱别名规则。
+</Callout>
+
+<Callout type="warn">
+  开启邮箱验证前先确认发信配置（SMTP 或 Resend）能从服务端正常发信。保存认证选项不会测试发信配置；如果邮件无法送达，用户可能无法完成注册验证或找回密码。
+</Callout>
+
+### OAuth 集成
+
+- 身份验证-OAuth 集成 GitHub
+
+![身份验证-OAuth 集成 GitHub 页面](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-github.png)
+
+- 身份验证-OAuth 集成 Discord
+
+![身份验证-OAuth 集成 Discord 页面](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-discord.png)
+
+- 身份验证-OAuth 集成 OIDC
+
+![身份验证-OAuth 集成 OIDC 页面](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-oidc.png)
+
+- 身份验证-OAuth 集成 Telegram
+
+![身份验证-OAuth 集成 Telegram 页面](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-telegram.png)
+
+- 身份验证-OAuth 集成 LinuxDO
+
+![身份验证-OAuth 集成 LinuxDO 页面](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-linuxdo.png)
+
+- 身份验证-OAuth 集成 微信
+
+![身份验证-OAuth 集成 微信 页面](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-wechat.png)
+
+OAuth 分区以标签页展示内置提供商。先在提供商后台创建应用，再把凭证和回调信息填入本页，最后开启对应开关。
+
+| 提供商 | 配置字段或特殊行为 |
+| --- | --- |
+| GitHub | 开关、Client ID、Client Secret。|
+| Discord | 开关、Client ID、Client Secret。 |
+| OIDC | 开关、显示名称、Client ID/Secret、Well-Known URL，以及授权、令牌和用户信息端点。显示名称为空时使用 `OIDC`。Well-Known URL 非空、且有改动或本次开启 OIDC 时，保存前浏览器会直接获取发现文档，并用结果覆盖授权、令牌和用户信息三个端点（Well-Known URL 须以 `http://` 或 `https://` 开头，否则报错并中止保存）；其他情况按填写的端点保存。 |
+| LinuxDO | 开关、Client ID、Client Secret、最低信任级别。只有达到配置阈值的 LinuxDO 账户才允许继续登录。 |
+| Telegram | 开关、Client ID、Client Secret。Client ID 和 Client Secret 在 BotFather 的 Login Widget 中登记回调地址后获取；完成配置后，现有 Telegram 绑定可继续使用。使用 `oauth.telegram.org` 的统一 **OIDC/PKCE** OAuth；`telegram` 标识符（slug）为内置保留。 |
+| 微信 | 开关、服务器地址（微信登录服务的地址）、服务器 Token、二维码图片 URL。登录时后端调用配置服务的 `/api/wechat/user?code=...` 获取用户信息，属于依赖外部服务的专用流程。 |
+
+<Callout type="info">
+- 除微信外，各提供商标签顶部的「设置引导」会显示由 `ServerAddress` 推导出的 `/oauth/{provider}` 回调地址（OIDC 标为「重定向 URL」，其余标为「授权回调 URL」），GitHub、Discord、OIDC 还显示主页 URL，均可直接复制；未设置服务器地址时，这些地址以占位文字「网站地址」开头，不能直接使用，应先在[站点与品牌配置](./settings-site#系统信息)中填写。
+- Discord 与 OIDC 的令牌交换会发送由 `ServerAddress` 生成的对应回调；
+- GitHub 当前令牌交换不发送 `redirect_uri`；
+- LinuxDO 则根据收到请求的协议和主机拼接 `/api/oauth/linuxdo`，与管理界面显示的地址可能不同。
+- 因此不要把所有提供商套用一个回调模板，应复制页面为当前实例生成的地址，并结合提供商要求和反向代理实际转发路径逐项核对。
+</Callout>
+
+- OAuth 登录与绑定流程
+
+1. 在提供商后台登记应用名称、主页和该提供商要求的回调地址。
+2. 在本页填写凭证和端点，保存后再开启提供商。
+3. 用未登录窗口测试登录；用已登录的个人设置测试账户绑定。
+4. 检查回调后的错误提示、用户绑定记录和服务端日志。
+
+<Callout type="info">
+  管理员可使用[用户管理](/zh/docs/guide/feature-guide/admin/user)管理用户绑定信息。
+</Callout>
+
+<Callout type="warn">
+  回调地址、浏览器公开地址和服务端看到的协议必须一致。
+</Callout>
+
+### 通行密钥认证
+
+- 身份验证-通行密钥认证
+
+![身份验证-通行密钥认证页面](/assets/guide/feature-guide/system-settings-authentication-passkey-authentication.png)
+
+Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录。
+
+| 字段 | 说明 |
+| --- | --- |
+| 启用 Passkey | 开启 Passkey 注册和登录。 |
+| 通行密钥显示名称 | 在 Passkey 提示期间向用户显示的可读名称。 |
+| 主域名 | 位于「通行密钥域名」分组，新通行密钥使用该域名。只填域名，例如 `example.com` 或 `localhost`，不含协议、端口、路径或通配符，也不能是 IP 地址；必须与当前域匹配或为其父域。留空时使用「服务器地址」中的主机名。 |
+| 兼容的通行密钥域名 | 已有通行密钥使用的旧域名，每行一个，格式同主域名；同一域名的不同端口无需填写。修改主域名时，原域名会自动保留到此列表。 |
+| 用户验证 | 控制在通行密钥流程中是否需要用户验证（生物识别/PIN）。可选必需、推荐、不推荐，默认推荐。 |
+| 设备类型偏好 | 无限制、内置设备（如指纹/面容、Windows Hello）或外部设备（如 USB 安全密钥）。 |
+| 允许不安全来源| 允许在非 HTTPS 源上注册通行密钥（仅建议用于开发，生产环境应关闭。） |
+| 允许使用通行密钥的网站 | 每行一个网站地址，例如 `https://example.com`，不带页面路径；带端口的地址填在这里。留空时使用「服务器地址」。 |
+
+<Callout type="warn">
+- 「通行密钥域名」分组中的「为什么需要设置？」会打开「如何设置通行密钥域名」，显示当前网站和系统当前使用的域名；弹窗中的操作按钮在尚未设置域名时为「填入当前网站」，已有域名时为「保留现有域名」，只有通过 HTTPS 或 `http://localhost` 访问、且不是 IP 地址时才能使用。主域名与当前网站不匹配或未设置时，分组提示变为黄色警告。
+- 修改主域名、兼容域名或允许使用的网站并保存时，系统先预检影响。更改或清空主域名会弹出「更改通行密钥域名？」；移除兼容域名会弹出「移除兼容的通行密钥域名？」，列出被移除的域名和受影响的通行密钥数量。确认后才写入。被移除域名上的通行密钥将无法使用，确认前应确保受影响用户可以用其他方式登录。
+- 关闭「启用 Passkey」后，已注册通行密钥但未启用 2FA 的用户将无法登录：主认证通过后仍要求通行密钥验证，此时提示「此验证方式当前不可用。」。如需恢复，可重新开启「启用 Passkey」，或在[用户管理](/zh/docs/guide/feature-guide/admin/user)中为这些用户执行「重置 Passkey」。
+</Callout>
+
+<Callout type="info">
+管理员若需为单个用户清理 Passkey，请到[用户管理](/zh/docs/guide/feature-guide/admin/user)执行「重置 Passkey」。该操作会删除用户Passkey凭证并撤销其现有登录会话。
+</Callout>
+
+### 机器人保护
+
+- 身份验证-机器人保护
+
+![身份验证-机器人保护页面](/assets/guide/feature-guide/system-settings-authentication-bot-protection.png)
+
+「机器人保护」分区对应 Cloudflare Turnstile，包含：
+
+| 字段 | 说明 |
+| --- | --- |
+| 启用 Turnstile | 全局开关 `TurnstileCheckEnabled`。需先填写并保存站点密钥才能开启；启用后，相关匿名或敏感操作必须提交有效的 Cloudflare Turnstile 挑战令牌。 |
+| 站点密钥 | 前端渲染挑战所需的站点密钥。 |
+| 密钥 | 服务端向 Cloudflare 验证令牌所需的密钥。 |
+
+<Callout type="info">
+  - 当前中间件会在以下流程检查 Turnstile：注册、密码登录、请求注册邮箱验证码、请求密码重置邮件，以及用户签到。
+  - Turnstile 密钥 是服务端凭证，启用或修改后应立即验证登录、注册、验证码和密码重置等受保护流程。
+</Callout>
+
+### 自定义 OAuth
+
+- 身份验证-自定义 OAuth
+
+![身份验证-自定义 OAuth 页面](/assets/guide/feature-guide/system-settings-authentication-custom-oauth.png)
+
+自定义 OAuth 是身份验证工作区的正式分区，地址为 `/system-settings/auth/custom-oauth`。<br/>
+只有 Root 可以在管理页创建、编辑、启用、禁用、发现或删除提供商；<br/>
+普通管理员只能在具备相应用户管理权限时查看或解除用户绑定。
+
+- 创建、编辑与启停
+
+{/* 分隔伪标题与图注，避免并入同一列表 */}
+
+- 身份验证-添加自定义 OAuth
+
+![身份验证-添加自定义 OAuth 页面](/assets/guide/feature-guide/system-settings-authentication-custom-oauth-add-provider.png)
+
+- 身份验证-编辑自定义 OAuth
+
+![身份验证-编辑自定义 OAuth 页面](/assets/guide/feature-guide/system-settings-authentication-custom-oauth-edit-provider.png)
+
+1. 点击「添加提供商」，在弹窗顶部「从预设快速设置」中选择预设模板并填写「API 地址」（预设端点按该地址拼接；不填时只带出名称、标识符、图标、作用域和字段映射），或直接填写空白表单。
+2. 填写名称、标识符（slug）、客户端凭证、三个端点和所需高级字段；保存前确认回调地址已登记。回调地址可从弹窗中的「OAuth 回调 URL」卡片复制，它随标识符实时更新。
+3. 启用状态由弹窗「基本信息」中的「已启用」开关控制（新建时默认开启），列表「状态」列只显示当前状态；停用或重新启用时，在列表中点击编辑，切换开关后保存。只有启用的提供商才会出现在登录页。
+4. 编辑已有提供商时，Client Secret 输入框为空表示保留原值。修改端点、字段映射或访问策略后，应重新测试登录和绑定。
+5. 修改标识符（slug）前先更新第三方后台的回调登记；保存后旧地址不再对应当前提供商。
+
+<Callout type="warn">
+新增、编辑（含启停、修改标识符）或删除提供商只在处理该请求的节点立即生效。多节点部署时，其他节点需要重启后才会加载变更，在此之前这些节点的登录页和回调仍按旧配置处理。规则见[生效范围与多实例同步](./system-setting#生效范围与多实例同步)。
+</Callout>
+
+<Callout type="info">
+- 创建前准备
+1. 先在第三方提供商后台创建 OAuth 应用，并准备 Client ID、Client Secret、授权端点、令牌端点和用户信息端点。
+2. 管理页提供以下创建预设：GitHub Enterprise、GitLab、Gitea、Nextcloud、Keycloak、Authentik 和 ORY Hydra。
+3. 预设只是辅助填写名称、标识符（slug）、端点、作用域和常见字段映射，不保证提供商可以直接连通。
+4. 使用预设时应根据实际版本和部署路径逐项核对。
+</Callout>
+
+- 字段说明
+
+| 字段 | 作用与边界 |
+| --- | --- |
+| 提供商名称、图标、已启用 | 决定管理页和登录入口的显示；只有启用的提供商会出现在登录页。图标填写图标标识符，例如 `github`。 |
+| 标识符（slug） | 用于URL和API路由；会转为小写，只允许小写字母、数字和连字符。 |
+| Client ID / Client Secret | 创建时均为必填项。接口不会回显 Secret；编辑时留空表示保留原值，填写新值才会替换。 |
+| 认证方式 | 客户端凭据如何发送至令牌端点：可选 Auto Detect（默认）、Params (in body)、Header (Basic Auth)；Auto Detect 当前按请求体参数发送。 |
+| 授权、令牌、用户信息端点 | 分别用于跳转授权、交换 Token 和读取用户资料。 |
+| 作用域 | 使用空格分隔，例如 `openid profile email`。 |
+| Well-Known URL| 供管理页手动执行 OIDC 发现 URL，点击"自动发现"以自动获取端点。发现文档由服务端获取。 |
+| 用户字段映射 | 从用户信息响应中读取用户 ID、用户名、显示名和邮箱；支持 `ocs.data.id` 这类 gjson 嵌套路径。 |
+| 访问策略、拒绝消息 | 根据用户信息限制允许登录的账号，并定制不满足条件时的提示。 |
+
+- 高级配置-访问策略
+
+根据提供商返回的用户信息字段执行策略判断。条件和嵌套分组支持 and/or 逻辑。<br/>
+支持的操作符：eq、ne、gt、gte、lt、lte、in、not_in、contains、not_contains、exists、not_exists。留空则允许所有用户。
+
+- 高级配置-访问被拒绝消息
+
+访问被拒绝时的提示消息。<br/>
+可用变量：`{{provider}}`、`{{field}}`、`{{op}}`、`{{required}}`、`{{current}}`，以及 `{{current.roles}}` 等路径变量。
+
+- 登录、绑定与生命周期
+
+1. 保存并启用后，用未登录窗口测试登录，再用已登录测试用户验证账户绑定。
+2. OAuth state 当前有效期约 10 分钟；绑定 state 还会关联发起用户和会话，不能跨会话复用。
+3. 同一用户对同一自定义提供商只能保留一个绑定，同一提供商账号也不能绑定到多个本地用户。
+4. 禁用提供商只会阻止后续登录和绑定，不会删除历史绑定。
+5. 删除提供商前必须先由用户在个人设置中解绑，或由有权限的管理员在[用户管理](/zh/docs/guide/feature-guide/admin/user)中解除全部绑定；仍有任意绑定时，删除请求会被拒绝。
+
+## 登录验证与安全
+
+本节说明与身份验证相关的安全检查边界，其中大多数能力不在本页表单中配置，但影响登录与账户安全。
+
+- **统一登录验证**：当用户已启用 2FA 或 Passkey 时，主认证通过后会进入统一的验证质询流程（有效期约 5 分钟），验证通过后才签发会话。这是提升登录安全性的统一机制。直接使用 Passkey 登录时不再追加质询。
+- **验证证明一次性消费**：这些验证证明绑定到「会话 + 动作」（基于 HMAC 的上下文哈希），且只被消费一次。回调、验证或绑定流程失败后通常需要重新发起，不要重复复用同一个证明。
+- **2FA 的边界**：2FA 是用户级安全功能，不是本页的全局开关。用户在个人设置中启用和管理 2FA；管理员重置某个用户的 2FA、备用码和登录会话时，应使用[用户管理](/zh/docs/guide/feature-guide/admin/user)中的「重置 2FA」。
+- **绑定/解绑/删除账户**：涉及账户绑定变更或删除的操作，也要求再次验证（已启用 2FA 或 Passkey 时使用它们，否则使用密码或第三方登录），避免会话被意外劫持。
+
+<Callout type="warn">
+  开启 2FA 或 Passkey 后，主认证之后还需要完成验证质询（约 5 分钟）才会签发会话。请为 Root 和用户保留至少一种经过验证的替代登录方式；如果验证证明或 OAuth state 已过期/被消费，需要重新发起登录或绑定，而不是反复刷新同一个地址。
+</Callout>
+
+## 密码传输加密
+
+密码传输加密由**环境变量** `PASSWORD_LOGIN_ENCRYPTION_ENABLED` 控制（默认 `false`），不在页面表单中配置。<br/>
+开启后，密码登录和敏感操作中的密码验证会由前端使用 RSA-OAEP 加密后提交；注册不在加密范围内，仍提交原始密码。
+
+工作机制：
+
+- 服务端启动时从数据库读取 RSA 私钥，不存在时自动生成（2048 位）并写入数据库；连接同一数据库的节点共用该密钥。
+- `/api/status` 返回 `password_login_encryption_enabled` 供前端判断是否启用。
+- 前端通过 `GET /api/user/login/encryption-key` 获取公钥；密码使用 RSA-OAEP v1/v2 信封加密后随请求提交。
+- 服务端使用私钥解密校验密码。
+
+<Callout type="warn">
+  - 该开关是实例级环境变量，多节点部署时各节点必须一致。
+  - 各节点开关不一致时，部分登录请求会被拒绝（提示「无效的参数」）；私钥无法读取或写入时服务无法启动；解密失败时提示「用户名或密码错误，或用户已被封禁」。同时注意与反向代理的 HTTPS/HTTP 传输配合，关闭则为明文密码传输。
+</Callout>
+
+## 保存与凭证安全
+
+保存方式见[系统设置概览](./system-setting#保存方式)，密钥字段不回显、留空保留的规则见概览中的[敏感配置与审计记录](./system-setting#敏感配置与审计记录)。
+
+保存后按以下顺序验证：
+
+1. 按[变更前记录与验证](./system-setting#变更前记录与验证)完成通用的提示确认与刷新核对。
+2. 使用测试账户验证密码登录、注册、邮箱验证码和密码重置。
+3. 对每个启用的 OAuth 提供商分别测试登录和绑定，并检查历史绑定是否符合预期。
+4. 对自定义 OAuth 额外核对回调地址、字段映射、访问策略和禁用／解绑／删除流程。
+5. 在支持 WebAuthn 的 HTTPS 浏览器中测试 Passkey 注册和登录。
+6. 若启用了 Turnstile，重复测试所有受保护流程，而不只测试登录。
+7. 若开启密码传输加密，确认各节点一致并能正常解密登录。
+
+## 注意事项
+
+- **回调一致性**：浏览器公开地址、`ServerAddress`、提供商登记回调与反向代理转发的 Host/Proto 必须一致。
+- **验证证明与 state 一次性**：失败后不要反复刷新同一地址，应重新发起登录或绑定。
+- **统一登录验证**：2FA/Passkey 用户需在主认证后完成验证质询（约 5 分钟）。
+- **Turnstile**：需站点密钥和密钥同时正确、Cloudflare 可达、token 有效，且只有一个全局开关。
+- **Passkey 与域名强绑定**：改域名/协议后需重新核对主域名、兼容的通行密钥域名、允许使用通行密钥的网站和 `ServerAddress`；旧域名应保留在兼容域名中。
+- **Telegram 迁移**：若此前用旧 Login Widget，需在 BotFather 的 Login Widget 中登记 `/oauth/telegram` 回调地址并取得 Client ID 和 Client Secret；现有绑定可继续使用。`telegram` 标识符（slug）保持内置保留。
+- **密码加密**：环境变量控制，多节点需一致；密钥在启动时自动生成并存入数据库，各节点需连接同一数据库。
+
+## 常见问题
+
+- **注册开关已开但注册失败**：检查密码注册开关、邮箱验证、发信配置、白名单、别名规则和 Turnstile；再查看后端返回的具体错误。
+- **邮箱白名单不生效**：确认域名限制已启用、列表非空，且每行是精确域名（不是完整邮箱或通配符）；邮箱域名白名单请使用小写。
+- **密码重置仍接受被域名限制的邮箱**：当前域名/别名规则重点用于注册验证码流程，密码重置有独立的流程，不应假定两者完全相同。
+- **OAuth 回调报错或状态失效**：检查 `ServerAddress`、反向代理的 Host/Proto、提供商后台回调登记和一次性流程令牌是否已过期。
+- **OIDC 保存时报发现文档错误**：Well-Known URL 必须以 `http://` 或 `https://` 开头，且保存页面的浏览器必须能访问该地址；否则清空 Well-Known URL 后手动填写端点，并检查网络策略。
+- **自定义 OAuth 的 Auto Detect 仍交换失败**：「认证方式」为 Auto Detect 时按请求体参数发送凭证，不会改用 Basic Auth 重试；根据提供商要求明确选择 Params (in body) 或 Header (Basic Auth)。
+- **自定义 OAuth 无法删除**：先在用户个人设置或用户管理中解除该提供商的全部历史绑定；禁用不会自动解绑。
+- **关闭 OAuth 后用户仍显示绑定**：关闭只阻止新的登录或绑定，不会清理历史身份；需要到用户管理解除绑定。
+- **Passkey 在新域名上不可用**：重新核对主域名、兼容的通行密钥域名、允许使用通行密钥的网站、HTTPS 和 `ServerAddress`；管理员可在用户管理重置后让用户重新注册。
+- **Turnstile 保存成功但所有请求仍失败**：同时检查站点密钥、密钥、Cloudflare 站点域名、服务端出网和令牌有效期；保存选项不会代替运行时验证。
+- **登录后无会话或验证失败**：若用户已启用 2FA/Passkey，确认统一验证质询能够通过；检查验证证明与 OAuth state 是否一次性被消费或已过期。
+- **开启密码传输加密后登录失败**：检查各节点 `PASSWORD_LOGIN_ENCRYPTION_ENABLED` 是否一致、是否连接同一数据库。
+- **Telegram 登录失败**：确认已在 BotFather 的 Login Widget 中登记 `/oauth/telegram` 回调地址，并填写对应的 Client ID 和 Client Secret。
+
+## 相关文档
+
+- [系统设置概览](./system-setting)：系统设置的生效机制、多实例同步、敏感配置与变更验证要求。
+- [站点与品牌配置](./settings-site)：`ServerAddress`、Logo、公开内容与侧边栏/顶部导航配置。
+- [运维配置](./settings-operations#邮件与通知)：邮件发送方式（SMTP / Resend）与发信凭证。
+- [用户管理](/zh/docs/guide/feature-guide/admin/user)：重置 2FA、重置 Passkey、管理员权限矩阵。
+- [订阅管理](/zh/docs/guide/feature-guide/admin/subscription)：与用户注册/登录相关的权益与分组配置。

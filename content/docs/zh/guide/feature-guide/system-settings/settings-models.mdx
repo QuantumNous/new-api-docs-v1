@@ -1,0 +1,206 @@
+---
+title: 模型配置
+description: Root 配置全局模型行为、供应商适配和 io.net 模型部署。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+模型配置位于 `/system-settings/models`，仅 Root 可访问。
+
+## 模型配置简介
+
+该工作区包含「全局模型配置」「Gemini」「Claude」「Grok」和「模型部署」五个分区。负责实例级的模型协议适配和模型部署集成。
+
+| 分区 | 入口 | 主要用途 |
+| --- | --- | --- |
+| [全局模型配置](#全局模型配置) | `/system-settings/models/global` | 请求透传、思考后缀豁免、ChatCompletions 转换、流式心跳。 |
+| [Gemini](#gemini) | `/system-settings/models/gemini` | Gemini/Vertex 转换默认值与思考适配。 |
+| [Claude](#claude) | `/system-settings/models/claude` | Claude 请求头覆盖、默认输出上限与思考适配。 |
+| [Grok](#grok) | `/system-settings/models/grok` | 使用规范违规的额外扣费。 |
+| [模型部署](#模型部署) | `/system-settings/models/model-deployment` | io.net 托管部署的开关与凭证。 |
+
+「路由可靠性」和「渠道亲和性」已移至[请求策略配置](./settings-request-policies)，旧地址 `/system-settings/models/routing-reliability`、`/system-settings/models/channel-affinity` 会自动跳转到其中的「会话与重试」。
+
+## 配置分区
+
+模型域下有五个独立分区：
+
+### 全局模型配置
+
+- 模型-全局模型配置
+
+![全局模型配置分区](/assets/guide/feature-guide/system-settings-model-global-model-configuration.png)
+
+- 请求透传
+
+启用后，Relay 会在相关协议链路中把客户端原始请求体直接发送给上游，跳过许多请求体转换、字段移除、系统提示词合并和参数覆盖步骤。
+
+<Callout type="info">
+- 分别发送一次非流式请求和一次流式请求，检查上游是否识别全部字段。
+- 对比开启前后的模型映射、用量统计和错误响应。
+</Callout>
+
+- 不自动处理思考后缀的模型
+
+此处列出的模型不会自动添加或移除 -thinking / -nothinking 后缀。命中的模型同时豁免 @ 修饰符解析与 400 校验。以 re: 开头的条目会按 Go 正则匹配完整模型名，例如 re:.*@sha256:.*。
+
+- ChatCompletions → 响应兼容
+
+渠道匹配与模型正则需要同时满足。页面提供「填充示例（指定渠道）」和「填充示例（全部渠道）」两个按钮。
+
+**字段说明：**
+
+| 字段 | 作用 |
+| --- | --- |
+| `enabled` | 总开关；关闭时其他字段不生效。 |
+| `all_channels` | 为 `true` 时允许所有渠道参与匹配。 |
+| `channel_ids` | `all_channels` 为 `false` 时按渠道 ID 匹配，命中任一即通过。 |
+| `channel_types` | `all_channels` 为 `false` 时按渠道类型编号匹配，命中任一即通过。 |
+| `model_patterns` | 正则表达式数组；请求模型至少命中一项才转换。 |
+
+<Callout type="warn">
+- 此功能为实验性功能。配置格式和行为可能会发生变化。
+- 全局请求透传或目标渠道的请求体透传开启时不会进入该转换链路
+</Callout>
+
+- 保持连接心跳
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 页面字段 | 配置键 | 默认值 | 校验与范围 | 影响范围 | 备注 |
+| --- | --- | --- | --- | --- | --- |
+| 保持连接心跳 | `general_setting.ping_interval_enabled` | `false` | 布尔 | 适用的流式连接 | 定期发送 ping 帧以保持流连接处于活动状态。 |
+| Ping 间隔（秒） | `general_setting.ping_interval_seconds` | `60` | 最小 `1` | 心跳写入周期 | 建议保持此值较高，以避免上游限流。 |
+
+</div>
+
+### Gemini
+
+Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认行为。
+
+- 模型-Gemini
+
+![Gemini 分区](/assets/guide/feature-guide/system-settings-model-gemini.png)
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 页面字段 | 默认值 | 校验与范围 | 说明 |
+| --- | --- | --- | --- |
+| 安全设置 | `{"default":"OFF"}` | JSON 字符串映射 | 以 JSON 格式提供按类别划分的安全覆盖。使用 `default` 作为回退值。 |
+| 版本覆盖 | `{"default":"v1beta","gemini-1.0-pro":"v1"}` | JSON 字符串映射 | 将模型标识符映射到 Gemini API 版本。当未找到特定匹配项时，将应用 `default` 条目。 |
+| 支持的 Imagine 模型 | 7 项内置模型 | JSON 字符串数组 | 接受支持 Imagine API 的模型标识符的 JSON 数组。 |
+| 思考后缀适配器 | `false` | 布尔 | 支持 `-thinking`、`-thinking-{{budget}}`、`-nothinking` 以及 `-high` 等推理强度后缀，同时路由到正确的 Gemini 变体。关闭后模型名原样发送给上游。 |
+| 预算令牌比例 | `0.6` | `0.002–1` | 预算令牌 = 最大令牌数 × 比例。接受 0.002 到 1 之间的十进制数。建议与上游计费保持一致。 |
+| 启用 FunctionCall 思维签名填充 | `true` | 布尔 | 仅为使用 OpenAI 格式的 Gemini/Vertex 渠道填充 thoughtSignature |
+| 移除 functionResponse.id 字段 | `true` | 布尔 | Vertex AI 不支持 functionResponse.id 字段，开启后将自动移除该字段 |
+
+</div>
+
+<Callout type="info">
+- 「支持的 Imagine 模型」只改变转换时的输出模态，不会自动添加模型、价格或渠道能力；应填写模型映射后的上游名称。
+- 即使禁用适配器，Gemini 也会继续自动检测思维模式。仅当您需要对定价和预算进行更精细的控制时才启用思考后缀适配器。
+</Callout>
+
+### Claude
+
+- 模型-Claude
+
+![Claude 分区](/assets/guide/feature-guide/system-settings-model-claude.png)
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 页面字段 | 默认值 | 校验与范围 | 影响范围 | 说明 |
+| --- | --- | --- | --- | --- |
+| 请求头覆盖 | `{}` | JSON 对象：模型名 → 请求头 → 值数组 | 命中模型的出站请求头 | 以 JSON 格式提供按模型划分的标头覆盖。可用于启用测试功能，例如扩展上下文窗口。 |
+| 默认最大 Token 数 | `{"default":8192}` | JSON 对象；值为非负整数 | 缺失或为 0 的 `max_tokens` | 示例 `{ "default": 8192, "claude-3-haiku-20240307": 4096, "claude-3-opus-20240229": 4096, "claude-3-7-sonnet-20250219-thinking": 8192 }` |
+| 思考后缀适配器 | `true` | 布尔 | 后缀到原生思考参数的转换 | 将带 `-thinking`、`-nothinking` 以及 `-high` 等推理强度后缀的请求适配为 Anthropic 原生思考请求，并保持计费可预测。关闭后模型名原样发送给上游。 |
+| 预算令牌比例 | `0.8` | `0.1–1` | 思考预算估算 | 预算令牌 = 最大令牌数 × 比例。接受 0.1 到 1 之间的十进制数。 |
+
+</div>
+
+### Grok
+
+- 模型-Grok
+
+![Grok 分区](/assets/guide/feature-guide/system-settings-model-grok.png)
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 页面字段 | 配置键 | 默认值 | 校验与范围 | 说明 |
+| --- | --- | --- | --- | --- |
+| 启用违规扣费 | `grok.violation_deduction_enabled` | `true` | 布尔 | 开启后，违规请求将额外扣费。 |
+| 违规扣费金额 | `grok.violation_deduction_amount` | `0.05` | 非负数 | 基础金额，实际扣费 = 基础金额 × 系统分组倍率。 |
+
+</div>
+
+<Callout type="warn">
+1. 只有在上游错误中出现受支持的违规标记（例如内容违反使用规范的提示）时才触发。普通上游错误、内容审核失败或所有 Grok 请求不会因此额外扣费；这类错误还会被标记为不可重试。
+2. 实际扣费按「基础金额 × 系统分组倍率」换算，并在正常预扣失败流程之外单独写入一条消费记录，排查时应同时查看原请求错误和违规费日志。页面提供指向 x.ai 官方说明的链接。
+3. 该设置直接扣减用户余额。启用或调整金额前应核对上游最新违规收费规则、分组倍率和面向用户的价格说明，并用可控测试验证日志与额度变化。
+</Callout>
+
+<Callout type="info">
+原「渠道亲和性」分区已移至请求策略，现称「会话保持」，见[会话与重试](./settings-request-policies#会话与重试)。
+</Callout>
+
+### 模型部署
+
+当前模型部署集成支持 io.net。Root 从「系统设置 → 模型 → 模型部署」进入，或访问 `/system-settings/models/model-deployment`。本分区用于启用接入和配置凭证，不是创建部署资源的表单。
+
+下图为开启「启用 io.net 部署」后的状态（默认关闭）。
+
+- 模型-模型部署
+
+![模型部署分区](/assets/guide/feature-guide/system-settings-model-model-deployment.png)
+
+**字段与按钮说明**
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 页面字段或按钮 | 默认或填写要求 | 说明 |
+| --- | --- | --- |
+| 启用 io.net 部署 | 默认关闭 | 配置键为 `model_deployment.ionet.enabled`。开启界面开关后才显示密钥输入框、测试按钮和密钥获取说明；实际使用部署服务还需保存开启状态及有效密钥。 |
+| io.net API 密钥 | 首次配置时填写 | 配置键为 `model_deployment.ionet.api_key`，用于 io.net 部署 API 授权。重新加载页面后不回显，输入框为空不表示尚未配置。 |
+| 测试连接 | 可在保存前使用 | 使用当前输入的密钥测试；输入为空时回退到已保存密钥。只测试连接，不保存设置。 |
+| 保存 io.net 设置 | 修改配置后点击 | 提交相对表单初始值发生变化的字段。开关和密钥逐项保存，不是一次整体事务。 |
+
+</div>
+
+**配置流程**
+
+1. 开启「启用 io.net 部署」，展开密钥配置区域。
+2. 点击「前往 io.net API 密钥」，打开 [io.net API 密钥页面](https://ai.io.net/ai/api-keys)。创建或选择密钥时，将 Project 设置为 `io.cloud`。
+3. 复制密钥，粘贴到「io.net API 密钥」输入框。已有密钥且无需更换时，可保持重新加载后的空框不变。
+4. 点击「测试连接」。成功后页面显示连接成功提示；失败时根据错误信息检查密钥、项目和网络连接。没有输入密钥且没有已保存密钥时，测试会提示需要 API Key。
+5. 点击右上角「保存 io.net 设置」。确认保存成功后刷新页面，核对启用状态，并在密钥输入框为空时再次测试，以验证已保存的凭证。
+
+<Callout type="warn">
+  关闭本分区的接入开关不会终止已有 io.net 部署，也不代表第三方费用停止。关闭后，New API 中查看、延长和终止已有部署的操作也会被拒绝。创建、延长和终止部署会改变第三方资源和费用，执行前应核对 io.net 账户、资源配置及账单；New API 不保证第三方容量、账单或部署成功率。
+</Callout>
+
+## 变更后验证
+
+1. 刷新当前分区，确认非敏感字段显示为预期值。
+2. 用测试 Token 分别发送非流式与流式请求，检查模型映射、上游请求格式、用量和日志。
+3. 分别验证 Gemini、Claude 或 Grok 的真实适配场景，不要只确认 JSON 能保存。
+4. 部署场景先做连接测试和价格估算，再创建最小部署，并单独验证渠道配置。
+
+## 常见问题
+
+- **保存后字段没有变化**：确认点击的是该分区的保存按钮，并检查是否有 `success:false` 提示；逐键保存时失败项不会自动重试。
+- **正则写了却没有匹配**：`thinking_model_blacklist` 的正则必须以 `re:` 开头，并按完整模型名匹配；无效正则只在运行期记录系统错误。
+- **开启透传后转换策略失效**：全局或渠道级请求透传会跳过转换链路。
+- **Claude 请求缺少 `max_tokens` 被上游拒绝**：确认 `default_max_tokens` 保留 `default` 键，且数值未超过上游输出上限。
+- **Grok 出现额外扣费**：查看原请求错误是否包含违规标记，再核对分组倍率和违规费消费日志。
+- **部署页提示未启用或连接失败**：显示「模型部署服务未启用」表示「启用 io.net 部署」尚未开启并保存；开关已开启但连接测试失败（例如没有保存有效 API Key）时，显示「连接失败」。需要同时开启开关并保存有效 API Key，两个条件缺一不可。
+- **部署已创建但模型请求没有使用它**：部署不会自动创建或绑定渠道，需要手动配置端点。
+
+## 相关文档
+
+- [系统设置概览](./system-setting)：生效机制、多实例同步与变更验证要求。
+- [渠道管理](/zh/docs/guide/feature-guide/admin/channel)：渠道模型列表、映射、优先级、权重和自动禁用开关。
+- [模型管理](/zh/docs/guide/feature-guide/admin/model)：模型目录、供应商、缺失模型与部署操作入口。
+- [计费与支付配置](./settings-billing)：分组倍率、按次价格和动态计费表达式。
+- [请求策略配置](./settings-request-policies)：重试、会话保持、渠道健康与请求检查。
+- [安全与限制配置](./settings-security)：限流、SSRF 和令牌限制。
+- [运维配置](./settings-operations)：系统行为与性能设置。

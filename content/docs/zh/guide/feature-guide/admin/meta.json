@@ -3,16 +3,12 @@
   "defaultOpen": false,
   "pages": [
     "channel",
+    "model",
+    "billing-expression",
     "user",
     "redemption",
-    "log",
     "subscription",
-    "model",
-    "group",
-    "system-setting",
-    "system-setting-advanced",
-    "custom-oauth",
-    "performance",
-    "docs-config"
+    "system-info",
+    "task-plugins"
   ]
 }

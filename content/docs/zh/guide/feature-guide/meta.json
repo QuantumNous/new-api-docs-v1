@@ -1,8 +1,4 @@
 {
   "title": "功能指南",
-  "pages": [
-    "index",
-    "user",
-    "admin"
-  ]
+  "pages": ["index", "user", "(admin-guide)", "(system-settings-guide)"]
 }

@@ -1,11 +1,11 @@
 ---
 title: 功能指南概述
-description: New API 功能指南，按用户指南和管理员指南组织。
+description: New API 功能指南，按用户指南、管理员指南和系统设置指南组织。
 ---
 
 New API 是一个统一的AI模型接口管理与分发系统，支持将多种大模型转为统一格式调用，支持OpenAI、Claude等格式，可供个人或者企业内部管理与分发渠道使用，并提供游乐场、OpenAI 兼容接口、模型与渠道路由、用量日志、计费、订阅和系统运维等能力。
 
-- 本指南按角色区分为用户指南、管理员指南两部分。
+- 本指南按角色和功能分区分为用户指南、管理员指南和系统设置指南三部分。
 
 ### 系统首页
 
@@ -22,7 +22,7 @@ New API 是一个统一的AI模型接口管理与分发系统，支持将多种�
 在普通用户权限基础上，Admin 默认可访问渠道、模型、用户、兑换码和订阅等管理资源。<br/>渠道等资源还区分读取、操作、普通写入、敏感写入和查看密钥等动作，超级管理员（Root）可为管理员（Admin）账号设置权限覆盖以管理可用权限。[「站点与品牌配置」→](/zh/docs/guide/feature-guide/system-settings/settings-site)
 
 - **超级管理员（Root）** <br/>
-Root 拥有全部权限，额外可访问**系统信息** `/system-info` 和**系统设置** `/system-settings/site`。<br/>系统设置分为站点与品牌、身份验证、计费与支付、模型与路由、安全与限制、控制台内容、运维七个设置域。
+Root 拥有全部权限，额外可访问**系统信息** `/system-info`、**任务插件** `/task-plugins` 和**系统设置** `/system-settings/site`。<br/>系统设置分为站点与品牌、身份验证、计费与支付、模型与路由、安全与限制、控制台内容、运维七个设置域。
 
 ## 用户指南
 
@@ -145,135 +145,100 @@ New API 支持快速导入配置到多种 AI 聊天应用，方便测试和日�
 
 ## 管理员指南
 
-适用于 Admin 及 Root 角色，涵盖平台运营与系统配置的全部功能。
+适用于 Admin 和 Root，包含七个日常管理页面。系统级选项另归入后面的系统设置指南；其中系统信息和任务插件为 Root 专属。
 
 ### 渠道管理
 
-配置 AI 服务商渠道，支持多 Key 轮询、优先级、自动禁用等策略。
-
-- 添加新渠道
-- 配置渠道参数
-- 渠道测试
-- 批量操作
-- 多 Key 模式配置
+配置上游 AI 服务商渠道、认证信息、模型、分组和路由可靠性策略，并执行测试、余额刷新、模型同步和批量操作。
 
 [查看详细文档 →](/zh/docs/guide/feature-guide/admin/channel)
 
+### 模型管理
+
+维护模型元信息、名称匹配、供应商和官方同步；在部署服务已由 Root 配置时，也可管理托管模型部署。
+
+[查看详细文档 →](/zh/docs/guide/feature-guide/admin/model)
+
 ### 用户管理
 
-查看和管理所有用户，修改角色、分组、配额，启用或禁用账号。
-
-- 查看用户列表
-- 编辑用户信息
-- 修改用户角色
-- 调整用户配额
-- 搜索用户
+查看和维护用户账户、状态、角色、分组、额度、登录绑定、安全凭证和订阅。
 
 [查看详细文档 →](/zh/docs/guide/feature-guide/admin/user)
 
 ### 兑换码管理
 
-批量生成和管理配额兑换码。
-
-- 批量生成兑换码
-- 设置兑换码面值
-- 导出兑换码
-- 查看使用状态
+创建、查看、编辑、启用、禁用和清理额度兑换码。
 
 [查看详细文档 →](/zh/docs/guide/feature-guide/admin/redemption)
 
-### 日志管理
-
-查看全站 API 调用日志和用户操作记录。
-
-- 查看全站日志
-- 高级筛选
-- 数据统计分析
-
-[查看详细文档 →](/zh/docs/guide/feature-guide/admin/log)
-
 ### 订阅管理
 
-创建和管理订阅套餐。
-
-- 创建订阅套餐
-- 编辑套餐信息
-- 管理订阅用户
+发布和维护订阅套餐，管理用户订阅权益、额度周期、分组升级与回退。
 
 [查看详细文档 →](/zh/docs/guide/feature-guide/admin/subscription)
 
-### 模型管理
+### 系统信息（Root 专属）
 
-配置模型定价和可用性。
+查看实例节点状态、资源指标和后台系统任务，并处理失联实例记录。
 
-- 设置模型倍率
-- 启用或禁用模型
-- 批量修改定价
+[查看详细文档 →](/zh/docs/guide/feature-guide/admin/system-info)
 
-[查看详细文档 →](/zh/docs/guide/feature-guide/admin/model)
+### 任务插件管理（Root 专属）
 
-### 分组管理
+管理异步任务插件：浏览任务插件市场、上传本地插件、查看插件详情与沙箱能力，并控制插件全局启用状态和任务插件渠道绑定。
 
-创建用户分组，实现差异化计费和渠道分配。
+[查看详细文档 →](/zh/docs/guide/feature-guide/admin/task-plugins)
 
-- 创建用户分组
-- 配置分组倍率
-- 分配渠道
+分组是渠道、用户、API 密钥和计费配置共同使用的路由与计费维度，不再作为独立主导航项。日志、绘图记录和用户异步任务的查看方式请参阅[日志与异步任务](/zh/docs/guide/feature-guide/user/log)。
 
-[查看详细文档 →](/zh/docs/guide/feature-guide/admin/group)
+## 系统设置指南
 
-### 系统设置（Root 专属）
+系统设置是 Root 专属的实例级配置工作区。配置按职责拆为七个设置域，并由一页概览说明通用的保存、生效和验证边界。
 
-Root 专属全局配置中心，涵盖站点信息、计费规则、支付、OAuth 等参数。
+### 系统设置概览
 
-- 站点基本信息
-- 计费规则配置
-- 支付方式配置
-- 邮件服务配置
-- 注册与登录设置
+了解系统设置的入口、七个设置域、保存机制、多实例同步、敏感配置和变更验证要求。
 
-[查看详细文档 →](/zh/docs/guide/feature-guide/admin/system-setting)
+[查看详细文档 →](/zh/docs/guide/feature-guide/system-settings/system-setting)
 
-### 系统高级配置（Root 专属）
+### 站点与品牌配置
 
-系统设置的详细配置选项，包含支付、限流、聊天、绘图等高级功能。
+配置系统信息、公开内容、法律文档、公告、顶部导航和侧边栏模块。
 
-- 支付设置（EPay、Stripe）
-- 限流设置
-- 倍率设置
-- 聊天设置
-- 绘图设置
-- 数据看板设置
-- 模型设置
-- 运营设置
+[查看详细文档 →](/zh/docs/guide/feature-guide/system-settings/settings-site)
 
-[查看详细文档 →](/zh/docs/guide/feature-guide/admin/system-setting-advanced)
+### 身份验证配置
 
-### 自定义 OAuth（Root 专属）
+配置注册、登录、OAuth、Passkey、机器人防护及自定义 OAuth 身份提供方。
 
-配置自定义 OAuth 登录提供商。
+[查看详细文档 →](/zh/docs/guide/feature-guide/system-settings/settings-auth)
 
-- 添加 OAuth 提供商
-- 配置 OAuth 参数
-- 测试 OAuth 登录
+### 计费与支付配置
 
-[查看详细文档 →](/zh/docs/guide/feature-guide/admin/custom-oauth)
+配置额度单位、货币、模型与分组价格、支付网关、充值和签到奖励。
 
-### 性能监控（Root 专属）
+[查看详细文档 →](/zh/docs/guide/feature-guide/system-settings/settings-billing)
 
-查看系统性能指标和运行状态。
+### 模型与路由配置
 
-- 查看系统负载
-- 监控渠道性能
-- 分析响应时间
+配置全局模型行为、路由可靠性、协议适配、渠道亲和和模型部署服务。
 
-[查看详细文档 →](/zh/docs/guide/feature-guide/admin/performance)
+[查看详细文档 →](/zh/docs/guide/feature-guide/system-settings/settings-models)
 
-### 文档配置（Root 专属）
+### 安全与限制配置
 
-配置文档站点的显示内容。
+配置速率限制、敏感词、SSRF 防护和 API 密钥数量限制。
 
-- 自定义文档内容
-- 配置文档链接
+[查看详细文档 →](/zh/docs/guide/feature-guide/system-settings/settings-security)
 
-[查看详细文档 →](/zh/docs/guide/feature-guide/admin/docs-config)
+### 控制台内容配置
+
+配置数据看板、结构化公告、API 信息、FAQ、Uptime Kuma、聊天预设和绘图相关内容。
+
+[查看详细文档 →](/zh/docs/guide/feature-guide/system-settings/settings-content)
+
+### 运维配置
+
+配置系统行为、监控告警、SMTP、Worker、日志维护、性能和更新检查。
+
+[查看详细文档 →](/zh/docs/guide/feature-guide/system-settings/settings-operations)
