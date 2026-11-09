@@ -13,7 +13,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 <Callout type="info" title="提示">
 - 普通用户仅可查看本账户的记录。管理员具有「查看其他账户审计日志」权限时，可在页面右上角切换「全部」「仅自己」（仅管理员可见）。
 - 调用模型的用量和扣费见<a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>。使用日志类型筛选中的「管理」「登录」已弃用，新的登录和管理操作记录在审计日志中。
-- 事件中的「API 令牌」即「API 密钥」页中的密钥；「访问令牌」是在「安全与访问」页创建、用于管理账户的凭证，不可用于调用模型。
+- 事件中的「API 令牌」即「API 密钥」页中的密钥；「访问令牌」是在<a href="/zh/docs/guide/feature-guide/user/security#创建和管理访问令牌" target="_blank" rel="noopener noreferrer">安全与访问</a>页创建、用于管理账户的凭证，不可用于调用模型。
 - 左侧边栏无「审计日志」页时：<br/>到「个人资料」页的「左侧边栏个人设置」区域中，开启「控制台区域」和「审计日志」并保存。
 </Callout>
 
@@ -123,7 +123,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 账户安全 | 注册了一个 Passkey、解绑了一个 Passkey | 添加或删除 Passkey。 | — |
 | 账户安全 | 账户绑定请求、账户绑定、账户解绑、重发邮箱确认码 | 绑定邮箱、微信和第三方账号，解绑第三方账号。 | — |
 | 账户安全 | 完成了安全验证 | 执行敏感操作前完成安全验证。 | — |
-| 账户安全 | 创建了访问令牌、重命名了访问令牌、修改了访问令牌权限、撤销了访问令牌 | 在「安全与访问」页管理访问令牌。 | — |
+| 账户安全 | 创建了访问令牌、重命名了访问令牌、修改了访问令牌权限、撤销了访问令牌 | 在<a href="/zh/docs/guide/feature-guide/user/security#创建和管理访问令牌" target="_blank" rel="noopener noreferrer">安全与访问</a>页管理访问令牌。 | — |
 | 账户安全 | 创建 API 令牌「…」、更新 API 令牌「…」、删除 API 令牌「…」、批量删除 API 令牌、查看 API 令牌「…」的密钥、批量查看 API 令牌密钥 | 在「API 密钥」页创建、编辑、启用或禁用、删除密钥，或查看、复制完整密钥。 | 「API 令牌」即 API 密钥。 |
 | 访问令牌 | 访问令牌 | 使用访问令牌调用账户管理接口。 | 每次请求记录一条，包括被拒绝的请求；被拒绝时详情中显示「失败原因」。 |
 | 操作审计 | 更新用户、增加用户「…」的额度、修改系统设置等管理员操作（仅管理员可见） | 管理员在管理页面执行的操作。 | 记在执行操作的管理员名下，普通用户的列表中无此类记录。例外：Root 以外的管理员重置订阅套餐额度时，受影响的用户会看到「管理员重置订阅套餐 …（ID: …）额度」。 |
@@ -183,7 +183,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 **处理方法**：
 1. 打开该记录的「日志详情」，查看「IP」「客户端」和登录方式。
 2. 确认不是本人操作时，立即修改密码。
-3. 在「安全与访问」页撤销不认识的登录会话和访问令牌。
+3. 在<a href="/zh/docs/guide/feature-guide/user/security" target="_blank" rel="noopener noreferrer">安全与访问</a>页撤销不认识的登录会话和访问令牌。
 4. 开启两步验证或 Passkey。
 5. 如仍无法解决，请联系管理员。
 </Accordion>
@@ -232,7 +232,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 **处理方法**：
 1. 在记录详情的「请求」区域查看「令牌标识」，确认是哪个访问令牌发起的请求。
 2. 按「令牌标识」筛选，查看该访问令牌的全部请求。
-3. 发现不认识的请求时，在「安全与访问」页撤销该访问令牌。
+3. 发现不认识的请求时，在<a href="/zh/docs/guide/feature-guide/user/security#创建和管理访问令牌" target="_blank" rel="noopener noreferrer">安全与访问</a>页撤销该访问令牌。
 </Accordion>
 
 <Accordion title="审计记录会保存多久">
@@ -245,4 +245,4 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：查看调用模型的用量和扣费，以及「管理」「登录」类型的历史记录。
 - <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>：创建、编辑和删除 API 密钥，这些操作会记录在审计日志中。
-- <a href="/zh/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">个人资料与安全</a>：修改密码、绑定账号、设置两步验证和管理登录会话。
+- <a href="/zh/docs/guide/feature-guide/user/security" target="_blank" rel="noopener noreferrer">安全与访问</a>：修改密码、绑定账号，设置两步验证和 Passkey，管理登录会话和访问令牌。

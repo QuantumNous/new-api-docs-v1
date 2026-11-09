@@ -250,7 +250,7 @@ curl https://your-host/v1/chat/completions \
 **处理方法**：
 1. 在列表中重新复制密钥，确认请求头为 `Authorization: Bearer sk-…`，且前后没有多余的空格或换行。
 2. 检查该密钥的「状态」是否为「已启用」，「过期」列是否已过期，「额度」列是否已用尽，处理方法见 [API 密钥状态](#api-密钥状态)。
-3. 确认使用的是 API 密钥。「安全与访问」中创建的「访问令牌」仅用于管理账户，不可用于调用模型（见<a href="/zh/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">个人资料与安全</a>）。
+3. 确认使用的是 API 密钥。「安全与访问」中创建的「访问令牌」仅用于管理账户，不可用于调用模型（见<a href="/zh/docs/guide/feature-guide/user/security#创建和管理访问令牌" target="_blank" rel="noopener noreferrer">安全与访问</a>）。
 4. 如仍无法解决，请新建密钥后重试，或联系管理员。
 </Accordion>
 
@@ -294,8 +294,8 @@ curl https://your-host/v1/chat/completions \
 
 | 提示原文 | 可能原因 | 处理方法 |
 | --- | --- | --- |
-| 「用户额度不足」（英文 Insufficient user quota）<br/>「预扣费额度失败」（英文 Not enough quota to pre-consume） | 账户余额不足。 | 前往<a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包与订阅</a>充值或兑换。 |
-| 「订阅额度不足或未配置订阅」（英文 Subscription quota is insufficient or no subscription is configured） | 本次请求按订阅扣费，但订阅额度不足或没有可用的订阅。 | 前往钱包与订阅页查看订阅。 |
+| 「用户额度不足」（英文 Insufficient user quota）<br/>「预扣费额度失败」（英文 Not enough quota to pre-consume） | 账户余额不足。 | 前往<a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>充值或兑换。 |
+| 「订阅额度不足或未配置订阅」（英文 Subscription quota is insufficient or no subscription is configured） | 本次请求按订阅扣费，但订阅额度不足或没有可用的订阅。 | 前往<a href="/zh/docs/guide/feature-guide/user/wallet#订阅计划" target="_blank" rel="noopener noreferrer">钱包</a>查看订阅。 |
 | token quota is not enough（仅英文） | 该密钥未开启「无限配额」，剩余额度不足以支付本次请求。 | 编辑该密钥，调高「额度」。 |
 </Accordion>
 
@@ -303,7 +303,7 @@ curl https://your-host/v1/chat/completions \
 
 ## 相关文档
 
-- <a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包与订阅</a>：充值、兑换额度，查看账户余额和订阅。
+- <a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>：充值、兑换额度，查看账户余额和订阅。
 - <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">日志与异步任务</a>：查看每次调用的明细和扣费。
 - <a href="/zh/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">模型广场和排行榜</a>：查看可用的模型和价格。
 - <a href="/zh/docs/guide/feature-guide/user/chat-apps" target="_blank" rel="noopener noreferrer">聊天应用集成</a>：从侧边栏「聊天」打开聊天应用，或手动配置客户端。
