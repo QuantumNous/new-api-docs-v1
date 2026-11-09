@@ -9,6 +9,8 @@
     "api",
     "chat-apps",
     "log",
+    "audit-log",
+    "task-log",
     "wallet",
     "pricing"
   ]
