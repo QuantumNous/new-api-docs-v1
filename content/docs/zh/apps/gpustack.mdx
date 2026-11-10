@@ -1,0 +1,129 @@
+---
+title: GPUStack
+description: GPUStack 集成教程 — 将 GPUStack 私有化部署的大模型、Embedding、Rerank、语音等能力，作为渠道接入 New API，聚合为统一的 OpenAI 兼容 API 网关。
+---
+
+<Callout type="info" title="项目介绍">
+ GPUStack 是一个开源的 GPU 集群管理器，旨在高效部署 AI 模型。它可以配置和协调推理引擎——vLLM、SGLang、TensorRT-LLM 或您自己的引擎——以优化 GPU 集群的性能。支持多集群 GPU 管理、可插拔推理引擎、第 0 天模型支持、性能优化、企业级运营和在线测评等功能，支持 NVIDIA、AMD、NPU、DCU、摩尔线程、天数智芯、平头哥、沐曦、寒武纪等 GPU 厂商，并对外提供标准的 OpenAI 兼容与 Anthropic 兼容接口。
+![gpustack-v2-architecture](/assets/gpustack/gpustack-v2-architecture.png)
+
+
+  将 GPUStack 接入 New API 后，即可把本地/私有部署的模型统一聚合到 New API 网关，配合分组、计费、令牌、限流等能力，为企业与团队提供统一的模型访问入口。
+
+  - 官方主页：[https://gpustack.ai](https://gpustack.ai)
+  - 项目仓库：[https://github.com/gpustack/gpustack](https://github.com/gpustack/gpustack)
+  - 官方文档：[https://docs.gpustack.ai](https://docs.gpustack.ai)
+</Callout>
+
+<Callout type="info" title="集成原理">
+  GPUStack 对外暴露标准的 OpenAI 兼容 / Anthropic 兼容接口，因此在 New API 中只需将 GPUStack 添加为一个**上游渠道**，即可把 GPUStack 部署的模型纳入 New API 统一管理和分发。整体流程为：
+
+  1. 在 GPUStack 中部署模型
+  2. 在 GPUStack 中创建 API Key
+  3. 在 New API 中添加 GPUStack 渠道并填入上述信息
+  4. 在 New API 中创建令牌并验证调用
+</Callout>
+
+## 前置条件
+
+<Callout type="info" title="开始之前请确认">
+  - 已部署并可正常访问的 GPUStack 服务（可获取其访问地址或域名）
+  - 已部署并可正常访问的 New API 服务
+  - New API 与 GPUStack 之间网络互通（若二者均以容器运行，请注意跨容器网络问题）
+</Callout>
+
+## 1. 在 GPUStack 中部署模型
+
+1. 登录 GPUStack 控制台，进入 `Deployments`（部署）页面，点击 `Deploy Model` 部署你需要的模型。以下为示例模型：
+
+- `qwen3-8b`
+- `qwen2.5-vl-3b-instruct`
+- `bge-m3`（Embedding）
+- `bge-reranker-v2-m3`（Rerank）
+
+![gpustack-deploy-models](/assets/gpustack/gpustack-deploy-models.png)
+
+2. 在模型的 `Operations`（操作）中打开 `API Access Info`（API 访问信息），可查看该模型的调用方式与接口路径，后续在 New API 中填写模型名称时需与此处保持一致。
+
+![gpustack-api-access-info](/assets/gpustack/gpustack-api-access-info.png)
+
+## 2. 在 GPUStack 中创建 API Key
+
+1. 进入 GPUStack 的 `Access Control`（访问控制）→ `API Keys` 页面，点击 `New API Key`。
+
+2. 填写名称后点击 `Save` 保存。
+
+3. 复制生成的 API Key 并妥善保存，后续在 New API 中配置渠道时需要使用。
+
+![gpustack-create-api-key](/assets/gpustack/gpustack-create-api-key.png)
+
+## 3. 在 New API 中添加 GPUStack 渠道
+
+1. 登录 New API 管理控制台，在左侧导航栏进入 `渠道`，点击 `添加渠道`。
+
+2. 按如下方式配置渠道参数：
+
+| **参数**         | **配置说明**                                                                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **类型**         | 选择 `OpenAI`（或 `自定义/Custom`）。GPUStack 提供标准 OpenAI 兼容与 Anthropic 兼容接口                                                          |
+| **名称**         | 自定义渠道名称，建议与模型相关联，便于识别，例如 `gpustack-qwen3-8b`                                                                            |
+| **Base URL**     | 填写 GPUStack 的访问地址或域名，如 `http://your-gpustack-url`。**无需在末尾添加 `/v1`**，New API 会自动补全。若 GPUStack 启用了 TLS，可使用 `https` |
+| **密钥**         | 填写上一步在 GPUStack 中创建并复制的 API Key                                                                                                    |
+| **模型**         | 填写或选择 GPUStack 中已部署的模型名称（如 `qwen3-8b`、`bge-m3`、`bge-reranker-v2-m3`），需与 GPUStack 的部署名称完全一致                        |
+
+<Callout type="warn" title="Base URL 填写注意事项">
+  - **不要以 `localhost` 或 `127.0.0.1` 作为地址**：如果 New API 运行在 Docker 容器中，`localhost` 指向的是容器自身，无法访问宿主机或其他容器上的 GPUStack。请使用宿主机 IP、内网地址或域名。
+  - **不要在 Base URL 末尾手动添加 `/v1`**：New API 会自动补全接口路径，重复添加会导致请求路径错误。
+  - 若 GPUStack 以 TLS/HTTPS 方式启动，则 Base URL 使用 `https://` 前缀。
+</Callout>
+
+![newapi-add-channel](/assets/gpustack/newapi-add-channel-01.png)
+
+![newapi-add-channel](/assets/gpustack/newapi-add-channel-02.png)
+
+![newapi-add-channel](/assets/gpustack/newapi-add-channel-03.png)
+
+![newapi-add-channel](/assets/gpustack/newapi-add-channel-04.png)
+
+3. 配置模型的价格（计费倍率）。
+
+![newapi-channel-pricing](/assets/gpustack/newapi-channel-pricing-01.png)
+
+![newapi-channel-pricing](/assets/gpustack/newapi-channel-pricing-02.png)
+
+![newapi-channel-pricing](/assets/gpustack/newapi-channel-pricing-03.png)
+
+4. 保存后，可在渠道列表中点击 `测试`，验证 New API 与 GPUStack 之间的连通性。
+
+![newapi-channel-test](/assets/gpustack/newapi-channel-test.png)
+
+## 4. 验证与使用
+
+1. 进入 New API 的 `令牌` 页面，点击 `添加令牌` 创建一个新的令牌。
+
+<Callout type="warn" title="分组必须匹配">
+  令牌所选的**分组**必须与渠道所配置的**分组**一致，否则将无法访问对应模型。
+</Callout>
+
+2. 复制新生成的 New API 令牌（以 `sk-` 开头）。
+
+3. 现在即可通过 New API 的统一入口访问所有由 GPUStack 提供的模型：
+
+- **统一 Base URL**：`http://your-newapi-url/v1`
+- **统一 API Key**：`sk-xxxxxx`（你的 New API 令牌）
+
+使用 `curl` 的示例请求：
+
+```bash
+curl http://your-newapi-url/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-your-newapi-token" \
+  -d '{
+    "model": "qwen3-8b",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'
+```
+
+<Callout type="info" title="Embedding / Rerank 等能力">
+  除对话模型外，GPUStack 部署的 Embedding、Rerank 等模型同样可以通过对应的模型名称，经由 New API 的统一接口进行调用（如 `/v1/embeddings`、`/v1/rerank`），只需确保渠道中已添加相应模型名称即可。
+</Callout>
