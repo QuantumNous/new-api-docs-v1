@@ -245,7 +245,7 @@ curl https://your-host/v1/chat/completions \
 <Accordion title="调用时提示「无效的令牌」">
 **提示原文**：「无效的令牌」（英文 Invalid token）
 
-**可能原因**：密钥错误、已删除、已禁用、已过期或额度已用尽，提示信息不区分具体原因。
+**可能原因**：请求未携带密钥，或密钥错误、已删除、已禁用、已过期、额度已用尽，提示信息不区分具体原因。
 
 **处理方法**：
 1. 在列表中重新复制密钥，确认请求头为 `Authorization: Bearer sk-…`，且前后没有多余的空格或换行。
@@ -294,7 +294,7 @@ curl https://your-host/v1/chat/completions \
 
 | 提示原文 | 可能原因 | 处理方法 |
 | --- | --- | --- |
-| 「用户额度不足」（英文 Insufficient user quota）<br/>「预扣费额度失败」（英文 Not enough quota to pre-consume） | 账户余额不足。 | 前往<a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>充值或兑换。 |
+| 「用户额度不足」（英文 Insufficient user quota）<br/>「预扣费额度失败」（英文 Not enough quota to pre-consume） | 账户余额不足。「预扣费额度失败」表示余额低于本次请求的预估费用，输入越长、模型价格和分组倍率越高，预估越高。 | 前往<a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>充值或兑换。 |
 | 「订阅额度不足或未配置订阅」（英文 Subscription quota is insufficient or no subscription is configured） | 本次请求按订阅扣费，但订阅额度不足或没有可用的订阅。 | 前往<a href="/zh/docs/guide/feature-guide/user/wallet#订阅计划" target="_blank" rel="noopener noreferrer">钱包</a>查看订阅。 |
 | token quota is not enough（仅英文） | 该密钥未开启「无限配额」，剩余额度不足以支付本次请求。 | 编辑该密钥，调高「额度」。 |
 </Accordion>
@@ -304,6 +304,6 @@ curl https://your-host/v1/chat/completions \
 ## 相关文档
 
 - <a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>：充值、兑换额度，查看账户余额和订阅。
-- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">日志与异步任务</a>：查看每次调用的明细和扣费。
-- <a href="/zh/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">模型广场和排行榜</a>：查看可用的模型和价格。
-- <a href="/zh/docs/guide/feature-guide/user/chat-apps" target="_blank" rel="noopener noreferrer">聊天应用集成</a>：从侧边栏「聊天」打开聊天应用，或手动配置客户端。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：查看每次调用的明细和扣费。
+- <a href="/zh/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a>：查看可用的模型和价格。
+- <a href="/zh/docs/guide/feature-guide/user/chat-apps" target="_blank" rel="noopener noreferrer">聊天</a>：从侧边栏「聊天」打开聊天应用，或手动配置客户端。

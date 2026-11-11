@@ -2,18 +2,20 @@
   "title": "用户指南",
   "defaultOpen": false,
   "pages": [
+    "quick-start",
     "auth",
+    "playground",
+    "chat-apps",
     "overview",
     "dashboard",
     "token",
-    "api",
-    "chat-apps",
     "log",
     "audit-log",
     "task-log",
     "wallet",
     "personal-setting",
     "security",
-    "pricing"
+    "pricing",
+    "faq"
   ]
 }

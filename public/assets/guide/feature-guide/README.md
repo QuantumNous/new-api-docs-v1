@@ -22,7 +22,6 @@
 | invite.png | 邀请码与返利 |
 | subscription-plans.png | 订阅套餐列表 |
 | subscription-status.png | 当前订阅状态 |
-| pricing.png | 定价页全貌 |
 | task-list.png | 任务列表页 |
 | mj-detail.png | Midjourney 任务详情 |
 | channel-list.png | 渠道列表页 |

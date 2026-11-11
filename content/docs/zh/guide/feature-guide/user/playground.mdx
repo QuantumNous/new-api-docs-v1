@@ -1,0 +1,364 @@
+---
+title: 游乐场
+description: 在网页中选择分组和模型、调整参数并与模型对话，测试模型效果；并提供用 API 调用模型的地址、认证方式、SDK 示例和支持的接口端点。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- 从侧边栏「聊天」→「游乐场」进入。
+- 在网页中与模型对话，测试模型和请求参数。
+- 调用模型会按价格扣账户里的额度（钱包余额或订阅额度）。
+
+<Callout type="info" title="提示">
+- 游乐场使用当前登录的账户调用模型，不使用 API 密钥：不受密钥的额度、模型限制和 IP 限制约束，也不计入任何密钥的已用额度。
+- 对话记录仅保存在当前浏览器中，按登录账户分开保存，不上传到服务器。
+- 左侧边栏无「游乐场」页时：<br/>到「个人资料」页的「左侧边栏个人设置」区域中，开启「聊天区域」和「游乐场」并保存。
+</Callout>
+
+## 游乐场概览
+
+- 游乐场-对话
+
+![游乐场-对话页面](/assets/guide/feature-guide/playground-chat.png)
+
+页面上方为对话区，下方为输入框，可完成以下操作：
+
+- [发送消息并查看回复](#发送消息并查看回复)
+- [调整请求参数](#调整请求参数)
+- [管理对话](#管理对话)
+- [API 地址与认证](#api-地址与认证)
+- [SDK 示例](#sdk-示例)
+- [支持的接口端点](#支持的接口端点)
+
+<Callout type="info" title="提示">
+发送后提示错误或没有回复时，查看[常见问题](#常见问题)
+</Callout>
+
+**区域说明：**
+
+下表按页面中从上到下、从左到右的顺序排列。
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 区域 | 定义 | 显示条件 | 备注 |
+| --- | --- | --- | --- |
+| 对话区 | 当前对话的消息列表，包括发送的消息和模型的回复。 | 始终显示。无消息时显示「开始一场游乐场对话」和「分析数据」「总结文本」「代码」「获取建议」四个入门提示。 | 点击入门提示会直接发送对应的提示词。消息下方的操作见[消息操作](#消息操作)。 |
+| 输入框 | 填写发送给模型的内容，占位文字为「随便问」。 | 始终显示，生成回复期间不可输入。 | 按 Enter 发送，按 Shift+Enter 换行。 |
+| 工具栏 | 输入框左下方的附加、搜索、参数、清空聊天历史四个图标。 | 始终显示，生成回复期间不可用。 | 参数图标右上角的数字为已启用的参数个数。各图标见[输入框与工具栏](#输入框与工具栏)。 |
+| 分组与模型选择器 | 本次对话使用的分组和模型。 | 始终显示。生成回复期间、模型列表加载中或账户无可用分组时不可用。 | 位于输入框右下方，按钮上显示当前模型和分组，未选择时显示「模型」「分组」。窄屏（如手机）时位于工具栏上方。 |
+| 发送 / 停止 | 发送输入框中的内容，或停止正在生成的回复。 | 生成回复期间，「发送」变为红色的「停止」。 | 输入框为空，或所选分组下无可用模型时，「发送」不可用。窄屏时仅显示图标。 |
+</div>
+
+## 发送消息并查看回复
+
+**操作流程：**
+1. 选择分组与模型：点击输入框右下方的分组与模型选择器，在左侧「模型分组」中选择分组，在右侧选择模型。
+2. 设置请求参数：按需点击输入框下方的参数图标，在「参数设置」中启用并调整参数，见[调整请求参数](#调整请求参数)。
+3. 填写对话内容：在输入框中输入问题、指令或提示词。
+4. 发送请求：点击「发送」，或按 Enter。
+5. 查看回复：在对话区查看模型逐步输出的回复；需要中断时，点击「停止」。
+
+<Callout type="info" title="提示">
+- 切换分组后，所选模型不在新分组中时，自动改为新分组中的第一个模型。
+- 推理模型的思考过程显示在回复上方，生成中显示「思考中...」，完成后显示「思考了 … 秒」，点击可展开或收起。
+- 点击「停止」后，已输出的内容保留在对话中。
+- 输入框下方的「附加」「搜索」目前未实现，点击后仅提示「功能开发中」「搜索功能开发中」，无法发送文件、图片或联网搜索。
+</Callout>
+
+**配置项说明：**
+
+分组与模型选择器分左右两栏，下表按从左到右的顺序排列。
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 分组 | 调用使用的分组，决定可用的模型和计费倍率。 | 在左侧「模型分组」中选择，仅列出账户有权使用的分组，包括账户所在的分组；站点允许时包括 auto（由系统自动选择可用分组）。列表仅显示分组名称。 | default，无此分组时为列表中的第一个分组；之后沿用上次的选择。 |
+| 模型 | 本次对话调用的模型。 | 在右侧列表中选择，可在「搜索模型...」中按名称搜索，无匹配时显示「未找到模型。」。列表为所选分组下可用的模型，不受 API 密钥「模型限制」的影响。 | gpt-4o，不在列表中时为列表中的第一个模型；之后沿用上次的选择。 |
+</div>
+
+## 调整请求参数
+
+**操作流程：**
+1. 点击输入框下方的参数图标（鼠标悬停显示「参数」），打开「参数设置」。
+2. 打开需要发送的参数右侧的开关。
+3. 拖动滑块或填写数值。
+
+<Callout type="info" title="提示">
+- 仅启用的参数随请求发送。参数的数值和开关保存在当前浏览器中，下次打开时沿用。
+- 部分模型不支持某些参数，发送后报错时，请关闭相应的参数后重试。
+- 游乐场不提供系统提示词和关闭流式输出的设置，回复始终逐步输出。
+</Callout>
+
+**配置项说明：**
+
+「参数设置」窗口不分区，每个参数右侧有一个开关，下表按窗口中的顺序排列。
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 温度 | 控制输出的随机性和创造性。 | 拖动滑块调整，范围 0.1～1，步长 0.1。 | 0.7，已启用 |
+| Top P | 按概率质量限制词元选择范围。 | 拖动滑块调整，范围 0.1～1，步长 0.1。 | 1，已启用 |
+| 频率惩罚 | 减少重复措辞。 | 拖动滑块调整，范围 -2～2，步长 0.1。 | 0，已启用 |
+| 存在惩罚 | 鼓励讨论新话题。 | 拖动滑块调整，范围 -2～2，步长 0.1。 | 0，已启用 |
+| 最大 Tokens | 限制回复长度。 | 填写 0～200000 的整数，超出范围时自动改为最接近的有效值。 | 4096，未启用 |
+| 随机种子 | 让兼容模型的回复更可复现。 | 填写 0～2147483647 的整数。未填写时显示「未设置」，即使启用也不发送。 | 未设置，未启用 |
+</div>
+
+## 管理对话
+
+**重新生成操作流程：**
+1. 将鼠标移到需要重新生成的消息上。
+2. 点击消息下方的重新生成图标（鼠标悬停显示「重新生成」）。
+
+**编辑操作流程：**
+1. 点击消息下方的编辑图标。
+2. 在文本框中修改内容。
+3. 编辑用户消息时，点击「保存并提交」按修改后的内容重新生成回复；仅保存修改时，点击「保存」。
+
+**删除操作流程：**
+1. 点击消息下方的删除图标。
+
+**清空聊天历史操作流程：**
+1. 点击输入框下方的垃圾桶图标（鼠标悬停显示「清空聊天历史」）。
+2. 在「清空聊天历史？」窗口中点击「清空」。
+
+<Callout type="warn" title="注意">
+清空后对话记录无法恢复。清空仅删除消息，分组、模型和参数保持不变。
+</Callout>
+
+<Callout type="info" title="提示">
+- 每次发送时，对话中已有的消息会一并作为上下文发送给模型，思考过程不发送。开始新话题前，请先清空聊天历史。
+- 生成回复期间，重新生成、编辑、删除和清空聊天历史不可用。
+- 窄屏时，消息的操作收在消息下方的 ⋯ 菜单中。
+</Callout>
+
+## 操作项说明
+
+### 输入框与工具栏
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 操作 | 位置 | 说明 |
+| --- | --- | --- |
+| 入门提示 | 对话区中部，无消息时显示 | 「分析数据」「总结文本」「代码」「获取建议」，点击后直接发送对应的提示词。 |
+| 附加 | 输入框左下方的回形针图标 | 菜单中有「上传文件」「上传照片」「截图」「拍照」，目前均未实现，点击后提示「功能开发中」。 |
+| 搜索 | 输入框左下方的地球图标 | 目前未实现，点击后提示「搜索功能开发中」。 |
+| 参数 | 输入框左下方的滑块图标 | 打开「参数设置」，见[调整请求参数](#调整请求参数)。右上角的数字为已启用的参数个数。 |
+| 清空聊天历史 | 输入框左下方的垃圾桶图标 | 无消息时不可用，见[管理对话](#管理对话)。 |
+| 分组与模型选择器 | 输入框右下方 | 见[发送消息并查看回复](#发送消息并查看回复)。 |
+| 发送 | 输入框右下角 | 发送输入框中的内容，也可按 Enter；按 Shift+Enter 换行。 |
+| 停止 | 输入框右下角，生成回复期间替代「发送」 | 立即中断生成，已输出的内容保留。 |
+</div>
+
+### 消息操作
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 操作 | 位置 | 说明 |
+| --- | --- | --- |
+| 复制 | 消息下方的复制图标 | 复制消息内容，复制后短暂显示「已复制！」。 |
+| 显示源码、显示预览 | 回复下方的代码图标 | 在「原始回复」原文和排版后的内容之间切换。 |
+| 重新生成 | 消息下方的刷新图标 | 删除该消息之后的所有消息并重新发送；在回复上操作时，该回复本身也会删除。 |
+| 编辑 | 消息下方的编辑图标 | 消息变为文本框，可「保存」「取消」，有修改时可「重置」；用户消息另有「保存并提交」。 |
+| 删除 | 消息下方的删除图标 | 仅删除该条消息，无确认窗口。 |
+| 重试、编辑、删除 | 出错回复下方 | 「重试」删除该回复后重新发送；「编辑」编辑上一条用户消息；「删除」删除该出错回复。 |
+| 打开菜单 | 窄屏时消息下方的 ⋯ | 展开上述操作。 |
+</div>
+
+<Callout type="info" title="提示">
+编辑时按 Ctrl+Enter（macOS 为 Cmd+Enter）保存，用户消息为保存并提交；按 Esc 取消。有未保存的修改时取消，会弹出「未保存的更改」确认窗口。
+</Callout>
+
+## API 地址与认证
+
+网关的 OpenAI 兼容地址通常为：
+
+```text
+https://your-host/v1
+```
+
+使用 API 密钥作为 Bearer Token：
+
+```http
+Authorization: Bearer sk-your-api-key
+```
+
+以聊天补全为例：
+
+```bash
+curl https://your-host/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"你好"}]}'
+```
+
+## SDK 示例
+
+### Python（OpenAI SDK）
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-xxxxxxxx",
+    base_url="https://your-host/v1",
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": "你好"}],
+)
+print(response.choices[0].message.content)
+```
+
+### Claude 原生格式
+
+```bash
+curl https://your-platform.com/v1/messages \
+  -H "x-api-key: sk-xxxxxxxx" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "content-type: application/json" \
+  -d '{"model": "claude-3-5-sonnet-20241022", "max_tokens": 1024, "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+### Gemini 原生格式
+
+```bash
+curl "https://your-platform.com/v1beta/models/gemini-1.5-pro:generateContent?key=sk-xxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"contents": [{"parts": [{"text": "Hello"}]}]}'
+```
+
+## 支持的接口端点
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 接口 | 路径 | 说明 |
+| --- | --- | --- |
+| 聊天补全 | `POST /v1/chat/completions` | OpenAI Chat Completions 兼容接口，要求提供 `model` 和 `messages`，支持流式或普通响应。 |
+| 文本补全 | `POST /v1/completions` | 传统文本补全接口，要求提供 `prompt` 和 `model`。 |
+| 向量嵌入 | `POST /v1/embeddings` | 将文本或文本数组转换为向量，要求提供 `input`，由渠道适配器转换为上游格式。 |
+| 图像生成 | `POST /v1/images/generations` | 根据提示词生成图像，具体模型、尺寸、质量和数量取决于请求参数及已配置渠道。 |
+| 图像编辑 | `POST /v1/images/edits` | 根据输入图像和提示词进行图像编辑，支持 JSON 和 `multipart/form-data` 请求。 |
+| 旧版编辑接口 | `POST /v1/edits` | 保留的旧版路径，当前不可用；图像编辑请使用 `/v1/images/edits`。 |
+| 语音转文字 | `POST /v1/audio/transcriptions` | 将音频转换为文字，按照 OpenAI 音频接口格式转发到对应语音识别渠道。 |
+| 音频翻译 | `POST /v1/audio/translations` | 识别音频内容并输出翻译后的文字。 |
+| 文字转语音 | `POST /v1/audio/speech` | 将输入文本转换为音频。 |
+| 重排序 | `POST /v1/rerank` | 根据 `query` 对候选 `documents` 进行相关性排序，要求查询内容和文档列表不为空。 |
+| 内容审核 | `POST /v1/moderations` | 对文本或其他输入执行内容审核；未提供模型时会使用默认审核模型候选。 |
+| Responses API | `POST /v1/responses` | OpenAI Responses 格式接口，支持输入、工具和响应事件等能力。 |
+| Responses WebSocket | `GET /v1/responses`（WebSocket） | 以 WebSocket 连接 Responses 接口，连接后发送 `response.create` 事件创建响应；收到第一个 `response.create` 事件后选择渠道，API 密钥的传递方式与实时对话相同。 |
+| Responses 压缩 | `POST /v1/responses/compact` | 对 Responses 请求上下文执行压缩处理。 |
+| Codex 网页搜索 | `POST /v1/alpha/search` | Codex 独立网页搜索格式接口，目前仅允许支持该能力的 Sub2API、New API、Codex 和高级自定义渠道处理。 |
+| DeepSeek 搜索 | `POST /v1/tools/search` | DeepSeek 搜索接口，请求体原样转发、响应原样返回；固定按模型 `deepseek-search` 选择渠道并按次计费，不计 Token；目前仅允许 DeepSeek、New API、Sub2API 和高级自定义渠道处理。 |
+| DeepSeek 网页抓取 | `POST /v1/tools/fetch` | DeepSeek 网页抓取接口，固定按模型 `deepseek-fetch` 选择渠道并按次计费；转发方式和可用渠道同 DeepSeek 搜索。 |
+| Claude Messages | `POST /v1/messages` | Anthropic Claude Messages 兼容接口，要求提供 `model` 和消息内容，必要时由 New API 转换为上游协议；`/v1/messages/count_tokens` 当前未启用。 |
+| 实时对话 | `GET /v1/realtime`（WebSocket） | OpenAI Realtime 风格的双向实时通信接口，模型通常通过查询参数传入，API 密钥可通过 Bearer Token 或 WebSocket 子协议传递。 |
+| Gemini 原生模型调用 | `POST /v1beta/models/{model}:{action}` | Gemini 原生格式接口，支持模型操作路径，例如 `generateContent`、`streamGenerateContent` 和嵌入相关操作；`:countTokens` 当前不支持，返回 404。 |
+| Gemini 兼容模型调用 | `POST /v1/models/{model}:{action}` | 以 `/v1` 前缀承接 Gemini 风格的模型操作请求，由 Gemini Relay 负责解析和转换。 |
+| 模型列表 | `GET /v1/models` | 默认返回 OpenAI 格式模型列表；同时带 `x-api-key` 和 `anthropic-version` 请求头时返回 Claude 格式，带 `x-goog-api-key` 请求头或 `key` 查询参数时返回 Gemini 格式。 |
+| 模型详情 | `GET /v1/models/{model}` | 查询单个模型信息；模型不存在时返回 `model_not_found` 错误对象（HTTP 状态码仍为 200）。 |
+| Gemini 模型列表 | `GET /v1beta/models` | 以 Gemini 格式返回可用模型列表，响应字段包括 `models` 和 `nextPageToken`。 |
+| OpenAI 格式模型列表 | `GET /v1beta/openai/models` | 在 Gemini 兼容命名空间下，以 OpenAI 格式返回模型列表。 |
+</div>
+
+## 常见问题
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="模型列表为空，或「发送」不可用">
+**提示原文**：「加载 playground 模型失败」（英文 Failed to load playground models）或「加载 playground 分组失败」（英文 Failed to load playground groups），也可能无提示。
+
+**可能原因**：
+- 所选分组下没有可用的模型。
+- 账户没有可用的分组，分组与模型选择器不可用。
+- 输入框为空，或模型列表仍在加载。
+
+**处理方法**：
+1. 在分组与模型选择器左侧切换到其他分组。
+2. 刷新浏览器页面后重试。
+3. 如仍无法解决，请联系管理员开通模型或分组。
+</Accordion>
+
+<Accordion title="发送后显示「错误」和「请求发生错误: …」">
+**说明**：出错的回复以红色「错误」框显示，内容为「请求发生错误: 」加服务端返回的提示，下方有「重试」「编辑」「删除」。出错的回复留在对话中时，会随下一次发送作为上下文发送给模型，请先点击「重试」或「删除」，再发送新消息。请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「无权访问该分组」（英文 No permission to access this group） | 所选分组已不在账户的可用分组中，如管理员调整了分组设置。 | 刷新浏览器页面，重新选择分组。 |
+| 「分组 … 下模型 … 无可用渠道（distributor）」（英文 No available channel for model … under group … (distributor)） | 所选分组下暂时没有可处理该模型的渠道。 | 切换分组或模型；如仍无法解决，请联系管理员。 |
+| 「用户额度不足, 剩余额度: …」（英文 Insufficient user quota, remaining quota: …）<br/>「预扣费额度失败, 用户剩余额度: …, 需要预扣费额度: …」（英文 Not enough quota to pre-consume for this request: … remaining, … required） | 账户余额不足。 | 前往<a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>充值或兑换。 |
+| 「订阅额度不足或未配置订阅: …」（英文 Subscription quota is insufficient or no subscription is configured: …） | 本次请求按订阅扣费，但订阅额度不足或没有可用的订阅。 | 前往<a href="/zh/docs/guide/feature-guide/user/wallet#订阅计划" target="_blank" rel="noopener noreferrer">钱包</a>查看订阅。 |
+| 上游服务返回的其他错误，多为英文 | 上游服务繁忙、限流或故障。 | 稍后点击「重试」，或切换模型、分组。 |
+</Accordion>
+
+<Accordion title="提示「模型价格未配置」">
+**提示原文**：「模型 … 的价格尚未由管理员配置，暂时无法使用，请联系站点管理员开启该模型」（英文 Model … has not been priced by the administrator yet. Please contact the site administrator to enable this model.）
+
+**说明**：模型列表按分组列出可用的模型，不检查是否已配置价格。未配置价格的模型发送后显示橙色的「模型价格未配置」卡片，不扣费。管理员账户看到的提示为「模型 … 的价格未配置。请前往「系统设置 → 运营设置」开启自用模式，或在「系统设置 → 分组与模型定价设置」中为该模型配置价格」，卡片中另有「前往设置」按钮（仅管理员可见），在新标签页中打开系统设置的模型定价页面，该页面仅 Root 可访问。
+
+**处理方法**：
+1. 在分组与模型选择器中选择其他模型。
+2. 需要使用该模型时，请联系管理员配置价格。
+</Accordion>
+
+<Accordion title="发送后没有回复，或回复为空">
+**可能原因**：
+- 模型未返回正文，例如仅返回了思考过程，此时只显示「思考了 … 秒」。
+- 启用了「最大 Tokens」且数值过小。
+- 上游长时间未响应，一直显示「正在回复...」。
+
+**处理方法**：
+1. 一直显示「正在回复...」时，点击「停止」。
+2. 在「参数设置」中关闭「最大 Tokens」或调大数值。
+3. 点击上一条用户消息下方的重新生成图标，或更换模型后重试。
+</Accordion>
+
+<Accordion title="对话记录不见了">
+**可能原因**：
+- 对话记录仅保存在当前浏览器中，更换了浏览器或设备，或使用了无痕窗口。
+- 清除了浏览器的网站数据。
+- 切换了登录账户，各账户的对话记录分开保存。
+- 对话区仅显示最近 24 条消息，更早的消息仍保存在当前浏览器中，并随每次发送作为上下文发送给模型。
+- 消息超过 100 条，仅保留最近的 100 条。
+- 站点从旧版本升级后，旧版本保存的对话记录不再保留。
+
+**处理方法**：
+1. 使用原来的浏览器登录原来的账户查看。
+2. 需要长期保存的内容，请用消息下方的复制图标另行保存。
+</Accordion>
+
+<Accordion title="使用日志中找不到游乐场的调用，或 API 密钥的已用额度没有变化">
+**说明**：游乐场不使用 API 密钥，调用从账户额度中扣除，不计入任何密钥的已用额度。成功的调用在使用日志中记为「消耗」记录，「令牌」列显示 `playground-` 加所选分组的名称，如 `playground-default`。调用失败时不扣费，站点未开启错误日志记录时不记录失败的请求。
+
+**处理方法**：
+1. 在<a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>的「令牌名称」中填写 `playground-default` 等完整名称。
+2. 将时间范围调整为调用发生的时间段，点击「搜索」。
+</Accordion>
+
+<Accordion title="点击「游乐场」后回到了「概览」页">
+**可能原因**：管理员关闭了「游乐场」。
+
+**处理方法**：
+1. 使用 API 密钥调用模型，见 [API 地址与认证](#api-地址与认证)。
+2. 需要使用游乐场时，请联系管理员。
+</Accordion>
+
+<Accordion title="点击「附加」或「搜索」后提示「功能开发中」">
+**提示原文**：「功能开发中」（英文 Feature in development）或「搜索功能开发中」（英文 Search feature in development）
+
+**说明**：「附加」中的「上传文件」「上传照片」「截图」「拍照」和「搜索」目前均未实现，游乐场中无法发送文件、图片或联网搜索。
+
+**处理方法**：
+1. 仅发送文字内容。
+2. 需要发送文件或图片时，请在支持该功能的客户端中通过 API 调用。
+</Accordion>
+
+</Accordions>
+
+## 相关文档
+
+- <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>：创建 API 密钥，复制 API 地址和密钥，在客户端中调用模型。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：查看游乐场和 API 调用的扣费明细。
+- <a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>：充值、兑换额度，查看订阅。
+- <a href="/zh/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a>：查看可用的模型和价格。
+- <a href="/zh/docs/guide/feature-guide/user/personal-setting#设置左侧边栏显示的页面" target="_blank" rel="noopener noreferrer">个人资料</a>：设置左侧边栏显示的页面。
+- <a href="/zh/docs/guide/feature-guide/user/chat-apps" target="_blank" rel="noopener noreferrer">聊天</a>：在 Cherry Studio 等聊天应用中使用模型。
+- <a href="/zh/docs/api" target="_blank" rel="noopener noreferrer">API 参考</a>：各接口的请求参数和返回格式。

@@ -1,0 +1,280 @@
+---
+title: 快速上手
+description: 第一次使用本站时，从注册登录、添加额度、创建 API 密钥到发送第一个请求并在使用日志中查看扣费的最短步骤，并介绍控制台的顶部栏和侧边栏。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+- 第一次使用本站时，按本页的 6 个步骤完成从注册登录到第一次调用模型。
+- 每一步只写最短的操作，其他选项和出错时的处理见该步链接的页面。
+- 调用模型会按价格扣账户里的额度（钱包余额或订阅额度）。
+
+<Callout type="info" title="提示">
+- 新注册的账户默认没有额度，也没有 API 密钥。管理员设置了注册赠送额度时，注册后即有额度；部分站点在注册时自动创建一个 API 密钥。
+- 可用的登录方式、充值方式、订阅套餐和模型均由管理员配置，各站点不同。某一步找不到入口时，请联系管理员。
+- 额度的单位由站点决定。
+</Callout>
+
+## 几个基本概念
+
+界面上同一样东西可能有几种叫法，下表列出本指南使用的名称和界面上的其他叫法。
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 名称 | 含义 | 界面上的其他叫法 |
+| --- | --- | --- |
+| API 密钥 | 程序或客户端调用模型时用的凭证，以 `sk-` 开头。 | 「令牌」，如提示「无效的令牌」。 |
+| 访问令牌 | 在脚本中管理账户用的凭证，以 `nap_` 开头，不可用于调用模型，见<a href="/zh/docs/guide/feature-guide/user/security#创建和管理访问令牌" target="_blank" rel="noopener noreferrer">安全与访问</a>。 | — |
+| 额度 | 账户里可以消费的数值，调用模型时按价格扣除。钱包余额和订阅额度都是额度。 | 「余额」「配额」「资金」，如「当前余额」「无限配额」「添加资金」。 |
+| 分组 | 管理员划分的线路和价格档位，决定可以调用哪些模型、按什么倍率计费。 | 分组名称和倍率，如「default」「1x」。 |
+| 游乐场 | 在网页中直接与模型对话的页面，使用账户的额度，不需要 API 密钥。 | 「Playground」，如「使用 Playground 或你的客户端验证路由」。 |
+</div>
+
+## 完成第一次调用
+
+<Steps>
+
+<Step>
+
+### 注册或登录
+
+**操作流程：**
+1. 点击站点右上角的「登录」，打开登录页。
+2. 已有账户时，使用账号密码、第三方账号或 Passkey 登录。
+3. 没有账户时，点击登录页的「注册」或首页的「开始使用」，按页面要求填写后点击「创建账户」，再用新账户登录。
+
+<Callout type="info" title="提示">
+- 登录后默认显示「概览」页。页面顶部的「设置引导」与本页第 3～5 步对应，顺序不同不影响使用；完成后刷新浏览器页面，步骤前才显示对勾，见<a href="/zh/docs/guide/feature-guide/user/overview#按设置引导开始使用" target="_blank" rel="noopener noreferrer">概览</a>。
+- 各种登录方式、注册时的邮箱验证和出错时的处理，见<a href="/zh/docs/guide/feature-guide/user/auth" target="_blank" rel="noopener noreferrer">注册与登录</a>。
+</Callout>
+
+</Step>
+
+<Step>
+
+### 查看模型和价格
+
+**操作流程：**
+1. 点击顶部导航的「模型广场」。
+2. 在搜索框中输入关键词，或在左侧「筛选」栏中选择分组、供应商等条件。
+3. 点击模型卡片右下角的「详情」，在「概览」的「按分组定价」中查看账户可用的分组和价格。
+4. 点击模型名称右侧的复制按钮，复制模型名称备用。
+
+<Callout type="info" title="提示">
+- 站点未设置为登录后才能查看时，未登录也可查看。登录后按账户可用的分组和专属倍率显示，看到的模型和价格可能与登录前不同。
+- 实际扣费按调用时所用的分组计算，价格的读法见<a href="/zh/docs/guide/feature-guide/user/pricing#读懂模型价格" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a>。
+</Callout>
+
+</Step>
+
+<Step>
+
+### 添加额度
+
+**操作流程：**
+1. 点击侧边栏「个人」→「钱包」。
+2. 按站点提供的方式，选择下表中的一种添加额度。
+3. 在「当前余额」或「我的订阅」中确认额度已到账。
+
+**添加方式：**
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 方式 | 操作 | 详细说明 |
+| --- | --- | --- |
+| 兑换码 | 在「添加资金」底部的「输入您的兑换码」中粘贴兑换码，点击「兑换额度」。 | <a href="/zh/docs/guide/feature-guide/user/wallet#兑换码" target="_blank" rel="noopener noreferrer">兑换码</a> |
+| 在线充值 | 在「添加资金」中选择或填写数量，点击付款方式，在「确认付款」窗口中点击「确认付款」，再在支付页面完成付款。 | <a href="/zh/docs/guide/feature-guide/user/wallet#在线充值" target="_blank" rel="noopener noreferrer">在线充值</a> |
+| 订阅套餐 | 在「订阅套餐」中点击套餐的「立即订阅」，点击「使用余额支付」或其他支付方式完成购买。 | <a href="/zh/docs/guide/feature-guide/user/wallet#订阅计划" target="_blank" rel="noopener noreferrer">订阅计划</a> |
+</div>
+
+<Callout type="info" title="提示">
+- 钱包中没有可用的方式时，表示管理员尚未配置，请联系管理员获取额度或兑换码。
+- 付款后余额未增加、兑换失败时，查看<a href="/zh/docs/guide/feature-guide/user/wallet#常见问题" target="_blank" rel="noopener noreferrer">钱包</a>的常见问题。
+- 订阅额度不计入「概览」页的「剩余额度」。只购买了订阅、钱包余额为 0 时，「设置引导」的「2. 添加额度」在第一次成功调用后才显示对勾。
+</Callout>
+
+</Step>
+
+<Step>
+
+### 创建 API 密钥
+
+**操作流程：**
+1. 点击侧边栏「常规」→「API 密钥」。
+2. 点击页面右上角「创建 API 密钥」。
+3. 填写「名称」，其他设置保持默认。
+4. 点击「保存更改」。
+5. 点击新密钥所在行「API 密钥」列中密钥右侧的复制按钮。
+
+<Callout type="info" title="提示">
+- 保持默认设置时，该密钥不限额度、不限模型、永不过期，调用时从账户额度中扣除。需要限制额度、模型或 IP 时，见 <a href="/zh/docs/guide/feature-guide/user/token#创建-api-密钥" target="_blank" rel="noopener noreferrer">API 密钥</a>。
+- 只在游乐场中使用时，可跳过本步。
+</Callout>
+
+<Callout type="warn" title="注意保管密钥">
+获得 API 密钥的任何人都可以用它消耗账户额度，请勿发送到聊天群，或包含在截图、公开的代码仓库中。
+</Callout>
+
+</Step>
+
+<Step>
+
+### 发送第一个请求
+
+以下三种方式任选一种。
+
+**方式一：在游乐场中发送**
+
+1. 点击侧边栏「聊天」→「游乐场」。
+2. 点击输入框右下方的分组与模型选择器，选择分组和模型。
+3. 在输入框中输入内容，点击「发送」。
+
+**方式二：用 curl 命令发送**
+
+1. 打开 macOS、Linux 的终端，或 Windows 的 Git Bash。Windows 的 PowerShell 和命令提示符无法直接运行该命令。
+2. 复制下面的命令，按下表替换其中三处内容后运行。
+
+```bash
+curl https://your-host/v1/chat/completions   -H "Content-Type: application/json"   -H "Authorization: Bearer sk-xxxxxxxx"   -d '{"model":"模型名称","messages":[{"role":"user","content":"你好"}]}'
+```
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 命令中的内容 | 替换为 | 获取位置 |
+| --- | --- | --- |
+| `https://your-host` | API 地址 | 在「API 密钥」页点击右上角「API 地址」，点击所需地址右侧的复制按钮。 |
+| `sk-xxxxxxxx` | API 密钥 | 第 4 步复制的 API 密钥。 |
+| `模型名称` | 模型名称 | 第 2 步复制的模型名称。 |
+</div>
+
+**方式三：复制概览页的示例命令发送**
+
+1. 点击侧边栏「常规」→「概览」。
+2. 点击「首个 API 请求」右上角「复制」。
+3. 在终端中粘贴并运行命令，无需替换任何内容。
+
+<Callout type="info" title="提示">
+- 终端返回包含模型回复的 JSON 时，表示调用成功；返回错误时，按提示原文在<a href="/zh/docs/guide/feature-guide/user/faq" target="_blank" rel="noopener noreferrer">常见问题</a>中查找原因。
+- 「首个 API 请求」的命令已填好 API 地址、列表中最前面的已启用密钥和第一个可用模型，无需替换，适用的终端与上面的 curl 命令相同。设置引导已收起时，先点击「显示设置引导」或页面标题右侧的「设置引导」，见<a href="/zh/docs/guide/feature-guide/user/overview#复制示例命令发送第一个请求" target="_blank" rel="noopener noreferrer">概览</a>。
+- API 地址的选择和在其他客户端中调用的方法，见<a href="/zh/docs/guide/feature-guide/user/token#复制密钥并调用模型" target="_blank" rel="noopener noreferrer">复制密钥并调用模型</a>。
+- 游乐场不使用 API 密钥，调用同样从账户额度中扣除，见<a href="/zh/docs/guide/feature-guide/user/playground" target="_blank" rel="noopener noreferrer">游乐场</a>。
+</Callout>
+
+</Step>
+
+<Step>
+
+### 在使用日志中查看扣费
+
+**操作流程：**
+1. 点击侧边栏「常规」→「使用日志」。
+2. 点击「搜索」刷新列表。
+3. 找到类型为「消耗」的记录，查看「费用」列。
+4. 点击该记录「详情」列的摘要，在「日志详情」中查看「Token 明细」和「计费详情」。
+
+<Callout type="info" title="提示">
+- 页面标题显示为「通用日志」。默认仅显示今天的记录，页面不会自动刷新。
+- 游乐场的调用在「令牌」列显示 `playground-` 加分组名称，如 `playground-default`。
+- 调用失败的请求不扣费。找不到记录时，见<a href="/zh/docs/guide/feature-guide/user/log#常见问题" target="_blank" rel="noopener noreferrer">使用日志</a>的常见问题。
+</Callout>
+
+</Step>
+
+</Steps>
+
+<Callout type="info" title="提示">
+任一步出错时，先查看该步链接页面的常见问题；调用失败、余额对不上等跨页面的问题见<a href="/zh/docs/guide/feature-guide/user/faq" target="_blank" rel="noopener noreferrer">常见问题</a>。
+</Callout>
+
+## 认识控制台界面
+
+登录后的控制台页面由顶部栏、左侧边栏和页面内容三部分组成。下图中的红色编号与下面两张表中的编号一一对应。
+
+- 快速上手-控制台界面
+
+![快速上手-控制台界面页面](/assets/guide/feature-guide/quick-start-console-layout.png)
+
+### 顶部栏
+
+下表按顶部栏中从左到右的顺序排列。
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 项目 | 位置 | 作用 | 显示条件 |
+| --- | --- | --- | --- |
+| 1. 侧边栏开关 | 顶部栏最左侧 | 展开或收起左侧边栏。 | 始终显示。 |
+| 2. 站点名称 | 侧边栏开关右侧 | 点击回到站点首页。 | 始终显示，名称和图标由管理员设置。 |
+| 3. 顶部导航 | 顶部栏右侧 | 打开「主页」「控制台」「模型广场」「排行榜」「文档」「关于」。 | 各入口由管理员开启或关闭；屏幕宽度小于 1024px 时不显示。 |
+| 4. 搜索 | 顶部导航右侧 | 按名称查找并打开侧边栏中的页面。 | 始终显示，窄屏时仅显示图标。 |
+| 5. 通知 | 搜索右侧的铃铛图标 | 打开「系统公告」窗口，查看站点通知和公告。 | 始终显示。 |
+| 6. 语言 | 通知右侧的图标 | 切换界面语言，见<a href="/zh/docs/guide/feature-guide/user/personal-setting#设置界面语言" target="_blank" rel="noopener noreferrer">设置界面语言</a>。 | 始终显示。 |
+| 7. 主题设置 | 语言右侧的调色板图标 | 调整主题、颜色、字体、布局等界面外观。 | 屏幕宽度小于 768px（如手机）时不显示。 |
+| 8. 头像 | 顶部栏最右侧 | 打开菜单，可进入「个人资料」「安全与访问」「钱包」「系统设置」（仅 Root 可见），或点击「登出」。 | 始终显示。 |
+</div>
+
+<Callout type="info" title="提示">
+- 快捷键：按 Ctrl+B（Mac 为 ⌘B）展开或收起侧边栏，按 Ctrl+K（Mac 为 ⌘K）打开搜索窗口。搜索窗口底部还可切换「浅色」「深色」「系统」主题。
+- 顶部导航中，「控制台」打开「概览」页；「模型广场」「排行榜」可由管理员设为登录后才能查看。
+- 「系统公告」窗口中，「通知」标签显示管理员发布的站点通知，「时间线」标签显示管理员发布的公告，最多 20 条，与「概览」页「公告」面板的内容相同；无内容时分别显示「目前暂无公告」「暂无系统公告」。
+- 有未读内容时，铃铛右上角显示未读数。打开窗口时，「通知」标签的内容记为已读；切换到「时间线」后，其中的公告记为已读。已读记录保存在当前浏览器中，更换浏览器或清除网站数据后重新显示为未读。
+- 语言与「个人资料」页的「界面语言」为同一设置。「主题设置」中的选择保存在当前浏览器中，不随账户同步，更换浏览器或设备后需重新设置；点击「重置」恢复默认。
+- 头像菜单顶部依次为显示名称、角色和分组。「安全与访问」「钱包」随侧边栏中的对应页面一起隐藏，「个人资料」始终显示。「登出」需在确认窗口中确认，之后回到登录页。
+- 首页、模型广场、排行榜等页面的顶部栏只有顶部导航、语言、主题切换、通知和「登录」（已登录时为头像）；窄屏时仅显示主题切换、头像和菜单按钮，顶部导航和「登录」收在菜单按钮中。
+</Callout>
+
+按 Ctrl+K（Mac 为 ⌘K）或点击「搜索」打开的搜索窗口，可按名称查找并打开侧边栏中的页面。
+
+- 快速上手-搜索窗口
+
+![快速上手-搜索窗口页面](/assets/guide/feature-guide/quick-start-search.png)
+
+点击铃铛图标打开「系统公告」窗口，「通知」和「时间线」两个标签分别显示站点通知和公告。
+
+- 快速上手-系统公告窗口
+
+![快速上手-系统公告窗口页面](/assets/guide/feature-guide/quick-start-notifications.png)
+
+点击调色板图标打开「主题设置」，可调整界面的外观和布局。
+
+- 快速上手-主题设置
+
+![快速上手-主题设置页面](/assets/guide/feature-guide/quick-start-theme-settings.png)
+
+点击头像打开菜单，可进入「个人资料」「安全与访问」「钱包」和「系统设置」（仅 Root 可见），或点击「登出」退出登录。
+
+- 快速上手-头像菜单
+
+![快速上手-头像菜单页面](/assets/guide/feature-guide/quick-start-avatar-menu.png)
+
+### 侧边栏
+
+下表按侧边栏中从上到下的顺序排列，分组编号见上方「快速上手-控制台界面」图。
+
+<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 分组 | 页面 | 说明 |
+| --- | --- | --- |
+| 9. 聊天 | 「游乐场」 | 在网页中与模型对话，见<a href="/zh/docs/guide/feature-guide/user/playground" target="_blank" rel="noopener noreferrer">游乐场</a>。 |
+| 9. 聊天 | 「聊天」 | 展开后列出管理员配置的聊天应用，点击即可使用，见<a href="/zh/docs/guide/feature-guide/user/chat-apps" target="_blank" rel="noopener noreferrer">聊天</a>。仅在站点有聊天预设时显示。 |
+| 10. 常规 | 「概览」「数据看板」 | 查看额度、用量和设置引导，以及按时间和模型汇总的调用统计，见<a href="/zh/docs/guide/feature-guide/user/overview" target="_blank" rel="noopener noreferrer">概览</a>、<a href="/zh/docs/guide/feature-guide/user/dashboard" target="_blank" rel="noopener noreferrer">数据看板</a>。 |
+| 10. 常规 | 「API 密钥」 | 创建和管理调用模型用的 API 密钥，见 <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>。 |
+| 10. 常规 | 「使用日志」「审计日志」「任务日志」 | 查看调用和扣费记录、账户操作记录，以及异步任务和绘图任务，见<a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>、<a href="/zh/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">审计日志</a>、<a href="/zh/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">任务日志</a>。 |
+| 11. 个人 | 「钱包」「个人资料」「安全与访问」 | 充值和订阅、个人偏好、密码和登录安全，见<a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>、<a href="/zh/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">个人资料</a>、<a href="/zh/docs/guide/feature-guide/user/security" target="_blank" rel="noopener noreferrer">安全与访问</a>。 |
+| 12. 管理员（仅管理员可见） | 渠道、模型、用户等管理页面 | 见<a href="/zh/docs/guide/feature-guide#管理员指南" target="_blank" rel="noopener noreferrer">功能指南概述</a>中的管理员指南。 |
+</div>
+
+<Callout type="info" title="提示">
+- 侧边栏由两层设置决定：管理员关闭的页面对所有用户隐藏；在此基础上，可在「个人资料」页的「左侧边栏个人设置」中再隐藏，见<a href="/zh/docs/guide/feature-guide/user/personal-setting#设置左侧边栏显示的页面" target="_blank" rel="noopener noreferrer">设置左侧边栏显示的页面</a>。
+- 收起后侧边栏只显示图标，鼠标悬停显示页面名称；展开或收起的状态保存在当前浏览器中。
+- 屏幕宽度小于 768px（如手机）时侧边栏默认隐藏，点击侧边栏开关后从左侧滑出，点击页面后自动收起。
+- 模型广场和排行榜不在侧边栏中，从顶部导航进入。
+</Callout>
+
+## 相关文档
+
+- <a href="/zh/docs/guide/feature-guide/user/auth" target="_blank" rel="noopener noreferrer">注册与登录</a>：注册账户，使用各种方式登录，重置忘记的密码。
+- <a href="/zh/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a>：查看可用的模型和价格。
+- <a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>：充值、兑换额度，购买订阅套餐。
+- <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>：创建 API 密钥，复制 API 地址和密钥调用模型。
+- <a href="/zh/docs/guide/feature-guide/user/playground" target="_blank" rel="noopener noreferrer">游乐场</a>：在网页中与模型对话。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：查看每次调用的扣费明细。
+- <a href="/zh/docs/guide/feature-guide/user/overview" target="_blank" rel="noopener noreferrer">概览</a>：按设置引导完成首次调用，复制示例命令。
+- <a href="/zh/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">个人资料</a>：设置界面语言和左侧边栏显示的页面。
+- <a href="/zh/docs/guide/feature-guide/user/faq" target="_blank" rel="noopener noreferrer">常见问题</a>：调用失败、余额对不上等跨页面的问题。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-site#顶部导航" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>：Root 设置顶部导航、侧边栏模块和系统公告。
