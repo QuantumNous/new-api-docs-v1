@@ -60,12 +60,12 @@ New API 当前内置以下出厂插件（随版本更新，以实际列表为准
 
 <Callout type="info">
   - 「端点」一列描述插件接入的协议端点：`Responses` 对应 `openai_responses` 协议（支持流式、同步、后台模式），`Video` 对应 `openai_video` 协议，`Images` 对应 `openai_image` 协议（`/v1/images/generations`、`/v1/images/edits`）。部分插件还注册了自定义原生路由（如 `jimeng` 的 `/jimeng/`）。
-  - 「计费参数」一列来自插件的 `usageSchema` 声明，供任务模型的计费表达式读取，见[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression#任务模型)。
+  - 「计费参数」一列来自插件的 `usageSchema` 声明，供任务模型的计费表达式读取，见<a href="/zh/docs/guide/feature-guide/admin/billing-expression#任务模型" target="_blank" rel="noopener noreferrer">计费表达式</a>。
 </Callout>
 
 ## 创建任务插件渠道
 
-插件本身不参与路由；要让某个平台可调用，需要创建「任务插件」类型的渠道并绑定插件 Key。也可以把插件作为扩展绑定到 New API 渠道，见[网关渠道](/zh/docs/guide/feature-guide/admin/channel#网关渠道new-api-与-sub2api)。
+插件本身不参与路由；要让某个平台可调用，需要创建「任务插件」类型的渠道并绑定插件 Key。也可以把插件作为扩展绑定到 New API 渠道，见<a href="/zh/docs/guide/feature-guide/admin/channel#网关渠道new-api-与-sub2api" target="_blank" rel="noopener noreferrer">网关渠道</a>。
 
 ### 前置条件
 
@@ -84,7 +84,7 @@ New API 当前内置以下出厂插件（随版本更新，以实际列表为准
 3. 进入渠道表单后，渠道类型自动设为「任务插件」；名称为空时填入插件名，「模型」中填入该插件声明的全部模型。
 4. 填写「API 地址」（必填），即插件请求的上游地址。插件声明了默认地址时会自动填入，下方显示「插件默认值」；未声明时下方提示「该插件未声明默认地址，必须手动填写」。
 5. 填写「API 密钥」——渠道 `key` 会作为插件环境的 `apiKey` 传入。
-6. 核对模型、分组，按需设置优先级/权重、标签、状态等（通用字段见[渠道管理](/zh/docs/guide/feature-guide/admin/channel#独立插件渠道)）。
+6. 核对模型、分组，按需设置优先级/权重、标签、状态等（通用字段见<a href="/zh/docs/guide/feature-guide/admin/channel#独立插件渠道" target="_blank" rel="noopener noreferrer">渠道管理</a>）。
 7. 保存渠道。保存后可使用实际模型发起一次异步任务验证。
 
 ### 字段说明
@@ -278,7 +278,7 @@ New API 当前内置以下出厂插件（随版本更新，以实际列表为准
 
 ![任务插件-插件详情-计费参数页面](/assets/guide/feature-guide/task-plugins-plugin-details-billing-parameters.png)
 
-插件可在 `usageSchema` 中声明计费参数。「计费参数」标签按适用模型分组列出参数表，列为名称、类型（数值/布尔/枚举）、单位（秒/数量/token/credit，插件可自定义单位名，如「张」）、枚举值和说明信息。任务模型的计费表达式用这些参数计价，见[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression#任务模型)；未声明时显示「未声明计费参数」。
+插件可在 `usageSchema` 中声明计费参数。「计费参数」标签按适用模型分组列出参数表，列为名称、类型（数值/布尔/枚举）、单位（秒/数量/token/credit，插件可自定义单位名，如「张」）、枚举值和说明信息。任务模型的计费表达式用这些参数计价，见<a href="/zh/docs/guide/feature-guide/admin/billing-expression#任务模型" target="_blank" rel="noopener noreferrer">计费表达式</a>；未声明时显示「未声明计费参数」。
 
 <Callout type="warn">
   计费参数表的字段来源于插件元信息。若渠道所在请求未命中该插件的模型或渠道类型，任务结果不会按该插件的 `usageSchema` 计费；需要同时满足路由匹配与计费表达式配置。
@@ -393,15 +393,15 @@ New API 当前内置以下出厂插件（随版本更新，以实际列表为准
 | 禁用后仍显示使用中 | 在确认对话框中执行「级联禁用渠道」或「强制操作」；并确认绑定渠道已切换或禁用。 |
 | 禁用自定义版本后，同名出厂插件也不再服务 | 这是当前行为：禁用会把该 Key 写入 `TaskPluginDisabledFactoryKeys`，出厂插件一起停用；直接重新启用会恢复当前的自定义版本。如需改由出厂插件服务，用「删除当前自定义版本」删除该 Key 的全部自定义版本，待「来源」显示「出厂」后，打开该行的「已启用」开关。 |
 | 任务不进入插件 | 检查渠道类型是否为任务插件、渠道是否绑定正确 Key、分组是否匹配、模型是否在插件 `models` 中。 |
-| 计费不生效 | 检查插件是否声明 `usageSchema`、请求是否命中该插件，以及是否已在[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression#任务模型)中为该任务模型配置任务表达式。 |
+| 计费不生效 | 检查插件是否声明 `usageSchema`、请求是否命中该插件，以及是否已在<a href="/zh/docs/guide/feature-guide/admin/billing-expression#任务模型" target="_blank" rel="noopener noreferrer">计费表达式</a>中为该任务模型配置任务表达式。 |
 | 市场安装失败 | 检查索引是否可访问、`indexVersion` 是否 ≤1、`kind` 是否为 `task`、源码哈希是否与索引一致（「完整性校验失败」）以及是否存在路由冲突。 |
 | 市场来源无法拉取 | 确认 `index_url` 为绝对 http(s) 地址且浏览器可访问；主机禁止跨域或不可达时下载后粘贴源码。 |
 | 任务插件渠道「测试连接」无效 | 「任务插件」渠道不支持测试探测；直接用真实模型发起任务验证。 |
 
 ## 相关文档
 
-- [渠道管理](/zh/docs/guide/feature-guide/admin/channel)：创建「任务插件」类型渠道、为 New API 渠道绑定插件扩展、配置分组与路由映射。
-- [日志与异步任务](/zh/docs/guide/feature-guide/user/log)：查看任务日志、任务状态与后台处理。
-- [模型配置](/zh/docs/guide/feature-guide/system-settings/settings-models)：配置全局模型行为与模型部署。
-- [计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)：配置额度单位、模型与分组价格。
-- [计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression#任务模型)：为任务模型配置使用插件计费参数的任务表达式。
+- <a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>：创建「任务插件」类型渠道、为 New API 渠道绑定插件扩展、配置分组与路由映射。
+- <a href="/zh/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">任务日志</a>：查看任务状态与后台处理。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型配置</a>：配置全局模型行为与模型部署。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：配置额度单位、模型与分组价格。
+- <a href="/zh/docs/guide/feature-guide/admin/billing-expression#任务模型" target="_blank" rel="noopener noreferrer">计费表达式</a>：为任务模型配置使用插件计费参数的任务表达式。

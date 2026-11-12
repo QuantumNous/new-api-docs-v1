@@ -7,7 +7,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 - 渠道是 New API 连接上游 AI 服务的配置单元。管理员可访问 `/channels`或从侧边栏进入「渠道」。
 - 本页仅说明渠道页面的配置和维护。
-- 模型目录、价格与用户分组还需要结合[模型管理](/zh/docs/guide/feature-guide/admin/model)、[计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)和[用户管理](/zh/docs/guide/feature-guide/admin/user)共同配置。
+- 模型目录、价格与用户分组还需要结合<a href="/zh/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">模型管理</a>、<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>和<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>共同配置。
 
 ## 渠道管理概览
 
@@ -33,7 +33,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 批量操作 | 先开启选择模式，再对已选择的渠道执行启停、标签或删除；不会自动选中所有筛选结果。 |
 | 拖拽模式 | 按优先级排序时拖动渠道调整优先级，见[拖拽调整优先级](#拖拽调整优先级)。 |
 | 排序、列设置、分页 | 排序下拉可选「优先级」「ID」「名称」「余额」「响应」「上次测试」，右侧按钮切换升序或降序，默认按优先级降序；「查看」调整表格视图的列显示；分页调整每页数量。分页选择只影响当前加载的行。 |
-| 「最大重试」徽标 | 页面标题旁显示[请求策略](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试)中的「最多重试次数」。Root 点击徽标（提示为「重试设置」）可跳转到「会话与重试」；Admin 只能看到数值。 |
+| 「最大重试」徽标 | 页面标题旁显示<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试" target="_blank" rel="noopener noreferrer">请求策略</a>中的「最多重试次数」。Root 点击徽标（提示为「重试设置」）可跳转到「会话与重试」；Admin 只能看到数值。 |
 
 ### 权限与安全边界
 
@@ -146,7 +146,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 优先级 | 默认 `0` | 同模型、同分组候选中优先级较高的渠道先参与选择。不是全局重试次数。 |
 | 权重 | 默认 `0` | 同优先级渠道的选择权重；不是严格固定比例，重试或渠道状态会改变实际结果。 |
 | 测试模型 | 可选 | 快速测试未指定模型时使用；应填写该渠道实际支持的模型。 |
-| 自动封禁 | 默认开启 | 即顶部快捷选项「异常自动禁用」。还需在[请求策略 → 渠道健康](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康)中开启全局「失败时禁用」才会生效（全部余额更新发现余额不足时除外，见[查询余额与运行状态](#查询余额与运行状态)）；手动禁用和自动禁用是不同状态。 |
+| 自动封禁 | 默认开启 | 即顶部快捷选项「异常自动禁用」。还需在<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康" target="_blank" rel="noopener noreferrer">请求策略 → 渠道健康</a>中开启全局「失败时禁用」才会生效（全部余额更新发现余额不足时除外，见[查询余额与运行状态](#查询余额与运行状态)）；手动禁用和自动禁用是不同状态。 |
 
 映射存在三类常见风险：JSON 无效、源模型不在公开列表、上游目标名称被公开给用户。保存时界面会提示缺失源模型，也会提示公开了映射目标；应先确认用户侧模型列表，再决定是否添加或移除名称。
 
@@ -270,7 +270,7 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 4. 查看成功/失败、响应时间和错误详情。
 5. 删除失败模型前确认失败不是临时网络、限流、代理、端点或价格配置问题。
 
-批量测试前端每批最多运行 5 个模型；停止操作只停止后续批次，不保证取消已发出的请求。全部渠道测试是后台维护任务，不受当前列表筛选范围限制，已有同类任务时可能返回冲突。它跳过手动禁用的渠道，并按[请求策略 → 渠道健康](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康)的规则自动禁用或恢复渠道；单个渠道的测试只显示结果，不改变渠道状态。
+批量测试前端每批最多运行 5 个模型；停止操作只停止后续批次，不保证取消已发出的请求。全部渠道测试是后台维护任务，不受当前列表筛选范围限制，已有同类任务时可能返回冲突。它跳过手动禁用的渠道，并按<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康" target="_blank" rel="noopener noreferrer">请求策略 → 渠道健康</a>的规则自动禁用或恢复渠道；单个渠道的测试只显示结果，不改变渠道状态。
 
 ### 查询余额与运行状态
 
@@ -409,9 +409,9 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 | 渠道无法保存 | 检查类型专属凭证、Base URL、名称、模型、分组、JSON、代理、HTTP/2 分片及 Advanced Custom 路由。 |
 | 测试认证失败 | 检查 Base URL 是否误包含完整接口路径、凭证格式、组织/项目/区域、代理和端点类型。 |
 | 模型不可见 | 检查渠道模型、模型映射、渠道分组、用户分组、API Key 限制、模型元信息和上游目标名称。 |
-| 请求被路由到意外渠道 | 检查优先级、权重、渠道状态、标签范围、请求路径、会话规则和[重试设置](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试)；在共享入口上，普通渠道与插件渠道会一起参与选择。实际选择过程可在使用日志详情的[请求策略决策](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#请求决策记录)中查看。 |
+| 请求被路由到意外渠道 | 检查优先级、权重、渠道状态、标签范围、请求路径、会话规则和<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试" target="_blank" rel="noopener noreferrer">重试设置</a>；在共享入口上，普通渠道与插件渠道会一起参与选择。实际选择过程可在使用日志详情的<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#请求决策记录" target="_blank" rel="noopener noreferrer">请求策略决策</a>中查看。 |
 | 参数覆盖没有生效 | 检查是否开启请求体透传、操作顺序、条件路径、JSON 类型和实际 relay 路径。 |
-| 渠道频繁自动禁用 | 查看失败状态码、错误文本、测试模型、代理和上游限流，对照[渠道健康](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康)中的自动禁用规则；全部余额更新时余额小于等于 0 的渠道也会被自动禁用；区分自动禁用与手动禁用。 |
+| 渠道频繁自动禁用 | 查看失败状态码、错误文本、测试模型、代理和上游限流，对照<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康" target="_blank" rel="noopener noreferrer">渠道健康</a>中的自动禁用规则；全部余额更新时余额小于等于 0 的渠道也会被自动禁用；区分自动禁用与手动禁用。 |
 | 获取模型失败 | 检查该类型是否支持模型获取、凭证、模型列表路由、Base URL 和网络；失败不会自动替换原列表。 |
 | 余额没有更新 | 确认渠道类型支持普通余额接口；Codex、vLLM/SGLang 使用其他运行信息入口。 |
 | 多 Key 渠道不可用 | 检查每个 Key 状态、自动禁用原因和剩余可用 Key；不要只看渠道总状态。 |
@@ -426,7 +426,7 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 - 只有请求进入相应 relay 处理路径时才会执行覆盖；请求体透传会绕过普通转换和部分覆盖链路。
 - `operations` 按数组顺序执行，前一个操作的结果会成为后一个操作的输入。
 - 同时存在旧式顶层字段和 `operations` 时，旧式字段先应用，再应用 `operations`。
-- 命中会话规则时，规则中的参数覆盖模板会与渠道参数覆盖合并，见[会话与重试](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试)。
+- 命中会话规则时，规则中的参数覆盖模板会与渠道参数覆盖合并，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试" target="_blank" rel="noopener noreferrer">会话与重试</a>。
 - 条件默认使用 `OR`；`logic: "AND"` 才要求全部条件满足。
 - 条件读取当前请求 JSON 和运行上下文；前序操作修改模型后，后续条件可能读取修改后的值。`original_model`、`upstream_model` 等上下文值不是自动写入请求 JSON 的字段。
 - `return_error` 会提前返回自定义错误；其状态码和错误字段仍受后端解析范围约束，不应仅依据输入框可接受的范围宣称所有值都可用。
@@ -477,10 +477,11 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 
 ## 相关文档
 
-- [模型管理](/zh/docs/guide/feature-guide/admin/model)：模型目录、供应商和模型部署。
-- [用户管理](/zh/docs/guide/feature-guide/admin/user)：用户分组、权限和用户状态。
-- [任务插件管理](/zh/docs/guide/feature-guide/admin/task-plugins)：插件安装、声明和绑定条件。
-- [计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)：模型价格、分组倍率和支付配置。
-- [请求策略配置](/zh/docs/guide/feature-guide/system-settings/settings-request-policies)：会话保持与重试、定期渠道测试、自动禁用与自动恢复。
-- [模型配置](/zh/docs/guide/feature-guide/system-settings/settings-models)：全局模型行为、供应商适配和模型部署。
-- [日志与异步任务](/zh/docs/guide/feature-guide/user/log)：请求、用量、扣费和任务状态。
+- <a href="/zh/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">模型管理</a>：模型目录、供应商和模型部署。
+- <a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>：用户分组、权限和用户状态。
+- <a href="/zh/docs/guide/feature-guide/admin/task-plugins" target="_blank" rel="noopener noreferrer">任务插件管理</a>：插件安装、声明和绑定条件。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：模型价格、分组倍率和支付配置。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>：会话保持与重试、定期渠道测试、自动禁用与自动恢复。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型配置</a>：全局模型行为、供应商适配和模型部署。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：请求、用量和扣费明细。
+- <a href="/zh/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">任务日志</a>：绘图、音乐和视频等异步任务的状态。

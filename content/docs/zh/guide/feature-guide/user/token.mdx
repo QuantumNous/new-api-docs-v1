@@ -35,7 +35,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **字段说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 名称 | 密钥的名称，用于区分密钥的用途或使用环境。 | 创建或编辑密钥时填写，必填。最长 50 个英文字符或约 16 个汉字。 | — |
@@ -66,7 +66,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 窗口分「基本信息」「额度设置」「高级设置」三个区域，「高级设置」默认折叠，点击标题展开。下表按窗口中的顺序排列。
 
-<div id="创建配置项说明" className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div id="创建配置项说明" className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 所属区域 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- | --- |
 | 名称 | 基本信息 | 密钥的名称，用于区分密钥的用途或使用环境。 | 必填，建议注明使用该密钥的应用或环境。最长 50 个英文字符或约 16 个汉字，超出时提示「令牌名称过长」。 | 空 |
@@ -166,7 +166,7 @@ curl https://your-host/v1/chat/completions \
 
 「更新 API 密钥」窗口的配置项与创建窗口相同，打开时显示该密钥当前的设置。各配置项的定义、填写要求、限制和默认值见[创建 API 密钥的配置项说明](#创建配置项说明)，下表仅列出与创建时不同的配置项。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 「创建 API 密钥」窗口 | 「更新 API 密钥」窗口 |
 | --- | --- | --- |
 | 数量 | 显示，默认为 1，可一次创建多个密钥。 | 不显示，每次仅修改一个密钥。 |
@@ -182,7 +182,7 @@ curl https://your-host/v1/chat/completions \
 
 ### 页面按钮与筛选
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 创建 API 密钥 | 页面右上角 | 打开「创建 API 密钥」窗口，见[创建 API 密钥](#创建-api-密钥)。 |
@@ -197,7 +197,7 @@ curl https://your-host/v1/chat/completions \
 
 ### 行操作
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 查看完整密钥 | 「API 密钥」列的密钥文字 | 在「完整 API 密钥」窗口中显示完整密钥。 |
@@ -213,7 +213,7 @@ curl https://your-host/v1/chat/completions \
 
 ### 批量操作
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 选择密钥 | 每行行首的复选框 | 勾选单个密钥。勾选后，页面底部显示批量操作栏。 |
@@ -229,7 +229,7 @@ curl https://your-host/v1/chat/completions \
 
 列表「状态」列和「状态」筛选中的四种状态：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 已启用 | 密钥可正常用于调用。 | — |

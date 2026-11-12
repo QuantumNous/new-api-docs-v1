@@ -37,7 +37,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **字段说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 当前余额 | 账户剩余的钱包额度，可用于调用模型和购买订阅。 | 由系统计算，不可直接修改。在线充值、兑换码、转移邀请奖励和每日签到会增加余额，调用模型和用余额购买订阅会扣除余额。 | 下方显示「剩余配额」。不含订阅额度和尚未转移的邀请奖励。 |
@@ -78,7 +78,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 可用的付款方式由管理员配置，未配置的方式不显示。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 付款方式 | 显示位置 | 显示条件 | 金额 | 支付页面 |
 | --- | --- | --- | --- | --- |
 | 易支付方式，如「支付宝」「微信」 | 「付款方式」 | 仅在管理员配置了易支付后显示，名称和图标由管理员设置。 | 使用「金额」或「自定义金额」。每种方式可设置最低数量，未达到时按钮置灰并显示「最低：…」。 | 新标签页 |
@@ -90,7 +90,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **「确认付款」窗口说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 备注 |
 | --- | --- | --- |
 | 充值金额 | 本次充值到账的额度。 | 按站点的货币显示方式显示。 |
@@ -102,7 +102,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「添加资金」卡片中的充值项如下，下表按卡片中的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 金额 | 预设的充值数量。 | 点击即选中，数量按站点的货币显示方式显示。按钮下方显示「支付 …」，有折扣时右上角显示「优惠 …%」并显示节省的金额。折扣按数量精确匹配，数量恰好等于管理员设置了折扣的数量时才有折扣，「优惠 …%」仅显示在预设数量按钮上。「支付 …」为估算，实际应付以「确认付款」窗口中的「您支付」为准。 | 由管理员设置，默认 10、20、50、100、200、500 |
@@ -146,7 +146,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 窗口中每个订单为一张卡片，下表按卡片中从上到下、从左到右的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 订单号 | 订单的编号。 | 下单时由系统生成，不可修改。 | 右侧有复制按钮。管理员视图另显示「用户 ID: …」（仅管理员可见）。 |
@@ -202,7 +202,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 套餐卡上的要点按下表顺序显示，未设置的项不显示。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 标题、副标题 | 套餐的名称和说明。 | 由管理员设置。 | 未设置标题时显示「订阅套餐」。 |
@@ -219,7 +219,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按窗口中从上到下的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 项目 | 说明 |
 | --- | --- |
 | 套餐名称、有效期、重置周期、套餐额度、升级分组 | 所选套餐的信息。无重置周期或升级分组时不显示对应行；套餐额度为 0 时显示「无限制」。 |
@@ -233,7 +233,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「我的订阅」标题旁显示「… 活跃」或「无生效」；有已过期或已取消的订阅时，另显示「… 已过期」（已取消的订阅也计入）。每份订阅显示以下内容：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 订阅标题 | 套餐名称和订阅编号，如「vip · 订阅 #3」。 | 由系统生成。 | 套餐已停用时仅显示「订阅 #…」。 |
@@ -261,7 +261,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **选项说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 选项 | 扣费规则 | 备注 |
 | --- | --- | --- |
 | 优先订阅 | 有生效订阅时先扣订阅额度。订阅额度不足时，仅当所有生效订阅的套餐都允许使用钱包余额，才改扣钱包余额，否则请求失败。无生效订阅时扣钱包余额。 | 默认选项。无生效订阅时置灰。 |
@@ -296,7 +296,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **字段说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 待确认 | 尚未转移到余额的邀请奖励。 | 被邀请人注册后增加，转移后减少。 | 与订单状态「待确认」同名，含义不同。 |
@@ -309,7 +309,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「转移奖励」窗口的配置项如下。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 转移金额 | 本次转移到余额的数量。 | 不低于 1 个额度单位，不高于窗口上方的「可用奖励」，否则「转移」置灰；提交失败时提示「转移额度最小为…！」或「邀请额度不足！」。 | 1 个额度单位 |
@@ -319,7 +319,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 页面按钮与筛选
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 订单历史 | 「添加资金」右上角 | 打开「计费历史」窗口，见[查看订单历史](#查看订单历史)。 |
@@ -340,7 +340,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 行操作
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 复制订单号 | 「计费历史」中订单号右侧的复制图标 | 复制该订单号。 |
@@ -353,7 +353,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「计费历史」窗口中订单右上角的状态：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 待确认 | 订单已创建，尚未收到支付平台的付款确认。 | 黄色。未付款、付款未完成或付款失败的订单也显示为「待确认」。已付款但长时间仍为「待确认」时，请保留订单号联系管理员。 |
@@ -365,7 +365,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「我的订阅」中每份订阅的状态：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 生效 | 订阅在有效期内，可使用订阅额度。 | 绿色，显示剩余天数、结束时间、下一次重置和额度。 |

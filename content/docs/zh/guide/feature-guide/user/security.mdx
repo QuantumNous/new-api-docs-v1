@@ -47,7 +47,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 页面上每张卡片一行，下表按左侧从上到下、再右侧从上到下的顺序排列；窄屏下按同样顺序单列显示。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 卡片 | 所属区域 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- | --- |
 | 更改密码 | 登录与认证 | 修改登录密码。 | 需完成安全验证。 | 账户无密码（如仅用第三方账号注册）时显示为「设置密码」。 |
@@ -81,7 +81,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **验证方式说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 验证方式 | 出现条件 | 填写内容 |
 | --- | --- | --- |
 | 身份验证器代码 | 账户已启用两步验证。 | 在「认证器验证码或备用码」中填写验证器中的 6 位验证码，或一个未使用的备用码。重新生成备用码时仅可填写 6 位验证码。连续输错 5 次后锁定 5 分钟。 |
@@ -123,7 +123,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「更改密码」「设置密码」窗口的配置项如下，下表按窗口中的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 当前密码 | 账户现在的登录密码。 | 仅更改密码时显示，必填；为空时提示「请输入当前密码」，错误时提示「当前密码不正确。」。 | 空 |
@@ -301,7 +301,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 每个会话一行，下表按从上到下的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 设备 | 登录时使用的浏览器和系统，如「Chrome · Windows」。 | 由系统识别。 | 无法识别时显示「浏览器」或「未知设备」。当前浏览器的会话带「当前」标记。 |
@@ -364,7 +364,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 每个令牌一行，下表按从上到下的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 名称 | 令牌的名称。 | 创建或编辑时填写。 | 右侧显示 `nap_…` 和令牌末尾几位，用于辨认令牌。 |
@@ -377,7 +377,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「创建访问令牌」窗口的配置项如下，下表按窗口中的顺序排列。
 
-<div id="访问令牌配置项说明" className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div id="访问令牌配置项说明" className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 令牌名称 | 用于区分令牌的名称。 | 必填，1–64 个字符；为空时提示「请输入名称」，过长时提示「名称不能超过 64 个字符」。名称可重复。 | 空 |
@@ -387,7 +387,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **权限说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 分组 | 资源 | 动作 | 说明 |
 | --- | --- | --- | --- |
 | 个人 | 个人资料 | 查看、编辑 | 查看个人资料、分组和可用模型；修改显示名称和个人设置。 |
@@ -403,7 +403,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「编辑访问令牌」窗口的配置项与创建窗口相同，见[创建窗口的配置项说明](#访问令牌配置项说明)，下表仅列出不同之处。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 「创建访问令牌」窗口 | 「编辑访问令牌」窗口 |
 | --- | --- | --- |
 | 令牌名称 | 必填。 | 可修改；仅修改名称时保存不需要安全验证。 |
@@ -437,7 +437,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **筛选项说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 筛选项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 时间范围 | 按请求时间筛选。 | 起始时间晚于结束时间时提示「结束时间必须晚于开始时间」。 | 空，即不限时间 |
@@ -447,7 +447,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **字段说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 时间 | 请求发生的时间。 | 由系统自动记录。 | — |
@@ -489,7 +489,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 页面按钮与筛选
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 更改密码 / 设置密码 | 「登录与认证」的密码卡片右侧 | 见[更改或设置密码](#更改或设置密码)。 |
@@ -511,7 +511,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 行操作
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 撤销 | 「登录会话」中其他设备右侧 | 确认「撤销此会话？」后，该设备立即退出。 |
@@ -530,7 +530,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「两步验证」卡片中「两步验证」后的标记：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 已禁用 | 未启用两步验证。 | 点击「启用」，见[启用两步验证](#启用两步验证)。 |
@@ -542,7 +542,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「Passkey 登录」卡片中「通行密钥认证」后的标记：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 已禁用 | 账户未注册 Passkey。 | 点击「启用 Passkey」。 |
@@ -553,7 +553,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「账户绑定」中各账号下方的状态：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 未绑定 | 尚未绑定该账号。 | 点击「绑定」。 |
@@ -564,7 +564,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 访问令牌时间行中的显示：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | … 过期 | 令牌有效，到该时间失效。 | — |
@@ -712,7 +712,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 <Accordion title="用访问令牌调用模型时提示「无效的令牌」">
 **提示原文**：「无效的令牌」（英文 Invalid token）
 
-**可能原因**：使用的是以 `nap_` 开头的访问令牌。访问令牌仅可调用账户管理接口，不可用于调用模型。
+**可能原因**：使用的是以 `nap_` 开头的访问令牌。访问令牌仅可调用面板 API，不可用于调用模型。
 
 **处理方法**：
 1. 在 <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>页创建以 `sk-` 开头的密钥，用于调用模型。
@@ -788,4 +788,4 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - <a href="/zh/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">审计日志</a>：查看登录、账户安全设置和访问令牌的操作记录。
 - <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：开启「记录 IP 地址」后，在日志详情中查看调用方 IP。
 - <a href="/zh/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">个人资料</a>：设置通知方式和左侧边栏显示的页面。
-- <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>：管理员开启第三方登录、Passkey 和密码登录。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>：Root 开启第三方登录、Passkey 和密码登录。

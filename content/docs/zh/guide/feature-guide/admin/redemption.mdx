@@ -14,14 +14,14 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 权限与合规前置
 
-1. Root 必须先在「系统设置」 → 「计费与支付」 → 「支付网关」中确认当前版本的支付合规条款，管理员才能创建兑换码，用户端也才会启用兑换入口。[详见：支付合规确认](/zh/docs/guide/feature-guide/system-settings/settings-billing#支付合规确认)
+1. Root 必须先在「系统设置」 → 「计费与支付」 → 「支付网关」中确认当前版本的支付合规条款，管理员才能创建兑换码，用户端也才会启用兑换入口。<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#支付合规确认" target="_blank" rel="noopener noreferrer">详见：支付合规确认</a>
 2. 合规状态必须同时满足「已确认」和「条款版本为当前版本」。
 3. 确认操作只能通过 Root 的控制台会话完成，API Access Token 不能代替该会话。
 4. 合规未确认或条款版本与当前版本不匹配时，已有兑换码仍可由管理员查看和维护，但创建操作及用户兑换会被拒绝。
 
 <Callout type="warn">
   - 「系统设置」 → 「站点与品牌」 → 「侧边栏模块」 → 「管理员区域」只控制菜单入口是否显示，不等同于撤销后端管理员权限。
-  - 「管理员权限」中没有兑换码相关权限。需要禁止某位 Admin 使用兑换码功能时，只能调整其账户角色（如[降级](/zh/docs/guide/feature-guide/admin/user#角色状态)为普通用户），或在部署侧做访问控制。
+  - 「管理员权限」中没有兑换码相关权限。需要禁止某位 Admin 使用兑换码功能时，只能调整其账户角色（如<a href="/zh/docs/guide/feature-guide/admin/user#角色状态" target="_blank" rel="noopener noreferrer">降级</a>为普通用户），或在部署侧做访问控制。
 </Callout>
 
 ## 兑换码管理概览
@@ -161,7 +161,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ### 使用兑换码
 
-用户在「钱包」页面输入兑换码即可充值。[详见：钱包与订阅](/zh/docs/guide/feature-guide/user/wallet#兑换码)
+用户在「钱包」页面输入兑换码即可充值。<a href="/zh/docs/guide/feature-guide/user/wallet#兑换码" target="_blank" rel="noopener noreferrer">详见：钱包</a>
 
 <Callout type="info">
   1. 只有启用且未过期的兑换码可以使用。
@@ -170,11 +170,11 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 审计与故障排查
 
-- 创建、编辑、启用或禁用、删除（包括单条删除、批量删除和删除无效）兑换码会产生审计记录，可在「审计日志」页面查询，不会写入「使用日志」。
+- 创建、编辑、启用或禁用、删除（包括单条删除、批量删除和删除无效）兑换码会产生审计记录，可在<a href="/zh/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">审计日志</a>页面查询，不会写入「使用日志」。
 - 兑换码日志不包含完整明文兑换码，但当前实现会把失败请求中提交的原始兑换码写入服务端错误日志，部署方应限制日志访问并按自身合规要求做好保护或脱敏。
 
 ## 相关文档
 
-- [计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing#支付合规确认)：确认支付合规条款、设置额度显示单位。
-- [钱包与订阅](/zh/docs/guide/feature-guide/user/wallet#兑换码)：用户在钱包页使用兑换码充值。
-- [用户管理](/zh/docs/guide/feature-guide/admin/user)：管理账户角色与管理员权限。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#支付合规确认" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：确认支付合规条款、设置额度显示单位。
+- <a href="/zh/docs/guide/feature-guide/user/wallet#兑换码" target="_blank" rel="noopener noreferrer">钱包</a>：用户在钱包页使用兑换码充值。
+- <a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>：管理账户角色与管理员权限。

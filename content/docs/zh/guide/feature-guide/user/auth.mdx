@@ -40,7 +40,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按登录页从上到下的顺序排列。截图中管理员开启了 Passkey、GitHub、LinuxDO 和人机验证，并配置了用户协议和隐私政策。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域 | 定义 | 显示条件 | 备注 |
 | --- | --- | --- | --- |
 | 标题 | 「登录」及其下方的「没有账号？注册」。 | 「没有账号？注册」仅在站点开放注册、且管理员未开启自用模式时显示。 | 点击「注册」打开注册页。页面左上角的站点名称可返回首页。 |
@@ -83,7 +83,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按登录页中从上到下的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
 | 登录方式 | 显示条件 | 验证或授权方式 | 首次使用 |
 | --- | --- | --- | --- |
 | Passkey | 管理员开启 Passkey。 | 按浏览器或系统的提示，用指纹、面容、PIN 或安全密钥确认。 | 不可用于注册。需先用其他方式登录，在<a href="/zh/docs/guide/feature-guide/user/security#启用-passkey" target="_blank" rel="noopener noreferrer">安全与访问</a>中启用 Passkey。用 Passkey 登录后不再要求登录验证。 |
@@ -140,7 +140,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 页面不分区，下表按页面中从上到下的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 用户名 | 登录用的名称，同时作为初始的显示名称。 | 必填，占位文字为「输入您的用户名」。最长 20 个字符，首尾空格自动去除；不可与已有或已注销账户的用户名相同，否则提示「用户名已存在，或已注销」；超长时提示「输入不合法 …」。 | 空 |
@@ -199,7 +199,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 登录页与注册页
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 站点名称 | 页面左上角 | 返回首页。 |
@@ -215,7 +215,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 忘记密码页与重置密码页
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 发送重置邮件 | 忘记密码页「Email」下方 | 发送重置邮件，30 秒内显示「重新发送 (…s)」。 |

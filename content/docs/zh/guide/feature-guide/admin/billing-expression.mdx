@@ -4,6 +4,7 @@ description: Root 使用计费表达式为模型定价：编辑器与预设、�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ## 计费表达式简介
 
@@ -11,7 +12,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 - 计费表达式在定价编辑器中配置，有三种方式可以打开：<br/>「系统设置 → 计费与支付 → 模型定价」、「模型」列表中某个模型的「定价」页，模型编辑抽屉的「定价」标签。
 - 仅 Root 可以查看和修改模型价格。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 项目 | 说明 |
 | --- | --- |
@@ -37,7 +38,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 面板顶部依次为「模型名称」「定价货币」和计费模式标签，选择「计费表达式」后显示下列内容（模型名称与定价货币见计费与支付配置中的基础字段）：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 默认或填写要求 | 说明 |
 | --- | --- | --- |
@@ -56,7 +57,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 每个档位的价格项前有勾选框，勾选后才单独计价；未勾选的缓存、图片、音频用量仍计入输入或输出，按输入或输出价格计费。可视化编辑器中的价格单位为所选定价货币 / 1M token，表达式中的系数始终为美元 / 1M token。「媒体定价」默认折叠，已有媒体价格时自动展开，也可点击「媒体定价」手动展开或收起。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 参数名称 | 表达式变量 | 定义说明 |
 | --- | --- | --- |
@@ -84,7 +85,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 「请求规则计费」只在可视化编辑器中显示。条件满足时，最终价格乘以倍率；多条命中的倍率相乘，小于 `1` 的值为折扣。点击「新增规则组」添加规则组，组内用「新增参数/Header」「新增时间条件」添加条件，同组条件全部满足才命中。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 字段或操作 | 填写要求 | 说明 |
 | --- | --- | --- |
@@ -103,7 +104,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 「Token 估算器」位于编辑器下方，「请求模拟」是其中的折叠区。两者都在浏览器中计算：估算器只计算基础表达式，不含请求规则和分组倍率；请求模拟包含请求规则，不含分组倍率。两者都不是实际账单。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 字段／控件 | 定义与作用 | 填写要求或说明 |
 | --- | --- | --- |
@@ -234,7 +235,7 @@ Current model: claude-opus-5-5
 
 ### 用量变量
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 变量 | 名称 | 定义 |
 | --- | --- | --- |
@@ -260,7 +261,7 @@ Current model: claude-opus-5-5
 
 ### 函数
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 函数 | 参数定义 | 作用／返回值 | 示例 |
 | --- | --- | --- | --- |
@@ -282,7 +283,7 @@ Current model: claude-opus-5-5
 
 ### 时间函数
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 函数 | 返回值 | 示例含义 |
 | --- | --- | --- |
@@ -299,7 +300,7 @@ Current model: claude-opus-5-5
 
 ### 常用语法
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 语法 | 含义 | 示例 |
 | --- | --- | --- |
@@ -319,7 +320,7 @@ Token 估算器和请求模拟在浏览器中计算，只支持上表中的运�
 
 ## 预扣、结算与日志
 
-1. **预扣**：请求发出前，用本地估算的输入 Token 同时作为 `p` 和 `len`，`c` 及其他用量都按 0 求值；Token 档位的结果再乘「输入预扣倍率」（见[额度设置](/zh/docs/guide/feature-guide/system-settings/settings-billing#额度设置)），按次档位不乘；最后乘分组倍率。因此以 `c` 为条件的分支在预扣时一律按 `c = 0` 判断。预扣结果小于 0 时请求被拒绝。
+1. **预扣**：请求发出前，用本地估算的输入 Token 同时作为 `p` 和 `len`，`c` 及其他用量都按 0 求值；Token 档位的结果再乘「输入预扣倍率」（见<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#额度设置" target="_blank" rel="noopener noreferrer">额度设置</a>），按次档位不乘；最后乘分组倍率。因此以 `c` 为条件的分支在预扣时一律按 `c = 0` 判断。预扣结果小于 0 时请求被拒绝。
 2. **结算**：上游返回后按实际用量重新求值，与预扣额的差额多退少补；结算时求值失败，按预扣额结算。
 3. **日志**：消费日志记录命中档位 `matched_tier`、计费单位 `billing_unit`、按次价格 `fixed_price`、图片数量 `image_count`、请求规则 `request_rules`（含每条是否命中）和 base64 编码的表达式全文 `expr_b64`。这些字段用户在自己的日志详情中也能看到，不要在表达式中写入不希望用户看到的内容。
 
@@ -327,11 +328,11 @@ Token 估算器和请求模拟在浏览器中计算，只支持上表中的运�
 
 1. 点击「保存模型价格」后，服务端逐个模型校验：表达式必须能编译；再用 7 组固定用量（含全 0 和超大的 `len`）分别配合 2 种请求上下文（空请求；带 `anthropic-beta: fast-mode-2026-02-01` 请求头和 `service_tier: fast` 请求体）试算，每次结果都必须是有限且不小于 0 的数；普通模型不能使用 `u()`。一次提交多个模型时，任一模型校验失败，整批都不保存。
 2. 试算只覆盖上述输入；由其他请求参数、请求头或时间条件触发的分支不会逐一检查，需自行确保每个分支的结果都不小于 0。
-3. 打开页面后价格已被他人修改时保存会被拒绝，处理方式见[系统设置概览](/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式)。
+3. 打开页面后价格已被他人修改时保存会被拒绝，处理方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>。
 
 - 常见报错
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
 
 | 报错片段 | 含义 | 处理 |
 | --- | --- | --- |
@@ -356,20 +357,41 @@ Token 估算器和请求模拟在浏览器中计算，只支持上表中的运�
 
 1. 由任务插件提供的模型（如视频、异步图片任务），编辑面板会多出一排提供商标签（如「默认」「普通 OpenAI」和各插件）。每个插件标签有「为此服务方单独设置」开关，关闭时沿用模型级表达式或价格。
 2. 任务表达式用 `u("字段")` 读取插件上报的用量（如秒数、张数），结果直接是美元，不再除以 1,000,000；不支持 `fixed()`。Token 估算器对这类表达式提示「此表达式需要任务用量数据才能估算费用，请检查模型的任务插件配置。」
-3. 插件的用量字段、插件级价格覆盖和保存校验见[用量与计费](/zh/docs/plugins/billing)。任务模型的价格不是计费表达式时，模型价格列表中模型名旁显示「尚未配置任务定价」。
+3. 插件的用量字段、插件级价格覆盖和保存校验见<a href="/zh/docs/plugins/billing" target="_blank" rel="noopener noreferrer">用量与计费</a>。任务模型的价格不是计费表达式时，模型价格列表中模型名旁显示「尚未配置任务定价」。
 
 ## 常见问题
 
-- **估算结果与实际扣费不一致？** Token 估算器不含请求规则和分组倍率，请求模拟不含分组倍率；实际扣费还要乘分组倍率，按结算时的实际用量和时间重新计算，工具调用附加费另计。
-- **阶梯没有按预期切换？** 检查条件是否用了 `p` 而不是 `len`（缓存命中会让 `p` 变小）；以 `c` 为条件的分支在预扣时按 `c = 0` 判断，结算时才按实际输出切换。
-- **分时价格错位？** 检查时间函数的时区名称。写错或留空时按 UTC 计算，不会报错。
-- **请求规则没有生效？** `param()` 只读取 JSON 请求体；用请求模拟核对条件是否「已命中」，再到消费日志的请求规则记录中确认。
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="估算结果与实际扣费不一致？">
+**说明**：Token 估算器不含请求规则和分组倍率，请求模拟不含分组倍率。实际扣费还需乘以分组倍率，按结算时的实际用量和时间重新计算，工具调用附加费另计。
+</Accordion>
+
+<Accordion title="阶梯没有按预期切换？">
+**可能原因**：
+- 条件用了 `p` 而不是 `len`。缓存命中会让 `p` 变小。
+- 以 `c` 为条件的分支在预扣时按 `c = 0` 判断，结算时才按实际输出切换。
+</Accordion>
+
+<Accordion title="分时价格错位？">
+**可能原因**：时间函数的时区名称写错或留空。此时按 UTC 计算，不会报错。
+</Accordion>
+
+<Accordion title="请求规则没有生效？">
+**说明**：`param()` 仅读取 JSON 请求体。
+
+**处理方法**：
+1. 用请求模拟核对条件是否「已命中」。
+2. 到消费日志的请求规则记录中确认。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 
-- [计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)：模型价格的添加与保存流程、输入预扣倍率、分组倍率与工具价格。
-- [模型管理](/zh/docs/guide/feature-guide/admin/model)：从模型列表打开「定价」。
-- [任务插件管理](/zh/docs/guide/feature-guide/admin/task-plugins)：任务插件与任务模型。
-- [用量与计费](/zh/docs/plugins/billing)：插件用量字段、`u()` 任务表达式与插件级价格覆盖。
-- [日志与异步任务](/zh/docs/guide/feature-guide/user/log)：在消费日志中查看命中档位与请求规则。
-- [系统设置概览](/zh/docs/guide/feature-guide/system-settings/system-setting)：模型价格的保存方式与版本冲突。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：模型价格的添加与保存流程、输入预扣倍率、分组倍率与工具价格。
+- <a href="/zh/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">模型管理</a>：从模型列表打开「定价」。
+- <a href="/zh/docs/guide/feature-guide/admin/task-plugins" target="_blank" rel="noopener noreferrer">任务插件管理</a>：任务插件与任务模型。
+- <a href="/zh/docs/plugins/billing" target="_blank" rel="noopener noreferrer">用量与计费</a>：插件用量字段、`u()` 任务表达式与插件级价格覆盖。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：在消费日志中查看命中档位与请求规则。
+- <a href="/zh/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">系统设置概览</a>：模型价格的保存方式与版本冲突。

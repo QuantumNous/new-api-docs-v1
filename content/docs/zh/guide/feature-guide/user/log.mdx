@@ -36,7 +36,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **字段说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 时间 | 记录产生的时间和日志类型。 | 由系统自动记录，不可修改。该列不可隐藏。 | 上方显示时间，精确到秒；下方以彩色文字显示日志类型，各类型的含义见[日志类型](#日志类型)。「错误」记录整行以浅红色显示，「退款」记录整行以浅蓝色显示。 |
@@ -71,7 +71,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 筛选区分两行，第二行默认收起，点击「展开」后显示。下表按筛选区中的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 筛选项 | 所属区域 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- | --- |
 | 时间范围 | 第一行 | 按记录产生的时间筛选，起止时间均包含在内。 | 快捷范围：「今天」「7 天」（含今天）、「本周」（周日至周六）、「30 天」（含今天）、「本月」，点击后直接填入；手动填写时精确到秒，填好后点击「确认」。普通用户一次查询的时间跨度有上限（默认 365 天），超出时提示「时间跨度不能超过 … 天」。 | 今天 00:00:00 至当前时间后 1 小时 |
@@ -89,7 +89,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 统计值位于筛选区左下角，随「搜索」一起刷新。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 统计项 | 定义 | 统计范围 |
 | --- | --- | --- |
 | 用量 | 「消耗」记录的费用合计。 | 所选时间范围内、符合「模型名称」「分组」「令牌名称」（管理员另含「用户名」「渠道 ID」）的「消耗」记录。不受「类型」「请求 ID」「上游请求 ID」影响，也不扣除「退款」。 |
@@ -113,7 +113,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按窗口中从上到下的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域 | 内容 | 显示条件 |
 | --- | --- | --- |
 | 请求 ID、上游请求 ID | New API 生成的请求编号，以及上游返回的请求编号。 | 记录中有该编号时显示。 |
@@ -161,7 +161,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **决策内容说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 决策内容 | 含义 |
 | --- | --- |
 | 选择渠道 | 本次尝试选中的渠道。 |
@@ -202,7 +202,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **配置项说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 时间范围 | 要导出的记录的时间范围。 | 必填，需同时设置起止时间。结束时间早于起始时间时提示「结束时间必须晚于开始时间」；跨度超过上限（默认 365 天）时提示「时间跨度不能超过 … 天」，此时「导出」不可点击。页面上的模型名称、分组、类型、令牌名称、请求 ID 等其他筛选条件同样生效。 | 页面当前生效的时间范围 |
@@ -217,7 +217,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 页面按钮与筛选
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 全部 / 仅自己（仅管理员可见） | 页面右上角 | 默认为「全部」，显示所有用户的记录，以及「渠道」「用户」列、「用户名」「渠道 ID」筛选和详情窗口中的管理员区域。「仅自己」仅显示本账户的记录，页面内容与普通用户相同。 |
@@ -236,7 +236,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 行操作
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 查看日志详情 | 「详情」列的摘要文字 | 打开「日志详情」窗口，见[查看日志详情](#查看日志详情)。 |
@@ -255,7 +255,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「时间」列下方和类型筛选中的日志类型：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 类型 | 含义 | 备注 |
 | --- | --- | --- |
 | 充值 | 账户额度增加或被管理员调整，包括兑换码充值、在线充值成功、购买订阅（含用余额购买），以及管理员增加、减少或覆盖账户额度。 | 青色。管理员调整额度的记录，详情中显示「额度调整详情」。 |

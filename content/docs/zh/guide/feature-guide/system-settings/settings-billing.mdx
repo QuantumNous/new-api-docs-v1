@@ -4,8 +4,9 @@ description: 配置额度、货币显示、模型与分组价格、支付网关�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap [&_td_code]:wrap-anywhere">
 
 计费与支付配置位于 `/system-settings/billing`，仅 Root 可访问。
 
@@ -29,7 +30,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 4. **网关实收**由各支付渠道的订单决定。
 
 <Callout type="warn">
-  计费与支付配置会影响扣费、余额和支付入账。修改前后的通用记录与验证步骤见[变更前记录与验证](./system-setting#变更前记录与验证)，密钥类字段的处理见[敏感配置与审计记录](./system-setting#敏感配置与审计记录)。本域另需用测试用户核对价格，并在支付服务商允许的测试环境中验证。
+  计费与支付配置会影响扣费、余额和支付入账。修改前后的通用记录与验证步骤见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#变更前记录与验证" target="_blank" rel="noopener noreferrer">变更前记录与验证</a>，密钥类字段的处理见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#敏感配置与审计记录" target="_blank" rel="noopener noreferrer">敏感配置与审计记录</a>。本域另需用测试用户核对价格，并在支付服务商允许的测试环境中验证。
 </Callout>
 
 ## 配置分区
@@ -42,7 +43,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![额度设置](/assets/guide/feature-guide/system-settings-billing-and-payments-quota-settings.png)
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 默认或填写要求 | 说明 |
 | --- | --- | --- |
@@ -75,7 +76,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![货币与展示](/assets/guide/feature-guide/system-settings-billing-and-payments-currency-and-display.png)
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 默认或填写要求 | 说明 |
 | --- | --- | --- |
@@ -130,14 +131,14 @@ import { Callout } from 'fumadocs-ui/components/callout';
 ![编辑模型定价](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-model-prices-edit-model-pricing.png)
 
 1. 搜索模型并编辑，或点击「添加模型」。新建时填写准确模型名，编辑时模型名不可直接更改。
-2. 选择定价货币和模式，设置价格或表达式（编辑器用法见[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)）。「预设模板」只是起点，先核对当前供应商价格和缓存规则。
+2. 选择定价货币和模式，设置价格或表达式（编辑器用法见<a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>）。「预设模板」只是起点，先核对当前供应商价格和缓存规则。
 3. 在「Token 估算器」中输入已知用量检查费用；含请求条件时，再用「请求模拟」填写请求体、请求头和时间。
 4. 点击保存模型价格，并确认列表及刷新后的价格符合预期。
 5. 用测试请求在日志中核对真实用量、分组倍率和最终费用。
 
 - 基础字段
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 默认或填写要求 | 说明 |
 | --- | --- | --- |
@@ -147,7 +148,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 </div>
 
-编辑器模式、预设模板、阶梯与计费分支、Token 与媒体价格、请求规则、Token 估算器与请求模拟，以及计费表达式的变量、函数和语法，见[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)。
+编辑器模式、预设模板、阶梯与计费分支、Token 与媒体价格、请求规则、Token 估算器与请求模拟，以及计费表达式的变量、函数和语法，见<a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>。
 
 #### 未设置价格模型
 
@@ -307,7 +308,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 **操作流程**
 
 1. 添加分组，设置名称、调用倍率、充值倍率和可选状态。
-2. 在[渠道管理](/zh/docs/guide/feature-guide/admin/channel)配置该组可用的渠道与模型，在[用户管理](/zh/docs/guide/feature-guide/admin/user)设置账户组。
+2. 在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>配置该组可用的渠道与模型，在<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>设置账户组。
 3. 配置下述特殊倍率规则、分组可见性或自动分组顺序后，点击「保存分组设置」。
 4. 用不同账户组、固定组及 Auto 令牌发起请求，核对实际组、渠道和费用。
 
@@ -652,7 +653,7 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 
 ## 保存后的验证清单
 
-- [ ] 按[变更前记录与验证](./system-setting#变更前记录与验证)完成通用的提示确认与刷新核对；模型价格遇到版本冲突时，点击「重新加载定价」后再修改。
+- [ ] 按<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#变更前记录与验证" target="_blank" rel="noopener noreferrer">变更前记录与验证</a>完成通用的提示确认与刷新核对；模型价格遇到版本冲突时，点击「重新加载定价」后再修改。
 - [ ] 用已知 Token、缓存、媒体和工具用量验证估算及真实日志；不要把估算器当真实账单。
 - [ ] 用不同账户组和令牌组验证实际渠道、分组倍率及 Auto 顺序。
 - [ ] 比较同一额度在钱包和日志中的显示，确认未混淆显示汇率与支付单价。
@@ -661,28 +662,75 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 
 ## 常见问题
 
-- **保存成功但价格没变？** 区分编辑草稿与最终保存，检查模型名、当前模式、提供方覆盖及请求开始时的价格快照。
-- **关闭某项价格是否就是免费？** 不一定。移除覆盖可能恢复默认；工具价格还可能匹配更具体前缀。显式零值、未配置和删除是不同状态。
-- **公开价格接口为什么访问失败？** 检查「暴露倍率接口」开关，当前路径为 `/api/ratio_config`。
-- **100 的优惠为什么没有用于 200？** 金额优惠按原始金额精确匹配，不是最低阈值规则。
-- **Stripe 报价与付款页不一致？** 核对 Stripe Price 的货币、单价和数量，以及本地单价、充值倍率、优惠与 Stripe 优惠码的区别。
-- **Creem 产品额度填 1 为什么不是到账 1 美元？** 该字段是内部 配额点数；默认基准下系统 1 USD 对应 500000 quota。
-- **密钥框为空是否未配置？** 不一定。密钥不回显的通用规则见[敏感配置与审计记录](./system-setting#敏感配置与审计记录)。注意 Waffo 公钥清空并保存会移除原值，不能当成留空保留的私钥。
-- **用户不能选择某个组？** 核对公共可用列表、特殊规则、账户自身组、倍率配置及令牌限制；使用 Auto 还需开放 `auto`。
-- **Pancake 创建成功为何没有完成配置？** 外部资源创建、当前选择和本地绑定保存是三个阶段，需核对并保存绑定。
-- **签到每天都是最小值？** 检查最大值是否不大于最小值，并确认输入使用的是 配额点数。
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="保存成功但价格没变？">
+**可能原因**：
+- 未区分编辑草稿与最终保存。
+- 模型名、当前模式、提供方覆盖或请求开始时的价格快照与预期不符。
+</Accordion>
+
+<Accordion title="关闭某项价格是否就是免费？">
+**说明**：不一定。移除覆盖可能恢复默认；工具价格还可能匹配更具体的前缀。显式零值、未配置和删除是不同状态。
+</Accordion>
+
+<Accordion title="公开价格接口为什么访问失败？">
+**说明**：该接口当前路径为 `/api/ratio_config`。
+
+**可能原因**：「暴露倍率接口」开关未开启。
+</Accordion>
+
+<Accordion title="100 的优惠为什么没有用于 200？">
+**说明**：金额优惠按原始金额精确匹配，不是最低阈值规则。
+</Accordion>
+
+<Accordion title="Stripe 报价与付款页不一致？">
+**可能原因**：
+- Stripe Price 的货币、单价或数量与预期不符。
+- 未区分本地单价、充值倍率、优惠与 Stripe 优惠码。
+</Accordion>
+
+<Accordion title="Creem 产品额度填 1 为什么不是到账 1 美元？">
+**说明**：该字段是内部配额点数；默认基准下，系统 1 USD 对应 500000 quota。
+</Accordion>
+
+<Accordion title="密钥框为空是否未配置？">
+**说明**：不一定。密钥不回显的通用规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#敏感配置与审计记录" target="_blank" rel="noopener noreferrer">敏感配置与审计记录</a>。注意 Waffo 公钥清空并保存会移除原值，不可当成留空保留的私钥。
+</Accordion>
+
+<Accordion title="用户不能选择某个组？">
+**可能原因**：
+- 公共可用列表、特殊规则、账户自身组、倍率配置或令牌限制不允许选择该组。
+- 使用 Auto 时未开放 `auto`。
+</Accordion>
+
+<Accordion title="Pancake 创建成功为何没有完成配置？">
+**说明**：外部资源创建、当前选择和本地绑定保存是三个阶段。
+
+**处理方法**：
+1. 核对并保存绑定。
+</Accordion>
+
+<Accordion title="签到每天都是最小值？">
+**可能原因**：
+- 最大值不大于最小值。
+- 输入使用的不是配额点数。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 
-- [系统设置概览](./system-setting)：配置入口与生效机制。
-- [模型管理](/zh/docs/guide/feature-guide/admin/model)：模型目录与元信息。
-- [计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)：表达式变量、函数、请求规则与费用模拟。
-- [渠道管理](/zh/docs/guide/feature-guide/admin/channel)：渠道模型、分组与路由。
-- [用户管理](/zh/docs/guide/feature-guide/admin/user)：用户分组和账户维护。
-- [钱包与订阅](/zh/docs/guide/feature-guide/user/wallet)：用户充值、余额与套餐使用。
-- [订阅管理](/zh/docs/guide/feature-guide/admin/subscription)：套餐及独立支付产品。
-- [日志与异步任务](/zh/docs/guide/feature-guide/user/log)：请求用量、扣费和任务状态。
-- [模型配置](./settings-models)：全局模型行为与供应商适配。
-- [请求策略配置](./settings-request-policies)：重试与 `auto` 分组的跨分组重试。
+- <a href="/zh/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">系统设置概览</a>：配置入口与生效机制。
+- <a href="/zh/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">模型管理</a>：模型目录与元信息。
+- <a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>：表达式变量、函数、请求规则与费用模拟。
+- <a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>：渠道模型、分组与路由。
+- <a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>：用户分组和账户维护。
+- <a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>：用户充值、余额与套餐使用。
+- <a href="/zh/docs/guide/feature-guide/admin/subscription" target="_blank" rel="noopener noreferrer">订阅管理</a>：套餐及独立支付产品。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：请求用量和扣费明细。
+- <a href="/zh/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">任务日志</a>：异步任务的状态。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型配置</a>：全局模型行为与供应商适配。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>：重试与 `auto` 分组的跨分组重试。
 
 </div>

@@ -4,6 +4,7 @@ description: Root 配置全局模型行为、供应商适配和 io.net 模型部
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 模型配置位于 `/system-settings/models`，仅 Root 可访问。
 
@@ -19,7 +20,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | [Grok](#grok) | `/system-settings/models/grok` | 使用规范违规的额外扣费。 |
 | [模型部署](#模型部署) | `/system-settings/models/model-deployment` | io.net 托管部署的开关与凭证。 |
 
-「路由可靠性」和「渠道亲和性」已移至[请求策略配置](./settings-request-policies)，旧地址 `/system-settings/models/routing-reliability`、`/system-settings/models/channel-affinity` 会自动跳转到其中的「会话与重试」。
+「路由可靠性」和「渠道亲和性」已移至<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>，旧地址 `/system-settings/models/routing-reliability`、`/system-settings/models/channel-affinity` 会自动跳转到其中的「会话与重试」。
 
 ## 配置分区
 
@@ -65,7 +66,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 - 保持连接心跳
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap [&_td_code]:wrap-anywhere [&_td:nth-child(3)]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值 | 校验与范围 | 影响范围 | 备注 |
 | --- | --- | --- | --- | --- | --- |
@@ -82,7 +83,7 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 
 ![Gemini 分区](/assets/guide/feature-guide/system-settings-model-gemini.png)
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
 
 | 页面字段 | 默认值 | 校验与范围 | 说明 |
 | --- | --- | --- | --- |
@@ -107,7 +108,7 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 
 ![Claude 分区](/assets/guide/feature-guide/system-settings-model-claude.png)
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 默认值 | 校验与范围 | 影响范围 | 说明 |
 | --- | --- | --- | --- | --- |
@@ -124,7 +125,7 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 
 ![Grok 分区](/assets/guide/feature-guide/system-settings-model-grok.png)
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值 | 校验与范围 | 说明 |
 | --- | --- | --- | --- | --- |
@@ -140,7 +141,7 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 </Callout>
 
 <Callout type="info">
-原「渠道亲和性」分区已移至请求策略，现称「会话保持」，见[会话与重试](./settings-request-policies#会话与重试)。
+原「渠道亲和性」分区已移至请求策略，现称「会话保持」，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试" target="_blank" rel="noopener noreferrer">会话与重试</a>。
 </Callout>
 
 ### 模型部署
@@ -155,7 +156,7 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 
 **字段与按钮说明**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段或按钮 | 默认或填写要求 | 说明 |
 | --- | --- | --- |
@@ -169,7 +170,7 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 **配置流程**
 
 1. 开启「启用 io.net 部署」，展开密钥配置区域。
-2. 点击「前往 io.net API 密钥」，打开 [io.net API 密钥页面](https://ai.io.net/ai/api-keys)。创建或选择密钥时，将 Project 设置为 `io.cloud`。
+2. 点击「前往 io.net API 密钥」，打开 <a href="https://ai.io.net/ai/api-keys" target="_blank" rel="noopener noreferrer">io.net API 密钥页面</a>。创建或选择密钥时，将 Project 设置为 `io.cloud`。
 3. 复制密钥，粘贴到「io.net API 密钥」输入框。已有密钥且无需更换时，可保持重新加载后的空框不变。
 4. 点击「测试连接」。成功后页面显示连接成功提示；失败时根据错误信息检查密钥、项目和网络连接。没有输入密钥且没有已保存密钥时，测试会提示需要 API Key。
 5. 点击右上角「保存 io.net 设置」。确认保存成功后刷新页面，核对启用状态，并在密钥输入框为空时再次测试，以验证已保存的凭证。
@@ -187,20 +188,59 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 
 ## 常见问题
 
-- **保存后字段没有变化**：确认点击的是该分区的保存按钮，并检查是否有 `success:false` 提示；逐键保存时失败项不会自动重试。
-- **正则写了却没有匹配**：`thinking_model_blacklist` 的正则必须以 `re:` 开头，并按完整模型名匹配；无效正则只在运行期记录系统错误。
-- **开启透传后转换策略失效**：全局或渠道级请求透传会跳过转换链路。
-- **Claude 请求缺少 `max_tokens` 被上游拒绝**：确认 `default_max_tokens` 保留 `default` 键，且数值未超过上游输出上限。
-- **Grok 出现额外扣费**：查看原请求错误是否包含违规标记，再核对分组倍率和违规费消费日志。
-- **部署页提示未启用或连接失败**：显示「模型部署服务未启用」表示「启用 io.net 部署」尚未开启并保存；开关已开启但连接测试失败（例如没有保存有效 API Key）时，显示「连接失败」。需要同时开启开关并保存有效 API Key，两个条件缺一不可。
-- **部署已创建但模型请求没有使用它**：部署不会自动创建或绑定渠道，需要手动配置端点。
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="保存后字段没有变化">
+**可能原因**：
+- 点击的不是该分区的保存按钮。
+- 保存时出现了失败提示。逐键保存时，失败项不会自动重试。
+</Accordion>
+
+<Accordion title="正则写了却没有匹配">
+**说明**：`thinking_model_blacklist` 的正则需以 `re:` 开头，并按完整模型名匹配。无效正则仅在运行期记录系统错误。
+</Accordion>
+
+<Accordion title="开启透传后转换策略失效">
+**说明**：全局或渠道级请求透传会跳过转换链路。
+</Accordion>
+
+<Accordion title="Claude 请求缺少 max_tokens 被上游拒绝">
+**可能原因**：`default_max_tokens` 中的数值超过上游输出上限。
+</Accordion>
+
+<Accordion title="Grok 出现额外扣费">
+**可能原因**：原请求的错误包含违规标记。
+
+**处理方法**：
+1. 核对分组倍率和违规费消费日志。
+</Accordion>
+
+<Accordion title="部署页提示未启用或连接失败">
+**提示原文**：「模型部署服务未启用」（英文 Model deployment service is disabled）或「连接失败」（英文 Connection failed）
+
+**可能原因**：
+- 显示「模型部署服务未启用」：「启用 io.net 部署」尚未开启并保存。
+- 显示「连接失败」：开关已开启，但连接测试失败，例如未保存有效 API Key。
+
+**处理方法**：
+1. 开启「启用 io.net 部署」并保存有效 API Key，两个条件缺一不可。
+</Accordion>
+
+<Accordion title="部署已创建但模型请求没有使用它">
+**说明**：部署不会自动创建或绑定渠道。
+
+**处理方法**：
+1. 手动配置端点。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 
-- [系统设置概览](./system-setting)：生效机制、多实例同步与变更验证要求。
-- [渠道管理](/zh/docs/guide/feature-guide/admin/channel)：渠道模型列表、映射、优先级、权重和自动禁用开关。
-- [模型管理](/zh/docs/guide/feature-guide/admin/model)：模型目录、供应商、缺失模型与部署操作入口。
-- [计费与支付配置](./settings-billing)：分组倍率、按次价格和动态计费表达式。
-- [请求策略配置](./settings-request-policies)：重试、会话保持、渠道健康与请求检查。
-- [安全与限制配置](./settings-security)：限流、SSRF 和令牌限制。
-- [运维配置](./settings-operations)：系统行为与性能设置。
+- <a href="/zh/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">系统设置概览</a>：生效机制、多实例同步与变更验证要求。
+- <a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>：渠道模型列表、映射、优先级、权重和自动禁用开关。
+- <a href="/zh/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">模型管理</a>：模型目录、供应商、缺失模型与部署操作入口。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：分组倍率、按次价格和动态计费表达式。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>：重试、会话保持、渠道健康与请求检查。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-security" target="_blank" rel="noopener noreferrer">安全与限制配置</a>：限流、SSRF 和令牌限制。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">运维配置</a>：系统行为与性能设置。

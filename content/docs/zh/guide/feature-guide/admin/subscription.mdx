@@ -9,7 +9,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 - 订阅管理仅 Admin 和 Root 可访问，从侧边栏「管理员」 → 「订阅」或访问 `/subscriptions` 进入，可以创建、编辑、启用、禁用套餐，以及批量重置某个套餐下的有效订阅额度。
 
 <Callout type="info">
-  Root 在「系统设置」 → 「计费与支付」 → 「支付网关」中[确认支付合规条款](/zh/docs/guide/feature-guide/system-settings/settings-billing#支付合规确认)之前，订阅管理页面只能查看套餐列表：页面顶部显示「管理员在支付网关设置中确认合规条款之前，订阅套餐的创建和修改会被锁定。」，「新建套餐」以及行内的编辑、重置订阅额度、启用/禁用按钮均不可用。
+  Root 在「系统设置」 → 「计费与支付」 → 「支付网关」中<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#支付合规确认" target="_blank" rel="noopener noreferrer">确认支付合规条款</a>之前，订阅管理页面只能查看套餐列表：页面顶部显示「管理员在支付网关设置中确认合规条款之前，订阅套餐的创建和修改会被锁定。」，「新建套餐」以及行内的编辑、重置订阅额度、启用/禁用按钮均不可用。
 </Callout>
 
 ## 订阅管理概览
@@ -41,7 +41,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 1. Root 需要在「系统设置」 → 「计费与支付」 → 「支付网关」中确认支付合规条款。
 2. 明确套餐面向的用户、售价、有效期、总额度和额度重置方式。
-3. 如需改变用户分组，先在[分组定价](/zh/docs/guide/feature-guide/system-settings/settings-billing#定价分组)中创建并核对升级分组和降级分组。
+3. 如需改变用户分组，先在<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#定价分组" target="_blank" rel="noopener noreferrer">分组定价</a>中创建并核对升级分组和降级分组。
 4. 如需第三方支付，先完成对应网关的全局凭证、回调地址和 Webhook 配置。
 5. 决定是否允许钱包余额兑换，以及订阅额度耗尽后是否允许继续使用钱包余额。
 
@@ -223,7 +223,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `cancelled`（已作废） | 管理员提前执行作废，结束时间同时改为当前时间。 |
 
 <Callout type="info">
-  「作废」会保留订阅历史记录；「删除」会硬删除该条订阅记录且没有恢复入口。删除订阅并不表示相关支付订单、充值流水、使用日志或任务记录也会被一并删除。完整操作说明参阅[用户管理](/zh/docs/guide/feature-guide/admin/user#用户订阅管理)。
+  「作废」会保留订阅历史记录；「删除」会硬删除该条订阅记录且没有恢复入口。删除订阅并不表示相关支付订单、充值流水、使用日志或任务记录也会被一并删除。完整操作说明参阅<a href="/zh/docs/guide/feature-guide/admin/user#用户订阅管理" target="_blank" rel="noopener noreferrer">用户管理</a>。
 </Callout>
 
 ## 分组升级与回退
@@ -251,7 +251,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 <Callout type="info">
   - 用户可以在钱包页面选择「优先订阅」「优先钱包」「仅用订阅」或「仅用钱包」。
   - 套餐的「额度用尽后允许使用钱包余额」只在用户选择「优先订阅」时起作用：订阅额度不足时，只有用户所有生效中的订阅都开启了该选项，才会继续使用钱包余额。该选项不会覆盖用户自己的计费偏好。
-  - 用户侧购买、订阅状态和计费偏好说明参阅[钱包与订阅](/zh/docs/guide/feature-guide/user/wallet)。
+  - 用户侧购买、订阅状态和计费偏好说明参阅<a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>。
 </Callout>
 
 ## 自动维护机制
@@ -270,6 +270,6 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 相关文档
 
-- [用户管理](/zh/docs/guide/feature-guide/admin/user#用户订阅管理)：为指定用户添加、重置、作废或删除订阅。
-- [钱包与订阅](/zh/docs/guide/feature-guide/user/wallet#订阅计划)：用户购买套餐、查看订阅和选择计费偏好。
-- [计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)：配置额度单位、货币显示、分组、支付合规和支付网关。
+- <a href="/zh/docs/guide/feature-guide/admin/user#用户订阅管理" target="_blank" rel="noopener noreferrer">用户管理</a>：为指定用户添加、重置、作废或删除订阅。
+- <a href="/zh/docs/guide/feature-guide/user/wallet#订阅计划" target="_blank" rel="noopener noreferrer">钱包</a>：用户购买套餐、查看订阅和选择计费偏好。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：配置额度单位、货币显示、分组、支付合规和支付网关。

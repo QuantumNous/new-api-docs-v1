@@ -7,7 +7,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 - 用户管理仅 Admin 和 Root 可访问，从侧边栏「管理员」 → 「用户」或访问 `/users` 进入。
 - 用于查看和筛选用户，管理角色、状态与管理员权限，维护账户资料、额度、登录绑定、订阅、Passkey 与 2FA，以及删除用户。
-- 注册与登录方式、分组价格、订阅套餐等全局规则分别见[身份验证配置](/zh/docs/guide/feature-guide/system-settings/settings-auth)、[计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)和[订阅管理](/zh/docs/guide/feature-guide/admin/subscription)。
+- 注册与登录方式、分组价格、订阅套餐等全局规则分别见<a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>、<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>和<a href="/zh/docs/guide/feature-guide/admin/subscription" target="_blank" rel="noopener noreferrer">订阅管理</a>。
 
 ## 用户管理概览
 
@@ -25,7 +25,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | --- | --- |
 | ID | 用户的唯一数字标识。 |
 | 用户名 | 上方为登录用户名；设置了备注时，用户名旁显示备注标签（仅管理员可见，悬停查看全文）；显示名称与用户名不同时显示在下方。 |
-| 状态 | 已启用、已禁用或已注销。「已注销」是用户在个人设置中自行注销的账户，记录保留在列表中，不显示任何操作。 |
+| 状态 | 已启用、已禁用或已注销。「已注销」是用户在「安全与访问」页自行注销的账户，记录保留在列表中，不显示任何操作。 |
 | 可用余额 | 列名带当前显示单位，如「可用余额 ($)」。上行为剩余额度（为负时标红），下行为已用额度，两者都为 0 时显示「无余额」；显示单位跟随平台的计费设置。 |
 | 用户分组 | 用户当前所属分组。分组会影响可用模型、渠道匹配和计费倍率等后续规则。 |
 | 角色 | 用户、管理员或 Root。 |
@@ -87,11 +87,11 @@ import { Callout } from 'fumadocs-ui/components/callout';
 - 编辑用户时修改密码或管理员权限；
 - 创建角色为「管理员」的用户。
 
-验证方式与个人账户的敏感操作相同：已启用 2FA 或已注册 Passkey 时使用 2FA 或 Passkey，否则使用账户密码，没有密码的账户使用已绑定的第三方登录，见[身份验证配置](/zh/docs/guide/feature-guide/system-settings/settings-auth#登录验证与安全)。
+验证方式与个人账户的敏感操作相同：已启用 2FA 或已注册 Passkey 时使用 2FA 或 Passkey，否则使用账户密码，没有密码的账户使用已绑定的第三方登录，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-auth#登录验证与安全" target="_blank" rel="noopener noreferrer">身份验证配置</a>。
 
 <Callout type="info">
   - 创建普通用户、只修改显示名称/分组/备注、「调整额度」和订阅管理不需要安全验证。
-  - 关闭密码登录或 Passkey 功能后，对应方式不能用于验证；操作者没有其他可用方式时无法完成上述操作，应先在个人设置中启用 2FA。
+  - 关闭密码登录或 Passkey 功能后，对应方式不能用于验证；操作者没有其他可用方式时无法完成上述操作，应先在<a href="/zh/docs/guide/feature-guide/user/security#启用两步验证" target="_blank" rel="noopener noreferrer">安全与访问</a>页启用 2FA。
 </Callout>
 
 ## 用户管理操作
@@ -272,7 +272,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 1. 在用户行菜单选择「重置 2FA」。
 2. 确认将删除现有的 2FA 因子和备用码。
 3. 确认并完成[安全验证](#安全验证)后，系统更新认证版本并撤销该用户的全部登录会话。
-4. 用户需要在个人设置中重新配置 2FA。
+4. 用户需要在「安全与访问」页重新配置 2FA。
 
 ### 删除用户
 
@@ -295,12 +295,12 @@ import { Callout } from 'fumadocs-ui/components/callout';
   - 只有角色层级严格高于目标角色的操作者可以执行，Root 账户不能通过此流程删除。
   - 删除前应先导出或保存组织要求留存的审计信息，因为当前页面没有恢复入口。
   - 用户硬删除不可撤销。若只是暂时阻止登录和调用，请使用「禁用」；只有在确认数据范围、留存要求和后续恢复方案后，才执行「删除」。
-  - 此处删除的用户会从列表中消失；用户在个人设置中自行注销的账户则以「已注销」状态保留在列表中，不提供任何操作。
+  - 此处删除的用户会从列表中消失；用户在「安全与访问」页自行注销的账户则以「已注销」状态保留在列表中，不提供任何操作。
 </Callout>
 
 ## 相关文档
 
-- [渠道管理](/zh/docs/guide/feature-guide/admin/channel)：了解渠道权限矩阵中各项能力的具体范围。
-- [订阅管理](/zh/docs/guide/feature-guide/admin/subscription)：创建套餐、设置额度周期、购买上限和分组升级/回退规则。
-- [身份验证配置](/zh/docs/guide/feature-guide/system-settings/settings-auth)：配置注册、OAuth、Passkey 和全局身份验证策略。
-- [计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)：确认支付合规和钱包、充值相关的全局设置。
+- <a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>：了解渠道权限矩阵中各项能力的具体范围。
+- <a href="/zh/docs/guide/feature-guide/admin/subscription" target="_blank" rel="noopener noreferrer">订阅管理</a>：创建套餐、设置额度周期、购买上限和分组升级/回退规则。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>：配置注册、OAuth、Passkey 和全局身份验证策略。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：确认支付合规和钱包、充值相关的全局设置。

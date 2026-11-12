@@ -41,7 +41,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表为「模型调用分析」标签中从上到下的区域，「分流」「用户统计」的内容见对应小节。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域 | 定义 | 显示条件 | 备注 |
 | --- | --- | --- | --- |
 | 标签 | 「模型调用分析」「分流」「用户统计」（仅管理员可见）。 | 始终显示。 | 点击切换标签，页面标题随之变化。 |
@@ -77,7 +77,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 窗口分「快速范围」「自定义时间范围」「图表设置」「仅限管理员」四个区域，「仅限管理员」仅管理员可见。下表按窗口中的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 筛选项 | 所属区域 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- | --- |
 | 快速范围 | 快速范围 | 从当前时间往前 1、7、14 或 29 天。 | 点击后同时填入起止时间，并切换时间粒度：「1 天」为「小时」，「7 天」「14 天」为「天」，「29 天」为「本周」。手动修改起止时间后，按钮不再高亮。 | 「偏好设置」中的「默认范围」，默认「1 天」 |
@@ -109,7 +109,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按窗口中的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 默认范围 | 进入页面时的时间范围。 | 单选「1 天」「7 天」「14 天」「29 天」。 | 「1 天」 |
@@ -136,7 +136,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按统计卡从左到右的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 统计项 | 定义 | 统计范围 | 备注 |
 | --- | --- | --- | --- |
 | 总数 | 调用次数。 | 所选时间范围内的「消耗」记录，每条计 1 次。 | 下方显示「统计计数」。数值较长时缩写显示，鼠标悬停查看完整数值。 |
@@ -150,7 +150,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **图表说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 图表 | 内容 | 切换方式 | 阅读提示 |
 | --- | --- | --- | --- |
 | 消耗分布 | 每个时间点各模型消耗的额度，按模型叠加显示。 | 「消耗分布」右上角「柱状图」「面积图」 | 面积图单独显示消耗最多的 15 个模型，其余合并为「其他」；鼠标悬停时最多列出 15 个模型。时间点少于 7 个时，左侧补齐空白的时间点。 |
@@ -188,7 +188,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - 管理员：用户 → 分组 → 模型 → 渠道，截图为此视图。
 - Root：用户 → 节点 → 令牌 → 分组 → 模型 → 渠道。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 列 | 含义 |
 | --- | --- |
 | 用户（仅管理员可见） | 发起调用的用户。 |
@@ -203,7 +203,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按页面中从左到右的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 连线粗细 | 连线粗细和「占比」的计算依据。 | 单选「按额度」「按 Token」「按请求数」。 | 「按额度」 |
@@ -237,7 +237,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **图表说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 图表 | 内容 | 阅读提示 |
 | --- | --- | --- |
 | 用户消耗排行 | 所选时间范围内额度消耗最多的用户（横向柱状图）。 | 显示的用户数由「热门用户」决定。 |
@@ -248,7 +248,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按页面中从左到右的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 时间范围 | 从当前时间往前计算的统计范围。 | 单选「1 天」「7 天」「14 天」「29 天」。 | 按「默认时间粒度」：「小时」1 天、「天」7 天、「本周」29 天 |
@@ -260,7 +260,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 页面按钮与筛选
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 模型调用分析、分流、用户统计（仅管理员可见） | 页面标题下方的标签 | 切换标签，页面标题随之变化。 |
@@ -275,7 +275,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 图表操作
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 柱状图、面积图 | 「消耗分布」右上角 | 切换图表类型，仅对当前显示有效，不保存。 |

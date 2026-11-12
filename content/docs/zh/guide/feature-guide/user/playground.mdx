@@ -39,7 +39,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按页面中从上到下、从左到右的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域 | 定义 | 显示条件 | 备注 |
 | --- | --- | --- | --- |
 | 对话区 | 当前对话的消息列表，包括发送的消息和模型的回复。 | 始终显示。无消息时显示「开始一场游乐场对话」和「分析数据」「总结文本」「代码」「获取建议」四个入门提示。 | 点击入门提示会直接发送对应的提示词。消息下方的操作见[消息操作](#消息操作)。 |
@@ -69,7 +69,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 分组与模型选择器分左右两栏，下表按从左到右的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 分组 | 调用使用的分组，决定可用的模型和计费倍率。 | 在左侧「模型分组」中选择，仅列出账户有权使用的分组，包括账户所在的分组；站点允许时包括 auto（由系统自动选择可用分组）。列表仅显示分组名称。 | default，无此分组时为列表中的第一个分组；之后沿用上次的选择。 |
@@ -93,7 +93,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「参数设置」窗口不分区，每个参数右侧有一个开关，下表按窗口中的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 温度 | 控制输出的随机性和创造性。 | 拖动滑块调整，范围 0.1～1，步长 0.1。 | 0.7，已启用 |
@@ -136,7 +136,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 输入框与工具栏
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 入门提示 | 对话区中部，无消息时显示 | 「分析数据」「总结文本」「代码」「获取建议」，点击后直接发送对应的提示词。 |
@@ -151,7 +151,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 消息操作
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 复制 | 消息下方的复制图标 | 复制消息内容，复制后短暂显示「已复制！」。 |
@@ -229,7 +229,7 @@ curl "https://your-platform.com/v1beta/models/gemini-1.5-pro:generateContent?key
 
 ## 支持的接口端点
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 接口 | 路径 | 说明 |
 | --- | --- | --- |
 | 聊天补全 | `POST /v1/chat/completions` | OpenAI Chat Completions 兼容接口，要求提供 `model` 和 `messages`，支持流式或普通响应。 |

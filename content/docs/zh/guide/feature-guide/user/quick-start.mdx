@@ -20,7 +20,7 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 界面上同一样东西可能有几种叫法，下表列出本指南使用的名称和界面上的其他叫法。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 名称 | 含义 | 界面上的其他叫法 |
 | --- | --- | --- |
 | API 密钥 | 程序或客户端调用模型时用的凭证，以 `sk-` 开头。 | 「令牌」，如提示「无效的令牌」。 |
@@ -78,7 +78,7 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 **添加方式：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 方式 | 操作 | 详细说明 |
 | --- | --- | --- |
 | 兑换码 | 在「添加资金」底部的「输入您的兑换码」中粘贴兑换码，点击「兑换额度」。 | <a href="/zh/docs/guide/feature-guide/user/wallet#兑换码" target="_blank" rel="noopener noreferrer">兑换码</a> |
@@ -134,10 +134,13 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 2. 复制下面的命令，按下表替换其中三处内容后运行。
 
 ```bash
-curl https://your-host/v1/chat/completions   -H "Content-Type: application/json"   -H "Authorization: Bearer sk-xxxxxxxx"   -d '{"model":"模型名称","messages":[{"role":"user","content":"你好"}]}'
+curl https://your-host/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-xxxxxxxx" \
+  -d '{"model":"模型名称","messages":[{"role":"user","content":"你好"}]}'
 ```
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 命令中的内容 | 替换为 | 获取位置 |
 | --- | --- | --- |
 | `https://your-host` | API 地址 | 在「API 密钥」页点击右上角「API 地址」，点击所需地址右侧的复制按钮。 |
@@ -196,7 +199,7 @@ curl https://your-host/v1/chat/completions   -H "Content-Type: application/json"
 
 下表按顶部栏中从左到右的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 项目 | 位置 | 作用 | 显示条件 |
 | --- | --- | --- | --- |
 | 1. 侧边栏开关 | 顶部栏最左侧 | 展开或收起左侧边栏。 | 始终显示。 |
@@ -247,7 +250,7 @@ curl https://your-host/v1/chat/completions   -H "Content-Type: application/json"
 
 下表按侧边栏中从上到下的顺序排列，分组编号见上方「快速上手-控制台界面」图。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 分组 | 页面 | 说明 |
 | --- | --- | --- |
 | 9. 聊天 | 「游乐场」 | 在网页中与模型对话，见<a href="/zh/docs/guide/feature-guide/user/playground" target="_blank" rel="noopener noreferrer">游乐场</a>。 |

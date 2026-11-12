@@ -7,7 +7,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 - 模型管理仅 Admin 和 Root 可访问，从侧边栏「管理员」 → 「模型」或访问 `/models/metadata` 进入。
 - 页面维护本站的模型资料、名称匹配、模型广场展示、供应商和预填充分组，并提供定价入口、资料与价格同步和 io.net 模型部署。
-- 渠道中的实际模型、分组和路由由[渠道管理](/zh/docs/guide/feature-guide/admin/channel)维护；价格规则见[计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)和[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)。
+- 渠道中的实际模型、分组和路由由<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>维护；价格规则见<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>和<a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>。
 
 ## 模型管理概览
 
@@ -21,7 +21,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 模型资料、供应商、预填充分组和模型部署，Admin 与 Root 都可以管理；模型定价只有 Root 可以修改。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 位置 | Root | Admin |
 | --- | --- | --- |
@@ -37,7 +37,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 除已有模型资料的记录外，列表还会列出渠道（含已禁用渠道）模型列表中出现、但没有精确同名资料的模型名称。这类行标为「缺元数据」，只能「补充资料」或复制名称。列表不支持按列排序：已有资料的记录按 ID 倒序，之后是「缺元数据」行按名称排序；默认每页 20 条。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 列 | 说明 |
 | --- | --- |
@@ -87,7 +87,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 勾选行后，列表底部显示批量操作：
 
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 操作 | 说明 |
 | --- | --- |
@@ -119,7 +119,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 ![模型管理-编辑模型-模型资料页面](/assets/guide/feature-guide/model-management-edit-model-model-information.png)
 
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 字段 | 默认值 | 校验 | 说明 |
 | --- | --- | --- | --- |
@@ -170,7 +170,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 - 只有 Root 可以编辑；Admin 打开此标签只看到「模型定价由超级管理员管理。」
 - 完全匹配规则的模型直接编辑本模型的价格；其他规则需先在「选择模型」中选择一个匹配到的具体模型，再配置它的价格。
 - 顶部显示当前生效的计费摘要；「恢复默认定价」移除此模型的自定义价格并恢复内置默认值，没有默认价格的模型会变为未定价。
-- 下方编辑器与[计费与支付配置 → 模型价格](/zh/docs/guide/feature-guide/system-settings/settings-billing#模型价格)相同，字段和计费方式见该页与[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)。点击「保存模型价格」保存，与「模型价格」中修改的是同一份配置。
+- 下方编辑器与<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#模型价格" target="_blank" rel="noopener noreferrer">计费与支付配置 → 模型价格</a>相同，字段和计费方式见该页与<a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>。点击「保存模型价格」保存，与「模型价格」中修改的是同一份配置。
 - 打开抽屉后如果此模型的价格在其他地方被修改，保存会失败，点击「重新加载定价」后再修改。
 
 ### 渠道与分组
@@ -179,14 +179,14 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-编辑模型-渠道与分组页面](/assets/guide/feature-guide/model-management-edit-model-channels-and-groups.png)
 
-此标签只读，内容由已启用渠道推导：广场展示状态、「绑定渠道」（渠道及其类型）、「启用分组」和「支持的端点」；非完全匹配规则另列「匹配模型」。创建或导入模型资料不会创建可调用的渠道，模型要被调用，需在[渠道管理](/zh/docs/guide/feature-guide/admin/channel)中把它加入渠道。
+此标签只读，内容由已启用渠道推导：广场展示状态、「绑定渠道」（渠道及其类型）、「启用分组」和「支持的端点」；非完全匹配规则另列「匹配模型」。创建或导入模型资料不会创建可调用的渠道，模型要被调用，需在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>中把它加入渠道。
 
 ## 删除模型
 
 在行「⋯」菜单中点击「删除」删除单个模型，或勾选后点击「删除选定的模型」批量删除（一次 1–1000 个）。「缺元数据」行没有模型资料，不能删除。确认框「删除模型？」中有两个可选项，默认都不勾选：
 
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 选项 | 说明 |
 | --- | --- |
@@ -285,7 +285,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 显示「资料同步完成」、创建与更新的模型数量、新增的供应商，以及每个模型已应用的变更。未处理的模型不在结果中列出，原因见第 1 步的「计划操作」。
 
 <Callout type="info">
-  官方目录不是当前实例已配置的渠道清单。同步后的模型仍需在[渠道管理](/zh/docs/guide/feature-guide/admin/channel)中配置渠道才能调用。
+  官方目录不是当前实例已配置的渠道清单。同步后的模型仍需在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>中配置渠道才能调用。
 </Callout>
 
 ## 同步价格
@@ -296,7 +296,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 「同步价格」仅 Root 可见，点击打开「同步模型定价」对话框：
 
-- 与[计费与支付配置 → 上游价格同步](/zh/docs/guide/feature-guide/system-settings/settings-billing#上游价格同步)是同一功能：选择价格来源、对比当前价格、按模型选择来源，预览确认后保存。字段和操作细节以该页为准。
+- 与<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#上游价格同步" target="_blank" rel="noopener noreferrer">计费与支付配置 → 上游价格同步</a>是同一功能：选择价格来源、对比当前价格、按模型选择来源，预览确认后保存。字段和操作细节以该页为准。
 - 保存的价格与「模型价格」、编辑抽屉「定价」标签修改的是同一份配置。
 
 ### 选择价格来源
@@ -335,7 +335,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-创建预填充组页面](/assets/guide/feature-guide/model-management-prefilled-groups-create-group.png)
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 字段 | 默认值 | 校验 | 说明 |
 | --- | --- | --- | --- |
@@ -390,7 +390,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ### 合并与删除供应商
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 操作 | 入口 | 结果 |
 | --- | --- | --- |
@@ -409,10 +409,10 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-模型部署未启用页面](/assets/guide/feature-guide/model-management-model-deployment.png)
 
-「部署」标签管理 io.net 上的容器部署，Admin 与 Root 都可使用。使用前，Root 需要在[系统设置 → 模型 → 模型部署](/zh/docs/guide/feature-guide/system-settings/settings-models#模型部署)中启用服务并保存 API Key。
+「部署」标签管理 io.net 上的容器部署，Admin 与 Root 都可使用。使用前，Root 需要在<a href="/zh/docs/guide/feature-guide/system-settings/settings-models#模型部署" target="_blank" rel="noopener noreferrer">系统设置 → 模型 → 模型部署</a>中启用服务并保存 API Key。
 
 - 进入标签时先检查配置和连接。未启用时显示「模型部署服务未启用」；连接失败时显示「连接失败」和错误信息，可点击「重试」。两种状态下的「前往设置」都打开系统设置中的模型部署配置，只有 Root 可以进入。
-- 创建部署不会新建或绑定渠道。需要通过 New API 调用部署的模型时，请在[渠道管理](/zh/docs/guide/feature-guide/admin/channel)中添加渠道，并把 Base URL 指向部署的公开地址。
+- 创建部署不会新建或绑定渠道。需要通过 New API 调用部署的模型时，请在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>中添加渠道，并把 Base URL 指向部署的公开地址。
 
 ### 部署列表
 
@@ -427,7 +427,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 模型部署服务启用后，点击右上角「创建部署」，填写后点击「新建」。
 
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 分组 | 字段 | 默认值 | 校验与说明 |
 | --- | --- | --- | --- |
@@ -451,7 +451,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 ### 查看与管理部署
 
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 操作 | 说明 |
 | --- | --- |
@@ -471,7 +471,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 ## 故障排查
 
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 现象 | 建议检查 |
 | --- | --- |
@@ -492,8 +492,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 相关文档
 
-- [渠道管理](/zh/docs/guide/feature-guide/admin/channel)：在渠道中配置实际可调用的模型、分组与路由，使用「预设分组」。
-- [计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)：模型价格、上游价格同步、分组价格等全局计费设置。
-- [计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)：「定价」标签中计费表达式的语法与示例。
-- [模型配置](/zh/docs/guide/feature-guide/system-settings/settings-models)：启用 io.net 模型部署并配置 API Key。
+- <a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>：在渠道中配置实际可调用的模型、分组与路由，使用「预设分组」。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：模型价格、上游价格同步、分组价格等全局计费设置。
+- <a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>：「定价」标签中计费表达式的语法与示例。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型配置</a>：启用 io.net 模型部署并配置 API Key。
 - <a href="/zh/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a>：用户侧如何看到模型广场中展示的模型。

@@ -37,7 +37,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **字段说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 提交时间 | 任务的提交时间和完成时间。 | 由系统自动记录，不可修改。 | 上方为提交时间，下方灰色小字为完成时间，未完成时显示「-」。 |
@@ -70,7 +70,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 筛选区只有一行，两个标签仅任务 ID 输入框不同。下表按筛选区中的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 筛选项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 时间范围 | 按任务的提交时间筛选，起止时间均包含在内。 | 快捷范围：「今天」「7 天」（含今天）、「本周」（周日至周六）、「30 天」（含今天）、「本月」；手动填写时精确到秒，填好后点击「确认」。 | 今天 00:00:00 至当前时间后 1 小时 |
@@ -103,7 +103,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按窗口中从上到下的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域 | 字段 | 定义 | 显示条件 |
 | --- | --- | --- | --- |
 | 基本信息 | 任务 ID | 任务的唯一编号。 | 所有任务。 |
@@ -134,7 +134,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「绘图日志」标签的列如下，「查看」中可选的列见[页面按钮与筛选](#页面按钮与筛选)：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 提交时间 | 任务的提交时间和状态。 | 由系统自动记录，不可修改。 | 上方为提交时间；下方以彩色文字显示状态，各状态的含义见[绘图任务状态](#绘图任务状态)。 |
@@ -183,7 +183,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 提交任务时先按价格扣除额度，任务失败或超时后全额退回原扣费来源（钱包余额或订阅额度），所用 API 密钥的额度一并退回，并在使用日志中产生一条「退款」记录：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 情形 | 「失败原因」显示 | 退款 |
 | --- | --- | --- |
 | 上游返回任务失败 | 上游返回的原因，可能为英文 | 全额退回 |
@@ -205,7 +205,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 页面按钮与筛选
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 全部 / 仅自己（仅管理员可见） | 页面右上角 | 默认为「全部」，显示所有用户的任务，以及「渠道」「用户」「插件」「提交结果」列、「渠道 ID」筛选和「任务详情」中的「仅限管理员」区域。「仅自己」仅显示本账户的任务，页面内容与普通用户相同。 |
@@ -222,7 +222,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 行操作
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 复制任务 ID | 「任务 ID」列 | 点击即复制。 |
@@ -243,7 +243,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「任务日志」标签「状态」列中的状态，通常按「未开始」→「排队中」→「进行中」→「成功」或「失败」变化：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 未开始 | 任务已提交，系统尚未取得上游的处理状态。 | 进度通常为「0%」。请稍后点击「搜索」查看最新状态。 |
@@ -257,7 +257,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「绘图日志」标签「提交时间」列下方显示的状态：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 未开始 | 任务已提交，尚未开始处理。 | — |
@@ -272,7 +272,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「绘图日志」标签「提交结果」列（仅管理员可见）中的取值：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 提交结果 | 含义 | 备注 |
 | --- | --- | --- |
 | 已提交 | 任务已提交到上游并被接受。 | 后台开始查询任务状态后，均显示为「已提交」。 |

@@ -4,6 +4,7 @@ description: Root 配置模型请求速率限制、SSRF 防护和用户 API 密�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 安全与限制配置位于 `/system-settings/security`，仅 Root 可访问。
 - 该工作区包含「速率限制」「SSRF 保护」和「令牌限制」三个分区，用于控制模型请求频率、出站访问安全与密钥数量。
@@ -121,7 +122,7 @@ SSRF 防护用于限制服务端出站 HTTP 请求允许访问的域名与 IP，
 
 - 生效于受保护出站 HTTP 客户端、下载请求、Midjourney 图片拉取、视频代理、Webhook 与 Bark/Gotify 通知等出站请求；转发到上游渠道的请求本身不做 SSRF 检查。
 - 仅允许 `http://` / `https://` 地址；域名解析失败会报错。
-- 对域名同时校验「请求时」与「拨号时」（dial-time），避免解析后回环 IP 绕过。
+- 对域名同时校验「请求时」与「拨号时」（dial-time），避免解析后回环 IP 绕过；拨号时的校验仅在开启「对已解析的域应用 IP 筛选器」且请求不经代理时生效。
 
 <Callout type="warn">
   - 关闭「允许私有 IP」时，指向内网或回环 IP 地址的下载、Webhook、通知等出站目标会被拦截；通过域名访问的目标仅在「对已解析的域应用 IP 筛选器」开启时才会检查解析出的 IP，关闭后解析到内网地址的域名不会被拦截。转发到上游渠道的请求不受影响。
@@ -155,19 +156,85 @@ SSRF 防护用于限制服务端出站 HTTP 请求允许访问的域名与 IP，
 
 ## 常见问题
 
-- **限流未生效**：确认「启用速率限制」已开、窗口与次数不超过（默认总数 `0`=不限、成功数 `1000`），并确认请求走的是模型请求路由（不是 `/api`、站点页面）。也要区分是否命中 `GLOBAL_*_RATE_LIMIT` 导致的 IP 级 `429`。
-- **全局限流 429 从何而来**：检查 `GLOBAL_API_RATE_LIMIT_*`、`GLOBAL_WEB_RATE_LIMIT_*`、`CRITICAL_RATE_LIMIT_*`、`SEARCH_RATE_LIMIT_*` 等环境变量及作用范围；这些是启动时变量，修改后需重启。环境变量限流返回的 429 没有响应体（可能带 `Retry-After` 头），本页模型限流的 429 带错误消息（如「您已达到请求数限制：…」），可据此区分；两类限流相互独立。
-- **分组规则不生效**：确认分组名与请求的分组键（API 密钥分组或用户分组）完全一致；分组只覆盖次数，周期仍取全局；规则是 `{"组名":[总数,成功数]}` 的 2 元素数组，成功数须 ≥1。
-- **窗口无法按分组区分**：分组与全局共享同一窗口时长；如需不同窗口，调整全局窗口。
-- **SSRF 误拦截**：检查是否关闭了「允许私有 IP」，或域名/IP 白名单是否覆盖目标；确认端口在允许列表中；域名场景检查「对已解析的域应用 IP 筛选器」是否把解析 IP 拦掉。
-- **SSRF 漏放**：检查黑名单是否未包含目标地址、允许端口是否为空（空=全部允许）、以及黑白名单模式是否符合预期。
-- **出站目标为域名但偶发失败**：多为 DNS 重绑定或被解析出的某个 IP 命中 IP 规则；开启「对已解析的域应用 IP 筛选器」并按网络实际情况补充 IP 白名单/黑名单。
-- **创建密钥被拒**：当前用户密钥数已达 `token_setting.max_user_tokens` 上限；删除部分密钥（禁用或过期的密钥仍计入数量），或调高上限。
-- **搜索密钥提示仅允许精确搜索**：用户密钥数超过上限时，带 `%` 通配符的模糊搜索会被拒绝，并提示「令牌数量超过上限，仅允许精确搜索，请勿使用 % 通配符」；调高上限或删除部分密钥后恢复。
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="限流未生效">
+**可能原因**：
+- 「启用速率限制」未开启。
+- 窗口与次数的设置与预期不符（默认总数 `0`=不限、成功数 `1000`）。
+- 请求走的不是模型请求路由，而是 `/api` 或站点页面。
+- 未区分是否命中 `GLOBAL_*_RATE_LIMIT` 导致的 IP 级 `429`。
+</Accordion>
+
+<Accordion title="全局限流 429 从何而来">
+**提示原文**：「您已达到请求数限制：…」（英文 You have reached the request limit: …）
+
+**说明**：本页模型限流的 429 带错误消息（如上面的提示原文），环境变量限流返回的 429 无响应体（可能带 `Retry-After` 头），可据此区分。两类限流相互独立。
+
+**处理方法**：
+1. 检查 `GLOBAL_API_RATE_LIMIT_*`、`GLOBAL_WEB_RATE_LIMIT_*`、`CRITICAL_RATE_LIMIT_*`、`SEARCH_RATE_LIMIT_*` 等环境变量及作用范围。
+2. 修改后重启。这些是启动时变量。
+</Accordion>
+
+<Accordion title="分组规则不生效">
+**说明**：分组仅覆盖次数，周期仍取全局。
+
+**可能原因**：
+- 分组名与请求的分组键（API 密钥分组或用户分组）不完全一致。
+- 规则不是 `{"组名":[总数,成功数]}` 的 2 元素数组，或成功数小于 1。
+</Accordion>
+
+<Accordion title="窗口无法按分组区分">
+**说明**：分组与全局共享同一窗口时长。
+
+**处理方法**：
+1. 如需不同窗口，调整全局窗口。
+</Accordion>
+
+<Accordion title="SSRF 误拦截">
+**可能原因**：
+- 关闭了「允许私有 IP」。
+- 域名/IP 白名单未覆盖目标。
+- 端口不在允许列表中。
+- 域名场景下，「对已解析的域应用 IP 筛选器」把解析 IP 拦掉了。
+</Accordion>
+
+<Accordion title="SSRF 漏放">
+**可能原因**：
+- 黑名单未包含目标地址。
+- 允许端口为空（空=全部允许）。
+- 黑白名单模式不符合预期。
+</Accordion>
+
+<Accordion title="出站目标为域名但偶发失败">
+**可能原因**：多为 DNS 重绑定，或被解析出的某个 IP 命中 IP 规则。
+
+**处理方法**：
+1. 开启「对已解析的域应用 IP 筛选器」。
+2. 按网络实际情况补充 IP 白名单/黑名单。
+</Accordion>
+
+<Accordion title="创建密钥被拒">
+**可能原因**：当前用户的密钥数已达 `token_setting.max_user_tokens` 上限，禁用或过期的密钥仍计入数量。
+
+**处理方法**：
+1. 删除部分密钥，或调高上限。
+</Accordion>
+
+<Accordion title="搜索密钥提示仅允许精确搜索">
+**提示原文**：「令牌数量超过上限，仅允许精确搜索，请勿使用 % 通配符」（英文 Token count exceeds the limit. Only exact search is allowed, do not use the % wildcard）
+
+**可能原因**：用户密钥数超过上限时，带 `%` 通配符的模糊搜索会被拒绝。
+
+**处理方法**：
+1. 调高上限或删除部分密钥后恢复。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 
-- [系统设置概览](./system-setting)：系统设置的生效机制、多实例同步、敏感配置与变更验证要求。
-- [请求策略配置](./settings-request-policies)：请求检查（原「敏感词」）、重试、会话保持与渠道健康。
-- [API 密钥](/zh/docs/guide/feature-guide/user/token)：API 密钥的创建、分组与模型限制。
-- [使用日志](/zh/docs/guide/feature-guide/user/log)：查看请求详情；被速率限制拒绝的模型请求不会写入使用日志。
+- <a href="/zh/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">系统设置概览</a>：系统设置的生效机制、多实例同步、敏感配置与变更验证要求。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>：请求检查（原「敏感词」）、重试、会话保持与渠道健康。
+- <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>：API 密钥的创建、分组与模型限制。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：查看请求详情；被速率限制拒绝的模型请求不会写入使用日志。

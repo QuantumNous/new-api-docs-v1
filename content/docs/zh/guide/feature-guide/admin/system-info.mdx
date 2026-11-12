@@ -47,7 +47,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 <Callout type="info">
   - CPU、内存和存储使用率旁的圆环使用固定颜色帮助快速浏览：低于 70% 为绿色，70% 至不足 90% 为黄色，90% 及以上为红色。
-  - 性能监控启用时，CPU 和内存约每 5 秒采样一次（优先按容器 cgroup 配额计算），实例每 30 秒上报最近一次采样值。关闭性能监控后，CPU 和内存显示为 0%，存储仍正常统计。开关与阈值见[运维配置 › 性能](/zh/docs/guide/feature-guide/system-settings/settings-operations#性能)；判断异常时应同时查看最后上报时间和外部监控。
+  - 性能监控启用时，CPU 和内存约每 5 秒采样一次（优先按容器 cgroup 配额计算），实例每 30 秒上报最近一次采样值。关闭性能监控后，CPU 和内存显示为 0%，存储仍正常统计。开关与阈值见<a href="/zh/docs/guide/feature-guide/system-settings/settings-operations#性能" target="_blank" rel="noopener noreferrer">运维配置 › 性能</a>；判断异常时应同时查看最后上报时间和外部监控。
 </Callout>
 
 ## 清理失联实例记录
@@ -83,8 +83,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 | 页面名称 | 后端类型 | 来源与触发方式 | 创建条件与行为 |
 | --- | --- | --- | --- |
-| 日志清理 | `log_cleanup` | Root 在[运维配置](/zh/docs/guide/feature-guide/system-settings/settings-operations)的「日志维护」中选择时间并手动发起。 | 按每批 100 条清理指定时间以前的数据库日志；使用 ClickHouse 日志库时由一次同步 mutation 完成。同类型已有活动任务时，入口会继续跟踪现有任务。 |
-| 渠道批量测试 | `channel_test` | 在[渠道管理](/zh/docs/guide/feature-guide/admin/channel)手动执行「测试所有渠道」，或在[请求策略配置](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康)中开启「定期渠道测试」后按「测试间隔 (分钟)」周期触发。 | 自动任务需要开启「定期渠道测试」。手动触发遇到同类型活动任务时会被拒绝，不会再创建并行批次。 |
+| 日志清理 | `log_cleanup` | Root 在<a href="/zh/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">运维配置</a>的「日志维护」中选择时间并手动发起。 | 按每批 100 条清理指定时间以前的数据库日志；使用 ClickHouse 日志库时由一次同步 mutation 完成。同类型已有活动任务时，入口会继续跟踪现有任务。 |
+| 渠道批量测试 | `channel_test` | 在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>手动执行「测试所有渠道」，或在<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康" target="_blank" rel="noopener noreferrer">请求策略配置</a>中开启「定期渠道测试」后按「测试间隔 (分钟)」周期触发。 | 自动任务需要开启「定期渠道测试」。手动触发遇到同类型活动任务时会被拒绝，不会再创建并行批次。 |
 | 上游模型批量更新 | `model_update` | 在渠道管理中执行「检测所有上游更新」，或由后台周期任务触发。 | 只处理已启用且开启上游模型检测的渠道。自动任务的默认计划间隔为 30 分钟；手动触发遇到同类型活动任务时会被拒绝。 |
 | 绘图任务轮询 | `midjourney_poll` | 系统自动调度；页面辅助标识显示为 `drawing_task_poll`。 | `UPDATE_TASK` 开启且至少存在一个未完成的 Midjourney 任务时，以 15 秒任务间隔参与调度；空闲时不创建记录。 |
 | 异步任务轮询 | `async_task_poll` | 系统自动调度。 | `UPDATE_TASK` 开启且至少存在一个未完成的 Suno 或视频任务时，以 15 秒任务间隔参与调度；空闲时不创建记录。 |
@@ -114,9 +114,10 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 相关文档
 
-- [渠道管理](/zh/docs/guide/feature-guide/admin/channel)：触发渠道批量测试和上游模型检测，并检查逐项结果。
-- [请求策略配置](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康)：配置定期渠道测试、自动禁用与自动恢复。
-- [运维配置](/zh/docs/guide/feature-guide/system-settings/settings-operations)：配置性能监控、日志维护和运行参数。
-- [日志与异步任务](/zh/docs/guide/feature-guide/user/log)：查看请求日志以及用户绘图、音乐和视频任务。
-- [环境变量](/zh/docs/installation/config-maintenance/environment-variables)：配置节点角色和后台任务开关。
-- [集群部署](/zh/docs/installation/deployment-methods/cluster-deployment)：了解 Master、Worker 和共享基础设施的部署方式。
+- <a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>：触发渠道批量测试和上游模型检测，并检查逐项结果。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康" target="_blank" rel="noopener noreferrer">请求策略配置</a>：配置定期渠道测试、自动禁用与自动恢复。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">运维配置</a>：配置性能监控、日志维护和运行参数。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：查看请求日志和扣费明细。
+- <a href="/zh/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">任务日志</a>：查看用户的绘图、音乐和视频任务。
+- <a href="/zh/docs/installation/config-maintenance/environment-variables" target="_blank" rel="noopener noreferrer">环境变量</a>：配置节点角色和后台任务开关。
+- <a href="/zh/docs/installation/deployment-methods/cluster-deployment" target="_blank" rel="noopener noreferrer">集群部署</a>：了解 Master、Worker 和共享基础设施的部署方式。

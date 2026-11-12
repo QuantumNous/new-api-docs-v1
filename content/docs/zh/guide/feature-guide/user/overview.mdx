@@ -38,7 +38,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按页面中从上到下、从左到右的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域 | 定义 | 显示条件 | 备注 |
 | --- | --- | --- | --- |
 | 设置引导 | 顶部标签为「开始使用」、标题为「几分钟内开始使用你的 API 网关」的卡片，列出「创建 API 密钥」「添加额度」「发送请求」三个步骤。 | 未完成全部步骤时自动展开，全部完成后自动收起；手动展开或收起后，按手动的选择显示。 | 已完成的步骤前显示绿色对勾。见[按设置引导开始使用](#按设置引导开始使用)。 |
@@ -70,7 +70,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **步骤说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 步骤 | 说明 | 完成条件 | 点击后打开 |
 | --- | --- | --- | --- |
 | 1. 创建 API 密钥 | 「为你的应用或服务创建密钥」 | 账户中至少有一个 API 密钥，已禁用、已过期的密钥也计入。 | 「API 密钥」页 |
@@ -97,7 +97,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **命令说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 组成部分 | 取值 | 备注 |
 | --- | --- | --- |
 | 请求地址 | 「API 信息」中第 1 条地址加 `/v1/chat/completions`；管理员未配置或关闭 API 信息时，为当前浏览器访问的站点地址加 `/v1/chat/completions`。 | 「路由已启用」显示「在线」表示使用了 API 信息中的地址，显示「当前域名」表示使用当前站点地址。「在线」不表示已检测该地址可以访问。 |
@@ -121,7 +121,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **统计项说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 统计项 | 定义 | 统计范围 | 备注 |
 | --- | --- | --- | --- |
 | 近 24 小时消耗 | 当前账户最近一天消耗的额度。 | 按整点小时汇总，包含当前小时和之前的 22 个小时，略短于 24 小时；含钱包余额和订阅额度支付的消耗。管理员关闭数据看板的统计后不再增加。 | 下方显示「近 24 小时消耗量」，按货币显示时后接单位，如「(USD)」。卡片底部的折线为这段时间的消耗变化。「剩余额度」中的「近 24 小时消耗」与此相同。 |
@@ -154,7 +154,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 页面按钮
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 设置引导 | 页面标题右侧 | 三个步骤全部完成后显示，点击展开或收起设置引导。 |
@@ -169,7 +169,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 面板内操作
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 测试延迟 | 「API 信息」中每条地址右侧的闪电图标 | 从浏览器向该地址发送一次请求并显示耗时，见 [API 地址延迟](#api-地址延迟)。 |
@@ -187,7 +187,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「剩余额度」右上角显示的三种状态：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 正常 | 钱包余额大于 0，且按最近一天的消耗估算可用 3 天及以上，或最近一天无消耗。 | 绿色圆点。 |
@@ -199,7 +199,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「API 信息」中点击闪电图标后显示的结果：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 结果 | 含义 | 备注 |
 | --- | --- | --- |
 | 测试中... | 正在测试。 | — |
@@ -213,7 +213,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「运行时间」中监控项名称前的圆点颜色，状态由 Uptime Kuma 提供：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 绿色 | 正常运行。 | — |

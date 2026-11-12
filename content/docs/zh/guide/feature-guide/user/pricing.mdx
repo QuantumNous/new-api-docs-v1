@@ -39,7 +39,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按表格视图从左到右的列顺序排列，最后两行为卡片视图独有的内容。页面默认显示卡片视图，截图为表格视图。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 模型 | 模型名称，即调用时填写的模型名。 | 由管理员添加，不可修改。 | 卡片视图中名称右侧有复制按钮（悬停显示「复制模型名称」）。 |
@@ -74,7 +74,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「筛选」栏各区域默认展开，点击标题可收起，下表按从上到下的顺序排列，最后一行为工具栏中的排序。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 筛选项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 分组 | 只显示该分组可调用的模型，价格按该分组的倍率显示。 | 单选，列出账户可用的分组，不含 auto，每项后显示倍率，如「x1.5」。 | 「所有分组」 |
@@ -100,7 +100,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 工具栏从左到右为模型数量、价格显示模式、Token 单位、排序和视图切换，下表按此顺序排列，排序见[筛选项说明](#查找和筛选模型)。截图为未登录状态。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
 | 标准、充值 | 价格的换算方式（「价格显示模式」）。 | 「标准」按站点的汇率换算；「充值」按在线充值时实际支付的金额换算，不含分组的充值倍率和充值折扣。两者默认相同，管理员设置的充值价格与汇率不同时才有差别。 | 「标准」 |
@@ -114,7 +114,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **计费方式说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 计费方式 | 卡片和表格中的价格 | 模型详情「概览」中的价格 | 扣费方式 |
 | --- | --- | --- | --- |
 | 按量计费 | 「输入」「输出」每 1M（或 1K）Token 的价格；设置了缓存价格时另显示缓存价格。 | 「基础价格」中列出输入、输出，以及已设置的「缓存输入」「缓存写入」「图片输入」「音频输入」「音频输出」价格。 | 按请求的输入、输出 Token 数分别计费；命中缓存、包含图片或音频的部分按对应的价格计费。 |
@@ -152,7 +152,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按从上到下的顺序排列，截图为动态计费的模型。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域 | 定义 | 显示条件 | 备注 |
 | --- | --- | --- | --- |
 | 标题 | 模型图标和名称，下方为供应商、计费方式和模型描述。 | 三个标签共用。 | 名称右侧为复制按钮。模型无描述时显示供应商的描述。 |
@@ -173,7 +173,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **区域说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域 | 定义 | 显示条件 | 备注 |
 | --- | --- | --- | --- |
 | TPS | 平均每秒输出的 Token 数，说明为「持续每秒 Token 数」。 | 有统计数据时显示，下同。 | — |
@@ -198,7 +198,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **区域说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域 | 定义 | 显示条件 | 备注 |
 | --- | --- | --- | --- |
 | 调用示例 | 调用该模型的示例代码，可选 cURL、Python、TypeScript、JavaScript。 | 模型支持多种端点时，先选择端点类型。 | 示例中的地址为站点设置的服务器地址；请将示例中的密钥占位符（如 `$NEW_API_KEY`、`<YOUR_API_KEY>`）替换为在 API 密钥页创建的密钥。点击代码右上角的按钮复制。 |
@@ -237,7 +237,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按页面中从上到下的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区块 | 内容 | 阅读提示 |
 | --- | --- | --- |
 | 热门模型 | 各时间段各模型的 Token 用量（堆叠柱状图），右上角为合计用量。 | 「今天」按小时、「本周」「本月」按天、「今年」按周显示。单独显示用量最多的 10 个模型，其余合并为「Others」。 |
@@ -251,7 +251,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 模型广场页面按钮与筛选
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 搜索框 | 页面标题下方 | 见[查找和筛选模型](#查找和筛选模型)，右侧的清除按钮清空关键词。 |
@@ -270,7 +270,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 模型详情
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 概览、性能、API | 标题下方的标签 | 切换标签。 |
@@ -283,7 +283,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 排行榜
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 今天、本周、本月、今年 | 页面标题下方的标签 | 切换统计的时间范围，默认「本周」。 |
@@ -298,7 +298,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 卡片底部的「状态」，以及模型详情中的成功率，按以下颜色显示。「状态」右侧的小条每格为一个有调用的小时，最多 24 格。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 状态 | 含义 | 备注 |
 | --- | --- | --- |
 | 深绿 | 成功率 100%。 | — |
@@ -316,7 +316,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 **可能原因**：管理员关闭了对应的入口。入口关闭后，打开收藏的地址也会回到首页。
 
 **处理方法**：
-1. 窄屏（如手机）时，先展开顶部导航的菜单查看。
+1. 窄屏（如手机）时，在首页等公开页面展开顶部导航的菜单查看；控制台内窗口宽度小于 1024px 时不显示顶部导航。
 2. 需要使用时，请联系管理员开启。
 </Accordion>
 

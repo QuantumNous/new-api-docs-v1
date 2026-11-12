@@ -35,7 +35,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **字段说明：**
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 字段 | 定义 | 填写要求和限制 | 备注 |
 | --- | --- | --- | --- |
 | 时间 | 操作发生的时间。 | 由系统自动记录，不可修改。 | 精确到秒，最新的记录排在最前。 |
@@ -68,7 +68,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 筛选区分两行，第二行默认收起，点击「展开」后显示。下表按筛选区中的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 筛选项 | 所属区域 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- | --- |
 | 时间范围 | 第一行 | 按操作发生的时间筛选，起止时间均包含在内。 | 快捷范围：「今天」「7 天」（含今天）、「本周」（周日至周六）、「30 天」（含今天）、「本月」；手动填写时精确到秒，填好后点击「确认」。可只填起止之一，不限时间跨度。起始时间晚于结束时间时提示「结束时间必须晚于开始时间」，列表不刷新。 | 空，即不限时间 |
@@ -94,7 +94,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 下表按窗口中从上到下的顺序排列。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域 | 字段 | 定义 | 显示条件 |
 | --- | --- | --- | --- |
 | 窗口顶部 | 事件、结果、时间 | 操作的描述、「成功」或「失败」，以及发生时间。 | 所有记录。 |
@@ -114,7 +114,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 各分类包含的事件如下，事件名称以「事件」列中的显示为准：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 分类 | 事件 | 产生的操作 | 备注 |
 | --- | --- | --- | --- |
 | 登录 | 登录成功（通过 …） | 使用密码、两步验证、Passkey、微信、Telegram 或第三方账号登录成功。 | 仅记录成功的登录，登录失败不记录。 |
@@ -125,7 +125,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 账户安全 | 完成了安全验证 | 执行敏感操作前完成安全验证。 | — |
 | 账户安全 | 创建了访问令牌、重命名了访问令牌、修改了访问令牌权限、撤销了访问令牌 | 在<a href="/zh/docs/guide/feature-guide/user/security#创建和管理访问令牌" target="_blank" rel="noopener noreferrer">安全与访问</a>页管理访问令牌。 | — |
 | 账户安全 | 创建 API 令牌「…」、更新 API 令牌「…」、删除 API 令牌「…」、批量删除 API 令牌、查看 API 令牌「…」的密钥、批量查看 API 令牌密钥 | 在「API 密钥」页创建、编辑、启用或禁用、删除密钥，或查看、复制完整密钥。 | 「API 令牌」即 API 密钥。 |
-| 访问令牌 | 访问令牌 | 使用访问令牌调用账户管理接口。 | 每次请求记录一条，包括被拒绝的请求；被拒绝时详情中显示「失败原因」。 |
+| 访问令牌 | 访问令牌 | 使用访问令牌调用面板 API。 | 每次请求记录一条，包括被拒绝的请求；被拒绝时详情中显示「失败原因」。 |
 | 操作审计 | 更新用户、增加用户「…」的额度、修改系统设置等管理员操作（仅管理员可见） | 管理员在管理页面执行的操作。 | 记在执行操作的管理员名下，普通用户的列表中无此类记录。例外：Root 以外的管理员重置订阅套餐额度时，受影响的用户会看到「管理员重置订阅套餐 …（ID: …）额度」。 |
 </div>
 
@@ -133,7 +133,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 页面按钮与筛选
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 全部 / 仅自己（仅管理员可见） | 页面右上角 | 管理员具有「查看其他账户审计日志」权限时显示，默认为「全部」。「全部」显示所有账户的记录（Root 执行的操作仅 Root 可见），并显示「用户名」筛选；「仅自己」仅显示本账户的记录。权限被收回时，页面提示「审计访问权限已变更，现仅显示本人的记录。」并切换为「仅自己」。 |
@@ -149,7 +149,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 行操作
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 操作 | 位置 | 说明 |
 | --- | --- | --- |
 | 查看详情 | 「详情」列的「详情」 | 打开「日志详情」窗口，见[查看审计详情](#查看审计详情)。 |
@@ -164,7 +164,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 「结果」列和结果筛选中的两种结果：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 结果 | 含义 | 备注 |
 | --- | --- | --- |
 | 成功 | 操作已完成。 | — |
@@ -227,7 +227,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 </Accordion>
 
 <Accordion title="「访问令牌」分类的记录很多">
-**说明**：使用访问令牌调用账户管理接口时，每个请求都会记录一条，包括被拒绝的请求。
+**说明**：使用访问令牌调用面板 API 时，每个请求都会记录一条，包括被拒绝的请求。
 
 **处理方法**：
 1. 在记录详情的「请求」区域查看「令牌标识」，确认是哪个访问令牌发起的请求。

@@ -4,6 +4,7 @@ description: Root 配置系统模式、模型性能指标、邮件发送（SMTP 
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 运维配置位于 `/system-settings/operations`，仅 Root 可访问。
 
@@ -11,7 +12,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 该工作区包含「系统行为」「模型性能指标」「邮件与通知」「Worker 代理」「日志维护」「性能」和「系统维护」七个分区。用于配置系统模式、模型性能指标、邮件发送与余额提醒、Worker、日志维护、性能保护和版本检查。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 分区 | 入口 | 主要用途 |
 | --- | --- | --- |
@@ -41,7 +42,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 系统行为分区包含三个开关：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值 | 实际作用与边界 |
 | --- | --- | --- | --- |
@@ -59,7 +60,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 模型性能指标从 Relay 请求完成和计费链路收集模型、分组、请求耗时、首 Token 时间、成功率、输出 Token 和生成耗时，用于模型广场等性能展示。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值 | 行为与边界 |
 | --- | --- | --- | --- |
@@ -94,7 +95,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 选择 SMTP 时，主要配置键如下：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值或格式 | 说明 |
 | --- | --- | --- | --- |
@@ -121,7 +122,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 选择 Resend API 时显示以下字段：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值或格式 | 说明 |
 | --- | --- | --- | --- |
@@ -146,7 +147,7 @@ SMTP 连接和 Resend 请求（`https://api.resend.com/emails`）都由后端直
 
 - 余额不足提醒
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值 | 说明 |
 | --- | --- | --- | --- |
@@ -158,11 +159,11 @@ SMTP 连接和 Resend 请求（`https://api.resend.com/emails`）都由后端直
 Relay 结算链路会分别检查钱包和订阅额度：钱包按 `UserQuota - (quota + preConsumedQuota)` 比较，订阅按订阅总额减已使用量比较。只有本次扣费使余额从阈值及以上降到阈值以下时才提醒一次；余额已低于阈值时不再重复提醒，充值回到阈值及以上后才可能再次提醒。
 
 操作流程：
-1. 根据[计费与支付配置](./settings-billing#货币与展示)中的「显示模式」设置默认提醒阈值，并确认测试用户的通知方式和个人阈值。
+1. 根据<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#货币与展示" target="_blank" rel="noopener noreferrer">计费与支付配置</a>中的「显示模式」设置默认提醒阈值，并确认测试用户的通知方式和个人阈值。
 2. 用测试账号验证通知。
 
 <Callout type="info">
-- 异步发送余额不足通知。用户在[个人设置](/zh/docs/guide/feature-guide/user/personal-setting#设置通知和行为偏好)中关闭「余额不足提醒」时不发送；用户设置的非零提醒阈值优先于此全局值。
+- 异步发送余额不足通知。用户在<a href="/zh/docs/guide/feature-guide/user/personal-setting#设置通知和行为偏好" target="_blank" rel="noopener noreferrer">个人资料</a>中关闭「余额不足提醒」时不发送；用户设置的非零提醒阈值优先于此全局值。
 - 通知方式由用户设置决定，可以是邮件、Webhook、Bark 或 Gotify；未选择时默认使用邮件。通知失败会写入系统错误日志。
 </Callout>
 
@@ -174,7 +175,7 @@ Relay 结算链路会分别检查钱包和订阅额度：钱包按 `UserQuota - 
 
 Worker 代理用于源码中明确接入的服务端外部请求链路，例如远程文件或图片下载、用户 Webhook，以及 Bark 和 Gotify 通知。它不是渠道 Relay、支付、OAuth 或所有出站流量的通用代理。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值或校验 | 行为 |
 | --- | --- | --- | --- |
@@ -217,12 +218,12 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 4. 调整开关后点击「保存日志设置」。
 
 <Callout type="info">
-该开关不会停止错误、充值、管理审计、系统、退款或登录日志，也不会关闭服务器文本日志、Midjourney 任务表或异步任务表。
+该开关只控制消费日志：不会停止错误、充值、系统或退款日志，不影响审计日志，也不会关闭服务器文本日志、Midjourney 任务表或异步任务表。
 </Callout>
 
 - 日志查询与导出
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值或校验 | 行为与边界 |
 | --- | --- | --- | --- |
@@ -250,7 +251,7 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 | `failed` | 查看错误并检查日志库与运行器；已完成的删除不会自动恢复。 |
 
 <Callout type="info">
-- 此操作不会清理 `quota_data` 聚合数据、性能指标、绘图与异步任务记录，也不会删除服务器上的日志文件。
+- 此操作不会清理 `quota_data` 聚合数据、性能指标、审计日志、绘图与异步任务记录，也不会删除服务器上的日志文件。
 - 多个实例共享日志库时，删除会影响共同的日志历史，不能把它当作“只清理当前实例”。
 </Callout>
 
@@ -278,7 +279,7 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 
 启用后，达到阈值且未超过当前缓存容量边界的大请求体或文件数据会临时存到磁盘，以减少内存占用；不满足条件时继续使用内存。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap [&_td_code]:wrap-anywhere">
 
 | 页面字段 | 配置键 | 默认值或校验 | 行为与边界 |
 | --- | --- | --- | --- |
@@ -293,7 +294,7 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 
 系统性能监控默认开启。后台约每 5 秒采集 CPU、内存和缓存目录所在磁盘的使用率；CPU 和内存优先按容器 cgroup 配额计算，取不到时使用宿主机数值。当某个阈值大于 `0`，且连续 3 次采样（约 15 秒）的整数使用率都严格高于阈值时，新 Relay 请求会被拒绝并返回 HTTP `503`；任一次采样回落即恢复。关闭监控或调高阈值后立即放行，采样超过 30 秒未更新时也不拒绝。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 配置键 | 默认值或校验 |
 | --- | --- | --- |
@@ -353,7 +354,7 @@ https://api.github.com/repos/QuantumNous/new-api/releases?per_page=100
 
 ## 变更后验证
 
-1. 通用的保存确认、刷新核对和多实例同步等待见[系统设置概览](./system-setting#变更前记录与验证)。
+1. 通用的保存确认、刷新核对和多实例同步等待见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#变更前记录与验证" target="_blank" rel="noopener noreferrer">系统设置概览</a>。
 2. 检查公开状态是否包含默认侧边栏偏好，并用当前新版前端确认它仍由 `sidebar_state` Cookie 控制；再分别使用普通用户和 Root 验证演示站、自用模式及实际角色权限。
 3. 确认「余额不足提醒」已开启，用测试用户的一次扣费把余额从阈值以上降到阈值以下，分别验证邮件、Webhook、Bark 或 Gotify；确认通知失败不会改变结算结果。
 4. 产生可控的 Relay 请求，等待至少一个性能指标刷库周期，再检查模型广场中的延迟、成功率和分组数据。
@@ -365,28 +366,103 @@ https://api.github.com/repos/QuantumNous/new-api/releases?per_page=100
 
 ## 常见问题
 
-- **修改默认侧边栏后当前前端没有变化**：该值已发布到公开状态，但当前新版前端只读取 `sidebar_state` Cookie，尚未消费该设置；清除 Cookie 只会回到前端自身的默认展开状态。该配置主要供兼容客户端使用。
-- **开启演示站点模式后危险操作仍可执行**：当前版本的演示站点模式不限制任何功能（见[系统行为](#系统行为)）。应使用角色权限、网络边界、只读数据副本和外部访问控制保护演示实例。
-- **开启自用模式后仍能注册或看到多个用户**：该开关不会关闭多用户与注册接口；要限制注册请在[身份验证配置](./settings-auth)中关闭对应能力。
-- **额度已低于阈值但没有通知**：提醒只在一次扣费跨过阈值时发送，余额原本已低于阈值时不会再提醒。检查站点「余额不足提醒」开关、用户是否关闭了个人提醒、个人阈值和通知方式，再检查所选邮件发送方式（SMTP 或 Resend）、Webhook、Bark、Gotify、Worker（含「允许 HTTP 图像请求」）、SSRF 与服务端错误日志。
-- **模型性能指标没有立即出现**：查询时只合并数据库中已刷库的数据和处理本次查询的实例的内存聚合桶。多实例部署时，其他实例的样本要等其刷库后才可见；模型广场的数据还会在页面缓存约 1 分钟。检查总开关、模型名、分组（只统计分组倍率中存在的分组和 `auto`）、桶时间和保留设置。
-- **保存后仍无法发信**：页面不测试连接。先确认「邮件发送方式」选的是已配置的方式，系统不会改用另一种。SMTP 核对主机、端口、安全模式、证书、账号、Token、发件地址（只能填纯邮箱）和服务商限制，端口 `465` 还会触发隐式 TLS 行为；Resend 核对发件域名是否已验证、API 密钥是否有效，具体拒绝原因见服务端日志。
-- **Worker 已配置但渠道请求仍直连上游**：Worker 只用于明确接入的下载和通知链路，不是模型渠道的通用网络代理。
-- **清理数据库日志后看板历史数据仍存在**：日志任务只删除 `logs` 表，不会删除 `quota_data` 聚合、性能指标或任务记录。
-- **日志清理一直等待或只完成了一部分**：检查主节点运行器、任务错误和日志库连接；任务失败不会回滚已删除的数据，重新提交前应再次确认截止时间。
-- **清理服务器日志后仍保留一个旧文件**：当前活动日志始终跳过；按数量清理还会保留指定的最新文件数。
-- **磁盘缓存达到上限后请求失败了吗**：系统通常改用内存；部分流式读取链路在磁盘创建失败且 Reader 已消费时可能直接报错。上限也不是磁盘配额保证。
-- **资源使用率达到阈值但请求没有被拒绝**：比较条件是严格高于阈值，使用采样的整数值，且需连续 3 次采样（约 15 秒）都超过阈值；采样超过 30 秒未更新时不拒绝；阈值为 `0` 时该维度不检查。在容器中，CPU 和内存按 cgroup 配额计算，可能与宿主机监控数值不同。
-- **检查更新提示的版本不符合预期**：页面按版本号比较，预发布版（如 `rc`）也参与比较，无法解析的标签会被忽略；当前版本为开发构建（`v0.0.0`）时无法比较。请打开 Release 并人工核对版本、分支和升级路径。
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="修改默认侧边栏后当前前端没有变化">
+**说明**：该值已发布到公开状态，但当前新版前端仅读取 `sidebar_state` Cookie，尚未消费该设置。清除 Cookie 仅会回到前端自身的默认展开状态。该配置主要供兼容客户端使用。
+</Accordion>
+
+<Accordion title="开启演示站点模式后危险操作仍可执行">
+**说明**：当前版本的演示站点模式不限制任何功能（见[系统行为](#系统行为)）。
+
+**处理方法**：
+1. 使用角色权限、网络边界、只读数据副本和外部访问控制保护演示实例。
+</Accordion>
+
+<Accordion title="开启自用模式后仍能注册或看到多个用户">
+**说明**：该开关不会关闭多用户与注册接口。
+
+**处理方法**：
+1. 如需限制注册，在<a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>中关闭对应能力。
+</Accordion>
+
+<Accordion title="额度已低于阈值但没有通知">
+**说明**：提醒仅在一次扣费跨过阈值时发送，余额原本已低于阈值时不会再提醒。
+
+**可能原因**：
+- 站点「余额不足提醒」开关未开启。
+- 用户关闭了个人提醒。
+- 个人阈值或通知方式与预期不符。
+- 所选邮件发送方式（SMTP 或 Resend）、Webhook、Bark、Gotify、Worker（含「允许 HTTP 图像请求」）或 SSRF 存在问题。
+
+**处理方法**：
+1. 查看服务端错误日志。
+</Accordion>
+
+<Accordion title="模型性能指标没有立即出现">
+**说明**：查询时仅合并数据库中已刷库的数据和处理本次查询的实例的内存聚合桶。多实例部署时，其他实例的样本需等其刷库后才可见。模型广场的数据还会在页面缓存约 1 分钟。
+
+**可能原因**：
+- 总开关未开启。
+- 模型名、分组（仅统计分组倍率中存在的分组和 `auto`）、桶时间或保留设置与预期不符。
+</Accordion>
+
+<Accordion title="保存后仍无法发信">
+**说明**：页面不测试连接。
+
+**可能原因**：
+- 「邮件发送方式」选的不是已配置的方式。系统不会改用另一种。
+- SMTP：主机、端口、安全模式、证书、账号、Token、发件地址（仅可填纯邮箱）或服务商限制存在问题。端口 `465` 还会触发隐式 TLS 行为。
+- Resend：发件域名未验证，或 API 密钥无效。具体拒绝原因见服务端日志。
+</Accordion>
+
+<Accordion title="Worker 已配置但渠道请求仍直连上游">
+**说明**：Worker 仅用于明确接入的下载和通知链路，不是模型渠道的通用网络代理。
+</Accordion>
+
+<Accordion title="清理数据库日志后看板历史数据仍存在">
+**说明**：日志任务仅删除 `logs` 表，不会删除 `quota_data` 聚合、性能指标或任务记录。
+</Accordion>
+
+<Accordion title="日志清理一直等待或只完成了一部分">
+**说明**：任务失败不会回滚已删除的数据。
+
+**可能原因**：主节点运行器或日志库连接存在问题。
+
+**处理方法**：
+1. 查看任务错误。
+2. 重新提交前，再次确认截止时间。
+</Accordion>
+
+<Accordion title="清理服务器日志后仍保留一个旧文件">
+**说明**：当前活动日志始终跳过。按数量清理还会保留指定的最新文件数。
+</Accordion>
+
+<Accordion title="磁盘缓存达到上限后请求失败了吗">
+**说明**：系统通常改用内存。部分流式读取链路在磁盘创建失败且 Reader 已消费时可能直接报错。上限也不是磁盘配额保证。
+</Accordion>
+
+<Accordion title="资源使用率达到阈值但请求没有被拒绝">
+**说明**：比较条件是严格高于阈值，使用采样的整数值，且需连续 3 次采样（约 15 秒）都超过阈值。采样超过 30 秒未更新时不拒绝。阈值为 `0` 时该维度不检查。在容器中，CPU 和内存按 cgroup 配额计算，可能与宿主机监控数值不同。
+</Accordion>
+
+<Accordion title="检查更新提示的版本不符合预期">
+**说明**：页面按版本号比较，预发布版（如 `rc`）也参与比较，无法解析的标签会被忽略。当前版本为开发构建（`v0.0.0`）时无法比较。
+
+**处理方法**：
+1. 打开 Release，人工核对版本、分支和升级路径。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 
-- [系统设置概览](./system-setting)：系统设置的生效机制、多实例同步、敏感配置与变更验证要求。
-- [站点与品牌配置](./settings-site)：公开站点内容、导航和任务地址。
-- [身份验证配置](./settings-auth)：注册、OAuth、Passkey 和邮箱验证。
-- [计费与支付配置](./settings-billing)：额度、定价、支付合规和签到奖励。
-- [模型配置](./settings-models)：全局模型行为、供应商适配和模型部署。
-- [请求策略配置](./settings-request-policies)：请求文本过滤、会话保持与重试、渠道健康检查与自动禁用。
-- [安全与限制配置](./settings-security)：限流、SSRF 和令牌数量限制。
-- [控制台内容配置](./settings-content)：数据看板、公告、FAQ、API 地址和客户端内容。
-- [系统信息](/zh/docs/guide/feature-guide/admin/system-info)：系统任务、节点状态和其他 Root 运维信息。
+- <a href="/zh/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">系统设置概览</a>：系统设置的生效机制、多实例同步、敏感配置与变更验证要求。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-site" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>：公开站点内容、导航和任务地址。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>：注册、OAuth、Passkey 和邮箱验证。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：额度、定价、支付合规和签到奖励。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型配置</a>：全局模型行为、供应商适配和模型部署。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>：请求文本过滤、会话保持与重试、渠道健康检查与自动禁用。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-security" target="_blank" rel="noopener noreferrer">安全与限制配置</a>：限流、SSRF 和令牌数量限制。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">控制台内容配置</a>：数据看板、公告、FAQ、API 地址和客户端内容。
+- <a href="/zh/docs/guide/feature-guide/admin/system-info" target="_blank" rel="noopener noreferrer">系统信息</a>：系统任务、节点状态和其他 Root 运维信息。
