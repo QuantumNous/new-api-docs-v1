@@ -189,7 +189,6 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 2. 按目标资源的协议决定是否允许 HTTP，点击「保存 Worker 设置」。
 3. 停用时清空 Worker URL 并保存，已保存的访问密钥会一并清除；若同时在密钥框输入了新值，则保存为该新值。仅清空密钥输入框但保留 URL，不会清除旧密钥。
 
-
 <Callout type="info" title="提示">
 - Worker 负载可能携带目标 URL、请求头、通知内容和认证信息。
 - `WorkerValidKey` 作为请求 JSON 的 `key` 字段发送，是否校验由 Worker 实现决定；New API 不使用它验证 Worker 响应，也不能用它替代目标 URL 的访问控制。
