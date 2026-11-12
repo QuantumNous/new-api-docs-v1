@@ -40,7 +40,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 刷新间隔 (分钟) | 整数，1–1440 | 后台用量数据聚合间隔；保持此值大于 1 分钟以避免数据库负载过重。 |
 | 默认时间粒度 | 小时 / 天 / 本周，默认小时 | 界面说明为「仅 UI 粒度 — 数据仍按小时汇总」。用户进入数据看板时使用的时间粒度，由各自在<a href="/zh/docs/guide/feature-guide/user/dashboard#设置图表的默认显示" target="_blank" rel="noopener noreferrer">数据看板</a>「偏好设置」中的「默认时间粒度」决定。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
 数据仪表板分区**不**配置看板上的各模块开关：设置引导、用量概览、性能健康、公告、FAQ、Uptime、API 地址等面板的可见性：
 1. 公告 / API 地址 / FAQ / Uptime 面板：由它们**所在分区**的启用开关控制；
 2. 设置引导、用量概览、性能健康等面板：没有单独开关（性能健康仅管理员可见）；整个「概览」与「数据看板」入口由<a href="/zh/docs/guide/feature-guide/system-settings/settings-site#侧边栏模块" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>中侧边栏模块的「数据看板」开关控制。
@@ -71,10 +71,9 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 1. 打开分区，点击「添加公告」。
 2. 填写内容、发布日期、类型与额外备注。
-3. 点击「保存设置」（整段数组写入），并确认分区「已启用」开关已开启。
-4. 回到控制台数据看板或通知中心「时间线」标签页验证展示与未读状态。
+3. 点击「保存设置」（整段数组写入），并开启分区「已启用」开关。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   已读状态由**客户端**记录（按公告 id 或内容哈希）。
 </Callout>
 
@@ -103,9 +102,8 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 1. 添加API链接信息，填写API URL、路由描述、说明信息与徽章颜色。
 2. 点击「保存设置」（整段数组写入），并开启分区「已启用」开关。
-3. 回到数据看板查看API链接信息展示，验证测试延迟、外部速度测试、复制URL、在新标签页中打开的面板功能。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 - 上限：**50 条**。
 </Callout>
 
@@ -128,7 +126,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 问题 | 必填，≤200 | 问题文本。 |
 | 答案 | 必填，≤1000 | 答案文本。支持 Markdown 和 HTML。|
 
-<Callout type="info">
+<Callout type="info" title="提示">
 - 上限：**100 条**。
 - 展示顺序 = 数组中的顺序。
 </Callout>
@@ -153,7 +151,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | Uptime Kuma URL | 必填，http(s)，≤500 | 您的 Uptime Kuma 实例的基础 URL。 |
 | 状态页面 Slug | 必填，`^[a-zA-Z0-9_-]+$`，≤100 | 分组标识，别名将附加到 URL: \{url\}/status/\{slug\}。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
 - 上限：**20 组**。
 </Callout>
 
@@ -183,9 +181,8 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 1. 打开分区，在「可视化」标签添加/编辑聊天预设（应用名 + URL），或切换到「JSON」直接编辑。
 2. 点击「保存聊天设置」：以归一化的 JSON 数组写入 `Chats`。
-3. 在侧边栏「聊天」或「API 密钥」列表操作菜单的「聊天」中，验证对应客户端可一键导入（见<a href="/zh/docs/guide/feature-guide/user/chat-apps" target="_blank" rel="noopener noreferrer">聊天</a>）。
 
-<Callout type="info">
+<Callout type="warn" title="注意">
   - 聊天预设的 URL 不做格式校验。占位符在用户打开预设时由控制台替换；填错或不受支持的占位符不会报错，只有打开链接、在目标应用中导入时才会暴露。占位符使用 `{key}`（API 密钥）、`{address}`（服务地址）等，与具体客户端的模板约定一致时才能正确导入。
   - `{key}` 会出现在打开的 URL 中。只配置可信客户端的导入地址；不要添加第三方或未知域名的预设，否则该域名可接收用户的 API 密钥。
 </Callout>
@@ -207,7 +204,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 在提示中清除模式标志 | 从用户提示中移除 MjProxy 参数，如 --fast、--relax 和 --turbo。 |
 | 在后续操作前要求任务成功 | 用户必须等待成功的绘图完成，才能进行放大或变体。 |
 
-<Callout type="warn">
+<Callout type="info" title="提示">
   绘图分区只有开关。上游 Base URL、端点、密钥、账号过滤值等请到<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>的 Midjourney 渠道配置。
 </Callout>
 
@@ -222,7 +219,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 数据仪表板 › 启用数据仪表板 | 页头「保存更改」 | 之后记录的用量才计入看板，关闭后不再计入；已有数据保留，关闭期间的用量不会补记。 |
 | 数据仪表板 › 刷新间隔 (分钟) | 页头「保存更改」 | 当前这一轮等待结束后，才按新间隔执行。 |
 | 数据仪表板 › 默认时间粒度 | 页头「保存更改」 | — |
-| 四个列表分区 › 「已启用」开关 | 切换后立即保存，提示「设置已保存」 | 公告、API 地址、常见问答、Uptime Kuma 在控制台中对应的面板（公告还包括通知中心）刷新页面后显示或隐藏。 |
+| 四个列表分区 › 「已启用」开关 | 切换后立即保存，先后提示「设置更新成功」「设置已保存」 | 公告、API 地址、常见问答、Uptime Kuma 在控制台中对应的面板（公告还包括通知中心）刷新页面后显示或隐藏。 |
 | 四个列表分区 › 列表 | 新增、编辑、删除只修改页面数据，点击卡片内的「保存设置」后整段写入 | 控制台中对应的面板（公告还包括通知中心）刷新页面后显示新内容。 |
 | 聊天预设 | 「保存聊天设置」 | 侧边栏「聊天」和 API 密钥列表中的「聊天」菜单刷新页面后更新。 |
 | 绘图 › 启用绘制功能 | 「保存绘图设置」 | — |
@@ -308,7 +305,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 </Accordion>
 
 <Accordion title="保存后状态未更新">
-**说明**：保存后，当前浏览器中已打开的看板面板和侧边栏「聊天」不会自动更新。
+**说明**：保存后，执行保存的浏览器中已打开的看板面板和侧边栏「聊天」不会自动更新。
 
 **处理方法**：
 1. 刷新页面或重新进入对应入口。

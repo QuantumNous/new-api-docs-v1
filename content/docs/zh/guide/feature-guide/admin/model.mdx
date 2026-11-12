@@ -12,7 +12,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ## 模型管理概览
 
-页面顶部有「模型」「供应商」「部署」三个标签，地址分别为 `/models/metadata`、`/models/vendors`、`/models/deployments`。「模型」标签右上角为「同步资料」「同步价格」「添加模型」和「⋯」菜单（「缺失的模型」「预填充分组」），下方为搜索框、筛选和模型列表。
+页面顶部有「模型」「供应商」「部署」三个标签，地址分别为 `/models/metadata`、`/models/vendors`、`/models/deployments`。「模型」标签右上角为「同步资料」「同步价格」「添加模型」和 ⋯ 菜单（「缺失的模型」「预填充分组」），下方为搜索框、筛选和模型列表。
 
 - 模型管理-模型列表
 
@@ -63,7 +63,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 已隐藏 | 已通过模型资料中的「广场展示」开关隐藏。 |
 | 部分展示 | 仅非完全匹配规则：匹配到的模型中，部分已隐藏或暂无可用渠道。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
   「广场展示」只控制模型广场中的展示，不影响 API 调用权限。用户能否调用某个模型，由渠道、分组和 API 密钥的限制决定。
 </Callout>
 
@@ -83,7 +83,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 「编辑」：打开编辑抽屉的「模型资料」标签；「缺元数据」行显示为「补充资料」，打开带有该模型名的创建抽屉。
 - 「定价」：仅 Root 可见，打开同一抽屉并定位到「定价」标签。
-- 「⋯」菜单：「从模型广场隐藏」或「在模型广场显示」（只修改「广场展示」开关），以及「删除」；「缺元数据」行没有此菜单。
+- ⋯ 菜单：「从模型广场隐藏」或「在模型广场显示」（只修改「广场展示」开关），以及「删除」；「缺元数据」行没有此菜单。
 
 勾选行后，列表底部显示批量操作：
 
@@ -184,7 +184,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ## 删除模型
 
-在行「⋯」菜单中点击「删除」删除单个模型，或勾选后点击「删除选定的模型」批量删除（一次 1–1000 个）。「缺元数据」行没有模型资料，不能删除。确认框「删除模型？」中有两个可选项，默认都不勾选：
+在行 ⋯ 菜单中点击「删除」删除单个模型，或勾选后点击「删除选定的模型」批量删除（一次 1–1000 个）。「缺元数据」行没有模型资料，不能删除。确认框「删除模型？」中有两个可选项，默认都不勾选：
 
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
@@ -199,7 +199,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - 两项都不勾选时，只删除模型资料；渠道中的模型名称、能力和价格都保留。只要启用的渠道仍引用该名称，它会重新出现在列表的「缺元数据」行和「缺失的模型」中。
 - 删除后可以重新创建同名模型资料。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   「同时从所有渠道移除」会直接修改渠道的模型列表，删除后该模型不能再通过这些渠道调用；需要恢复时，要在渠道中重新添加模型名称。
 </Callout>
 
@@ -209,7 +209,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![模型管理-缺失的模型页面](/assets/guide/feature-guide/model-management-missing-models.png)
 
-在「模型」标签右上角点击「⋯ → 缺失的模型」打开。列表显示已启用渠道正在使用、但没有**精确同名**模型资料的模型名称；被前缀、包含或后缀规则覆盖的名称仍会列出。
+在「模型」标签右上角点击 ⋯ →「缺失的模型」打开。列表显示已启用渠道正在使用、但没有**精确同名**模型资料的模型名称；被前缀、包含或后缀规则覆盖的名称仍会列出。
 
 - 可按名称搜索，每页 20 条。
 - 点击行内「配置」，打开带有该模型名的「创建模型」抽屉。
@@ -273,7 +273,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 检查将要创建或更新的模型、字段和新增供应商，点击「应用 N 个模型的变更」。所有变更在一次提交中写入，任何一项写入失败，本次变更都不会应用。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   预览后如果官方目录或本站模型资料发生变化，应用会失败并提示重新预览；点击「重新预览」回到第 1 步重新选择即可。
 </Callout>
 
@@ -285,8 +285,8 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 显示「资料同步完成」、创建与更新的模型数量、新增的供应商，以及每个模型已应用的变更。未处理的模型不在结果中列出，原因见第 1 步的「计划操作」。
 
-<Callout type="info">
-  官方目录不是当前实例已配置的渠道清单。同步后的模型仍需在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>中配置渠道才能调用。
+<Callout type="info" title="提示">
+  官方目录不是本站已配置的渠道清单。同步后的模型仍需在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>中配置渠道才能调用。
 </Callout>
 
 ## 同步价格
@@ -322,7 +322,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![模型管理-预填充分组管理页面](/assets/guide/feature-guide/model-management-prefilled-groups.png)
 
-在「模型」标签右上角点击「⋯ → 预填充分组」，打开「预填充分组管理」。预填充分组保存一组可复用的值，**不是**用户分组或渠道分组，也不影响计费。列表显示分组名称与描述、类型、条目（最多显示 6 个）和操作（编辑、删除）；点击「新建分组」创建，「刷新」重新加载。
+在「模型」标签右上角点击 ⋯ →「预填充分组」，打开「预填充分组管理」。预填充分组保存一组可复用的值，**不是**用户分组或渠道分组，也不影响计费。列表显示分组名称与描述、类型、条目（最多显示 6 个）和操作（编辑、删除）；点击「新建分组」创建，「刷新」重新加载。
 
 | 类型 | 条目内容 | 使用位置 |
 | --- | --- | --- |
@@ -357,7 +357,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 搜索框「搜索供应商名称或简介」；「模型归属」筛选「有关联模型」或「无关联模型」；「查看」可显示 ID、创建时间、更新时间（默认隐藏）。
 - 「关联模型」列显示归属该供应商的模型资料数量，点击跳到「模型」标签并按该供应商筛选。
-- 行「⋯」菜单为「编辑」「删除」；勾选多行后可「合并供应商」「删除供应商」。默认每页 20 条。
+- 行 ⋯ 菜单为「编辑」「删除」；勾选多行后可「合并供应商」「删除供应商」。默认每页 20 条。
 
 ### 添加供应商
 
@@ -379,7 +379,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![模型管理-编辑供应商-供应商资料页面](/assets/guide/feature-guide/model-management-providers-edit-provider-provider-information.png)
 
-点击供应商名称或「⋯ → 编辑」打开以供应商名为标题的抽屉，有「供应商资料」「关联模型 (N)」两个标签。「供应商资料」的字段与创建时相同，另显示创建时间和更新时间。打开后如果该供应商被其他人修改，保存会失败，点击「重新加载供应商资料」后再修改。
+点击供应商名称或 ⋯ →「编辑」打开以供应商名为标题的抽屉，有「供应商资料」「关联模型 (N)」两个标签。「供应商资料」的字段与创建时相同，另显示创建时间和更新时间。打开后如果该供应商被其他人修改，保存会失败，点击「重新加载供应商资料」后再修改。
 
 #### 关联模型
 
@@ -396,7 +396,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 操作 | 入口 | 结果 |
 | --- | --- | --- |
 | 合并供应商 | 勾选多个供应商 →「合并供应商」，在「保留此供应商」中选择要保留的一个 | 其他所选供应商的模型改为归属保留的供应商，然后删除其他供应商；保留供应商的资料不变。 |
-| 删除供应商 | 行「⋯ → 删除」或勾选后「删除供应商」 | 删除所选供应商记录。仍有关联模型的供应商不能删除，需先转移或清除这些模型的供应商归属。 |
+| 删除供应商 | 行 ⋯ →「删除」或勾选后「删除供应商」 | 删除所选供应商记录。仍有关联模型的供应商不能删除，需先转移或清除这些模型的供应商归属。 |
 
 </div>
 
@@ -465,8 +465,8 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 </div>
 
-<Callout type="warn">
-  如果渠道 Base URL 或高级自定义路由指向某个部署，终止或修改部署前必须先切换到其他可用渠道，并验证模型路由。部署属于外部资源，New API 不会因为部署状态变化而修正渠道配置。
+<Callout type="warn" title="注意">
+  如果渠道 Base URL 或高级自定义路由指向某个部署，终止或修改部署前必须先切换到其他可用渠道。部署属于外部资源，New API 不会因为部署状态变化而修正渠道配置。
 </Callout>
 
 ## 保存与生效
@@ -478,7 +478,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 操作 | 保存方式 | 生效时机 |
 | --- | --- | --- |
 | 编辑模型资料 | 编辑抽屉「模型资料」标签中点击「保存资料」 | 模型广场按上述时机显示新资料。 |
-| 隐藏、显示（含批量） | 行「⋯」菜单中点击「从模型广场隐藏」或「在模型广场显示」，立即保存 | 只影响广场展示，不影响 API 调用。 |
+| 隐藏、显示（含批量） | 行 ⋯ 菜单中点击「从模型广场隐藏」或「在模型广场显示」，立即保存 | 只影响广场展示，不影响 API 调用。 |
 | 同步资料 | 预览后点击「应用 N 个模型的变更」 | 所选模型一次写入，任一失败则全部不写入；关闭了「允许资料同步」的模型不处理。 |
 | 供应商、供应商归属 | 添加、编辑供应商时点击「保存资料」；归属的设置、清除、合并、删除在预览后点击「应用更改」 | 模型广场的供应商筛选和图标随之更新；预览后数据有变化时应用失败，需重新预览。 |
 | 模型价格 | 「定价」标签中点击「保存模型价格」，或在同步价格中点击「确认更改」（仅 Root） | 处理该请求的节点下一次请求起按新价格计费，其他节点随系统设置同步（默认 60 秒）后生效，见<a href="/zh/docs/guide/feature-guide/admin/billing-expression#保存与生效" target="_blank" rel="noopener noreferrer">计费表达式</a>。 |

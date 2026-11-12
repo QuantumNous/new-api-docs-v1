@@ -36,11 +36,6 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 启用后，Relay 会在相关协议链路中把客户端原始请求体直接发送给上游，跳过许多请求体转换、字段移除、系统提示词合并和参数覆盖步骤。
 
-<Callout type="info">
-- 分别发送一次非流式请求和一次流式请求，检查上游是否识别全部字段。
-- 对比开启前后的模型映射、用量统计和错误响应。
-</Callout>
-
 - 不自动处理思考后缀的模型
 
 此处列出的模型不会自动添加或移除 -thinking / -nothinking 后缀。命中的模型同时豁免 @ 修饰符解析与 400 校验。以 re: 开头的条目会按 Go 正则匹配完整模型名，例如 re:.*@sha256:.*。
@@ -59,7 +54,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | `channel_types` | `all_channels` 为 `false` 时按渠道类型编号匹配，命中任一即通过。 |
 | `model_patterns` | 正则表达式数组；请求模型至少命中一项才转换。 |
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
 - 此功能为实验性功能。配置格式和行为可能会发生变化。
 - 全局请求透传或目标渠道的请求体透传开启时不会进入该转换链路
 </Callout>
@@ -97,7 +92,7 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 
 </div>
 
-<Callout type="info">
+<Callout type="info" title="提示">
 - 「支持的 Imagine 模型」只改变转换时的输出模态，不会自动添加模型、价格或渠道能力；应填写模型映射后的上游名称。
 - 即使禁用适配器，Gemini 也会继续自动检测思维模式。仅当您需要对定价和预算进行更精细的控制时才启用思考后缀适配器。
 </Callout>
@@ -134,13 +129,13 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 
 </div>
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
 1. 只有在上游错误中出现受支持的违规标记（例如内容违反使用规范的提示）时才触发。普通上游错误、内容审核失败或所有 Grok 请求不会因此额外扣费；这类错误还会被标记为不可重试。
 2. 实际扣费按「基础金额 × 系统分组倍率」换算，并在正常预扣失败流程之外单独写入一条消费记录，排查时应同时查看原请求错误和违规费日志。页面提供指向 x.ai 官方说明的链接。
-3. 该设置直接扣减用户余额。启用或调整金额前应核对上游最新违规收费规则、分组倍率和面向用户的价格说明，并用可控测试验证日志与额度变化。
+3. 该设置直接扣减用户余额。启用或调整金额前应核对上游最新违规收费规则、分组倍率和面向用户的价格说明。
 </Callout>
 
-<Callout type="info">
+<Callout type="info" title="提示">
 原「渠道亲和性」分区已移至请求策略，现称「会话保持」，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试" target="_blank" rel="noopener noreferrer">会话与重试</a>。
 </Callout>
 
@@ -175,7 +170,7 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 4. 点击「测试连接」。成功后页面显示连接成功提示；失败时根据错误信息检查密钥、项目和网络连接。没有输入密钥且没有已保存密钥时，测试会提示需要 API Key。
 5. 点击右上角「保存 io.net 设置」。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   关闭本分区的接入开关不会终止已有 io.net 部署，也不代表第三方费用停止。关闭后，New API 中查看、延长和终止已有部署的操作也会被拒绝。创建、延长和终止部署会改变第三方资源和费用，执行前应核对 io.net 账户、资源配置及账单；New API 不保证第三方容量、账单或部署成功率。
 </Callout>
 

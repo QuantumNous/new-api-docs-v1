@@ -87,10 +87,13 @@
 
 ## 管理员指南
 
-页面顺序：渠道管理、模型管理、计费表达式、用户管理、兑换码管理、订阅管理、系统信息、任务插件管理。渠道管理页另有一个视频 `channel-management-drag-and-drop-mode.mp4`，见「其他」。
+页面顺序：计费表达式、渠道管理、模型管理、用户管理、兑换码管理、订阅管理、系统信息、任务插件管理。渠道管理页另有一个视频 `channel-management-drag-and-drop-mode.mp4`，见「其他」。
 
 | 文件名 | 内容 |
 | --- | --- |
+| `billing-expression-expression-editor.png` | 计费表达式-表达式编辑器 |
+| `system-settings-billing-and-payments-model-pricing-model-prices-edit-model-pricing.png` | 计费表达式-编辑模型定价-默认档位（另被「计费与支付配置」引用） |
+| `system-settings-billing-and-payments-model-pricing-model-prices-add-model-pricing.png` | 计费表达式-添加模型定价-请求规则示例（另被「计费与支付配置」引用） |
 | `channel-management-card-view.png` | 渠道管理-卡片视图 |
 | `channel-management-table-view.png` | 渠道管理-表格视图 |
 | `channel-management-select-provider-or-plugin-built-in.png` | 渠道管理-选择内置渠道 |
@@ -137,9 +140,6 @@
 | `model-management-providers-edit-provider-linked-models.png` | 模型管理-编辑供应商-关联模型 |
 | `model-management-model-deployment.png` | 模型管理-模型部署未启用 |
 | `model-management-model-deployment-create-deployment.png` | 模型管理-创建部署 |
-| `billing-expression-expression-editor.png` | 计费表达式-表达式编辑器 |
-| `system-settings-billing-and-payments-model-pricing-model-prices-edit-model-pricing.png` | 计费表达式-编辑模型定价-默认档位（另被「计费与支付配置」引用） |
-| `system-settings-billing-and-payments-model-pricing-model-prices-add-model-pricing.png` | 计费表达式-添加模型定价-请求规则示例（另被「计费与支付配置」引用） |
 | `user-management-list.png` | 用户管理-用户列表 |
 | `user-management-operations.png` | 用户管理-操作菜单 |
 | `user-management-add-user.png` | 用户管理-新建用户 |

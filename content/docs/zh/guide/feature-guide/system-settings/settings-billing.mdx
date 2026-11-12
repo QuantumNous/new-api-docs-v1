@@ -29,8 +29,8 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 3. **模型费用**由请求用量和价格规则计算；
 4. **网关实收**由各支付渠道的订单决定。
 
-<Callout type="warn">
-  计费与支付配置会影响扣费、余额和支付入账。修改前后的通用记录与验证步骤见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#变更前记录与验证" target="_blank" rel="noopener noreferrer">变更前记录与验证</a>，密钥类字段的处理见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#敏感配置与审计记录" target="_blank" rel="noopener noreferrer">敏感配置与审计记录</a>。本域另需用测试用户核对价格，并在支付服务商允许的测试环境中验证。
+<Callout type="warn" title="注意">
+  计费与支付配置会影响扣费、余额和支付入账。修改前后的通用记录与验证步骤见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#变更前记录与验证" target="_blank" rel="noopener noreferrer">变更前记录与验证</a>，密钥类字段的处理见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#敏感配置与审计记录" target="_blank" rel="noopener noreferrer">敏感配置与审计记录</a>。
 </Callout>
 
 ## 配置分区
@@ -61,9 +61,9 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 1. 核对额度单位。
 2. 设置新用户配额、钱包免预扣门槛、输入预扣倍率和奖励；配置正数邀请奖励前，先到支付网关确认合规声明。
-3. 填写充值链接并保存，刷新检查非敏感字段。
+3. 填写充值链接并保存。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 配置邀请奖励不为0时，需要先在「系统设置」→「计费与支付」→「支付网关」设置中确认合规条款。
 </Callout>
 
@@ -90,10 +90,9 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 **操作流程**
 
 1. 选择货币显示模式 USD、元 或 自定义货币；使用 自定义货币 时需填写自定义货币符号以及每 USD 单位数。
-2. 填写相关配置信息，核对 Token 统计信息开关，保存。
-3. 在钱包、价格页和日志中对照同一笔额度，确认货币符号、小数和换算值。
+2. 填写相关配置信息并保存。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 内部 `500000 配额点数` 在默认基准下为 `$1`。
 </Callout>
 
@@ -107,7 +106,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - 「重置价格」：确认后把所有模型的价格恢复为系统默认值，已保存的自定义价格（包括计费表达式）会被清除。
 - 「切换到 JSON」：以 JSON 查看和编辑旧版价格字段，如「模型固定定价」「模型倍率」「补全倍率」。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
 配置或编辑模型价格时，计费模式推荐使用计费表达式；「按 Token」、「按次」为已弃用的计费模式，但仍可在对应界面将旧数据编辑转换为计费表达式。
 </Callout>
 
@@ -132,8 +131,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 1. 搜索模型并编辑，或点击「添加模型」。新建时填写准确模型名，编辑时模型名不可直接更改。
 2. 选择定价货币和模式，设置价格或表达式（编辑器用法见<a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>）。「预设模板」只是起点，先核对当前供应商价格和缓存规则。
 3. 在「Token 估算器」中输入已知用量检查费用；含请求条件时，再用「请求模拟」填写请求体、请求头和时间。
-4. 点击保存模型价格，并确认列表及刷新后的价格符合预期。
-5. 用测试请求在日志中核对真实用量、分组倍率和最终费用。
+4. 点击保存模型价格。
 
 - 基础字段
 
@@ -160,7 +158,6 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 1. 筛选未定价模型并进入价格编辑。
 2. 单独配置，或从已核对的源模型复制价格到所选目标。
 3. 核对每个目标的协议、缓存和媒体计费差异，再保存。
-4. 刷新列表，发起测试请求确认。
 
 #### 工具价格
 
@@ -182,7 +179,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 切换到 JSON     | 以 JSON 对象形式查看或批量编辑价格。         | 对象键为工具标识，值为非负数字，例如 `{"web_search":10}`。 |
 | 切换到可视化    | 返回表格编辑模式。                           | 建议先修复 JSON 错误，再切换模式。                           |
 | 复制            | 复制 JSON 编辑区的内容。                     | 在 JSON 模式显示，可用于留存修改前的配置。                   |
-| 保存工具价格    | 提交当前完整价格配置。                       | 无效价格或 JSON 错误会阻止保存；提交后应确认成功提示，并重新打开页面核对。 |
+| 保存工具价格    | 提交当前完整价格配置。                       | 无效价格或 JSON 错误会阻止保存。 |
 
 - 操作流程
 
@@ -190,11 +187,10 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 2. 选择配置范围；全部模型使用通用工具标识；特定模型系列使用 `工具名:模型前缀*`。
 3. 添加或修改规则；修改已有行，或点击“添加”填写工具标识和价格；按美元/千次填写。
 4. 检查匹配与金额；按目标模型名称确认最长前缀规则，并换算单次基础费用。
-5. 保存配置；点击“保存工具价格”，确认保存成功。
-6. 复查配置与计费；重新打开页面核对保存结果，再用受控请求触发目标工具，检查消费记录；核对工具调用次数、单价、分组倍率和最终费用。
+5. 保存配置；点击“保存工具价格”。
 
-<Callout type="info">
-单项工具附加费用 = 价格（美元/千次） × 计费调用次数 ÷ 1000 × 分组倍率
+<Callout type="info" title="提示">
+单项工具附加费用 = 价格（美元/千次） × 计费调用次数 ÷ 1000 × 分组倍率<br/>
 总工具附加费用 = 各项工具附加费用之和
 </Callout>
 
@@ -270,7 +266,6 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 6. 选择待同步价格；勾选目标模型对应的来源，或使用来源列头批量勾选。
 7. 打开变更预览；检查底部已选数量，点击“应用同步”。
 8. 核对并确认；检查“价格来源、模型、当前计费、最终保存价格”，点击“确认更改”。
-9. 检查同步结果；确认成功提示，在“模型价格”中复查配置，必要时重新拉取比较。
 
 ### 分组定价
 
@@ -309,7 +304,6 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 1. 添加分组，设置名称、调用倍率、充值倍率和可选状态。
 2. 在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>配置该组可用的渠道与模型，在<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>设置账户组。
 3. 配置下述特殊倍率规则、分组可见性或自动分组顺序后，点击「保存分组设置」。
-4. 用不同账户组、固定组及 Auto 令牌发起请求，核对实际组、渠道和费用。
 
 #### 特殊倍率规则
 
@@ -385,9 +379,9 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 1. 使用超级管理员账号进入「计费与支付」 → 「支付网关」。
 2. 点击「确认合规」，阅读条款并按提示填写各段确认文字。
 3. 点击「确认并启用」，等待提交成功。
-4. 确认页面显示「合规已确认」及确认用户、时间，再继续配置支付渠道。
+4. 页面显示「合规已确认」及确认用户、时间后，再继续配置支付渠道。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 支付网关配置、充值、支付等相关功能使用前，需要先完成支付合规确认。确认后，各网关还需满足以下条件才会出现在钱包中：
 
 - EPay：已填写「Epay 端点」「易支付商户 ID」「Epay 密钥」，且「常规 › 付款方式」中至少有一项。
@@ -433,8 +427,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 折扣率 | 应付金额乘以的系数。 | `0` < 折扣率 ≤ `1` 。 | 示例：`0.85`，即支付 85%。 |
 | 优惠 | 显示折扣对应的减免比例。 | 按折扣率自动计算。 | 示例：折扣率 `0.85` 对应优惠 `15%`。 |
 
-<Callout type="info">
-- 金额计算说明：<br/>
+<Callout type="info" title="金额计算说明">
 `应付金额 = 充值金额数量 × 价格（本地货币/美元） × 用户分组充值倍率 × 匹配的折扣率`<br/>
 例如 Epay 充值 `100` 美元余额，价格（本地货币/美元）为 `7.3`、发起充值用户的分组充值倍率为 `1`，且配置 `100 → 0.85`，则应付 `620.50` 单位本地货币，到账为 `100` 美元余额。
 </Callout>
@@ -460,10 +453,9 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 1. 填写端点、商户 ID 和密钥。
 2. 核对回调基础地址，系统会在其后拼接 `/api/user/epay/notify`。
-3. 统一保存后，在钱包发起测试充值。
+3. 统一保存。
 
-<Callout type="warn">
-**Epay 安全提醒**：<br/>
+<Callout type="warn" title="Epay 安全提醒">
 Epay 是一种支付协议，不是某个固定官网。请自行核验服务提供方，不要轻信他人搭建的第三方 Epay 站点。
 </Callout>
 
@@ -492,9 +484,9 @@ Epay 是一种支付协议，不是某个固定官网。请自行核验服务提
 2. 配置 Webhook 接收支付状态通知。
 3. 填写 Stripe 的 API 密钥、Webhook 密钥和价格 ID。
 4. 设置充值单价、最低充值金额，并按需开启促销代码。
-5. 点击“保存所有设置”，统一保存后测试充值。
+5. 点击“保存所有设置”。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerAddress>/api/stripe/webhook`，并订阅 `checkout.session.completed` 和 `checkout.session.expired` 两个事件。
 </Callout>
 
@@ -535,7 +527,7 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 1. 在 Creem 后台配置 Webhook 地址 `<ServerAddress>/api/creem/webhook`，并填写 API 密钥和 Webhook 密钥，选择测试或正式模式。
 2. 点击“添加产品”，填入产品 ID、名称、货币和价格。
 3. 将期望到账余额换算为配额点数，填写“额度”。
-4. 核对本地售价、币种与 Creem 产品一致，统一保存后到钱包选择产品测试。
+4. 核对本地售价、币种与 Creem 产品一致，统一保存。
 
 #### Waffo Pancake
 
@@ -559,10 +551,9 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 2. 填写商户 ID 和私钥，等待校验及目录加载。
 3. 选择已有店铺和激活产品；如需新建，先填写返回地址，再点击新建按钮。
 4. 启用后钱包会自动显示 Waffo Pancake 支付方式；如需自定义显示名称、图标或最低充值，可在「常规 › 付款方式」中添加处理标识为 `waffo_pancake` 的条目。
-5. 核对产品绑定，统一保存后发起测试充值
+5. 统一保存。
 
-<Callout type="info">
-**Waffo Pancake MoR**<br/>
+<Callout type="info" title="Waffo Pancake MoR">
 - 无需注册公司即可开始全球收款。面向独立开发者、OPC 个体经营者和初创团队构建。
 - Waffo Pancake 作为你的登记商户（Merchant of Record），承担全球收款相关的合规负担，包括消费税、开票、订阅管理、退款和拒付。
 - 个人开发者可以快速上线，专注产品而不是合规事务。几分钟即可完成入驻，从一个提示词到完整集成。
@@ -590,8 +581,7 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 | 回调通知地址 | 接收 Waffo 服务端支付结果。 | 选填完整 URL，需包含 `/api/waffo/webhook` 路径。留空时根据回调基础地址或服务器地址自动构造。 | 默认：空；示例：`https://api.example.com/api/waffo/webhook`。 |
 | 支付返回地址 | 指定支付后浏览器跳转页面。 | 选填完整页面 URL；留空回退至服务器地址加 `/wallet?show_history=true`。 | 默认：空；示例：`https://api.example.com/wallet`。 |
 
-<Callout type="info">
-**Waffo 聚合网关**
+<Callout type="info" title="Waffo 聚合网关">
 - 支付聚合模式：使用你自己的注册公司（离岸实体）入驻。面向企业场景构建。
 - 请在 Waffo 后台获取 API 密钥、商户 ID 以及 RSA 密钥对，并配置回调地址。
 </Callout>
@@ -610,8 +600,7 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 
 1. 开启 Waffo，选择环境并填写对应三项凭证、商户资料和金额设置。
 2. 核对通知和返回地址，新增或编辑支付方式；弹窗确认仅更新列表。
-3. 保存所有设置，再用测试账户选择相应方式下单。
-4. 核对 `X-SIGNATURE` 验签、订单成功状态、到账额度及日志。
+3. 保存所有设置。
 
 #### 金额与入账核对
 
@@ -644,7 +633,7 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 
 <Callout type="warn" title="注意">
 - 关闭「启用签到功能」时不显示两个额度输入框，开启后才能填写。
-- 最大值大于最小值时，在包含两端的区间内随机发放；否则固定发放最小值。当前表单不会因最小值大于最大值自动报错，保存前自行核对。
+- 最大值大于最小值时，在包含两端的区间内随机发放；否则固定发放最小值。当前表单不会因最小值大于最大值自动报错。
 - 每日按服务进程的本地日期判断，不按每位用户的浏览器时区判断；多实例应保持时区一致。
 - 用户和日期的唯一约束防止同一天重复领取；开启全局 Turnstile 时，签到请求也需通过对应校验。
 </Callout>

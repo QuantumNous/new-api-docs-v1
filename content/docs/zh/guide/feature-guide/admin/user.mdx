@@ -12,7 +12,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ## 用户管理概览
 
-页面顶部为关键词搜索框和「状态」「角色」「用户分组」筛选，右侧为「添加用户」和「查看」；每行末尾为编辑（铅笔）按钮和「…」操作菜单。
+页面顶部为关键词搜索框和「状态」「角色」「用户分组」筛选，右侧为「添加用户」和「查看」；每行末尾为编辑（铅笔）按钮和 ⋯ 操作菜单。
 
 - 用户管理-用户列表
 
@@ -32,7 +32,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 角色 | 用户、管理员或 Root。 |
 | 邀请信息 | 已邀请人数、邀请收益额度和邀请人 ID；三项都为空时显示「—」。 |
 | 时间 | 上行为创建时间，下行为最后登录时间（从未登录时为「-」）；按此列排序时按创建时间排序。 |
-| 操作 | 铅笔图标为编辑；「…」菜单含启用/禁用、提升/降级、管理绑定、管理订阅、重置 Passkey、重置 2FA、删除。Root 行的禁用、重置 Passkey、重置 2FA、删除置灰，且没有降级；已注销用户不显示任何操作。 |
+| 操作 | 铅笔图标为编辑；⋯ 菜单含启用/禁用、提升/降级、管理绑定、管理订阅、重置 Passkey、重置 2FA、删除。Root 行的禁用、重置 Passkey、重置 2FA、删除置灰，且没有降级；已注销用户不显示任何操作。 |
 
 ## 角色层级、状态和权限
 
@@ -50,7 +50,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![用户管理-操作菜单页面](/assets/guide/feature-guide/user-management-operations.png)
 
-点击「…」展开操作菜单，可执行启用、禁用、提升、降级；这四项操作提交前都需要完成[安全验证](#安全验证)。
+点击 ⋯ 展开操作菜单，可执行启用、禁用、提升、降级；这四项操作提交前都需要完成[安全验证](#安全验证)。
 
 | 操作 | 适用对象 | 行为与限制 |
 | --- | --- | --- |
@@ -59,7 +59,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 提升 | 普通用户 | 只有 Root 可以把普通用户提升为 Admin。 |
 | 降级 | Admin | 将 Admin 改为普通用户；Root 不能被降级。降级时会清除该账户的细粒度权限覆盖并撤销现有会话。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
   角色或状态发生认证敏感变化时，系统会更新认证状态、清理相关缓存并撤销用户会话。
 </Callout>
 
@@ -90,7 +90,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 验证方式与个人账户的敏感操作相同：已启用 2FA 或已注册 Passkey 时使用 2FA 或 Passkey，否则使用账户密码，没有密码的账户使用已绑定的第三方登录，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-auth#登录验证与安全" target="_blank" rel="noopener noreferrer">身份验证配置</a>。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   - 创建普通用户、只修改显示名称/分组/备注、「调整额度」和订阅管理不需要安全验证。
   - 关闭密码登录或 Passkey 功能后，对应方式不能用于验证；操作者没有其他可用方式时无法完成上述操作，应先在<a href="/zh/docs/guide/feature-guide/user/security#启用两步验证" target="_blank" rel="noopener noreferrer">安全与访问</a>页启用 2FA。
 </Callout>
@@ -119,7 +119,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 3. 按需填写显示名称，留空时系统使用用户名。
 4. 选择「普通用户」（默认）或「管理员」角色，点击「保存更改」；创建管理员时需先完成[安全验证](#安全验证)。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   - 仅 Root 可添加管理员用户。
   - Root 添加或编辑管理员用户时，可在抽屉下方的「管理员权限」区块为其设置权限，见[管理员权限](#管理员权限)。
 </Callout>
@@ -140,9 +140,9 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 ![用户管理-更新用户页面](/assets/guide/feature-guide/user-management-edit-user-information.png)
 
 1. 在目标用户行点击铅笔图标。
-2. 核对用户名，修改允许编辑的字段。
+2. 修改允许编辑的字段。
 3. 若要调整剩余额度，点击「调整额度」打开独立对话框 → 选择模式 → 输入金额并确认，不要直接修改只读额度字段。
-4. 点击「保存更改」；修改了密码或管理员权限时，需先完成[安全验证](#安全验证)。等待成功提示后重新加载列表。
+4. 点击「保存更改」；修改了密码或管理员权限时，需先完成[安全验证](#安全验证)。
 
 可编辑字段：
 
@@ -155,7 +155,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 剩余额度 | 用户钱包的余额 | 使用「调整额度」进行余额增减或覆盖 |
 | 备注 | 仅管理员可见，最长 255 个字符。 | 适合记录内部说明，不要写入密钥、Token 或不必要的个人敏感信息。 |
 | 管理员权限 | 仅 Root 编辑 Admin 时显示。 | 见[管理员权限](#管理员权限)；修改后保存需完成安全验证。 |
-| 角色 | 不可在编辑抽屉中修改。 | 使用「…」菜单中的「提升」「降级」。 |
+| 角色 | 不可在编辑抽屉中修改。 | 使用 ⋯ 菜单中的「提升」「降级」。 |
 | 绑定信息 | 只读展示 GitHub ID、Discord ID、OIDC ID、WeChat ID、邮箱、Telegram ID。 | 仅可查看；完整绑定列表（含 LinuxDO 和自定义 OAuth）和解除绑定需从菜单进入「管理绑定」。 |
 
 ### 用户绑定管理
@@ -168,12 +168,11 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 查看或解除绑定：
 
-1. 点击目标用户的「 ... 」展开操作菜单，选择「管理绑定」。
+1. 点击目标用户的 ⋯ 展开操作菜单，选择「管理绑定」。
 2. 对话框默认显示已绑定方式；点击「显示全部」可同时查看未绑定和已禁用的提供商，按钮随之变为「仅已绑定」。
-3. 核对用户名、用户 ID、提供商名称和外部账号标识。
-4. 若需要解除绑定，点击用户已绑定提供商卡片右上角的解除绑定图标，在「确认解绑」中确认，再完成[安全验证](#安全验证)。
+3. 若需要解除绑定，点击用户已绑定提供商卡片右上角的解除绑定图标，在「确认解绑」中确认，再完成[安全验证](#安全验证)。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   - 管理绑定对话框只提供解除绑定，不会替用户建立新的邮箱、OAuth、Passkey 或其他登录方式。
   - 解除绑定前应确认用户仍有密码或其他可用恢复方式；解除后，用户不能再通过该身份登录。
 </Callout>
@@ -184,7 +183,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![用户管理-用户订阅管理页面](/assets/guide/feature-guide/user-management-user-subscription.png)
 
-点击目标用户的「 ... 」展开操作菜单，选择「管理订阅」打开管理订阅面板：
+点击目标用户的 ⋯ 展开操作菜单，选择「管理订阅」打开管理订阅面板：
 
 - 可以查看该用户的订阅记录、套餐、来源、状态、有效期和额度使用情况。
 - 订阅管理面板还提供添加订阅、重置订阅额度、订阅作废和订阅删除操作。
@@ -203,11 +202,9 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 #### 添加订阅
 
 1. 在顶部套餐选择框中选择一个管理端可用套餐。
-2. 核对套餐名称、价格显示和目标用户。
-3. 点击「新增订阅」，等待成功提示。
-4. 创建成功后重新加载列表，检查来源、有效期和额度。
+2. 点击「新增订阅」。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   - 添加订阅是管理员代绑，不会创建支付订单，但接口要求实例已完成支付合规确认，并会再次校验套餐 ID 和单用户购买上限。
   - 购买上限统计该用户在此套餐下已经存在的全部订阅记录，包括生效、已过期、已作废的订阅记录；只有删除旧记录才会释放名额。
 </Callout>
@@ -215,11 +212,11 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 #### 重置订阅额度
 
 1. 在目标套餐的有效订阅行打开操作菜单，选择「重置额度」。
-2. 确认该操作会影响该用户该套餐下的所有有效、未过期订阅额度。
+2. 该操作会影响该用户该套餐下的所有有效、未过期订阅额度。
 3. 根据需要保留或关闭「推进下次重置时间」。该开关默认开启。
-4. 确认后查看返回的重置数量并重新加载列表。
+4. 在确认框中点击「重置额度」。成功提示会显示实际重置的有效订阅数量。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   重置会把匹配订阅的已用额度清零。开启推进时，系统按套餐当前的重置规则重新计算下一次重置时间；关闭时只清零已用额度并保留原重置时间。
 </Callout>
 
@@ -241,8 +238,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 恢复方式 | 没有“恢复作废”操作，只能重新创建订阅 | 没有恢复入口，通常无法找回 |
 | 进行中的请求/任务 | 因记录仍存在，后续结算或退款通常仍可按订阅 ID 完成 | 后续按订阅 ID 查询可能失败，结算或退款可能无法完成 |
 
-<Callout type="warn">
-  **实际使用建议**
+<Callout type="warn" title="实际使用建议">
   - 需要停止订阅继续生效，但保留完整历史记录：使用“作废”。
   - 仅在确认记录错误、测试数据或确实不需要保留历史时使用“删除”。
   - 如果涉及退款，应单独执行退款流程，不能把作废或删除当作退款。
@@ -256,11 +252,10 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 ![用户管理-重置 Passkey 页面](/assets/guide/feature-guide/user-management-reset-passkey.png)
 
 1. 在用户行菜单选择「重置 Passkey」。
-2. 核对确认框中的用户名。
-3. 确认并完成[安全验证](#安全验证)后，系统删除该用户现有的 Passkey 凭证，并撤销其全部登录会话。
-4. 用户需要重新注册 Passkey，之后才能继续使用无密码登录。
+2. 确认并完成[安全验证](#安全验证)后，系统删除该用户现有的 Passkey 凭证，并撤销其全部登录会话。
+3. 用户需要重新注册 Passkey，之后才能继续使用无密码登录。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   重置前，确认该用户仍有可用的登录方式：已设置密码、已绑定可用的第三方账号，或已绑定可接收重置邮件的邮箱。否则用户在重置后无法登录，也无法重新注册 Passkey。
 </Callout>
 
@@ -271,17 +266,17 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 ![用户管理-重置 2FA 页面](/assets/guide/feature-guide/user-management-reset-2fa.png)
 
 1. 在用户行菜单选择「重置 2FA」。
-2. 确认将删除现有的 2FA 因子和备用码。
+2. 该操作会删除现有的 2FA 因子和备用码。
 3. 确认并完成[安全验证](#安全验证)后，系统更新认证版本并撤销该用户的全部登录会话。
 4. 用户需要在「安全与访问」页重新配置 2FA。
 
 ### 删除用户
 
-1. 在目标行打开「…」菜单，选择「删除」。
-2. 在确认框「您确定吗？」中核对用户名和「此操作无法撤销」提示，点击「删除」。
-3. 完成[安全验证](#安全验证)后等待成功提示，并重新加载列表。
+1. 在目标行打开 ⋯ 菜单，选择「删除」。
+2. 在确认框「您确定吗？」中点击「删除」；确认框提示「此操作无法撤销」。
+3. 完成[安全验证](#安全验证)。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   硬删除会清理用户主记录及源码明确关联的认证数据，包括：
   - API Token 和其他用户认证令牌；
   - 浏览器会话和认证流程记录；
@@ -291,7 +286,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
   - 自定义 OAuth 绑定。
 </Callout>
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   - 当前页面的删除按钮调用 `DELETE /api/user/:id`，执行永久硬删除。
   - 只有角色层级严格高于目标角色的操作者可以执行，Root 账户不能通过此流程删除。
   - 删除前应先导出或保存组织要求留存的审计信息，因为当前页面没有恢复入口。
@@ -323,12 +318,12 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 | 操作 | 保存方式 | 生效时机 |
 | --- | --- | --- |
-| 启用、禁用、提升、降级 | 「…」菜单 → 确认 → 安全验证 | 立即生效；状态或角色实际变化时撤销会话。禁用后，该用户的 API 密钥从下一次请求起被拒绝；降级同时清除该账户的管理员权限覆盖。 |
+| 启用、禁用、提升、降级 | ⋯ 菜单 → 确认 → 安全验证 | 立即生效；状态或角色实际变化时撤销会话。禁用后，该用户的 API 密钥从下一次请求起被拒绝；降级同时清除该账户的管理员权限覆盖。 |
 | 管理员权限 | 在编辑抽屉中随「保存更改」提交，需安全验证 | 处理该请求的节点立即生效，其他节点按同步周期（默认 60 秒）重新载入；不撤销会话。 |
 | 修改密码 | 编辑抽屉中填写新密码并点击「保存更改」，需安全验证 | 立即生效并撤销会话。 |
 | 解除绑定 | 「管理绑定」中点击解除绑定图标，「确认解绑」后完成安全验证，提示「解绑成功」 | 立即生效，之后不能再用该身份登录；不撤销已登录的会话。 |
-| 重置 Passkey、重置 2FA | 「…」菜单 → 确认 → 安全验证 | 立即删除对应凭证并撤销会话。 |
-| 删除用户 | 「…」菜单 →「您确定吗？」→ 安全验证，提示「用户删除成功」 | 立即删除，不可恢复，见[删除用户](#删除用户)。 |
+| 重置 Passkey、重置 2FA | ⋯ 菜单 → 确认 → 安全验证 | 立即删除对应凭证并撤销会话。 |
+| 删除用户 | ⋯ 菜单 →「您确定吗？」→ 安全验证，提示「用户删除成功」 | 立即删除，不可恢复，见[删除用户](#删除用户)。 |
 
 </div>
 

@@ -36,7 +36,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 每周期最大请求数 | ≥0，默认 `0` | 限制周期内允许的请求总数（含失败）；0 = 无限制。 |
 | 最大成功请求数 | ≥1，默认 `1000` | 限制周期内允许的成功请求数（响应状态码低于 400 计为成功）。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
 - 模型请求路由按登录用户（同一用户跨多个 API 密钥共享计数）计数并受速率限制；
 - Web/API 路由限流则由独立环境变量控制并按 IP 计数;
 - 限制周期内任一计数超限即返回 429 限流错误
@@ -52,8 +52,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 1. 点击「添加分组」。
 2. 在弹窗中输入分组名称（须与用户分组或 API 密钥分组的名称完全一致），填写最大请求数（含失败）与最大成功请求数。
-3. 点击「添加」后确认规则已加入列表，再点击页头「保存速率限制」写入（编辑、删除规则后同样需要保存）；需要精确控制时切换到 JSON 模式核对。
-4. 用该分组下的 API 密钥发起请求验证。
+3. 点击「添加」，再点击页头「保存速率限制」写入（编辑、删除规则后同样需要保存）；需要精确控制时可切换到 JSON 模式。
 
 - 安全与限制-添加分组
 
@@ -63,7 +62,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![安全与限制-编辑分组页面](/assets/guide/feature-guide/system-settings-security-and-limits-rate-limiting-edit-group.png)
 
-<Callout type="info">
+<Callout type="info" title="提示">
   分组规则仅在请求对应的分组键（API 密钥分组或用户分组）出现在规则中时生效；未命中任何分组规则时使用全局限制。空规则集表示全部使用全局。
 </Callout>
 
@@ -95,7 +94,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - **Critical**：作用于注册、登录、密码重置、OAuth state/回调、Passkey、Access Token、2FA 验证、验证码等**关键/匿名**接口，按 IP计数。
 - **Search**：作用于搜索端点，按用户计数。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 这些变量可以通过部署环境或启动配置设置，**修改后需重启服务**才生效；多实例部署需保持一致。
 </Callout>
 
@@ -124,7 +123,7 @@ SSRF 防护用于限制服务端出站 HTTP 请求允许访问的域名与 IP，
 - 仅允许 `http://` / `https://` 地址；域名解析失败会报错。
 - 对域名同时校验「请求时」与「拨号时」（dial-time），避免解析后回环 IP 绕过；拨号时的校验仅在开启「对已解析的域应用 IP 筛选器」且请求不经代理时生效。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   - 关闭「允许私有 IP」时，指向内网或回环 IP 地址的下载、Webhook、通知等出站目标会被拦截；通过域名访问的目标仅在「对已解析的域应用 IP 筛选器」开启时才会检查解析出的 IP，关闭后解析到内网地址的域名不会被拦截。转发到上游渠道的请求不受影响。
   - 域名白名单启用后请同时注意「对已解析的域应用 IP 筛选器」：它会让解析出的每个 IP 再受 IP 规则约束；
   - 若 IP 列表为空且为黑名单模式则全部放行；若为白名单且为空则全部阻断。

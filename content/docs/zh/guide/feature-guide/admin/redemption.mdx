@@ -9,7 +9,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - 兑换码管理仅 Admin 和 Root 可访问，从侧边栏「管理员」 → 「兑换码」或访问 `/redemption-codes` 进入；创建、查询、编辑、启停和删除接口统一按管理员角色授权，没有单独的细粒度权限矩阵。
 - 用于批量创建和分发额度兑换码，维护其名称、额度、有效期和启用状态，并清理已失效的记录。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   本页说明控制台当前提供的兑换码管理能力。兑换码可以作为一次性的额度凭证分发给用户；额度和有效期由创建时填写，额度的显示单位由平台的计费设置决定。
 </Callout>
 
@@ -20,7 +20,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 3. 确认操作只能通过 Root 的控制台会话完成，API Access Token 不能代替该会话。
 4. 合规未确认或条款版本与当前版本不匹配时，已有兑换码仍可由管理员查看和维护，但创建操作及用户兑换会被拒绝。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   - 「系统设置」 → 「站点与品牌」 → 「侧边栏模块」 → 「管理员区域」只控制菜单入口是否显示，不等同于撤销后端管理员权限。
   - 「管理员权限」中没有兑换码相关权限。需要禁止某位 Admin 使用兑换码功能时，只能调整其账户角色（如<a href="/zh/docs/guide/feature-guide/admin/user#角色状态" target="_blank" rel="noopener noreferrer">降级</a>为普通用户），或在部署侧做访问控制。
 </Callout>
@@ -92,14 +92,14 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
    - 名称：1–20 个字符；留空时自动以额度的显示值（如 `$10`）作为名称。
    - 额度：必须大于 0。
    - 过期时间：可用「永不」「1 个月」「1 周」「1 天」快速设置；留空表示永不过期，不能早于当前时间。
-3. 核对额度显示单位及有效期，然后点击「保存更改」。
+3. 点击「保存更改」。
 4. 创建成功后弹出「兑换码创建完成」：
    - 需要保存发放清单时，勾选「保存为文件」并选择「保存为 TXT」或「保存为 Markdown」；「包含名称」「包含额度」默认已勾选，可按需取消。然后点击「完成」下载文件。
    - 不勾选「保存为文件」时，点击「完成」只关闭弹窗。
    - TXT 文件每行一个兑换码，名称、兑换码、额度依次以 Tab 分隔（未勾选的项不写入），没有表头；Markdown 文件为带表头的表格。
 5. 之后可在列表中复制单个或勾选的兑换码，并通过安全渠道分发。
 
-<Callout type="warn">
+<Callout type="warn" title="注意保管兑换码">
   完整兑换码等同于可转移的额度凭证。不要将其放入公开截图、群聊、工单、日志或代码仓库；批量创建后应记录发放对象和批次，未使用的明文副本也应限制访问。
 </Callout>
 
@@ -111,7 +111,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 名称<Tab>完整兑换码
 ```
 
-<Callout type="info">
+<Callout type="info" title="提示">
   当前控制台没有兑换码导入功能，列表也不能导出文件；文件只能在创建完成时保存一次。保存发放清单时，应在受控环境中处理复制的内容和创建时保存的文件，并避免把完整代码长期存放在普通表格或共享文档中。
 </Callout>
 
@@ -134,13 +134,13 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 启用或禁用
 
-1. 点击目标行操作列的「…」菜单。
+1. 点击目标行操作列的 ⋯ 菜单。
 2. 「未使用」的兑换码菜单中显示「禁用」，「已禁用」的显示「启用」，点击即可切换。「已使用」和「已过期」的兑换码菜单中只有「删除」。
 
 ### 单条删除兑换码
 
-1. 点击目标行操作列的「…」菜单并选择「删除」。
-2. 在确认框核对后确认删除。
+1. 点击目标行操作列的 ⋯ 菜单并选择「删除」。
+2. 在确认框中确认删除。
 
 ### 删除无效兑换码
 
@@ -156,7 +156,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 点击页面右上角的「删除无效」，在「删除无效的兑换码？」确认框中再次点击「删除无效」。完成后页面提示删除的数量。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   单条删除、批量删除和「删除无效」都没有恢复入口。若只是暂时停止发放，优先使用「禁用」，不要用删除代替停用。
 </Callout>
 
@@ -164,7 +164,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 用户在「钱包」页面输入兑换码即可充值。<a href="/zh/docs/guide/feature-guide/user/wallet#兑换码" target="_blank" rel="noopener noreferrer">详见：钱包</a>
 
-<Callout type="info">
+<Callout type="info" title="提示">
   1. 只有启用且未过期的兑换码可以使用。
   2. 同一个兑换码在重复或并发请求中最多成功一次。
 </Callout>
@@ -179,7 +179,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | --- | --- | --- |
 | 创建兑换码 | 「创建兑换码」抽屉中点击「保存更改」，提示「成功创建了 … 个兑换码」并显示「兑换码创建完成」 | 立即可兑换。 |
 | 编辑 | 「更新兑换码」抽屉中点击「保存更改」，提示「兑换码更新成功」 | 立即生效，只影响之后的兑换，已兑换的不变。 |
-| 启用、禁用 | 「…」菜单中点击后直接提交，没有确认框；提示「兑换码已启用」或「兑换码已禁用」 | 立即生效；已兑换到账的额度不受影响。 |
+| 启用、禁用 | ⋯ 菜单中点击后直接提交，没有确认框；提示「兑换码已启用」或「兑换码已禁用」 | 立即生效；已兑换到账的额度不受影响。 |
 | 单条删除、批量删除、删除无效 | 在确认框中确认 | 立即生效，删除后无法兑换，也没有恢复入口；已兑换到账的额度不会收回。 |
 | 过期 | 无需操作 | 到达过期时间后无法兑换；列表中的「已过期」按浏览器的当前时间判断。 |
 

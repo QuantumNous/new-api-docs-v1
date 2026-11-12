@@ -41,16 +41,16 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 电子邮件别名限制 | 启用后拒绝 @ 前含 `+` 或 `.` 的邮箱，例如 `user+test@example.com`、`first.last@example.com`。 |
 | 电子邮件域白名单 | 每行一个域名 (仅在启用域名限制时使用) |
 
-<Callout type="info">
+<Callout type="info" title="提示">
 - 用户名最长 20 个字符，邮箱最长 50 个字符，密码长度为 8–128 个字符。
 - 新注册用户创建为普通用户；管理员角色应在<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>中由有权限的管理员创建或调整。
 </Callout>
 
-<Callout type="info">
+<Callout type="info" title="提示">
 当前代码在发送密码注册验证码和已登录用户绑定邮箱时，都会检查域名白名单和邮箱别名规则。
 </Callout>
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   开启邮箱验证前先确认发信配置（SMTP 或 Resend）能从服务端正常发信。保存认证选项不会测试发信配置；如果邮件无法送达，用户可能无法完成注册验证或找回密码。
 </Callout>
 
@@ -91,12 +91,12 @@ OAuth 分区以标签页展示内置提供商。先在提供商后台创建应�
 | Telegram | 开关、Client ID、Client Secret。Client ID 和 Client Secret 在 BotFather 的 Login Widget 中登记回调地址后获取；完成配置后，现有 Telegram 绑定可继续使用。使用 `oauth.telegram.org` 的统一 **OIDC/PKCE** OAuth；`telegram` 标识符（slug）为内置保留。 |
 | 微信 | 开关、服务器地址（微信登录服务的地址）、服务器 Token、二维码图片 URL。登录时后端调用配置服务的 `/api/wechat/user?code=...` 获取用户信息，属于依赖外部服务的专用流程。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
 - 除微信外，各提供商标签顶部的「设置引导」会显示由 `ServerAddress` 推导出的 `/oauth/{provider}` 回调地址（OIDC 标为「重定向 URL」，其余标为「授权回调 URL」），GitHub、Discord、OIDC 还显示主页 URL，均可直接复制；未设置服务器地址时，这些地址以占位文字「网站地址」开头，不能直接使用，应先在<a href="/zh/docs/guide/feature-guide/system-settings/settings-site#系统信息" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>中填写。
 - Discord 与 OIDC 的令牌交换会发送由 `ServerAddress` 生成的对应回调；
 - GitHub 当前令牌交换不发送 `redirect_uri`；
 - LinuxDO 则根据收到请求的协议和主机拼接 `/api/oauth/linuxdo`，与管理界面显示的地址可能不同。
-- 因此不要把所有提供商套用一个回调模板，应复制页面为当前实例生成的地址，并结合提供商要求和反向代理实际转发路径逐项核对。
+- 因此不要把所有提供商套用一个回调模板，应复制页面为本站生成的地址，并以提供商要求和反向代理实际转发路径为准。
 </Callout>
 
 - OAuth 登录与绑定流程
@@ -104,11 +104,11 @@ OAuth 分区以标签页展示内置提供商。先在提供商后台创建应�
 1. 在提供商后台登记应用名称、主页和该提供商要求的回调地址。
 2. 在本页填写凭证和端点，保存后再开启提供商。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   管理员可使用<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>管理用户绑定信息。
 </Callout>
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   回调地址、浏览器公开地址和服务端看到的协议必须一致。
 </Callout>
 
@@ -131,13 +131,13 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
 | 允许不安全来源| 允许在非 HTTPS 源上注册通行密钥（仅建议用于开发，生产环境应关闭。） |
 | 允许使用通行密钥的网站 | 每行一个网站地址，例如 `https://example.com`，不带页面路径；带端口的地址填在这里。留空时使用「服务器地址」。 |
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
 - 「通行密钥域名」分组中的「为什么需要设置？」会打开「如何设置通行密钥域名」，显示当前网站和系统当前使用的域名；弹窗中的操作按钮在尚未设置域名时为「填入当前网站」，已有域名时为「保留现有域名」，只有通过 HTTPS 或 `http://localhost` 访问、且不是 IP 地址时才能使用。主域名与当前网站不匹配或未设置时，分组提示变为黄色警告。
 - 修改主域名、兼容域名或允许使用的网站并保存时，系统先预检影响。更改或清空主域名会弹出「更改通行密钥域名？」；移除兼容域名会弹出「移除兼容的通行密钥域名？」，列出被移除的域名和受影响的通行密钥数量。确认后才写入。被移除域名上的通行密钥将无法使用，确认前应确保受影响用户可以用其他方式登录。
 - 关闭「启用 Passkey」后，已注册通行密钥但未启用 2FA 的用户将无法登录：主认证通过后仍要求通行密钥验证，此时提示「此验证方式当前不可用。」。如需恢复，可重新开启「启用 Passkey」，或在<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>中为这些用户执行「重置 Passkey」。
 </Callout>
 
-<Callout type="info">
+<Callout type="info" title="提示">
 管理员若需为单个用户清理 Passkey，请到<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>执行「重置 Passkey」。该操作会删除用户Passkey凭证并撤销其现有登录会话。
 </Callout>
 
@@ -155,7 +155,7 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
 | 站点密钥 | 前端渲染挑战所需的站点密钥。 |
 | 密钥 | 服务端向 Cloudflare 验证令牌所需的密钥。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
   - 当前中间件会在以下流程检查 Turnstile：注册、密码登录、请求注册邮箱验证码、请求密码重置邮件，以及用户签到。
   - Turnstile 密钥是服务端凭证。
 </Callout>
@@ -188,16 +188,14 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
 4. 编辑已有提供商时，Client Secret 输入框为空表示保留原值。
 5. 修改标识符（slug）前先更新第三方后台的回调登记；保存后旧地址不再对应当前提供商。
 
-<Callout type="warn">
-新增、编辑（含启停、修改标识符）或删除提供商只在处理该请求的节点立即生效。多节点部署时，其他节点需要重启后才会加载变更，在此之前这些节点的登录页和回调仍按旧配置处理。规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>。
+<Callout type="warn" title="注意">
+新增、编辑（含启停、修改标识符）或删除提供商只在处理该请求的节点立即生效。多实例部署时，其他节点需要重启后才会加载变更，在此之前这些节点的登录页和回调仍按旧配置处理。规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>。
 </Callout>
 
-<Callout type="info">
-- 创建前准备
+<Callout type="info" title="创建前准备">
 1. 先在第三方提供商后台创建 OAuth 应用，并准备 Client ID、Client Secret、授权端点、令牌端点和用户信息端点。
 2. 管理页提供以下创建预设：GitHub Enterprise、GitLab、Gitea、Nextcloud、Keycloak、Authentik 和 ORY Hydra。
 3. 预设只是辅助填写名称、标识符（slug）、端点、作用域和常见字段映射，不保证提供商可以直接连通。
-4. 使用预设时应根据实际版本和部署路径逐项核对。
 </Callout>
 
 - 字段说明
@@ -240,7 +238,7 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
 - **2FA 的边界**：2FA 是用户级安全功能，不是本页的全局开关。用户在<a href="/zh/docs/guide/feature-guide/user/security#启用两步验证" target="_blank" rel="noopener noreferrer">安全与访问</a>页启用和管理 2FA；管理员重置某个用户的 2FA、备用码和登录会话时，应使用<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>中的「重置 2FA」。
 - **绑定/解绑/删除账户**：涉及账户绑定变更或删除的操作，也要求再次验证（已启用 2FA 或 Passkey 时使用它们，否则使用密码或第三方登录），避免会话被意外劫持。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   开启 2FA 或 Passkey 后，主认证之后还需要完成验证质询（约 5 分钟）才会签发会话。请为 Root 和用户保留至少一种经过验证的替代登录方式；如果验证证明或 OAuth state 已过期/被消费，需要重新发起登录或绑定，而不是反复刷新同一个地址。
 </Callout>
 
@@ -256,8 +254,8 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
 - 前端通过 `GET /api/user/login/encryption-key` 获取公钥；密码使用 RSA-OAEP v1/v2 信封加密后随请求提交。
 - 服务端使用私钥解密校验密码。
 
-<Callout type="warn">
-  - 该开关是实例级环境变量，多节点部署时各节点必须一致。
+<Callout type="warn" title="注意">
+  - 该开关是实例级环境变量，多实例部署时各节点必须一致。
   - 各节点开关不一致时，部分登录请求会被拒绝（提示「无效的参数」）；私钥无法读取或写入时服务无法启动；解密失败时提示「用户名或密码错误，或用户已被封禁」。同时注意与反向代理的 HTTPS/HTTP 传输配合，关闭则为明文密码传输。
 </Callout>
 
@@ -277,7 +275,7 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
 | 通行密钥认证 | 页头「保存更改」；修改域名设置会使已有通行密钥失效时，需先确认才写入 | 下一次通行密钥注册或登录起生效；被移除域名上的通行密钥无法使用。 |
 | 机器人保护 | 页头「保存更改」 | 服务端从下一次受保护的请求起校验，范围见[机器人保护](#机器人保护)。 |
 | 自定义 OAuth | 在列表和对话框中逐个保存，页头没有保存按钮 | 处理该请求的节点立即生效；其他节点需重启服务后才会加载，在此之前仍按旧配置处理。 |
-| 密码传输加密 | 不在页面保存，由环境变量控制 | 需重启服务；多节点部署需保持一致，见[密码传输加密](#密码传输加密)。 |
+| 密码传输加密 | 不在页面保存，由环境变量控制 | 需重启服务；多实例部署需保持一致，见[密码传输加密](#密码传输加密)。 |
 
 </div>
 

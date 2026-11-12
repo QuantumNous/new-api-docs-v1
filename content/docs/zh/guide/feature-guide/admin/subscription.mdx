@@ -9,7 +9,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - 订阅套餐把价格、有效期、可用额度、额度重置周期、用户分组和支付方式组合成一项可购买的权益。
 - 订阅管理仅 Admin 和 Root 可访问，从侧边栏「管理员」 → 「订阅」或访问 `/subscriptions` 进入，可以创建、编辑、启用、禁用套餐，以及批量重置某个套餐下的有效订阅额度。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   Root 在「系统设置」 → 「计费与支付」 → 「支付网关」中<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#支付合规确认" target="_blank" rel="noopener noreferrer">确认支付合规条款</a>之前，订阅管理页面只能查看套餐列表：页面顶部显示「管理员在支付网关设置中确认合规条款之前，订阅套餐的创建和修改会被锁定。」，「新建套餐」以及行内的编辑、重置订阅额度、启用/禁用按钮均不可用。
 </Callout>
 
@@ -46,7 +46,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 4. 如需第三方支付，先完成对应网关的全局凭证、回调地址和 Webhook 配置。
 5. 决定是否允许钱包余额兑换，以及订阅额度耗尽后是否允许继续使用钱包余额。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   套餐保存成功不等于所有支付方式已经可用。第三方支付同时依赖套餐产品 ID、全局网关配置、回调可达性和支付平台中的产品状态。
 </Callout>
 
@@ -80,8 +80,8 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 允许余额兑换 | `allow_balance_pay` | 开关；默认开启。 | 开启后，余额足够的用户可以用钱包余额购买；关闭后，购买弹窗中的「使用余额支付」不可用，并提示「该套餐不允许使用余额兑换」。 |
 | 额度用尽后允许使用钱包余额 | `allow_wallet_overflow` | 开关；默认开启。 | 创建订阅时写入权益快照。是否实际回退钱包还取决于用户选择的计费偏好。 |
 
-<Callout type="info">
-  界面中的「额度」不是所有部署都固定显示为美元。其标签和步进值会跟随实例的货币或 Token 显示设置，最终保存为 New API 内部 quota；配置和核对时应使用当前实例显示的单位。
+<Callout type="info" title="提示">
+  界面中的「额度」不是所有部署都固定显示为美元。其标签和步进值会跟随实例的货币或 Token 显示设置，最终保存为 New API 内部 quota；配置时应使用本站显示的单位。
 </Callout>
 
 ### 有效期参数
@@ -92,7 +92,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 有效期数值 | `duration_value` | 正整数；默认 `1`；单位选择「自定义(秒)」时不显示，改为填写「自定义秒数」。 | 年和月按日历增加；日按 24 小时、小时按固定小时数增加。 |
 | 自定义秒数 | `custom_seconds` | 单位选择「自定义(秒)」时必须大于 `0`。 | 直接把指定秒数加到订阅创建时间。非正值会导致订阅无法创建。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
   有效期在每份用户订阅创建时计算并保存。之后修改套餐的有效期，不会延长或缩短已经存在的订阅。
 </Callout>
 
@@ -103,7 +103,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 重置周期 | `quota_reset_period` | 不重置、每天、每周、每月、自定义(秒)；默认「不重置」。 | 决定订阅的下一次额度重置时间。每天推进到次日，每周推进到下一个周一，每月推进到下月第一天。 |
 | 自定义秒数 | `quota_reset_custom_seconds` | 重置周期为「自定义(秒)」时才可填写，必须大于 `0`。 | 从当前计算基准向后增加指定秒数。下一次重置晚于订阅结束时间时，不再安排重置。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
   重置额度只会把已用额度清零，不会改变套餐总额度，也不会延长订阅有效期。
 </Callout>
 
@@ -115,11 +115,11 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | Creem Product ID | `creem_product_id` | 将套餐关联到 Creem 产品。 | 还需配置全局 Creem API Key、Webhook Secret 和产品列表；套餐 Product ID 与系统充值产品配置是两个层级。 |
 | Waffo Pancake Product ID | `waffo_pancake_product_id` | 从已保存店铺的一次性产品中选择套餐产品。 | 产品列表和「+ 新建」接口要求 Root，并依赖 Merchant ID、Private Key、Store ID 和回调配置。当前网关启用判定还要求系统已配置钱包充值用 Pancake Product ID；它与套餐 Product ID 不能混用。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
   EPay 没有套餐级产品 ID。启用全局 EPay、配置至少一种支付方式且套餐价格不低于 `0.01` 后，用户可以按套餐价格创建 EPay 订单。钱包余额购买同样不需要第三方产品 ID。
 </Callout>
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   - Stripe 和 Creem 下单时分别以套餐的外部 Price ID 或 Product ID 为准，实际扣款金额与币种由第三方产品决定；New API 列表展示和订单记录使用本地「套餐价格」。发布前必须确保外部产品与本地价格完全一致。修改一端不会自动同步另一端。
   - Stripe 套餐使用 `subscription` 模式创建周期性订阅。Stripe 会按所选 Price 的周期自动续费，直到订阅被取消。Stripe 后续的续费扣款不会在 New API 中创建或延长订阅，本地订阅仍按套餐有效期到期；上线前请在 Stripe 后台确认取消方式，并告知用户续费规则。
 </Callout>
@@ -135,7 +135,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - 套餐标题不为空；
 - 套餐价格大于 `0`。
 
-<Callout type="info">
+<Callout type="warn" title="注意">
   该操作会先在第三方平台创建产品，之后仍需保存套餐表单。若第三方产品创建成功但套餐保存失败，Pancake 中的产品不会由 New API 自动删除，应到第三方平台核对并按需清理。
 </Callout>
 
@@ -146,8 +146,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 ![订阅管理-编辑套餐页面](/assets/guide/feature-guide/subscription-management-edit-subscription.png)
 
 1. 在目标套餐右侧点击编辑图标。
-2. 核对表单中回填的基本信息、有效期、重置周期和产品 ID。
-3. 修改需要调整的字段并点击「保存更改」。
+2. 修改需要调整的字段并点击「保存更改」。
 
 编辑套餐主要影响后续购买和新建订阅，不是批量迁移既有订阅的工具。各类字段对已有订阅的影响如下：
 
@@ -158,7 +157,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 额度重置周期、自定义重置秒数 | 自动重置或管理员选择推进下次重置时间时，会读取套餐当前规则，因此可能影响已有的有效订阅。 |
 | 限购 | 后续购买或管理员添加订阅时重新统计现存记录并应用当前上限。 |
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   待支付订单保存的是套餐 ID 和下单金额。支付回调完成订单时会重新读取套餐并创建权益；用户支付期间若修改套餐的有效期、额度、分组或「额度用尽后允许使用钱包余额」配置，最终创建的权益可能与下单时看到的内容不同。高风险调整应先暂停公开购买并处理待支付订单。
 </Callout>
 
@@ -185,7 +184,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - 阻止已经创建的待支付订单在成功回调后完成；
 - 阻止管理员在用户管理中为指定用户添加该套餐。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   当前订阅管理页面没有删除套餐功能。禁用是发布状态控制，不是撤销权益；如需立即终止某个用户的订阅，应在「用户管理」 → 「管理订阅」中执行作废操作，并先确认分组回退和其他有效订阅的影响。
 </Callout>
 
@@ -198,16 +197,15 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 套餐列表中的重置操作会处理该套餐下所有状态为生效的订阅：
 
 1. 点击目标套餐右侧的重置图标。
-2. 确认对话框中的套餐名称。
-3. 决定是否开启「推进下次重置时间」。该开关默认开启。
-4. 点击「重置额度」。成功提示会显示实际重置的有效订阅数量。
+2. 决定是否开启「推进下次重置时间」。该开关默认开启。
+3. 点击「重置额度」。成功提示会显示实际重置的有效订阅数量。
 
 | 选项 | 实际行为 |
 | --- | --- |
 | 开启「推进下次重置时间」 | 清零已用额度，并按套餐当前重置规则重新计算下一次重置时间。 |
 | 关闭「推进下次重置时间」 | 只清零已用额度，保留订阅原有的下一次重置时间。 |
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   这是对套餐下所有用户的批量操作。执行前应确认目标套餐、重置周期和影响人数；尤其不要把它当作给单个用户补额度的快捷方式。单个用户的重置应从「用户管理」 → 「管理订阅」执行。
 </Callout>
 
@@ -221,7 +219,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | `expired`（已过期） | 到达结束时间后，被后台维护流程标记为已过期。 |
 | `cancelled`（已作废） | 管理员提前执行作废，结束时间同时改为当前时间。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
   「作废」会保留订阅历史记录；「删除」会硬删除该条订阅记录且没有恢复入口。删除订阅并不表示相关支付订单、充值流水、使用日志或任务记录也会被一并删除。完整操作说明参阅<a href="/zh/docs/guide/feature-guide/admin/user#用户订阅管理" target="_blank" rel="noopener noreferrer">用户管理</a>。
 </Callout>
 
@@ -233,7 +231,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 2. 否则，订阅设置了降级分组时，直接切换到该分组；即使用户分组已被手动修改，也会被改为降级分组。
 3. 没有设置降级分组时，只有用户当前仍处于该订阅的升级分组，才恢复购买前分组。购买时用户已在升级分组中的，订阅没有记录购买前分组，因此不回退。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   执行作废或删除前，应先检查用户的当前分组和其他有效订阅。
 </Callout>
 
@@ -247,7 +245,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | Creem | 套餐填写 Creem Product ID，全局 Creem 和回调配置完整。 | 支付回调成功后创建一份订阅。 |
 | Waffo Pancake | 套餐选择独立的 Waffo Pancake Product ID，全局凭证、店铺和回调配置完整。 | 购买一次性产品并在回调成功后创建一份订阅。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
   - 用户可以在钱包页面选择「优先订阅」「优先钱包」「仅用订阅」或「仅用钱包」。
   - 套餐的「额度用尽后允许使用钱包余额」只在用户选择「优先订阅」时起作用：订阅额度不足时，只有用户所有生效中的订阅都开启了该选项，才会继续使用钱包余额。该选项不会覆盖用户自己的计费偏好。
   - 用户侧购买、订阅状态和计费偏好说明参阅<a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>。
@@ -257,7 +255,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 订阅到期和周期额度重置由后台维护任务处理：
 
-- 只在 Master 节点运行；
+- 只在 Master 实例运行；
 - 服务启动后先执行一次，之后约每分钟检查一次；
 - 每批最多处理 300 条记录；
 - 到期处理会更新订阅状态，并按条件执行用户分组回退；
@@ -269,7 +267,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ### 套餐
 
-用户侧的套餐列表直接读取数据库，保存后各节点立即可见。下单、支付回调、余额购买、管理员添加订阅、重置额度和订阅额度的周期重置读取套餐缓存：启用 Redis 时保存后立即生效；未启用 Redis 的多节点部署中，其他节点最长约 5 分钟（默认）后才读到新值。
+用户侧的套餐列表直接读取数据库，保存后各节点立即可见。下单、支付回调、余额购买、管理员添加订阅、重置额度和订阅额度的周期重置读取套餐缓存：启用 Redis 时保存后立即生效；未启用 Redis 的多实例部署中，其他节点最长约 5 分钟（默认）后才读到新值。
 
 <div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
 
@@ -311,15 +309,15 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 <Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
 
 <Accordion title="订阅已到期，状态仍为「生效」或分组没有回退">
-**说明**：到期处理由 Master 节点上的后台维护任务约每分钟执行一次。已到结束时间但尚未被标记的订阅，不再用于扣除订阅额度。
+**说明**：到期处理由 Master 实例上的后台维护任务约每分钟执行一次。已到结束时间但尚未被标记的订阅，不再用于扣除订阅额度。
 
 **可能原因**：
-- 没有运行中的 Master 节点。
+- 没有运行中的 Master 实例。
 - 后台维护任务执行失败，应用日志中有对应错误。
 - 订阅刚到期，任务尚未执行。
 
 **处理方法**：
-1. 检查 Master 节点和后台任务的运行情况。
+1. 检查 Master 实例和后台任务的运行情况。
 2. 查看应用日志。
 3. 需要立即终止时，在「用户管理」→「管理订阅」中作废该订阅。
 </Accordion>

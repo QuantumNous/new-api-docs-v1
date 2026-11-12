@@ -47,7 +47,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 逐项保存（默认） | 下列以外的所有分区 | 见表后说明。 | — |
 | 整体保存 | 请求策略的三个分区（各自保存） | 每次提交的修改项先整体校验，再在一个事务中写入；任一项不合法，全部不写入。成功提示「保存成功」。没有版本冲突检测，后保存的覆盖先保存的。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#保存与生效" target="_blank" rel="noopener noreferrer">请求策略配置</a> |
 | 批量保存并检测冲突 | 计费与支付 › 模型定价中的模型价格 | 多个模型的价格修改一次提交，在一个事务中写入；如果打开页面后价格已被他人修改，保存会被拒绝，需要重新加载后再修改。成功提示「模型定价已保存」。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a> |
-| 开关即时保存，列表单独保存 | 控制台内容 › 公告、API 地址、常见问答、Uptime Kuma | 「启用」开关切换后立即保存；列表中的新增、编辑、删除只修改页面数据，点击卡片内的「保存设置」后才写入。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">控制台内容配置</a> |
+| 开关即时保存，列表单独保存 | 控制台内容 › 公告、API 地址、常见问答、Uptime Kuma | 「已启用」开关切换后立即保存；列表中的新增、编辑、删除只修改页面数据，点击卡片内的「保存设置」后才写入。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">控制台内容配置</a> |
 | 按条目保存 | 身份验证 › 自定义 OAuth | 在列表和对话框中逐个新增、编辑、删除提供商，页头没有保存按钮。生效范围见[生效范围与多实例同步](#生效范围与多实例同步)。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a> |
 | 保存前确认 | 身份验证 › 通行密钥认证中的域名设置 | 修改域名设置时，如果会使已有通行密钥失效，需要先确认才会写入。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a> |
 | 无保存按钮 | 运维 › 系统维护 | 只显示当前版本、启动时间和更新检查。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">运维配置</a> |
@@ -56,7 +56,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 逐项保存：只提交有改动的字段，每个字段单独提交，各提示一次「设置更新成功」；某个字段失败时，其后的字段不再提交，已提交的字段不会回滚。没有改动时，部分分区提示「没有需要保存的更改」，部分分区不提示。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 - 「设置更新成功」「保存成功」等提示只表示服务端已接受这次保存，不代表 OAuth、SMTP、支付网关、Webhook、Worker 等外部服务已经连通。
 </Callout>
 
@@ -66,7 +66,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 2. 其他节点每隔 `SYNC_FREQUENCY` 秒（默认 60 秒）从数据库重新载入全部设置，也包括请求策略、模型价格、通行密钥域名等使用专用保存方式写入的设置。各设置域页面把这一过程简称为「随系统设置同步（默认 60 秒）」。
    - 这项同步与是否启用 Redis 无关，前提是所有节点连接同一个主数据库。
    - 同步完成前，各节点读到的值可能不一致。
-3. 主节点和从节点（`NODE_TYPE`）在保存和同步设置时没有区别，可以在任一节点保存。
+3. Master 实例和 Worker 实例（`NODE_TYPE`）在保存和同步设置时没有区别，可以在任一节点保存。
 
 以下修改不随同步生效，需要重启：
 
@@ -97,7 +97,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - <a href="/zh/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">审计日志</a>位于侧边栏「常规 › 审计日志」。Root 的操作记录只有 Root 能看到。
 - 审计日志不保存旧值，不能用来恢复配置，也不能代替外部的密钥管理和变更记录。
 
-<Callout type="warn">
+<Callout type="warn" title="注意保管密钥">
 不要在截图、工单或普通日志中记录客户端密钥、SMTP Token、支付密钥等敏感值。读取接口不回显明文，不代表浏览器、代理、数据库备份或运维环境可以不保护凭证。
 </Callout>
 
