@@ -213,22 +213,42 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ## 保存与生效
 
-保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>。本域另需注意：
+保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>，浏览器何时显示新值见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#前端显示与缓存" target="_blank" rel="noopener noreferrer">前端显示与缓存</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点随系统设置同步（默认 60 秒）；各配置项读取新值的时机如下：
 
-- 公告、API 地址、常见问答和 Uptime Kuma：「已启用」开关切换后立即保存并提示「设置已保存」；列表的新增、编辑、删除只修改页面数据，点击卡片内的「保存设置」后整段写入。
-- 数据仪表板、聊天预设、绘图：使用页头的「保存更改」「保存聊天设置」「保存绘图设置」按钮保存。
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-<Callout type="info">
-  公告、API 地址、FAQ、Uptime 等展示效果需回到数据看板/通知中心等实际入口验证，且这些面板受各自分区启用开关控制；整个数据看板入口还受侧边栏模块「数据看板」控制。
-</Callout>
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 数据仪表板 › 启用数据仪表板 | 页头「保存更改」 | 之后记录的用量才计入看板，关闭后不再计入；已有数据保留，关闭期间的用量不会补记。 |
+| 数据仪表板 › 刷新间隔 (分钟) | 页头「保存更改」 | 当前这一轮等待结束后，才按新间隔执行。 |
+| 数据仪表板 › 默认时间粒度 | 页头「保存更改」 | — |
+| 四个列表分区 › 「已启用」开关 | 切换后立即保存，提示「设置已保存」 | 公告、API 地址、常见问答、Uptime Kuma 在控制台中对应的面板（公告还包括通知中心）刷新页面后显示或隐藏。 |
+| 四个列表分区 › 列表 | 新增、编辑、删除只修改页面数据，点击卡片内的「保存设置」后整段写入 | 控制台中对应的面板（公告还包括通知中心）刷新页面后显示新内容。 |
+| 聊天预设 | 「保存聊天设置」 | 侧边栏「聊天」和 API 密钥列表中的「聊天」菜单刷新页面后更新。 |
+| 绘图 › 启用绘制功能 | 「保存绘图设置」 | — |
+| 绘图 › 其余 5 个开关 | 「保存绘图设置」 | 下一次相关的绘图请求起生效。 |
+
+</div>
+
+### 补充说明
+
+- **用量计入**：各节点各自汇总用量，并按刷新间隔写入数据库。
+- **通知中心的公告**：通知中心「时间线」标签只显示按发布日期倒序的前 20 条公告。
+- **公告已读**：已读由浏览器按公告 id 记录，编辑后 id 不变，不会重新变为未读。
+- **运行状态**：Uptime Kuma 各状态组的运行状态不经过保存，每次打开面板或点击刷新时由服务端实时获取。
 
 ## 注意事项
 
-- **数据仪表板**：只含数据导出三元组；面板可见性由各自分区启用开关控制，整个数据看板入口还受侧边栏模块「数据看板」控制，不要在此处寻找面板开关。
-- **公告**：公告上限 100；已读由浏览器按公告 id 记录，编辑后 id 不变，不会重新变为未读；与站点与品牌的「系统公告」是两套。
+### 条目上限与校验
+
+- **公告**：公告上限 100；与站点与品牌的「系统公告」是两套。
 - **API 地址**：上限 50；颜色需在服务端白名单；任意项不合规会整段被拒。
 - **常见问答**：上限 100；无排序字段（数组顺序即展示顺序）。
-- **Uptime Kuma**：上限 20；`description` 后端存在但界面不可编辑；状态经 `/api/uptime/status` 由服务端拉取。
+- **Uptime Kuma**：上限 20；`description` 后端存在但界面不可编辑。
+
+### 面板与配置边界
+
+- **数据仪表板**：只含数据导出三元组；面板可见性由各自分区启用开关控制，整个数据看板入口还受侧边栏模块「数据看板」控制，不要在此处寻找面板开关。
 - **聊天预设**：单键值对数组；无 URL 校验；占位符在用户打开预设时由控制台替换。
 - **绘图**：只是 6 个开关；上游配置在渠道层。
 

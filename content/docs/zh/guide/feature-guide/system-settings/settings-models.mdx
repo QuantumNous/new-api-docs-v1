@@ -173,18 +173,38 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 2. 点击「前往 io.net API 密钥」，打开 <a href="https://ai.io.net/ai/api-keys" target="_blank" rel="noopener noreferrer">io.net API 密钥页面</a>。创建或选择密钥时，将 Project 设置为 `io.cloud`。
 3. 复制密钥，粘贴到「io.net API 密钥」输入框。已有密钥且无需更换时，可保持重新加载后的空框不变。
 4. 点击「测试连接」。成功后页面显示连接成功提示；失败时根据错误信息检查密钥、项目和网络连接。没有输入密钥且没有已保存密钥时，测试会提示需要 API Key。
-5. 点击右上角「保存 io.net 设置」。确认保存成功后刷新页面，核对启用状态，并在密钥输入框为空时再次测试，以验证已保存的凭证。
+5. 点击右上角「保存 io.net 设置」。
 
 <Callout type="warn">
   关闭本分区的接入开关不会终止已有 io.net 部署，也不代表第三方费用停止。关闭后，New API 中查看、延长和终止已有部署的操作也会被拒绝。创建、延长和终止部署会改变第三方资源和费用，执行前应核对 io.net 账户、资源配置及账单；New API 不保证第三方容量、账单或部署成功率。
 </Callout>
 
-## 变更后验证
+## 保存与生效
 
-1. 刷新当前分区，确认非敏感字段显示为预期值。
-2. 用测试 Token 分别发送非流式与流式请求，检查模型映射、上游请求格式、用量和日志。
-3. 分别验证 Gemini、Claude 或 Grok 的真实适配场景，不要只确认 JSON 能保存。
-4. 部署场景先做连接测试和价格估算，再创建最小部署，并单独验证渠道配置。
+保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点随系统设置同步（默认 60 秒）；各配置项读取新值的时机如下：
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 全局模型配置 › 请求透传、不自动处理思考后缀的模型、ChatCompletions → 响应兼容；Gemini、Claude 的全部字段 | 页头「保存更改」 | 下一次请求起。 |
+| 全局模型配置 › 保持连接心跳、Ping 间隔（秒） | 页头「保存更改」 | 每个流式响应开始时读取，新的流式请求起生效；已在进行的流沿用原设置。 |
+| Grok › 违规扣费的开关和金额 | 页头「保存更改」 | 下一次出现违规标记、需要扣费时按新设置计算。 |
+| 模型部署 › 启用 io.net 部署、io.net API 密钥 | 「保存 io.net 设置」 | 下一次查看、创建、延长或终止部署时按新值判断；关闭后这些操作被拒绝，已有部署不会终止。 |
+| 模型部署 › 测试连接 | 不保存设置 | 用输入框中的密钥测试，输入为空时使用已保存的密钥。 |
+
+</div>
+
+### 补充说明
+
+- **校验**：页面检查 JSON 字段的格式。服务端另外校验两项：Gemini「安全设置」的阈值必须是允许的取值，Claude「默认最大 Token 数」不能为负数；校验不通过时该字段及其后的字段都不保存，提示见[常见问题](#常见问题)。
+
+## 注意事项
+
+- **Grok 违规扣费直接扣减用户余额**：见[Grok](#grok)。
+- **关闭 io.net 部署不会终止已有部署**：也不会停止第三方费用，见[模型部署](#模型部署)。
+- **保存成功不代表上游接受**：除上述两项取值外，其他配置是否被上游接受，要到实际请求时才能确定。
+- **请求透传会绕过转换**：全局或渠道级请求体透传开启时，ChatCompletions 转换、参数覆盖等不生效，见[全局模型配置](#全局模型配置)。
 
 ## 常见问题
 
@@ -231,6 +251,18 @@ Gemini 分区控制 Gemini 和部分 Vertex 转换链路使用的实例级默认
 
 **处理方法**：
 1. 手动配置端点。
+</Accordion>
+
+<Accordion title="保存安全设置或默认最大 Token 数时被拒绝">
+**提示原文**：如 `invalid Gemini safety threshold "…" for "…"` 或 `negative Claude default max_tokens … for "…"`（仅英文）
+
+**可能原因**：
+- Gemini「安全设置」中某个类别的阈值不是 `OFF`、`BLOCK_NONE`、`BLOCK_ONLY_HIGH`、`BLOCK_MEDIUM_AND_ABOVE`、`BLOCK_LOW_AND_ABOVE`、`HARM_BLOCK_THRESHOLD_UNSPECIFIED` 之一。阈值为空的类别不检查。
+- Claude「默认最大 Token 数」中某个模型的值为负数。
+
+**处理方法**：
+1. 按提示中的类别或模型名修正对应的值。
+2. 重新点击「保存更改」。
 </Accordion>
 
 </Accordions>

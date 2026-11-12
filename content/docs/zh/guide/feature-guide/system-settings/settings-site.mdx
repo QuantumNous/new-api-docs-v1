@@ -4,6 +4,7 @@ description: Root 配置站点身份、公开内容、法律文档、系统公�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 站点与品牌配置位于 `/system-settings/site`，仅 Root 可访问。
 - 系统信息、公告、关于页、首页内容、用户协议和隐私政策等属于面向未登录访问者的公开内容，其接口无需登录即可读取。
@@ -121,20 +122,83 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 保存与生效
 
-变更前记录与保存后验证的通用步骤见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#变更前记录与验证" target="_blank" rel="noopener noreferrer">系统设置概览</a>。本域另需注意：
+保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>，浏览器何时显示新值见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#前端显示与缓存" target="_blank" rel="noopener noreferrer">前端显示与缓存</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点随系统设置同步（默认 60 秒）；各配置项读取新值的时机如下：
 
-1. 修改前记录当前值，特别是服务器地址、异步任务对外地址、法律内容和导航开关。
-2. 涉及外部地址（OAuth 回调、任务产物 URL、iframe 嵌入、支付回跳）时，先在测试实例或维护窗口验证，不要只在表单内检查。
+### 品牌、地址与页面内容
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 系统名称、徽标 URL、页脚、文档链接 | 页头「保存更改」，只提交有改动的字段；「重置」恢复表单 | 刷新页面后显示新值，执行保存的浏览器也需刷新。 |
+| 服务器地址 | 页头「保存更改」，提交前去掉结尾的 `/` | 下一次使用该地址的请求起按新值；执行保存的浏览器自动更新。 |
+| 异步任务对外地址 | 页头「保存更改」，提交前去掉结尾的 `/`；非空时服务端校验格式 | 之后查询任务时返回的产物地址按新地址生成，已发出的地址不变。 |
+| 关于 | 页头「保存更改」 | 下一次打开关于页时读取。 |
+| 首页内容 | 页头「保存更改」 | 下一次打开首页时，先显示浏览器缓存的内容，随后自动更新为最新内容；清空字段才会恢复内置首页。 |
+| 用户协议、隐私政策 | 页头「保存更改」 | 协议正文在打开时读取，未刷新页面时缓存约 10 分钟；登录页、注册页和页脚中的入口刷新页面后更新。 |
+
+</div>
+
+### 公告、导航与侧边栏
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 系统公告 | 「保存通知」，整体写入 | 通知中心的系统公告在浏览器中缓存，刷新页面后读取新内容；内容有任何变化，都会再次显示为未读。 |
+| 顶部导航 | 「保存导航」，整体写入；「重置为默认」只恢复表单 | 执行保存的浏览器自动更新，其他浏览器刷新页面后更新；「模型广场」「排行榜」的显示开关和登录要求从下一次请求起由服务端执行。 |
+| 侧边栏模块 | 「保存侧边栏模块」，整体写入；「重置为默认」只恢复表单 | 执行保存的浏览器自动更新，其他浏览器刷新页面后更新；只改变侧边栏显示，不改变访问权限。 |
+
+</div>
+
+### 补充说明
+
+- **没有改动**：系统信息没有改动时提示「没有需要保存的更改」。
+- **未保存的修改**：有未保存的修改时离开「系统信息」分区，会弹出「未保存的更改」确认。
 
 ## 注意事项
 
 - **页脚是裸 HTML**：不要加入不可信脚本、事件属性或第三方注入代码。
 - **关于页/首页/法律正文的嵌入 HTML**：DOMPurify 会移除 `<script>` 等标签，脚本不会执行；样式与 iframe 行为也受到隔离与沙箱限制，不要把逻辑依赖在任意脚本上。
 - **外部 URL 嵌入**：远端站点可能因 `X-Frame-Options`、CSP、混合内容或证书拒绝显示；这是远端策略，New API 无法绕过。
-- **首页内容有浏览器缓存**：首页先显示浏览器缓存的内容，随后自动更新为最新内容，修改后刷新页面即可；清空字段才会恢复内置首页。
-- **公告已读与内容绑定**：系统公告内容的任何变化都会被视为新通知，并再次显示未读。
-- **菜单隐藏不等于关闭能力**：隐藏入口后仍可通过地址访问，是否允许进入取决于对应路由与后端接口的权限处理。
+- **菜单隐藏不等于关闭能力**：「主页」「控制台」「文档」「关于」和侧边栏模块只改变入口显示，仍可通过地址访问；关闭「模型广场」后，服务端拒绝读取模型价格数据（Root 除外），关闭「排行榜」后拒绝读取排行榜数据；开启「要求登录才能查看模型」「要求登录才能查看排行榜」后，拒绝未登录的访问。
 - **异步任务对外地址**：仅用于任务产物 URL，需公网可达且各节点共享 `CRYPTO_SECRET`。
+
+## 常见问题
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="「异步任务对外地址」提示地址格式不正确">
+**提示原文**：「请输入不含认证信息、查询参数或片段的 HTTP(S) 绝对 URL」（英文 Enter an absolute HTTP(S) URL without credentials, query parameters, or fragments）
+
+**可能原因**：地址不以 `http://` 或 `https://` 开头，或包含查询参数（`?`）、片段（`#`）、用户信息（`@`）、控制字符、反斜杠或首尾空白。
+
+**处理方法**：
+1. 改为绝对地址，可带端口和路径前缀，如 `https://media.example.com/prefix`。
+2. 不需要独立地址时留空，使用「服务器地址」。
+</Accordion>
+
+<Accordion title="保存系统名称、徽标或页脚后，页面仍显示旧内容">
+**说明**：保存后，当前浏览器已加载的站点信息不会自动更新。
+
+**处理方法**：
+1. 刷新页面。
+2. 多节点部署时，等待一个同步周期（默认 60 秒）后再刷新。
+</Accordion>
+
+<Accordion title="保存侧边栏模块后，个别账号的入口与预期不符">
+**说明**：侧边栏由两层设置决定：本页的配置决定入口能否显示，用户可在个人资料中进一步隐藏。
+
+**可能原因**：
+- 该账号在个人资料的「左侧边栏个人设置」中隐藏了该模块。
+- 模块所在的区域在本页被整体关闭。
+
+**处理方法**：
+1. 在本页检查区域开关和模块开关。
+2. 请该用户在<a href="/zh/docs/guide/feature-guide/user/personal-setting#设置左侧边栏显示的页面" target="_blank" rel="noopener noreferrer">个人资料</a>中检查侧边栏设置。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 

@@ -4,6 +4,7 @@ description: 管理用户账户、角色、分组、额度、登录绑定、安�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 用户管理仅 Admin 和 Root 可访问，从侧边栏「管理员」 → 「用户」或访问 `/users` 进入。
 - 用于查看和筛选用户，管理角色、状态与管理员权限，维护账户资料、额度、登录绑定、订阅、Passkey 与 2FA，以及删除用户。
@@ -64,7 +65,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ### 管理员权限
 
-管理员权限即 Admin 权限矩阵。Root 新建或编辑角色为「管理员」的用户时，抽屉下方显示「管理员权限」区块，可为该账户覆盖默认的 Admin 权限：每个资源一行，点击权限按钮授予或撤销，资源名旁的 ⓘ 显示各项说明。修改权限需要完成[安全验证](#安全验证)，保存后立即生效。普通 Admin 看不到该区块。
+管理员权限即 Admin 权限矩阵。Root 新建或编辑角色为「管理员」的用户时，抽屉下方显示「管理员权限」区块，可为该账户覆盖默认的 Admin 权限：每个资源一行，点击权限按钮授予或撤销，资源名旁的 ⓘ 显示各项说明。修改权限需要完成[安全验证](#安全验证)，保存后的生效时间见[保存与生效](#保存与生效)。普通 Admin 看不到该区块。
 
 | 资源 | 权限名称 | API 动作键 | Admin 默认 | 说明 |
 | --- | --- | --- | --- | --- |
@@ -297,6 +298,90 @@ import { Callout } from 'fumadocs-ui/components/callout';
   - 用户硬删除不可撤销。若只是暂时阻止登录和调用，请使用「禁用」；只有在确认数据范围、留存要求和后续恢复方案后，才执行「删除」。
   - 此处删除的用户会从列表中消失；用户在「安全与访问」页自行注销的账户则以「已注销」状态保留在列表中，不提供任何操作。
 </Callout>
+
+## 保存与生效
+
+本页的操作直接写入数据库，各节点从下一次请求起读取到新值；管理员权限是例外，见表。表中「撤销会话」指该用户已登录的浏览器会话全部失效，需要重新登录；撤销会话不影响该用户的 API 密钥。
+
+### 资料、额度与订阅
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| 操作 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 添加用户 | 抽屉中点击「保存更改」，提示「用户创建成功」；创建管理员时需先完成安全验证 | 立即可登录。新添加的用户同样获得「新用户配额」；新用户配额大于 0 时，还会记录一条「新用户注册赠送 …」日志。 |
+| 修改显示名称、备注 | 编辑抽屉中点击「保存更改」，提示「用户更新成功」 | 立即生效，不撤销会话。 |
+| 修改分组 | 编辑抽屉中点击「保存更改」，提示「用户更新成功」 | 下一次请求起按新分组选路和计费，并撤销会话。 |
+| 调整额度 | 「调整额度」对话框中确认，不需要安全验证 | 下一次请求起使用新余额，进行中的请求已预扣的额度不受影响；不撤销会话。 |
+| 用户订阅的添加、重置、作废、删除 | 在管理订阅面板中逐项提交，不需要安全验证 | 立即生效；订阅引起的分组切换不撤销会话，见<a href="/zh/docs/guide/feature-guide/admin/subscription#保存与生效" target="_blank" rel="noopener noreferrer">订阅管理</a>。 |
+
+</div>
+
+### 状态、权限与登录凭证
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| 操作 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 启用、禁用、提升、降级 | 「…」菜单 → 确认 → 安全验证 | 立即生效；状态或角色实际变化时撤销会话。禁用后，该用户的 API 密钥从下一次请求起被拒绝；降级同时清除该账户的管理员权限覆盖。 |
+| 管理员权限 | 在编辑抽屉中随「保存更改」提交，需安全验证 | 处理该请求的节点立即生效，其他节点按同步周期（默认 60 秒）重新载入；不撤销会话。 |
+| 修改密码 | 编辑抽屉中填写新密码并点击「保存更改」，需安全验证 | 立即生效并撤销会话。 |
+| 解除绑定 | 「管理绑定」中点击解除绑定图标，「确认解绑」后完成安全验证，提示「解绑成功」 | 立即生效，之后不能再用该身份登录；不撤销已登录的会话。 |
+| 重置 Passkey、重置 2FA | 「…」菜单 → 确认 → 安全验证 | 立即删除对应凭证并撤销会话。 |
+| 删除用户 | 「…」菜单 →「您确定吗？」→ 安全验证，提示「用户删除成功」 | 立即删除，不可恢复，见[删除用户](#删除用户)。 |
+
+</div>
+
+## 注意事项
+
+- **删除用户不可撤销**：只是暂时阻止登录和调用时，请使用「禁用」，见[删除用户](#删除用户)。
+- **角色层级限制**：Admin 只能管理普通用户；提升用户和创建管理员仅 Root 可执行，见[角色层级](#角色层级)。
+- **安全验证可能无法完成**：关闭密码登录或 Passkey 功能后，对应方式不能用于验证；操作者没有其他可用方式时，无法执行需要验证的操作，见[安全验证](#安全验证)。
+- **解除绑定前确认用户仍能登录**：解除绑定或重置 Passkey 前，确认用户仍有密码或其他可用的登录方式，见[用户绑定管理](#用户绑定管理)和[重置 Passkey](#重置-passkey)。
+- **作废、删除订阅不退款**：两者都不返还未使用额度，涉及退款需单独处理，见[用户订阅管理](#用户订阅管理)。
+
+## 常见问题
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="操作用户时提示无权更新同权限等级或更高权限等级的用户信息">
+**说明**：Admin 与 Root 的管理范围不同，服务端会拒绝超出范围的操作，常见提示如下。
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「无权更新同权限等级或更高权限等级的用户信息」（英文 No permission to update users of same or higher permission level） | Admin 操作了同级 Admin 或 Root 的账户。 | 请 Root 操作。 |
+| 「普通管理员用户无法提升其他用户为管理员」（英文 Regular administrators cannot promote other users to administrator） | 提升用户仅 Root 可执行。 | 请 Root 提升。 |
+| 「无法创建权限大于等于自己的用户」（英文 Cannot create users with permission level equal to or higher than yourself） | Admin 只能创建普通用户。 | 请 Root 创建管理员。 |
+</Accordion>
+
+<Accordion title="验证对话框显示「此操作没有可用的验证方式。」">
+**提示原文**：「此操作没有可用的验证方式。」（英文 No verification method is available for this action.）
+
+**可能原因**：操作者没有可用的验证方式。关闭密码登录或 Passkey 功能后，对应方式不能用于验证；对话框会显示各方式不可用的原因。
+
+**处理方法**：
+1. 在<a href="/zh/docs/guide/feature-guide/user/security#启用两步验证" target="_blank" rel="noopener noreferrer">安全与访问</a>页启用 2FA。
+2. 重新执行操作。
+</Accordion>
+
+<Accordion title="修改用户的密码或分组后，该用户被要求重新登录">
+**说明**：密码或分组实际发生变化时，该用户现有的浏览器会话会被撤销，属于预期行为。启用、禁用、提升、降级（状态或角色实际变化时），以及重置 Passkey、重置 2FA，同样会撤销会话。
+
+**处理方法**：
+1. 通知用户重新登录；不希望中断时，避免在其使用期间修改密码或分组。
+</Accordion>
+
+<Accordion title="重置用户订阅额度时提示「该用户没有有效的此套餐订阅」">
+**提示原文**：「该用户没有有效的此套餐订阅」（英文 This user has no active subscription to this plan）
+
+**可能原因**：该用户在所选套餐下没有状态为生效且未到结束时间的订阅，如已过期、已作废或从未添加。
+
+**处理方法**：
+1. 在订阅列表中核对状态。
+2. 需要时先添加订阅。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 

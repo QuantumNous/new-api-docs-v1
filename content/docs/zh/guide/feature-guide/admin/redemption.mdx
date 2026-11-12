@@ -4,6 +4,7 @@ description: 创建、分发和维护用户额度兑换码，并安全清理无�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 兑换码管理仅 Admin 和 Root 可访问，从侧边栏「管理员」 → 「兑换码」或访问 `/redemption-codes` 进入；创建、查询、编辑、启停和删除接口统一按管理员角色授权，没有单独的细粒度权限矩阵。
 - 用于批量创建和分发额度兑换码，维护其名称、额度、有效期和启用状态，并清理已失效的记录。
@@ -168,10 +169,71 @@ import { Callout } from 'fumadocs-ui/components/callout';
   2. 同一个兑换码在重复或并发请求中最多成功一次。
 </Callout>
 
-## 审计与故障排查
+## 保存与生效
 
-- 创建、编辑、启用或禁用、删除（包括单条删除、批量删除和删除无效）兑换码会产生审计记录，可在<a href="/zh/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">审计日志</a>页面查询，不会写入「使用日志」。
-- 兑换码日志不包含完整明文兑换码，但当前实现会把失败请求中提交的原始兑换码写入服务端错误日志，部署方应限制日志访问并按自身合规要求做好保护或脱敏。
+兑换码只保存在数据库中，没有缓存；下表操作在各节点从下一次兑换起生效。
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| 操作 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 创建兑换码 | 「创建兑换码」抽屉中点击「保存更改」，提示「成功创建了 … 个兑换码」并显示「兑换码创建完成」 | 立即可兑换。 |
+| 编辑 | 「更新兑换码」抽屉中点击「保存更改」，提示「兑换码更新成功」 | 立即生效，只影响之后的兑换，已兑换的不变。 |
+| 启用、禁用 | 「…」菜单中点击后直接提交，没有确认框；提示「兑换码已启用」或「兑换码已禁用」 | 立即生效；已兑换到账的额度不受影响。 |
+| 单条删除、批量删除、删除无效 | 在确认框中确认 | 立即生效，删除后无法兑换，也没有恢复入口；已兑换到账的额度不会收回。 |
+| 过期 | 无需操作 | 到达过期时间后无法兑换；列表中的「已过期」按浏览器的当前时间判断。 |
+
+</div>
+
+## 注意事项
+
+- **完整兑换码等同于额度凭证**：分发和保存方式见[创建兑换码](#创建兑换码)中的提示。
+- **删除没有恢复入口**：「删除无效」是全平台操作，暂停发放请使用「禁用」，见[删除无效兑换码](#删除无效兑换码)。
+- **审计记录**：创建、编辑、启用或禁用、删除（包括单条删除、批量删除和删除无效）兑换码会产生审计记录，可在<a href="/zh/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">审计日志</a>页面查询，不会写入「使用日志」。
+- **服务端错误日志含原始兑换码**：使用日志中的兑换记录只含兑换码 ID；用户兑换失败时，服务端错误日志会记录其提交的原始兑换码，部署方应限制日志访问，并按自身合规要求做好保护或脱敏。
+
+## 常见问题
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="创建兑换码时提示支付、兑换码、订阅计划和邀请返利功能已禁用">
+**提示原文**：「支付、兑换码、订阅计划和邀请返利功能已禁用。管理员需先确认合规声明后方可启用。」（英文 Payment, redemption, subscription, and invitation reward features are disabled. The administrator must confirm compliance terms before enabling them.）
+
+**可能原因**：Root 尚未确认支付合规条款，或已确认的条款版本不是当前版本。
+
+**处理方法**：
+1. 请 Root 在「系统设置」→「计费与支付」→「支付网关」中确认合规条款，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#支付合规确认" target="_blank" rel="noopener noreferrer">支付合规确认</a>。
+2. 重新创建兑换码。
+</Accordion>
+
+<Accordion title="创建或编辑兑换码时提示参数不合法">
+**说明**：服务端校验失败时的提示如下。
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「兑换码名称长度必须在1-20之间」（英文 Redemption code name length must be between 1-20） | 创建时名称为空或超过 20 个字符。 | 修改名称。 |
+| 「一次兑换码批量生成的个数不能大于 100」（英文 Maximum 100 redemption codes can be generated at once） | 「数量」超过 100。 | 分批创建。 |
+| 「兑换码额度必须大于 0」（英文 Redemption quota must be positive） | 额度为 0 或负数。 | 填写大于 0 的额度。 |
+| 「过期时间不能早于当前时间」（英文 Expiration time cannot be earlier than current time） | 过期时间早于当前时间。 | 重新选择过期时间，或选择「永不」。 |
+</Accordion>
+
+<Accordion title="用户反映兑换时提示「兑换失败，请稍后重试」">
+**提示原文**：「兑换失败，请稍后重试」（英文 Redemption failed, please try again later）
+
+**说明**：用户端不区分失败原因。
+
+**可能原因**：
+- 兑换码不存在或已被删除。
+- 兑换码已使用、已禁用或已过期。
+- 数据库短暂出错。
+
+**处理方法**：
+1. 在列表中按名称或 ID 查找该兑换码，核对状态和过期时间。
+2. 「已禁用」的兑换码先启用；「已使用」「已过期」的兑换码无法再次兑换，需另行创建。
+3. 用户侧的处理见<a href="/zh/docs/guide/feature-guide/user/wallet#常见问题" target="_blank" rel="noopener noreferrer">钱包</a>。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 

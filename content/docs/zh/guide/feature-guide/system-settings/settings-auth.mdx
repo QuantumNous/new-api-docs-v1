@@ -103,8 +103,6 @@ OAuth 分区以标签页展示内置提供商。先在提供商后台创建应�
 
 1. 在提供商后台登记应用名称、主页和该提供商要求的回调地址。
 2. 在本页填写凭证和端点，保存后再开启提供商。
-3. 用未登录窗口测试登录；用已登录账户在「安全与访问」页测试账户绑定。
-4. 检查回调后的错误提示、用户绑定记录和服务端日志。
 
 <Callout type="info">
   管理员可使用<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>管理用户绑定信息。
@@ -159,7 +157,7 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
 
 <Callout type="info">
   - 当前中间件会在以下流程检查 Turnstile：注册、密码登录、请求注册邮箱验证码、请求密码重置邮件，以及用户签到。
-  - Turnstile 密钥 是服务端凭证，启用或修改后应立即验证登录、注册、验证码和密码重置等受保护流程。
+  - Turnstile 密钥是服务端凭证。
 </Callout>
 
 ### 自定义 OAuth
@@ -187,7 +185,7 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
 1. 点击「添加提供商」，在弹窗顶部「从预设快速设置」中选择预设模板并填写「API 地址」（预设端点按该地址拼接；不填时只带出名称、标识符、图标、作用域和字段映射），或直接填写空白表单。
 2. 填写名称、标识符（slug）、客户端凭证、三个端点和所需高级字段；保存前确认回调地址已登记。回调地址可从弹窗中的「OAuth 回调 URL」卡片复制，它随标识符实时更新。
 3. 启用状态由弹窗「基本信息」中的「已启用」开关控制（新建时默认开启），列表「状态」列只显示当前状态；停用或重新启用时，在列表中点击编辑，切换开关后保存。只有启用的提供商才会出现在登录页。
-4. 编辑已有提供商时，Client Secret 输入框为空表示保留原值。修改端点、字段映射或访问策略后，应重新测试登录和绑定。
+4. 编辑已有提供商时，Client Secret 输入框为空表示保留原值。
 5. 修改标识符（slug）前先更新第三方后台的回调登记；保存后旧地址不再对应当前提供商。
 
 <Callout type="warn">
@@ -228,11 +226,10 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
 
 - 登录、绑定与生命周期
 
-1. 保存并启用后，用未登录窗口测试登录，再用已登录测试用户验证账户绑定。
-2. OAuth state 当前有效期约 10 分钟；绑定 state 还会关联发起用户和会话，不能跨会话复用。
-3. 同一用户对同一自定义提供商只能保留一个绑定，同一提供商账号也不能绑定到多个本地用户。
-4. 禁用提供商只会阻止后续登录和绑定，不会删除历史绑定。
-5. 删除提供商前必须先由用户在<a href="/zh/docs/guide/feature-guide/user/security#绑定邮箱和第三方账号" target="_blank" rel="noopener noreferrer">安全与访问</a>页解绑，或由有权限的管理员在<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>中解除全部绑定；仍有任意绑定时，删除请求会被拒绝。
+1. OAuth state 当前有效期约 10 分钟；绑定 state 还会关联发起用户和会话，不能跨会话复用。
+2. 同一用户对同一自定义提供商只能保留一个绑定，同一提供商账号也不能绑定到多个本地用户。
+3. 禁用提供商只会阻止后续登录和绑定，不会删除历史绑定。
+4. 删除提供商前必须先由用户在<a href="/zh/docs/guide/feature-guide/user/security#绑定邮箱和第三方账号" target="_blank" rel="noopener noreferrer">安全与访问</a>页解绑，或由有权限的管理员在<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>中解除全部绑定；仍有任意绑定时，删除请求会被拒绝。
 
 ## 登录验证与安全
 
@@ -264,29 +261,47 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
   - 各节点开关不一致时，部分登录请求会被拒绝（提示「无效的参数」）；私钥无法读取或写入时服务无法启动；解密失败时提示「用户名或密码错误，或用户已被封禁」。同时注意与反向代理的 HTTPS/HTTP 传输配合，关闭则为明文密码传输。
 </Callout>
 
-## 保存与凭证安全
+## 保存与生效
 
-保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，密钥字段不回显、留空保留的规则见概览中的<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#敏感配置与审计记录" target="_blank" rel="noopener noreferrer">敏感配置与审计记录</a>。
+保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>，浏览器何时显示新值见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#前端显示与缓存" target="_blank" rel="noopener noreferrer">前端显示与缓存</a>，密钥字段不回显、留空保留的规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#敏感配置与审计记录" target="_blank" rel="noopener noreferrer">敏感配置与审计记录</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点随系统设置同步（默认 60 秒）；各配置项读取新值的时机如下：
 
-保存后按以下顺序验证：
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
 
-1. 按<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#变更前记录与验证" target="_blank" rel="noopener noreferrer">变更前记录与验证</a>完成通用的提示确认与刷新核对。
-2. 使用测试账户验证密码登录、注册、邮箱验证码和密码重置。
-3. 对每个启用的 OAuth 提供商分别测试登录和绑定，并检查历史绑定是否符合预期。
-4. 对自定义 OAuth 额外核对回调地址、字段映射、访问策略和禁用／解绑／删除流程。
-5. 在支持 WebAuthn 的 HTTPS 浏览器中测试 Passkey 注册和登录。
-6. 若启用了 Turnstile，重复测试所有受保护流程，而不只测试登录。
-7. 若开启密码传输加密，确认各节点一致并能正常解密登录。
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 基本身份验证 › 密码登录 | 页头「保存更改」 | 下一次密码登录请求起生效，已登录的会话不受影响。 |
+| 基本身份验证 › 注册已启用、密码注册 | 页头「保存更改」 | 下一次注册请求起生效；关闭「注册已启用」后，通过 OAuth 或微信首次登录也不再创建新账户。 |
+| 基本身份验证 › 电子邮件验证 | 页头「保存更改」 | 下一次注册起要求邮箱和验证码，已注册的账户不受影响。 |
+| 基本身份验证 › 电子邮件域限制、电子邮件别名限制、电子邮件域白名单 | 页头「保存更改」 | 下一次发送验证码或绑定邮箱时检查，已有账户的邮箱不重新检查。 |
+| OAuth 集成 › 各提供商的开关、凭证和端点 | 页头「保存更改」 | 下一次登录或绑定起生效；关闭不会删除用户已有的绑定。 |
+| 通行密钥认证 | 页头「保存更改」；修改域名设置会使已有通行密钥失效时，需先确认才写入 | 下一次通行密钥注册或登录起生效；被移除域名上的通行密钥无法使用。 |
+| 机器人保护 | 页头「保存更改」 | 服务端从下一次受保护的请求起校验，范围见[机器人保护](#机器人保护)。 |
+| 自定义 OAuth | 在列表和对话框中逐个保存，页头没有保存按钮 | 处理该请求的节点立即生效；其他节点需重启服务后才会加载，在此之前仍按旧配置处理。 |
+| 密码传输加密 | 不在页面保存，由环境变量控制 | 需重启服务；多节点部署需保持一致，见[密码传输加密](#密码传输加密)。 |
+
+</div>
+
+### 补充说明
+
+- **开启顺序**：开启 GitHub、Discord、OIDC、LinuxDO 或微信登录，以及电子邮件域限制、Turnstile 前，先填写并保存对应的凭证或配置，再开启开关并保存；对应配置未保存时开启会被拒绝，提示见[常见问题](#常见问题)。
+- **没有改动**：OAuth 集成和通行密钥认证没有改动时提示「没有需要保存的更改」。
+- **未保存的修改**：OAuth 集成有未保存的修改时离开页面，会弹出「未保存的更改」确认。
+- **登录页和注册页**：登录方式、注册入口和 Turnstile 组件的显示来自浏览器缓存的站点状态；服务端已按新设置判断，已打开的页面刷新后才显示新内容。通行密钥、OIDC 显示名称和自定义 OAuth 保存后，执行保存的浏览器自动更新。
 
 ## 注意事项
+
+### 登录与回调
 
 - **回调一致性**：浏览器公开地址、`ServerAddress`、提供商登记回调与反向代理转发的 Host/Proto 必须一致。
 - **验证证明与 state 一次性**：失败后不要反复刷新同一地址，应重新发起登录或绑定。
 - **统一登录验证**：2FA/Passkey 用户需在主认证后完成验证质询（约 5 分钟）。
-- **Turnstile**：需站点密钥和密钥同时正确、Cloudflare 可达、token 有效，且只有一个全局开关。
+
+### 凭证与域名
+
 - **Passkey 与域名强绑定**：改域名/协议后需重新核对主域名、兼容的通行密钥域名、允许使用通行密钥的网站和 `ServerAddress`；旧域名应保留在兼容域名中。
+- **Turnstile**：需站点密钥和密钥同时正确、Cloudflare 可达、token 有效，且只有一个全局开关。保护的流程见[机器人保护](#机器人保护)。
 - **Telegram 迁移**：若此前用旧 Login Widget，需在 BotFather 的 Login Widget 中登记 `/oauth/telegram` 回调地址并取得 Client ID 和 Client Secret；现有绑定可继续使用。`telegram` 标识符（slug）保持内置保留。
-- **密码加密**：环境变量控制，多节点需一致；密钥在启动时自动生成并存入数据库，各节点需连接同一数据库。
+- **密码加密的密钥共用**：密钥在启动时自动生成并存入数据库，各节点需连接同一数据库。
 
 ## 常见问题
 
@@ -379,6 +394,17 @@ Passkey 使用 WebAuthn。启用后，用户可以注册 Passkey 并用它登录
 **可能原因**：
 - 未在 BotFather 的 Login Widget 中登记 `/oauth/telegram` 回调地址。
 - 未填写对应的 Client ID 和 Client Secret。
+</Accordion>
+
+<Accordion title="开启登录方式时提示「无法启用…」">
+**说明**：对应的配置尚未保存时，开启开关会被拒绝，常见提示如下。
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「无法启用 GitHub OAuth，请先填入 GitHub OAuth 的 Client ID 和 Client Secret！」（英文 Cannot enable GitHub OAuth. Enter the GitHub OAuth Client ID and Client Secret first.）；Discord OAuth、OIDC、LinuxDO OAuth 同理 | 该提供商的凭证尚未保存。 | 先关闭开关，保存凭证，再开启并保存。 |
+| 「无法启用邮箱域名限制，请先填入限制的邮箱域名！」（英文 Cannot enable the email domain restriction. Enter the allowed email domains first.） | 「电子邮件域白名单」尚未保存。 | 先保存白名单，再开启「电子邮件域限制」。 |
+| 「无法启用微信登录，请先填入微信登录相关配置信息！」（英文 Cannot enable WeChat login. Enter the WeChat login settings first.） | 微信的服务器地址尚未保存。 | 先保存微信配置，再开启。 |
+| 「无法启用 Turnstile 校验，请先填入 Turnstile 校验相关配置信息！」（英文 Cannot enable Turnstile verification. Enter the Turnstile settings first.） | Turnstile 站点密钥尚未保存。 | 先保存站点密钥和密钥，再开启。 |
 </Accordion>
 
 </Accordions>

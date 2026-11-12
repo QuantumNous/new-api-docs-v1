@@ -4,6 +4,7 @@ description: Root 监控部署实例、资源状态与跨实例系统任务，�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 系统信息仅 Root 可访问，从侧边栏「管理员」 → 「系统信息」或访问 `/system-info` 进入。
 - 用于观察当前部署中的 New API 实例和跨实例系统任务，并清理失联实例记录与历史系统任务。
@@ -111,6 +112,95 @@ import { Callout } from 'fumadocs-ui/components/callout';
 3. 在确认框中核对提示，然后点击「删除」。成功提示会显示实际清理的条数。
 
 清理范围是所有分页中符合当前筛选条件的历史任务，不只是当前页。进行中的任务和每种类型最新的一条记录始终保留，系统据此安排下一次定时任务。清理无法撤销。
+
+## 保存与生效
+
+本页没有保存按钮。删除和清理在确认框中点击「删除」后立即执行，无法撤销；系统任务由 Master 实例领取执行。
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 操作 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 删除单个失联实例 | 点击行末删除按钮，在确认框中点击「删除」 | 立即从数据库删除该实例记录；只删除超过 90 秒未上报的记录，确认时已恢复上报的实例不会被删除。 |
+| 删除所有失联实例 | 点击「删除所有失联」，在确认框中点击「删除」 | 立即删除当前超过 90 秒未上报的全部记录，成功提示显示实际删除的数量。 |
+| 清理历史任务 | 点击「清理历史任务」，在确认框中点击「删除」 | 立即删除符合当前筛选的已成功、已失败任务，不限当前页；进行中的任务和每种类型最新的一条始终保留。 |
+| 实例状态 | 无需操作 | 实例每 30 秒上报一次，超过 90 秒未上报显示「失联」；刷新后看到的状态最多落后一个上报周期。 |
+| 手动发起的系统任务 | 在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>或<a href="/zh/docs/guide/feature-guide/system-settings/settings-operations#日志维护" target="_blank" rel="noopener noreferrer">运维配置</a>中发起 | 先显示「等待中」：处理该请求的节点是 Master 实例时立即开始，否则由 Master 实例约 15 秒内领取；同类型已有进行中的任务时不再新建。 |
+| 定期系统任务 | 由系统自动调度 | Master 实例约每 15 秒检查一次是否到期，到期后创建新任务。 |
+
+</div>
+
+### 补充说明
+
+- **记录会重建**：删除失联实例只清理数据库中的实例记录，不会停止实例；实例仍在运行时，下一次上报会重新创建记录。
+
+## 注意事项
+
+- **「失联」不等于已下线**：只表示超过 90 秒没有上报，数据库短暂不可用或网络中断时也会出现；删除所有失联记录前，先确认这些节点已下线。
+- **系统任务只由 Master 实例执行**：Worker 实例不领取系统任务；没有运行中的 Master 实例时，任务停在「等待中」，见[实例字段说明](#实例字段说明)的「角色」。
+- **节点名需唯一**：多个实例使用相同的 `NODE_NAME` 时写入同一条记录，状态互相覆盖。
+
+## 常见问题
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="实例显示「失联」">
+**说明**：「失联」表示超过 90 秒没有上报心跳。
+
+**可能原因**：
+- 该实例的进程已停止。
+- 该实例无法写入数据库，上报失败。
+
+**处理方法**：
+1. 检查该实例的进程和数据库连接，以及服务端日志。
+2. 确认节点已下线后，再删除该记录，见[清理失联实例记录](#清理失联实例记录)。
+</Accordion>
+
+<Accordion title="实例列表的数量少于实际部署的实例">
+**可能原因**：多个实例使用了相同的 `NODE_NAME`，写入同一条记录。未设置 `NODE_NAME` 时使用主机名，名称旁显示黄色警示图标。
+
+**处理方法**：
+1. 为每个实例设置唯一的 `NODE_NAME`，然后重启这些实例。
+</Accordion>
+
+<Accordion title="删除失联实例时提示 instance is not stale or no longer exists">
+**提示原文**：`instance is not stale or no longer exists`（仅英文）
+
+**可能原因**：
+- 打开确认框后，该实例已恢复上报。
+- 该记录已被其他管理员删除。
+
+**处理方法**：
+1. 点击「刷新」，重新查看实例状态。
+2. 实例仍在运行但不再需要时，先停止该实例。
+</Accordion>
+
+<Accordion title="系统任务一直是「等待中」">
+**说明**：Master 实例约每 15 秒领取一次等待中的任务。
+
+**可能原因**：当前没有运行中的 Master 实例。`NODE_TYPE=slave` 的实例为 Worker，不领取系统任务。
+
+**处理方法**：
+1. 确认至少有一个 Master 实例在运行，见[实例字段说明](#实例字段说明)。
+</Accordion>
+
+<Accordion title="系统任务「已失败」，详情为 task lease expired">
+**提示原文**：`task lease expired`（仅英文）
+
+**可能原因**：执行该任务的实例在 60 秒的任务锁到期前没有续期，如进程退出或无法写入数据库。
+
+**处理方法**：
+1. 根据「执行实例」查看该实例的服务端日志。
+2. 定时任务会在下次调度时再次执行；手动任务需重新发起。
+</Accordion>
+
+<Accordion title="清理历史任务后仍有记录，或提示已清理 0 条">
+**提示原文**：「已清理 0 条历史系统任务」（英文 Deleted 0 historical system tasks）
+
+**说明**：每种类型最新的一条记录和进行中的任务始终保留，系统据此安排下一次定时任务。只剩这些记录时，清理结果为 0 条。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 

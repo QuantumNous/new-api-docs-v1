@@ -324,28 +324,6 @@ Token 估算器和请求模拟在浏览器中计算，只支持上表中的运�
 2. **结算**：上游返回后按实际用量重新求值，与预扣额的差额多退少补；结算时求值失败，按预扣额结算。
 3. **日志**：消费日志记录命中档位 `matched_tier`、计费单位 `billing_unit`、按次价格 `fixed_price`、图片数量 `image_count`、请求规则 `request_rules`（含每条是否命中）和 base64 编码的表达式全文 `expr_b64`。这些字段用户在自己的日志详情中也能看到，不要在表达式中写入不希望用户看到的内容。
 
-## 保存校验与常见报错
-
-1. 点击「保存模型价格」后，服务端逐个模型校验：表达式必须能编译；再用 7 组固定用量（含全 0 和超大的 `len`）分别配合 2 种请求上下文（空请求；带 `anthropic-beta: fast-mode-2026-02-01` 请求头和 `service_tier: fast` 请求体）试算，每次结果都必须是有限且不小于 0 的数；普通模型不能使用 `u()`。一次提交多个模型时，任一模型校验失败，整批都不保存。
-2. 试算只覆盖上述输入；由其他请求参数、请求头或时间条件触发的分支不会逐一检查，需自行确保每个分支的结果都不小于 0。
-3. 打开页面后价格已被他人修改时保存会被拒绝，处理方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>。
-
-- 常见报错
-
-<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
-
-| 报错片段 | 含义 | 处理 |
-| --- | --- | --- |
-| `expr compile error: …` | 语法错误，或使用了不存在的变量、函数 | 检查拼写、括号、引号和逗号 |
-| `fixed price must be a finite, non-negative numeric literal…` | `fixed()` 的金额不是非负数字常量 | 改为数字常量，如 `fixed(0.01)` |
-| `fixed pricing requires tier(name, fixed(amount)) leaves…` | `fixed()` 档位与 Token 费用相加，或结构不符 | 每个按次档位写成 `tier(名称, fixed(金额))` |
-| `vector {p=…, c=…}: result must be finite and non-negative, got …` | 某组试算结果为负数或无穷大 | 检查减法、除法和各分支 |
-| `expression references usage keys […] but the model has no task plugin usage schema` | 普通模型使用了 `u()` | 删除 `u()`，或确认该模型由任务插件提供 |
-| `identifier "_trace" is reserved for internal use` | 使用了保留名 | 换用其他名称 |
-| `model pricing changed; reload before saving` | 版本冲突 | 点击「重新加载定价」后再修改 |
-
-</div>
-
 ## 从旧模式转换
 
 1. 选择「按 Token（已弃用）」或「按次（已弃用）」标签时，页面提示「旧定价模式已弃用。可将当前价格转换为计费表达式草稿，保存后生效。」并提供「转换为计费表达式」按钮。点击后打开「定价迁移预览」左右对照，确认「应用到草稿」后切换为计费表达式草稿，点击「保存模型价格」后才生效。已有表达式草稿时该按钮不可用。
@@ -358,6 +336,36 @@ Token 估算器和请求模拟在浏览器中计算，只支持上表中的运�
 1. 由任务插件提供的模型（如视频、异步图片任务），编辑面板会多出一排提供商标签（如「默认」「普通 OpenAI」和各插件）。每个插件标签有「为此服务方单独设置」开关，关闭时沿用模型级表达式或价格。
 2. 任务表达式用 `u("字段")` 读取插件上报的用量（如秒数、张数），结果直接是美元，不再除以 1,000,000；不支持 `fixed()`。Token 估算器对这类表达式提示「此表达式需要任务用量数据才能估算费用，请检查模型的任务插件配置。」
 3. 插件的用量字段、插件级价格覆盖和保存校验见<a href="/zh/docs/plugins/billing" target="_blank" rel="noopener noreferrer">用量与计费</a>。任务模型的价格不是计费表达式时，模型价格列表中模型名旁显示「尚未配置任务定价」。
+
+## 保存与生效
+
+编辑器中的修改只改动草稿，点击「保存模型价格」后整批提交，成功提示「模型定价已保存」；保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>。保存后各对象的生效时机如下：
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 对象 | 生效时机 |
+| --- | --- |
+| 处理该请求的节点 | 下一次请求起按新价格预扣和结算。 |
+| 其他节点 | 随系统设置同步（默认 60 秒）后使用新价格，同步前仍按旧价格计费，见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>。 |
+| 已完成预扣的请求 | 结算时沿用预扣时的表达式，不受本次保存影响。 |
+| 已提交的异步任务 | 任务模型的已提交任务沿用提交时的表达式，不受本次保存影响。 |
+| 模型广场 | 处理该请求的节点立即更新价格，其他节点随系统设置同步后更新；用户已打开的模型广场刷新页面后显示新价格。 |
+
+</div>
+
+### 补充说明
+
+- **无效草稿**：可视化编辑器中有无效字段时不能保存，编辑器提示「请先修正无效字段，再保存或切换模式。上次有效的表达式已保留。」
+- **服务端校验**：逐个模型校验：表达式必须能编译；再用 7 组固定用量（含全 0 和超大的 `len`）分别配合 2 种请求上下文（空请求；带 `anthropic-beta: fast-mode-2026-02-01` 请求头和 `service_tier: fast` 请求体）试算，每次结果都必须是有限且不小于 0 的数；普通模型不能使用 `u()`。失败提示见[常见问题](#常见问题)。
+- **整批保存**：一次提交多个模型时，任一模型校验失败，整批都不保存，已有价格不变。
+- **版本冲突**：打开页面后价格已被他人修改时保存会被拒绝，需点击「重新加载定价」后重新修改。
+
+## 注意事项
+
+- **试算不覆盖全部分支**：由其他请求参数、请求头或时间条件触发的分支不会逐一检查，需自行确保每个分支的结果都不小于 0。
+- **「恢复默认定价」会清除自定义价格**：在模型的「定价」标签中执行后，该模型的自定义价格（含计费表达式）被移除并恢复内置默认值，没有默认价格的模型会变为未定价，见<a href="/zh/docs/guide/feature-guide/admin/model#定价" target="_blank" rel="noopener noreferrer">模型管理</a>。
+- **计费字段对用户可见**：表达式全文等计费字段会出现在用户自己的日志详情中，见[预扣、结算与日志](#预扣结算与日志)。
+- **按请求参数加价需渠道转发该参数**：渠道默认移除 `service_tier`，见[请求规则计费](#请求规则计费)。
 
 ## 常见问题
 
@@ -383,6 +391,58 @@ Token 估算器和请求模拟在浏览器中计算，只支持上表中的运�
 **处理方法**：
 1. 用请求模拟核对条件是否「已命中」。
 2. 到消费日志的请求规则记录中确认。
+</Accordion>
+
+<Accordion title="保存时提示 expr compile error">
+**提示原文**：提示中包含 `expr compile error: …`（仅英文）。
+
+**可能原因**：
+- 语法错误，或使用了不存在的变量、函数。
+- 使用了保留名，提示中还包含 `identifier "_trace" is reserved for internal use`。
+
+**处理方法**：
+1. 检查拼写、括号、引号和逗号。
+2. 使用了保留名时，换用其他名称。
+</Accordion>
+
+<Accordion title="保存时提示 fixed price 相关错误">
+**提示原文**：提示中包含 `fixed price must be a finite, non-negative numeric literal…` 或 `fixed pricing requires tier(name, fixed(amount)) leaves…`（仅英文）。
+
+**可能原因**：
+- `fixed()` 的金额不是非负数字常量。
+- `fixed()` 档位与 Token 费用相加，或结构不符。
+
+**处理方法**：
+1. 把金额改为数字常量，如 `fixed(0.01)`。
+2. 每个按次档位写成 `tier(名称, fixed(金额))`。
+</Accordion>
+
+<Accordion title="保存时提示 result must be finite and non-negative">
+**提示原文**：提示中包含 `vector {p=…, c=…}: result must be finite and non-negative, got …`（仅英文）。
+
+**可能原因**：某组试算结果为负数或无穷大。试算范围见[保存与生效](#保存与生效)。
+
+**处理方法**：
+1. 检查减法、除法和各分支。
+</Accordion>
+
+<Accordion title="普通模型保存时提示 expression references usage keys">
+**提示原文**：提示中包含 `expression references usage keys […] but the model has no task plugin usage schema`（仅英文）。
+
+**可能原因**：普通模型使用了 `u()`。
+
+**处理方法**：
+1. 删除 `u()`；该模型由任务插件提供时，见[任务模型](#任务模型)。
+</Accordion>
+
+<Accordion title="保存时提示 model pricing changed">
+**提示原文**：提示中包含 `model pricing changed; reload before saving`（仅英文）。
+
+**可能原因**：打开页面后，该模型的价格已被他人修改。
+
+**处理方法**：
+1. 点击「重新加载定价」。
+2. 重新修改后保存。
 </Accordion>
 
 </Accordions>

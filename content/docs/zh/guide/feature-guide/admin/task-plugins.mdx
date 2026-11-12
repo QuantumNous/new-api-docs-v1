@@ -4,6 +4,7 @@ description: 管理异步任务插件：查看内置插件、上传或从市场�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 任务插件管理仅 Root 可访问，Root 从侧边栏「管理员」 → 「任务插件」或访问 `/task-plugins` 进入管理页。
 - 任务插件把图像、视频、音频等异步任务平台接入 New API 的统一任务接口。
@@ -85,7 +86,7 @@ New API 当前内置以下出厂插件（随版本更新，以实际列表为准
 4. 填写「API 地址」（必填），即插件请求的上游地址。插件声明了默认地址时会自动填入，下方显示「插件默认值」；未声明时下方提示「该插件未声明默认地址，必须手动填写」。
 5. 填写「API 密钥」——渠道 `key` 会作为插件环境的 `apiKey` 传入。
 6. 核对模型、分组，按需设置优先级/权重、标签、状态等（通用字段见<a href="/zh/docs/guide/feature-guide/admin/channel#独立插件渠道" target="_blank" rel="noopener noreferrer">渠道管理</a>）。
-7. 保存渠道。保存后可使用实际模型发起一次异步任务验证。
+7. 保存渠道。
 
 ### 字段说明
 
@@ -376,27 +377,187 @@ New API 当前内置以下出厂插件（随版本更新，以实际列表为准
 3. 上传插件源码，或从市场安装所需平台插件；上传/安装后核对解析出的 Key、版本、渠道类型与模型。
 4. 在「已安装」列表检查插件运行状态是否为「已注册」；若为编译失败或未注册，按详情与错误信息处理。
 5. 前往「渠道管理」创建任务插件渠道（在「插件」分类中选择插件），填写 API 地址、API 密钥与分组；确认模型自动填充是否符合预期。
-6. 使用实际模型发起一次异步任务请求，通过任务日志确认提交、查询与结果解析正常，并检查计费参数是否生效。
-7. 需要切换插件版本时，先在插件详情的「版本历史」中激活目标版本，再用实际模型发起任务验证。
-8. 变更或禁用插件前，先确认绑定的渠道与在途任务，必要时执行级联禁用，避免请求路由到不可用插件。
+6. 需要切换插件版本时，在插件详情的「版本历史」中激活目标版本。
+7. 变更或禁用插件前，先确认绑定的渠道与在途任务，必要时执行级联禁用，避免请求路由到不可用插件。
 
-## 故障排查
+## 保存与生效
 
-| 现象 | 建议检查 |
-| --- | --- |
-| 创建渠道时看不到「插件」分类 | 确认当前账户具备 `task_plugin.bind` 权限；没有该权限时，选择对话框不显示「插件」分类。 |
-| 任务插件渠道无法保存 | 检查插件是否已注册、`task_plugin_key` 是否 ≤30 字符、API 地址与 API 密钥是否填写；按后端错误信息逐项处理。 |
-| 请求所选渠道与插件不匹配 | 检查渠道 `setting.task_plugin_key` 与请求固定 Key 是否一致；其他渠道类型的编号是否在插件的 `channelTypes` 内。 |
-| 插件上传失败 | 检查源码是否超过 8 MiB、`apiVersion/key/version/name/models` 是否满足校验，以及是否与现有插件存在模型/渠道类型/路由冲突；存在冲突时，先在「已安装」中处理冲突插件（删除或禁用），再重新上传。 |
-| 插件显示编译失败 | 在详情中查看源码与错误，确认 `buildSubmitRequest/parseSubmitResponse/parseTaskResult` 等必需导出存在；`batch` 模式还需批量导出。 |
-| 插件未注册 | 该版本已启用，但当前节点的注册表尚未加载。各节点每 30 秒从数据库同步一次，稍后刷新列表；持续未注册时查看服务端日志中的任务插件同步错误。 |
-| 禁用后仍显示使用中 | 在确认对话框中执行「级联禁用渠道」或「强制操作」；并确认绑定渠道已切换或禁用。 |
-| 禁用自定义版本后，同名出厂插件也不再服务 | 这是当前行为：禁用会把该 Key 写入 `TaskPluginDisabledFactoryKeys`，出厂插件一起停用；直接重新启用会恢复当前的自定义版本。如需改由出厂插件服务，用「删除当前自定义版本」删除该 Key 的全部自定义版本，待「来源」显示「出厂」后，打开该行的「已启用」开关。 |
-| 任务不进入插件 | 检查渠道类型是否为任务插件、渠道是否绑定正确 Key、分组是否匹配、模型是否在插件 `models` 中。 |
-| 计费不生效 | 检查插件是否声明 `usageSchema`、请求是否命中该插件，以及是否已在<a href="/zh/docs/guide/feature-guide/admin/billing-expression#任务模型" target="_blank" rel="noopener noreferrer">计费表达式</a>中为该任务模型配置任务表达式。 |
-| 市场安装失败 | 检查索引是否可访问、`indexVersion` 是否 ≤1、`kind` 是否为 `task`、源码哈希是否与索引一致（「完整性校验失败」）以及是否存在路由冲突。 |
-| 市场来源无法拉取 | 确认 `index_url` 为绝对 http(s) 地址且浏览器可访问；主机禁止跨域或不可达时下载后粘贴源码。 |
-| 任务插件渠道「测试连接」无效 | 「任务插件」渠道不支持测试探测；直接用真实模型发起任务验证。 |
+本页各操作提交后由服务端立即执行，没有统一的保存按钮。处理该请求的节点立即生效；其他节点的同步方式因对象而异，按下列两组查看。
+
+### 插件版本
+
+处理该请求的节点立即更新插件注册表，其他节点最迟 30 秒后加载。
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| 操作 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 上传、市场「安装并启用」 | 服务端先编译、校验元信息并预检冲突，通过后才保存 | 该 Key 的第一个版本保存后立即激活；已有激活版本时提示「插件已保存，待激活」，当前版本不变，点击「立即激活」或在版本历史中激活后才生效。 |
+| 激活、回滚版本 | 在「版本历史」中操作，成功提示「插件版本已激活」 | 激活前先编译，编译失败时不切换版本。 |
+| 启用、禁用自定义插件 | 开关加确认框；插件仍在使用时按「插件仍在使用中」处理 | 禁用后该 Key 不再参与路由，重新启用后恢复；进行中的任务不会被取消。 |
+| 删除当前自定义版本 | 确认框；成功提示「插件版本已删除」 | 该 Key 还有其他版本时激活其中最近上传的一个，否则回落出厂插件；没有出厂插件时该平台不可用。 |
+
+</div>
+
+### 全局开关、出厂插件与市场来源
+
+这些对象保存为系统设置：处理该请求的节点立即生效，其他节点随系统设置同步（默认 60 秒）。
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| 操作 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 全局「启用任务插件」 | 切换开关；关闭前先确认「禁用任务插件？」；成功提示「任务插件设置已更新」 | 关闭后新的任务插件请求被拒绝；进行中的任务不会被取消。 |
+| 启用、禁用出厂插件 | 开关加确认框 | 禁用后该 Key 的出厂插件停止服务，不会回落；重新启用后恢复。 |
+| 市场来源 | 「市场源」对话框中整张列表一次保存，成功提示「市场源已更新」 | 只改变「插件市场」中可浏览的来源，不影响已安装的插件。 |
+
+</div>
+
+### 补充说明
+
+- **同名出厂与自定义插件一起启停**：两者各按所在组的方式同步，默认配置下其他节点最迟约 60 秒后全部生效。
+- **编译失败**：某个节点加载新版本时编译失败，该节点继续使用已加载的旧版本，运行状态显示「编译失败」。
+- **插件沙盒「运行干跑」**：不保存，使用临时副本执行，不影响当前注册表。
+- **任务插件渠道**：保存与生效见<a href="/zh/docs/guide/feature-guide/admin/channel#保存与生效" target="_blank" rel="noopener noreferrer">渠道管理</a>。
+
+## 注意事项
+
+- **上传和安装是管理员级信任决策**：插件可以读取渠道凭证并构造上游请求，市场索引任何人都可以发布，安装前请审查源码，见[上传插件](#上传插件)和[浏览与安装](#浏览与安装)。
+- **禁用会连带同名出厂插件**：禁用出厂插件，或禁用有同名出厂插件的自定义版本，该 Key 的出厂插件一起停止服务，不会回落，见[启用与禁用单个插件](#启用与禁用单个插件)。
+- **在途任务不会被取消**：关闭全局开关或禁用插件后，进行中的任务交由超时清理，清理只在 `UPDATE_TASK` 开启时运行，见[任务超时与清理](#任务超时与清理)。
+- **删除或禁用前先处理绑定的渠道**：否则这些渠道上的请求会因插件不可用而失败；删除当前自定义版本时，若该 Key 还有其他版本，会激活最近上传的一个，见[删除当前自定义版本](#删除当前自定义版本)。
+- **修改源码需提升版本**：同一 Key 和版本的源码不同会被拒绝，见[上传插件](#上传插件)。
+- **冲突预检不能跳过**：启用状态上传会先预检冲突，界面上传和市场安装都不能跳过预检，见[上传插件](#上传插件)。
+
+## 常见问题
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="创建渠道时看不到「插件」分类">
+**提示原文**：复制或提交任务插件渠道时可能提示 `task plugin channels require the task_plugin.bind permission`（仅英文）。
+
+**可能原因**：当前账户没有 `task_plugin.bind` 权限。没有该权限时，选择对话框不显示「插件」分类。
+
+**处理方法**：
+1. 请 Root 在<a href="/zh/docs/guide/feature-guide/admin/user#管理员权限" target="_blank" rel="noopener noreferrer">用户管理</a>的「管理员权限」中授予「绑定任务插件」。
+</Accordion>
+
+<Accordion title="任务插件渠道无法保存">
+**提示原文**：如 `task plugin "…" is not registered`、`task plugin key must not exceed 30 characters`、`base URL is required for task plugin channels`、`channel cannot be empty`（仅英文），或「此渠道类型需要填写 Base URL」（英文 Base URL is required for this channel type）。
+
+**可能原因**：
+- 绑定的插件未注册。
+- `task_plugin_key` 超过 30 个字符。
+- 未填写「API 地址」或「API 密钥」。
+
+**处理方法**：
+1. 按提示逐项修正。
+2. 确认该插件的运行状态为「已注册」。
+</Accordion>
+
+<Accordion title="请求没有进入预期的插件">
+**提示原文**：`selected channel does not match the pinned task plugin`；插件系统或该插件已关闭时，客户端收到 HTTP 400 和 `the task plugin system is disabled on this gateway` 或 `task plugin "…" is disabled on this gateway`（仅英文）。
+
+**可能原因**：
+- 渠道 `setting.task_plugin_key` 与请求固定的 Key 不一致。
+- 其他渠道类型的编号不在插件的 `channelTypes` 内。
+- 渠道类型不是任务插件、渠道绑定的 Key 有误、分组不匹配，或模型不在插件的 `models` 中。
+- 全局「启用任务插件」或该插件已关闭。
+
+**处理方法**：
+1. 按上述原因逐项核对渠道与插件。
+2. 插件已关闭时重新启用。
+</Accordion>
+
+<Accordion title="插件上传失败">
+**提示原文**：如「插件源码超过 8 MiB 上限。」（英文 Plugin source exceeds the 8 MiB limit.）、`plugin source sha256 mismatch`、`plugin key and version already exist with different source`（仅英文）。
+
+**可能原因**：
+- 源码超过 8 MiB。
+- `apiVersion`、`key`、`version`、`name`、`models` 不满足校验。
+- 与现有插件存在模型、渠道类型或路由冲突。
+- 同一 Key 和版本已存在，但源码不同。
+
+**处理方法**：
+1. 存在冲突时，先在「已安装」中删除或禁用冲突插件，再重新上传。
+2. 修改源码后提升 `version` 再上传。
+</Accordion>
+
+<Accordion title="插件显示编译失败">
+**提示原文**：悬停运行状态可看到错误，如 `plugin … is missing required export "buildSubmitRequest"`（仅英文）。
+
+**可能原因**：源码错误、元信息缺失，或缺少 `buildSubmitRequest`、`parseSubmitResponse`、`parseTaskResult` 等必需导出；`batch` 模式还需批量导出。
+
+**处理方法**：
+1. 在详情中查看源码与错误并修正。
+</Accordion>
+
+<Accordion title="插件显示未注册">
+**说明**：该版本已启用，但当前节点的注册表尚未加载。各节点每 30 秒从数据库同步一次。
+
+**处理方法**：
+1. 稍后刷新列表。
+2. 持续未注册时，查看服务端日志中的任务插件同步错误。
+</Accordion>
+
+<Accordion title="禁用插件时提示「插件仍在使用中」">
+**说明**：插件仍被启用的渠道或在途任务使用。
+
+**处理方法**：
+1. 在确认框中点击「级联禁用渠道」；仍有在途任务时点击「强制操作」，见[启用与禁用单个插件](#启用与禁用单个插件)。
+2. 需要保留这些渠道时，先把它们切换到其他插件。
+</Accordion>
+
+<Accordion title="禁用自定义版本后，同名出厂插件也不再服务">
+**说明**：禁用会把该 Key 写入 `TaskPluginDisabledFactoryKeys`，出厂插件一起停用。
+
+**处理方法**：
+1. 直接重新启用，恢复当前的自定义版本。
+2. 需要改由出厂插件服务时，用「删除当前自定义版本」删除该 Key 的全部自定义版本，待「来源」显示「出厂」后，打开该行的「已启用」开关。
+</Accordion>
+
+<Accordion title="任务计费不生效">
+**可能原因**：
+- 插件未声明 `usageSchema`。
+- 请求未命中该插件。
+- 未在<a href="/zh/docs/guide/feature-guide/admin/billing-expression#任务模型" target="_blank" rel="noopener noreferrer">计费表达式</a>中为该任务模型配置任务表达式。
+</Accordion>
+
+<Accordion title="市场安装失败">
+**提示原文**：如「完整性校验失败」（英文 Integrity check failed）、`unsupported indexVersion …`（仅英文），或「市场安装绝不会强制跳过冲突。请先在任务插件页面处理冲突，然后重新安装。」（英文 Marketplace installs never force past a conflict. Resolve it on the task plugins page, then install again.）
+
+**可能原因**：
+- 索引无法访问。
+- `indexVersion` 大于 1，或 `kind` 不是 `task`。
+- 源码哈希与索引不一致。
+- 存在路由冲突。
+
+**处理方法**：
+1. 按提示处理后重新安装；存在冲突时，先在「已安装」中处理冲突插件。
+</Accordion>
+
+<Accordion title="市场来源无法拉取">
+**提示原文**：「无法加载该源」（英文 Could not load this source），或「无法在浏览器中拉取插件源码。该主机可能禁止跨域请求或无法访问。」（英文 Could not fetch the plugin source from this browser. The host may block cross-origin requests or be unreachable.）
+
+**可能原因**：
+- `index_url` 不是绝对 http(s) 地址。
+- 浏览器无法访问该主机，或主机禁止跨域请求。
+
+**处理方法**：
+1. 改正 `index_url`。
+2. 主机禁止跨域或无法访问时，下载源码后在「上传插件」中粘贴。
+</Accordion>
+
+<Accordion title="任务插件渠道「测试连接」无效">
+**提示原文**：`Task Plugin channel test is not supported`（仅英文）
+
+**说明**：「任务插件」渠道不支持测试探测。
+
+**处理方法**：
+1. 直接用真实模型发起任务，在任务日志中查看结果。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 

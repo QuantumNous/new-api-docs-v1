@@ -2,9 +2,9 @@
   "title": "管理员指南",
   "defaultOpen": false,
   "pages": [
+    "billing-expression",
     "channel",
     "model",
-    "billing-expression",
     "user",
     "redemption",
     "subscription",
