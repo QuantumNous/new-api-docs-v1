@@ -23,7 +23,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `author`                        | `{ name, url? }`     | 作者名称必填，URL 为 HTTP(S) 地址；属于作者自述信息                 |
 | `models`                        | string[]             | 声明支持的模型                                                      |
 | `fetchMode`                     | `per_task` / `batch` | 单任务或批量轮询                                                    |
-| `description`                   | LocalizedText        | 插件简介                                                            |
+| `description`                   | LocalizedText        | 插件简介，每种语言建议不超过 80 列，见下方“插件简介长度”            |
 | `icon`                          | string               | LobeHub 图标名或 `text` / `text:<label>`，不接受远程 URL 或内联图片 |
 | `website`                       | string               | 可选插件官网，非空时为有效 HTTPS URL                                |
 | `sortPriority`                  | integer              | 展示排序，值越大越靠前；不影响路由优先级                            |
@@ -54,6 +54,16 @@ description: {
 ```
 
 插件数据中的文案不应作为管理前端的翻译键使用。模型名、字段 key 和枚举原始值必须保持稳定。
+
+### 插件简介长度
+
+插件站的市场列表把 `meta.description` 显示在插件名下方，只占一行，超出部分以省略号截断。每种语言的简介建议不超过 80 列：汉字、日文、韩文和全角标点每个算 2 列，其他字符算 1 列，约合 40 个汉字或 80 个英文字符。这个长度在桌面浏览器窗口里能完整显示，窗口更窄或在手机上会显示得更少。
+
+- 开头先写厂商或产品和主要能力，即使被截短也能认出是哪个插件。
+- 写模型系列和主要能力，不逐个列出模型变体、模式、接口或计费细节，这些写进使用说明。
+- 每种语言分别核对长度。同样的意思，英文通常比中文占更多列。
+- 例如 `Shengshu Vidu video generation (text-to-video, image-to-video, first-and-last-frame, and reference-to-video)`（108 列）可以改成 `Shengshu Vidu video generation from text, images, keyframes or references`（73 列）。`快手可灵视频生成（文生视频、图生视频）`占 38 列。
+- 这是写作建议，宿主只校验每种语言不超过 512 个字符。
 
 ## 生命周期钩子
 

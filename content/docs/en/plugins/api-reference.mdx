@@ -22,7 +22,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `author`                        | `{ name, url? }`     | Author name is required, URL is HTTP(S) address; self-declared author information |
 | `models`                        | string[]             | Declares supported models                                                   |
 | `fetchMode`                     | `per_task` / `batch` | Single-task or batch polling                                                |
-| `description`                   | LocalizedText        | Plugin description                                                          |
+| `description`                   | LocalizedText        | Plugin description; keep each locale within 80 columns, see Plugin summary length below |
 | `icon`                          | string               | LobeHub icon name or `text` / `text:<label>`, remote URLs or inline images are not accepted |
 | `website`                       | string               | Optional plugin official website, must be a valid HTTPS URL if not empty    |
 | `sortPriority`                  | integer              | Display sort order, larger value means higher priority; does not affect routing priority |
@@ -53,6 +53,16 @@ description: {
 ```
 
 Text in plugin data should not be used as translation keys for the management frontend. Model names, field keys, and raw enum values must remain stable.
+
+### Plugin summary length
+
+The plugin site's marketplace list shows `meta.description` on a single line under the plugin name and cuts off anything longer with an ellipsis. Keep each locale's summary within 80 columns, counting each Chinese, Japanese or Korean character and each full-width punctuation mark as two columns and any other character as one. That is about 40 Chinese characters or 80 English characters, which fits on one line of the plugin site's list in a desktop browser window. Narrower windows and phones show less.
+
+- Lead with the vendor or product and the main capability, so a shortened line still identifies the plugin.
+- Name the model family and the main capabilities instead of listing every model variant, mode, endpoint or billing detail. The usage guide covers those.
+- Check each translation on its own. English often needs more columns than Chinese for the same meaning.
+- For example, `Shengshu Vidu video generation (text-to-video, image-to-video, first-and-last-frame, and reference-to-video)` (108 columns) becomes `Shengshu Vidu video generation from text, images, keyframes or references` (73 columns). `快手可灵视频生成（文生视频、图生视频）` uses 38 columns.
+- This is a writing recommendation. Hosts enforce only the 512-rune limit.
 
 ## Lifecycle Hooks
 
