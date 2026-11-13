@@ -170,6 +170,12 @@ routes: [
 - `routes[].models` 可限制 submit/dynamic 的顶层模型，不能用于 query；模型嵌套在厂商 body 内时应由 decoder 判断。
 - 宿主负责认证、所有权和任务持久化，呈现器只处理对外响应。钩子抛出的错误信息可能返回调用者，应使用可读且不含敏感数据的错误文本。
 
+内置插件和上传的插件都可使用声明的路径，网关还会在 `/{key}` 下提供同一路由。例如，key 为 `demo-task` 的插件声明 `POST /v1/systemone` 后，可通过 `/v1/systemone` 和 `/demo-task/v1/systemone` 调用。若路径首段已经是 key 或 key 的真前缀，例如 `alibaba` 的 `/ali/...`，则使用该地址，不再增加一份。
+
+同一 HTTP 方法的宿主路由及其尾斜线重定向优先响应。顶层路径的首段属于其他插件的 key 或内置插件的自有前缀时，网关也会跳过该顶层路径。带 `/{key}` 的地址仍可用，插件列表（`GET /api/plugin/task`）和详情通过 `skipped_routes` 列出被跳过的声明，例如 `GET /v1/models`。宿主 Video 查询和 Gemini `predictLongRunning` 路由会按特定规则先交给插件，详见[Manifest 说明](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.md#manifest)。
+
+与 `/v1/tasks`、`/assets` 或控制台保留路径相交的路由会编译失败。插件 key 也应避开 `api`、`v1`、`v1beta`、`mj`、`pg`、`dashboard` 等宿主路由前缀，以及内置插件的自有前缀。冲突的 key 会在编译或注册路由时被拒绝。
+
 `originTaskIds` 使用公开任务 ID，宿主检查所有权与渠道一致性后，将包含内部上游 ID 的 `originTasks` 注入 driver；不会把它交给对外呈现器。
 
 ### 结果保留

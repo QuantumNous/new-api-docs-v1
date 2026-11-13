@@ -88,7 +88,9 @@ Plugins can provide vendor-style native interfaces via `meta.routes`. Use the **
 
 The response encapsulation for native routes is determined by the plugin; the general task response fields above cannot be directly applied to all native interfaces. Query routes are first validated for task ownership by the host; submission and dynamic routes will also check model scope based on declarations.
 
-Native paths may include a plugin prefix, such as `/doubao/api/v3/...` or `/ali/api/v1/...`; do not use the vendor path as the gateway path without checking it. For an immediate-completion route declaring `retainResult: false`, save the result from the create response. Later result queries and artifact endpoints are unavailable, while billing and task logs remain.
+The gateway serves declared vendor paths and copies under `/{key}`, for both built-in and uploaded plugins. For example, Doubao's `/api/v3/...` is also available at `/doubao/api/v3/...`; Alibaba's `/ali/...` already uses its own prefix. If a host route or another plugin's namespace takes precedence, use the `/{key}` address and check `skipped_routes` in the installed plugin details. See the [API reference](/en/docs/plugins/api-reference) for routing rules.
+
+For an immediate-completion route declaring `retainResult: false`, save the result from the create response. Later result queries and artifact endpoints are unavailable, while billing and task logs remain.
 
 ## OpenAI Image compatible interface
 

@@ -89,7 +89,9 @@ curl 'https://your-newapi.example/v1/tasks/<public-task-id>/artifacts/<artifact-
 
 原生路由的响应封装由插件决定，不能把上面的通用任务响应字段直接套用到所有原生接口。查询路由由宿主先验证任务所有权；提交和动态路由还会根据声明检查模型范围。
 
-原生路径可能包含插件前缀，例如 `/doubao/api/v3/...` 或 `/ali/api/v1/...`，不能把厂商原始路径直接当作网关路径。对于声明 `retainResult: false` 的即时完成路由，请保存创建响应中的结果；后续结果查询和产物接口不可用，计费与任务日志仍会保留。
+内置插件和上传的插件都可使用声明的厂商路径，以及 `/{key}` 下的地址。例如，豆包的 `/api/v3/...` 也可通过 `/doubao/api/v3/...` 调用；阿里巴巴的 `/ali/...` 已经使用自有前缀。若顶层路径被宿主路由或其他插件占用，请使用带 `/{key}` 的地址，并查看已安装插件详情中的 `skipped_routes`。具体规则见 [API 参考](/zh/docs/plugins/api-reference)。
+
+对于声明 `retainResult: false` 的即时完成路由，请保存创建响应中的结果；后续结果查询和产物接口不可用，计费与任务日志仍会保留。
 
 ## OpenAI Image 兼容接口
 

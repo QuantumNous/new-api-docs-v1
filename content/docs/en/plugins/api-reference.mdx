@@ -169,6 +169,12 @@ routes: [
 - `routes[].models` can restrict top-level models for submit/dynamic, but not for query; when models are nested within the vendor body, the decoder should determine them.
 - The host is responsible for authentication, ownership, and task persistence; renderers only handle external responses. Error messages thrown by hooks may be returned to the caller and should use readable error text without sensitive data.
 
+Built-in and uploaded plugins both serve their declared paths and a copy under `/{key}`. For example, a plugin with key `demo-task` declaring `POST /v1/systemone` serves both `/v1/systemone` and `/demo-task/v1/systemone`. A path whose first segment is already the key or a proper prefix of it, such as `/ali/...` for `alibaba`, keeps that address without another copy.
+
+A host route of the same HTTP method, including its trailing-slash redirect, takes precedence. The gateway also skips a top-level path whose first segment belongs to another plugin's key or a built-in plugin's own prefix. The `/{key}` address remains available, and the plugin list (`GET /api/plugin/task`) and detail report skipped declarations in `skipped_routes`, for example `GET /v1/models`. The host's Video retrieval and Gemini `predictLongRunning` routes have specific plugin handoffs described in the [Manifest section](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.md#manifest).
+
+Routes intersecting `/v1/tasks`, `/assets`, or reserved console paths fail compilation. Plugin keys must also avoid `api`, host route prefixes such as `v1`, `v1beta`, `mj`, `pg`, and `dashboard`, and built-in plugin prefixes. Conflicting keys are rejected during compilation or route registration.
+
 `originTaskIds` uses public task IDs. After the host checks ownership and channel consistency, `originTasks` containing internal upstream IDs are injected into the driver; they are not passed to external renderers.
 
 ### Result retention
