@@ -7,6 +7,12 @@ A Next.js documentation site for New API.
 Run the development server:
 
 ```bash
+make dev
+```
+
+Or with Bun directly:
+
+```bash
 bun install
 
 bun dev

@@ -224,8 +224,7 @@ export function Hero({ children }: { children: ReactNode }) {
                 imageReady ? 'animate-in fade-in duration-400' : 'invisible'
               )}
               onLoad={() => setImageReady(true)}
-              loading="lazy"
-              fetchPriority="low"
+              loading="eager"
               sizes="(min-width: 1024px) 1200px, 100vw"
             />
           )}

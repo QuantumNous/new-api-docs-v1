@@ -442,8 +442,8 @@ export default async function Page({
               <Image
                 src={partner.logo}
                 alt={partner.name}
-                width={72}
-                height={60}
+                width={200}
+                height={80}
                 className="h-[50px] w-auto md:h-[60px]"
                 loading="lazy"
                 decoding="async"
@@ -470,8 +470,8 @@ export default async function Page({
               <Image
                 src={partner.lightLogo}
                 alt={partner.name}
-                width={120}
-                height={60}
+                width={200}
+                height={80}
                 className="block h-[50px] w-auto md:h-[60px] dark:hidden"
                 loading="lazy"
                 decoding="async"
@@ -479,8 +479,8 @@ export default async function Page({
               <Image
                 src={partner.darkLogo}
                 alt={partner.name}
-                width={120}
-                height={60}
+                width={200}
+                height={80}
                 className="hidden h-[50px] w-auto md:h-[60px] dark:block"
                 loading="lazy"
                 decoding="async"
