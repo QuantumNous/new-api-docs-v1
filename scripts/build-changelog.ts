@@ -24,6 +24,12 @@ interface Release {
   }>;
 }
 
+interface ActiveCodeFence {
+  char: '`' | '~';
+  length: number;
+  quoteDepth: number;
+}
+
 // i18n Configuration
 const CHANGELOG_I18N = {
   zh: {
@@ -129,19 +135,280 @@ function formatTimeToChina(
   }
 }
 
-function processMarkdownHeaders(body: string): string {
+function escapeHtmlAttribute(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function escapeMdxInlineText(value: string): string {
+  return value.replace(/\\?([{}<])/g, '\\$1');
+}
+
+function normalizeSafeImgTag(rawAttrs: string): string | null {
+  const attrs: Partial<Record<'src' | 'alt' | 'width' | 'height', string>> = {};
+  const attrRe =
+    /\b(src|alt|width|height)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/gi;
+
+  for (let match; (match = attrRe.exec(rawAttrs)); ) {
+    const key = match[1].toLowerCase() as 'src' | 'alt' | 'width' | 'height';
+    const val = match[2] ?? match[3] ?? match[4] ?? '';
+    attrs[key] = val;
+  }
+
+  if (!attrs.src || !/^(?:https?:\/\/|\/)/i.test(attrs.src)) {
+    return null;
+  }
+
+  const parts = [`src="${escapeHtmlAttribute(attrs.src)}"`];
+  if (attrs.alt !== undefined) {
+    parts.push(`alt="${escapeHtmlAttribute(attrs.alt)}"`);
+  }
+  if (attrs.width !== undefined) {
+    parts.push(`width="${escapeHtmlAttribute(attrs.width)}"`);
+  }
+  if (attrs.height !== undefined) {
+    parts.push(`height="${escapeHtmlAttribute(attrs.height)}"`);
+  }
+
+  return `<img ${parts.join(' ')} />`;
+}
+
+function sanitizeMdxProse(text: string): string {
+  const tokenRe =
+    /\\[\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]|<!--[\s\S]*?-->|<((?:https?|mailto):[^>\s]+)>|<(br|hr)\s*\/?>|<img\b([^>]*?)\/?>|\]\(((?:https?:\/\/|\/)(?:[^\s()]|\([^\s()]*\))+)\)|(https?:\/\/[^\s<>)\]]+)|[{}<]/gi;
+
+  return text.replace(
+    tokenRe,
+    (
+      match,
+      autolinkUrl?: string,
+      voidTag?: string,
+      imgAttrs?: string,
+      markdownLinkUrl?: string,
+      bareUrl?: string
+    ) => {
+      if (match.startsWith('\\')) {
+        return match;
+      }
+      if (match.startsWith('<!--')) {
+        return '';
+      }
+      if (autolinkUrl !== undefined) {
+        return `[${autolinkUrl.replace(/([{}<])/g, '\\$1')}](${autolinkUrl})`;
+      }
+      if (voidTag !== undefined) {
+        return `<${voidTag.toLowerCase()} />`;
+      }
+      if (imgAttrs !== undefined) {
+        return normalizeSafeImgTag(imgAttrs) ?? match.replace(/[{}<]/g, '\\$&');
+      }
+      if (markdownLinkUrl !== undefined) {
+        return `](${markdownLinkUrl})`;
+      }
+      if (bareUrl !== undefined) {
+        const trailingMatch = /[.,;:!?]+$/.exec(bareUrl);
+        const cleanUrl = trailingMatch
+          ? bareUrl.slice(0, -trailingMatch[0].length)
+          : bareUrl;
+        const trailing = trailingMatch ? trailingMatch[0] : '';
+        if (/[{}]/.test(cleanUrl)) {
+          return `[${cleanUrl.replace(/([{}])/g, '\\$1')}](${cleanUrl})${trailing}`;
+        }
+        return bareUrl;
+      }
+      return `\\${match}`;
+    }
+  );
+}
+
+function sanitizeNonFencedChunk(chunk: string): string {
+  const headerNormalized = chunk
+    .split('\n')
+    .map((line) => {
+      const headingMatch = /^( {0,3}(?:> ?)* {0,3})(#{1,6})([ \t]+.*)$/.exec(
+        line
+      );
+      if (headingMatch) {
+        const [, prefix, hashes, rest] = headingMatch;
+        const nextLevel = Math.min(
+          6,
+          hashes.length === 1 ? 3 : hashes.length + 1
+        );
+        return `${prefix}${'#'.repeat(nextLevel)}${rest}`;
+      }
+      if (/^(import|export)(?=\s)/.test(line)) {
+        return line.startsWith('import')
+          ? `&#105;${line.slice(1)}`
+          : `&#101;${line.slice(1)}`;
+      }
+      return line;
+    })
+    .join('\n');
+
+  let out = '';
+  let proseStart = 0;
+  let i = 0;
+
+  while (i < headerNormalized.length) {
+    const ch = headerNormalized[i];
+    if (
+      ch === '\\' &&
+      i + 1 < headerNormalized.length &&
+      /^[\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]$/.test(headerNormalized[i + 1])
+    ) {
+      i += 2;
+      continue;
+    }
+
+    if (ch === '`') {
+      let openEnd = i;
+      while (
+        openEnd < headerNormalized.length &&
+        headerNormalized[openEnd] === '`'
+      ) {
+        openEnd++;
+      }
+      const tickLen = openEnd - i;
+
+      let searchPos = openEnd;
+      let closeStart = -1;
+      while (searchPos < headerNormalized.length) {
+        if (headerNormalized[searchPos] === '`') {
+          let runEnd = searchPos;
+          while (
+            runEnd < headerNormalized.length &&
+            headerNormalized[runEnd] === '`'
+          ) {
+            runEnd++;
+          }
+          if (runEnd - searchPos === tickLen) {
+            const inner = headerNormalized.slice(openEnd, searchPos);
+            if (!/\n[ \t]*(?:> ?)*[ \t]*\n/.test(inner)) {
+              closeStart = searchPos;
+            }
+            break;
+          }
+          searchPos = runEnd;
+          continue;
+        }
+        searchPos++;
+      }
+
+      if (closeStart !== -1) {
+        out += sanitizeMdxProse(headerNormalized.slice(proseStart, i));
+        out += headerNormalized.slice(i, closeStart + tickLen);
+        i = closeStart + tickLen;
+        proseStart = i;
+        continue;
+      }
+
+      i = openEnd;
+      continue;
+    }
+
+    i++;
+  }
+
+  if (proseStart < headerNormalized.length) {
+    out += sanitizeMdxProse(headerNormalized.slice(proseStart));
+  }
+
+  return out;
+}
+
+function getQuoteDepth(line: string): { stripped: string; quoteDepth: number } {
+  const stripped = line.replace(/^(?: {0,3}> ?)*/, '');
+  const prefix = line.slice(0, line.length - stripped.length);
+  const quoteDepth = (prefix.match(/>/g) || []).length;
+  return { stripped, quoteDepth };
+}
+
+function matchOpenCodeFence(line: string): ActiveCodeFence | null {
+  const { stripped, quoteDepth } = getQuoteDepth(line);
+  const backtickMatch = /^ {0,3}(`{3,})([^`]*)$/.exec(stripped);
+  if (backtickMatch) {
+    return { char: '`', length: backtickMatch[1].length, quoteDepth };
+  }
+  const tildeMatch = /^ {0,3}(~{3,})(.*)$/.exec(stripped);
+  if (tildeMatch) {
+    return { char: '~', length: tildeMatch[1].length, quoteDepth };
+  }
+  return null;
+}
+
+function isClosingCodeFence(line: string, fence: ActiveCodeFence): boolean {
+  const { stripped } = getQuoteDepth(line);
+  const closeMatch = /^ {0,3}(`{3,}|~{3,})[ \t]*$/.exec(stripped);
+  if (!closeMatch) return false;
+  const marker = closeMatch[1];
+  return marker[0] === fence.char && marker.length >= fence.length;
+}
+
+export function sanitizeReleaseMarkdown(body: string): string {
   if (!body) return '';
 
-  // Decrease header levels (process from highest to lowest to avoid multiple downgrades)
-  let processed = body;
-  processed = processed.replace(/^######\s+/gm, '###### ');
-  processed = processed.replace(/^#####\s+/gm, '###### ');
-  processed = processed.replace(/^####\s+/gm, '##### ');
-  processed = processed.replace(/^###\s+/gm, '#### ');
-  processed = processed.replace(/^##\s+/gm, '### ');
-  processed = processed.replace(/^#\s+/gm, '### ');
+  const lines = body.replace(/\r\n?/g, '\n').split('\n');
+  const outputSegments: string[] = [];
+  let proseBuffer: string[] = [];
+  let codeBuffer: string[] = [];
+  let activeFence: ActiveCodeFence | null = null;
 
-  return processed;
+  const flushProse = () => {
+    if (proseBuffer.length > 0) {
+      outputSegments.push(sanitizeNonFencedChunk(proseBuffer.join('\n')));
+      proseBuffer = [];
+    }
+  };
+
+  const flushCode = () => {
+    if (codeBuffer.length > 0) {
+      outputSegments.push(codeBuffer.join('\n'));
+      codeBuffer = [];
+    }
+  };
+
+  for (const line of lines) {
+    if (activeFence) {
+      const { quoteDepth } = getQuoteDepth(line);
+      if (quoteDepth < activeFence.quoteDepth) {
+        codeBuffer.push(
+          `${'> '.repeat(activeFence.quoteDepth)}${activeFence.char.repeat(activeFence.length)}`
+        );
+        flushCode();
+        activeFence = null;
+      } else {
+        codeBuffer.push(line);
+        if (isClosingCodeFence(line, activeFence)) {
+          flushCode();
+          activeFence = null;
+        }
+        continue;
+      }
+    }
+
+    const opened = matchOpenCodeFence(line);
+    if (opened) {
+      flushProse();
+      activeFence = opened;
+      codeBuffer.push(line);
+    } else {
+      proseBuffer.push(line);
+    }
+  }
+
+  if (activeFence) {
+    codeBuffer.push(
+      `${'> '.repeat(activeFence.quoteDepth)}${activeFence.char.repeat(activeFence.length)}`
+    );
+    flushCode();
+  } else {
+    flushProse();
+  }
+
+  return outputSegments.join('\n');
 }
 
 function formatFileSize(bytes: number): string {
@@ -164,17 +431,18 @@ function formatDownloadLinks(
   for (const asset of assets) {
     const { name, browser_download_url, size } = asset;
     const sizeStr = formatFileSize(size);
-    html += `<li><a href="${browser_download_url}">${name}</a> (${sizeStr})</li>\n`;
+    html += `<li><a href="${escapeHtmlAttribute(browser_download_url)}">${escapeMdxInlineText(name)}</a> (${sizeStr})</li>\n`;
   }
 
   // Add source code download links
   if (tagName) {
+    const encodedTag = encodeURIComponent(tagName);
     for (const [ext, extName] of [
       ['zip', 'zip'],
       ['tar.gz', 'tar.gz'],
     ]) {
-      const url = `https://github.com/${SOURCE_REPO}/archive/refs/tags/${tagName}.${ext}`;
-      html += `<li><a href="${url}">Source code (${extName})</a></li>\n`;
+      const url = `https://github.com/${SOURCE_REPO}/archive/refs/tags/${encodedTag}.${ext}`;
+      html += `<li><a href="${escapeHtmlAttribute(url)}">Source code (${extName})</a></li>\n`;
     }
   }
 
@@ -196,7 +464,7 @@ function getVersionType(
   }
 }
 
-function formatReleasesMarkdown(
+export function formatReleasesMarkdown(
   releases: Release[],
   lang: keyof typeof CHANGELOG_I18N
 ): string {
@@ -242,10 +510,13 @@ function formatReleasesMarkdown(
 
     // Process content
     const formattedDate = formatTimeToChina(published_at, lang);
-    const processedBody = processMarkdownHeaders(body);
+    const processedBody = sanitizeReleaseMarkdown(body || i18n.noReleaseNotes);
+    const safeHeading = escapeMdxInlineText(
+      (name || tag_name || i18n.unknownVersion).replace(/\r?\n/g, ' ').trim()
+    );
 
     // Generate version block
-    markdown += `## ${name}\n\n`;
+    markdown += `## ${safeHeading}\n\n`;
 
     const versionType = getVersionType(index, prerelease, lang);
     const calloutType = index === 0 ? 'info' : 'note';
@@ -266,7 +537,7 @@ function formatReleasesMarkdown(
   return markdown;
 }
 
-async function generateChangelog() {
+export async function generateChangelog() {
   console.log('\n🚀 Starting to generate Changelog...\n');
 
   try {
@@ -310,8 +581,8 @@ async function generateChangelog() {
 }
 
 // Execute generation
-if (require.main === module) {
+if (typeof require !== 'undefined' && require.main === module) {
   generateChangelog();
 }
 
-export { generateChangelog };
+export type { Release };

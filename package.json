@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": "^24.22.1"
+    "node": "24.x"
   },
   "scripts": {
     "prebuild": "tsx scripts/prebuild.ts",
@@ -13,6 +13,7 @@
     "postinstall": "fumadocs-mdx",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "test:changelog": "node --import tsx --test tests/changelog/*.test.ts",
     "test:plugins": "node --import tsx --test tests/plugins/*.test.ts",
     "test:community:browser": "playwright test --config playwright.community.config.ts",
     "test:seo:browser": "playwright test --config playwright.seo.config.ts",
