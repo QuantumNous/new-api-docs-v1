@@ -41,6 +41,21 @@ domains, both use the same canonical origin to consolidate duplicate pages.
 Official website links to `www.newapi.ai` and `www.newapi.pro` remain visible on
 the homepage, quick start pages, and shared footer.
 
+Moved document paths are recorded in `src/lib/docs-redirects.json`. Next.js
+returns 308 redirects for HTML, `/llms.mdx/`, and `.mdx` URLs, preserving query
+parameters and the requested format. Add an exact mapping when a page has an
+equivalent replacement. Retired pages without a replacement return 404.
+
+Language fallback is disabled. Navigation, search, sitemaps, and language
+alternates contain pages with source files in the requested language. When
+removing a translation, add its replacement to the redirect map if one exists.
+From the `qn-platform` repository, run
+`bun scripts/sync-docs-routes.ts ../new-api-docs-v1` to update the official
+website's document allowlist and migration mappings.
+
+Run the redirect checks with `bun run test:seo`. The SEO browser suite also
+checks redirects over HTTP, query preservation, and sitemap exclusions.
+
 SEO browser checks run against a production build:
 
 ```bash

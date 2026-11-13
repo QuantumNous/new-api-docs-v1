@@ -17,6 +17,7 @@
     "test:plugins": "node --import tsx --test tests/plugins/*.test.ts",
     "test:community:browser": "playwright test --config playwright.community.config.ts",
     "test:seo:browser": "playwright test --config playwright.seo.config.ts",
+    "test:seo": "bun test tests/seo/*.test.ts",
     "test:plugins:browser": "playwright test --config playwright.plugins.config.ts",
     "translate": "bun scripts/translate-docs.ts",
     "translate:all": "bun scripts/translate-docs.ts",

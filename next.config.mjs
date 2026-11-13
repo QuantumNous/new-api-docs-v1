@@ -1,4 +1,5 @@
 import { createMDX } from 'fumadocs-mdx/next';
+import { docsRedirects } from './src/lib/docs-redirects.mjs';
 
 const withMDX = createMDX();
 
@@ -6,6 +7,7 @@ const withMDX = createMDX();
 const config = {
   reactStrictMode: true,
   poweredByHeader: false,
+  redirects: docsRedirects,
   experimental: {
     serverActions: {
       allowedOrigins: [
