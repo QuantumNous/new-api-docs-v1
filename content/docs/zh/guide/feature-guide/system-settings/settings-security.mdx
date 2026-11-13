@@ -4,6 +4,7 @@ description: Root 配置模型请求速率限制、SSRF 防护和用户 API 密�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 安全与限制配置位于 `/system-settings/security`，仅 Root 可访问。
 - 该工作区包含「速率限制」「SSRF 保护」和「令牌限制」三个分区，用于控制模型请求频率、出站访问安全与密钥数量。
@@ -35,7 +36,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 每周期最大请求数 | ≥0，默认 `0` | 限制周期内允许的请求总数（含失败）；0 = 无限制。 |
 | 最大成功请求数 | ≥1，默认 `1000` | 限制周期内允许的成功请求数（响应状态码低于 400 计为成功）。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
 - 模型请求路由按登录用户（同一用户跨多个 API 密钥共享计数）计数并受速率限制；
 - Web/API 路由限流则由独立环境变量控制并按 IP 计数;
 - 限制周期内任一计数超限即返回 429 限流错误
@@ -51,8 +52,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 1. 点击「添加分组」。
 2. 在弹窗中输入分组名称（须与用户分组或 API 密钥分组的名称完全一致），填写最大请求数（含失败）与最大成功请求数。
-3. 点击「添加」后确认规则已加入列表，再点击页头「保存速率限制」写入（编辑、删除规则后同样需要保存）；需要精确控制时切换到 JSON 模式核对。
-4. 用该分组下的 API 密钥发起请求验证。
+3. 点击「添加」，再点击页头「保存速率限制」写入（编辑、删除规则后同样需要保存）；需要精确控制时可切换到 JSON 模式。
 
 - 安全与限制-添加分组
 
@@ -62,7 +62,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![安全与限制-编辑分组页面](/assets/guide/feature-guide/system-settings-security-and-limits-rate-limiting-edit-group.png)
 
-<Callout type="info">
+<Callout type="info" title="提示">
   分组规则仅在请求对应的分组键（API 密钥分组或用户分组）出现在规则中时生效；未命中任何分组规则时使用全局限制。空规则集表示全部使用全局。
 </Callout>
 
@@ -94,7 +94,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 - **Critical**：作用于注册、登录、密码重置、OAuth state/回调、Passkey、Access Token、2FA 验证、验证码等**关键/匿名**接口，按 IP计数。
 - **Search**：作用于搜索端点，按用户计数。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 这些变量可以通过部署环境或启动配置设置，**修改后需重启服务**才生效；多实例部署需保持一致。
 </Callout>
 
@@ -121,9 +121,9 @@ SSRF 防护用于限制服务端出站 HTTP 请求允许访问的域名与 IP，
 
 - 生效于受保护出站 HTTP 客户端、下载请求、Midjourney 图片拉取、视频代理、Webhook 与 Bark/Gotify 通知等出站请求；转发到上游渠道的请求本身不做 SSRF 检查。
 - 仅允许 `http://` / `https://` 地址；域名解析失败会报错。
-- 对域名同时校验「请求时」与「拨号时」（dial-time），避免解析后回环 IP 绕过。
+- 对域名同时校验「请求时」与「拨号时」（dial-time），避免解析后回环 IP 绕过；拨号时的校验仅在开启「对已解析的域应用 IP 筛选器」且请求不经代理时生效。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   - 关闭「允许私有 IP」时，指向内网或回环 IP 地址的下载、Webhook、通知等出站目标会被拦截；通过域名访问的目标仅在「对已解析的域应用 IP 筛选器」开启时才会检查解析出的 IP，关闭后解析到内网地址的域名不会被拦截。转发到上游渠道的请求不受影响。
   - 域名白名单启用后请同时注意「对已解析的域应用 IP 筛选器」：它会让解析出的每个 IP 再受 IP 规则约束；
   - 若 IP 列表为空且为黑名单模式则全部放行；若为白名单且为空则全部阻断。
@@ -139,35 +139,121 @@ SSRF 防护用于限制服务端出站 HTTP 请求允许访问的域名与 IP，
 
 ## 保存与生效
 
-- 各分区按字段逐项保存：先计算变更字段，再对每个变更字段单独提交 `PUT /api/option/`。
-- `SSRF` 的列表字段以 JSON 字符串保存：域名列表、IP 列表按每行一个，允许端口按逗号分隔，转换为数组后提交。
-- 配置写入后当前进程更新内存值；多实例部署中的其他节点按 `SYNC_FREQUENCY` 周期重新载入（默认约 60 秒），同步完成前不同节点可能短暂不一致。
+保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点随系统设置同步（默认 60 秒）；各配置项读取新值的时机如下：
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 速率限制 › 全部字段 | 页头「保存速率限制」 | 下一次模型请求起按新数值判断；启用 Redis 时各节点共用计数，未启用时各节点各自计数。 |
+| 速率限制 › 全局限流环境变量 | 不在页面保存，由部署环境设置 | 需重启服务；多实例部署需保持一致。 |
+| SSRF 保护 › 全部字段 | 页头「保存 SSRF 设置」 | 下一次出站请求起按新规则检查。 |
+| 令牌限制 › 每个用户的最大令牌数 | 页头「保存令牌限制」 | 下一次创建 API 密钥起按新上限判断；已有密钥不受影响，不会被删除或禁用。 |
+
+</div>
+
+### 补充说明
+
+- **没有改动**：SSRF 保护没有改动时提示「没有需要保存的更改」。
+- **逐项提交**：各分区按字段逐项保存：先计算变更字段，再对每个变更字段单独提交 `PUT /api/option/`。
+- **SSRF 列表的存储**：`SSRF` 的列表字段以 JSON 字符串保存：域名列表、IP 列表按每行一个，允许端口按逗号分隔，转换为数组后提交。
 
 ## 注意事项
 
+### 限流与令牌
+
 - **速率限制**：只作用于模型请求路由、按登录用户计数；全局 `Global/API/Web/Critical` 限流由环境变量控制、按 IP 计数，二者相互独立。
 - **分组规则共享窗口**：分组仅覆盖次数，窗口与全局一致。
+- **令牌限制**：是每用户密钥数量上限，达到上限后创建被拒；密钥数超过上限（如调低上限后）时，带 `%` 通配符的模糊搜索会被拒绝，只能精确搜索。
+
+### SSRF 与失败方式
+
 - **SSRF 私网范围**：关闭「允许私有 IP」会拦截比界面列出网段更广的 IANA 私有/保留段。
 - **SSRF 黑白名单语义**：白名单为空=全部阻断，黑名单为空=全部放行；域名通配只在域名层生效，IP 过滤在解析后对每个 IP 生效。
 - **SSRF 默认端口**：后端默认 `80/443/8080/8443`；为空表示全部端口允许。
-- **令牌限制**：是每用户密钥数量上限，达到上限后创建被拒；密钥数超过上限（如调低上限后）时，带 `%` 通配符的模糊搜索会被拒绝，只能精确搜索。
-- 机制为「阻止并返回错误」，不是静默重试：限流、SSRF 命中时对应请求都会失败，客户端按错误处理即可。
+- **失败方式**：机制为「阻止并返回错误」，不是静默重试：限流、SSRF 命中时对应请求都会失败，客户端按错误处理即可。
 
 ## 常见问题
 
-- **限流未生效**：确认「启用速率限制」已开、窗口与次数不超过（默认总数 `0`=不限、成功数 `1000`），并确认请求走的是模型请求路由（不是 `/api`、站点页面）。也要区分是否命中 `GLOBAL_*_RATE_LIMIT` 导致的 IP 级 `429`。
-- **全局限流 429 从何而来**：检查 `GLOBAL_API_RATE_LIMIT_*`、`GLOBAL_WEB_RATE_LIMIT_*`、`CRITICAL_RATE_LIMIT_*`、`SEARCH_RATE_LIMIT_*` 等环境变量及作用范围；这些是启动时变量，修改后需重启。环境变量限流返回的 429 没有响应体（可能带 `Retry-After` 头），本页模型限流的 429 带错误消息（如「您已达到请求数限制：…」），可据此区分；两类限流相互独立。
-- **分组规则不生效**：确认分组名与请求的分组键（API 密钥分组或用户分组）完全一致；分组只覆盖次数，周期仍取全局；规则是 `{"组名":[总数,成功数]}` 的 2 元素数组，成功数须 ≥1。
-- **窗口无法按分组区分**：分组与全局共享同一窗口时长；如需不同窗口，调整全局窗口。
-- **SSRF 误拦截**：检查是否关闭了「允许私有 IP」，或域名/IP 白名单是否覆盖目标；确认端口在允许列表中；域名场景检查「对已解析的域应用 IP 筛选器」是否把解析 IP 拦掉。
-- **SSRF 漏放**：检查黑名单是否未包含目标地址、允许端口是否为空（空=全部允许）、以及黑白名单模式是否符合预期。
-- **出站目标为域名但偶发失败**：多为 DNS 重绑定或被解析出的某个 IP 命中 IP 规则；开启「对已解析的域应用 IP 筛选器」并按网络实际情况补充 IP 白名单/黑名单。
-- **创建密钥被拒**：当前用户密钥数已达 `token_setting.max_user_tokens` 上限；删除部分密钥（禁用或过期的密钥仍计入数量），或调高上限。
-- **搜索密钥提示仅允许精确搜索**：用户密钥数超过上限时，带 `%` 通配符的模糊搜索会被拒绝，并提示「令牌数量超过上限，仅允许精确搜索，请勿使用 % 通配符」；调高上限或删除部分密钥后恢复。
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="限流未生效">
+**可能原因**：
+- 「启用速率限制」未开启。
+- 窗口与次数的设置与预期不符（默认总数 `0`=不限、成功数 `1000`）。
+- 请求走的不是模型请求路由，而是 `/api` 或站点页面。
+- 未区分是否命中 `GLOBAL_*_RATE_LIMIT` 导致的 IP 级 `429`。
+</Accordion>
+
+<Accordion title="全局限流 429 从何而来">
+**提示原文**：「您已达到请求数限制：…」（英文 You have reached the request limit: …）
+
+**说明**：本页模型限流的 429 带错误消息（如上面的提示原文），环境变量限流返回的 429 无响应体（可能带 `Retry-After` 头），可据此区分。两类限流相互独立。
+
+**处理方法**：
+1. 检查 `GLOBAL_API_RATE_LIMIT_*`、`GLOBAL_WEB_RATE_LIMIT_*`、`CRITICAL_RATE_LIMIT_*`、`SEARCH_RATE_LIMIT_*` 等环境变量及作用范围。
+2. 修改后重启。这些是启动时变量。
+</Accordion>
+
+<Accordion title="分组规则不生效">
+**说明**：分组仅覆盖次数，周期仍取全局。
+
+**可能原因**：
+- 分组名与请求的分组键（API 密钥分组或用户分组）不完全一致。
+- 规则不是 `{"组名":[总数,成功数]}` 的 2 元素数组，或成功数小于 1。
+</Accordion>
+
+<Accordion title="窗口无法按分组区分">
+**说明**：分组与全局共享同一窗口时长。
+
+**处理方法**：
+1. 如需不同窗口，调整全局窗口。
+</Accordion>
+
+<Accordion title="SSRF 误拦截">
+**可能原因**：
+- 关闭了「允许私有 IP」。
+- 域名/IP 白名单未覆盖目标。
+- 端口不在允许列表中。
+- 域名场景下，「对已解析的域应用 IP 筛选器」把解析 IP 拦掉了。
+</Accordion>
+
+<Accordion title="SSRF 漏放">
+**可能原因**：
+- 黑名单未包含目标地址。
+- 允许端口为空（空=全部允许）。
+- 黑白名单模式不符合预期。
+</Accordion>
+
+<Accordion title="出站目标为域名但偶发失败">
+**可能原因**：多为 DNS 重绑定，或被解析出的某个 IP 命中 IP 规则。
+
+**处理方法**：
+1. 开启「对已解析的域应用 IP 筛选器」。
+2. 按网络实际情况补充 IP 白名单/黑名单。
+</Accordion>
+
+<Accordion title="创建密钥被拒">
+**可能原因**：当前用户的密钥数已达 `token_setting.max_user_tokens` 上限，禁用或过期的密钥仍计入数量。
+
+**处理方法**：
+1. 删除部分密钥，或调高上限。
+</Accordion>
+
+<Accordion title="搜索密钥提示仅允许精确搜索">
+**提示原文**：「令牌数量超过上限，仅允许精确搜索，请勿使用 % 通配符」（英文 Token count exceeds the limit. Only exact search is allowed, do not use the % wildcard）
+
+**可能原因**：用户密钥数超过上限时，带 `%` 通配符的模糊搜索会被拒绝。
+
+**处理方法**：
+1. 调高上限或删除部分密钥后恢复。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 
-- [系统设置概览](./system-setting)：系统设置的生效机制、多实例同步、敏感配置与变更验证要求。
-- [请求策略配置](./settings-request-policies)：请求检查（原「敏感词」）、重试、会话保持与渠道健康。
-- [API 密钥](/zh/docs/guide/feature-guide/user/token)：API 密钥的创建、分组与模型限制。
-- [使用日志](/zh/docs/guide/feature-guide/user/log)：查看请求详情；被速率限制拒绝的模型请求不会写入使用日志。
+- <a href="/zh/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">系统设置概览</a>：系统设置的生效机制、多实例同步、敏感配置与变更验证要求。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>：请求检查（原「敏感词」）、重试、会话保持与渠道健康。
+- <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>：API 密钥的创建、分组与模型限制。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：查看请求详情；被速率限制拒绝的模型请求不会写入使用日志。

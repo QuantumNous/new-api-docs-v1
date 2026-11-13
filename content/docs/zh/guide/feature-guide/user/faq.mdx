@@ -1,0 +1,274 @@
+---
+title: 常见问题
+description: 按提示原文或现象查找调用失败、额度与费用、账号与登录、界面与显示等跨页面问题的原因和处理方法。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- 汇总多个页面都会遇到的问题，如调用失败、余额或费用对不上、无法登录、找不到页面或菜单。
+- 只与某一页有关的问题在该页的「常见问题」中解答，本页列出链接。
+- 调用接口返回的提示为简体中文、繁体中文或英文，通常取决于账户的「界面语言」，本页的「提示原文」同时列出中文和英文。
+
+<Callout type="info" title="提示">
+- 各组中，折叠的问答为本页的完整解答，表格列出其他页面已解答的问题及链接。
+- 调用失败时，提示末尾通常带有「(request id: …)」，向管理员反馈问题时请一并提供。
+- 第一次使用时的完整步骤见<a href="/zh/docs/guide/feature-guide/user/quick-start" target="_blank" rel="noopener noreferrer">快速上手</a>。
+</Callout>
+
+按问题类型查找：[调用失败](#调用失败)、[额度与费用](#额度与费用)、[账号与登录](#账号与登录)、[界面与显示](#界面与显示)。
+
+## 调用失败
+
+使用 API 密钥或游乐场调用模型时返回错误的问题。
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="调用时提示「分组 … 下模型 … 无可用渠道」，或模型不存在">
+**提示原文**：「分组 … 下模型 … 无可用渠道（distributor）」（英文 No available channel for model … under group … (distributor)），或「分组 … 下模型 … 的可用渠道不存在（retry）」（英文 No available channel for model … under group … (retry)）
+
+**说明**：本站没有单独的「模型不存在」提示，模型名称填写错误时也返回此提示。
+
+**可能原因**：
+- 模型名称填写错误，如大小写或版本后缀与模型广场中的名称不一致。
+- API 密钥所用的分组不可调用该模型。
+- 提供该模型的渠道暂时全部不可用，或管理员停用了该模型。
+
+**处理方法**：
+1. 在<a href="/zh/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a>中复制模型名称，替换请求中的模型名称。
+2. 在模型详情「概览」的「按分组定价」中查看可调用该模型的分组，编辑 API 密钥的「分组」；使用游乐场时，在分组与模型选择器中切换分组。
+3. 稍后重试；如仍无法解决，请联系管理员。
+</Accordion>
+
+<Accordion title="调用时提示「您已达到请求数限制」或「您已达到总请求数限制」">
+**提示原文**：「您已达到请求数限制：…分钟内最多请求…次」（英文 You have reached the request limit: maximum … requests in … minutes），或「您已达到总请求数限制：…分钟内最多请求…次，包括失败次数，请检查您的请求是否正确」（英文 You have reached the total request limit: maximum … requests in … minutes, including failed attempts. Please check that your requests are correct）
+
+**说明**：管理员开启了请求数限制，HTTP 状态码为 429。次数按账户统计，同一账户的所有 API 密钥共用，管理员可为部分分组单独设置；游乐场中的调用不计入。状态码为 429、但提示不是这两句时，为上游服务的限流，见本节「调用时提示上游服务的错误，或「数据库出错，请联系管理员」」。
+
+**可能原因**：
+- 提示中的时间内调用次数超过了站点设置的上限。
+- 「总请求数限制」把失败的请求也计入，请求参数错误导致的反复失败会很快达到上限。
+
+**处理方法**：
+1. 等待提示中的时间过去后重试，并降低调用频率；在程序中，请在失败后等待一段时间再重试。
+2. 提示为「总请求数限制」时，先根据其他失败请求的提示排查原因。
+3. 需要更高的限制时，请联系管理员。
+</Accordion>
+
+<Accordion title="调用时提示「用户已被封禁」">
+**提示原文**：「用户已被封禁」（英文 User has been banned）
+
+**可能原因**：账户已被管理员禁用，账户下的所有 API 密钥均无法调用。
+
+**处理方法**：
+1. 请联系管理员确认账户状态。
+2. 网页登录时的同类提示见<a href="/zh/docs/guide/feature-guide/user/auth#常见问题" target="_blank" rel="noopener noreferrer">注册与登录</a>。
+</Accordion>
+
+<Accordion title="调用时提示「普通用户不支持指定渠道」">
+**提示原文**：「普通用户不支持指定渠道」（英文 Regular users cannot specify a channel）
+
+**说明**：API 密钥 `sk-` 之后的部分含有「-」时，「-」之后的内容会被当作指定的渠道，仅管理员账户可以这样使用。
+
+**可能原因**：
+- 复制密钥时带入了多余的内容，或把两段内容粘在了一起。
+- 按管理员的用法在密钥后添加了「-」和渠道编号。
+
+**处理方法**：
+1. 在 <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>页点击密钥右侧的复制按钮，重新复制完整的密钥。
+2. 确认请求头为 `Authorization: Bearer sk-…`，密钥后无其他内容。
+</Accordion>
+
+<Accordion title="调用时提示「无效的请求」「未指定模型名称」，或请求体过大（413）">
+**说明**：请求的格式不符合要求时，请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「无效的请求，…」（英文 Invalid request: …） | 请求体不是有效的 JSON，或格式与所调用的接口不符。 | 按 <a href="/zh/docs/api" target="_blank" rel="noopener noreferrer">API 参考</a>核对请求格式。 |
+| 「未指定模型名称，模型名称不能为空」（英文 Model name not specified, model name cannot be empty） | 请求中缺少 `model`。 | 在请求中填写模型名称。 |
+| HTTP 状态码 413，提示中含 request body too large（仅英文） | 请求体超过站点的上限（默认 128 MB），如附带的图片或文件过大。 | 压缩或减少附件后重试；需要更大的上限时，请联系管理员。 |
+</Accordion>
+
+<Accordion title="调用时提示上游服务的错误，或「数据库出错，请联系管理员」">
+**说明**：模型由管理员接入的上游服务处理。上游返回错误时，提示为上游的原文，多为英文，已隐去上游的地址；HTTP 状态码通常与上游相同，如 400、429、500、502。
+
+**可能原因**：
+- 上游服务暂时繁忙、限流或故障，常见状态码为 429 和 5xx。
+- 请求参数不被该模型支持，上游返回 400 类错误。
+- 提示为「数据库出错，请联系管理员」（英文 Database error, please contact the administrator）时，为本站服务出错。
+
+**处理方法**：
+1. 稍后重试，或改用其他模型、其他分组。
+2. 提示与请求参数有关时，按 <a href="/zh/docs/api" target="_blank" rel="noopener noreferrer">API 参考</a>和模型提供方的说明修改参数。
+3. 如仍无法解决，请将提示原文连同末尾的「(request id: …)」发给管理员。
+</Accordion>
+
+<Accordion title="报错消息末尾的「(request id: …)」是什么">
+**说明**：本站为每次请求生成一个编号。调用失败时，编号附在提示的末尾，管理员可凭它查找该请求的处理记录。
+
+**处理方法**：
+1. 复制完整的提示原文，连同 request id 发给管理员。
+2. 该请求有使用日志记录时，可在<a href="/zh/docs/guide/feature-guide/user/log#筛选日志并查看统计" target="_blank" rel="noopener noreferrer">使用日志</a>中点击「展开」，在「请求 ID」中填写该编号查找。
+</Accordion>
+
+<Accordion title="调用失败，但使用日志中没有这次请求">
+**说明**：以下请求在调用模型之前即被拒绝，不扣费，也不产生使用日志记录：
+- API 密钥校验未通过，如「无效的令牌」「您的 IP 不在令牌允许访问的列表中」「用户已被封禁」。
+- 无权访问分组或模型、无可用渠道、达到请求数限制，或请求格式错误。
+- 额度不足，如「用户额度不足」「预扣费额度失败」。
+
+其他失败的请求仅在站点开启错误日志记录后显示为「错误」记录。
+
+**处理方法**：
+1. 根据提示原文，在本页或对应页面的常见问题中查找原因。
+2. 需要管理员排查时，请提供提示末尾的「(request id: …)」。
+3. 失败的请求与日志记录的关系见<a href="/zh/docs/guide/feature-guide/user/log#常见问题" target="_blank" rel="noopener noreferrer">使用日志</a>。
+</Accordion>
+
+</Accordions>
+
+**其他页面已解答的问题：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 问题 | 说明 | 详见 |
+| --- | --- | --- |
+| 调用时提示「无效的令牌」 | 密钥错误、已删除、已禁用、已过期或额度已用尽，或请求未携带密钥。 | <a href="/zh/docs/guide/feature-guide/user/token#常见问题" target="_blank" rel="noopener noreferrer">API 密钥</a> |
+| 调用时提示「该令牌无权访问模型 …」 | 密钥的「模型限制」不含该模型。 | <a href="/zh/docs/guide/feature-guide/user/token#常见问题" target="_blank" rel="noopener noreferrer">API 密钥</a> |
+| 调用时提示「您的 IP 不在令牌允许访问的列表中」 | 发起请求的地址不在密钥的「IP 白名单」中。 | <a href="/zh/docs/guide/feature-guide/user/token#常见问题" target="_blank" rel="noopener noreferrer">API 密钥</a> |
+| 调用时提示「无权访问 … 分组」或「分组 … 已被弃用」 | 密钥指定的分组已不可用。 | <a href="/zh/docs/guide/feature-guide/user/token#常见问题" target="_blank" rel="noopener noreferrer">API 密钥</a> |
+| 调用时提示额度不足 | 账户余额、订阅额度或密钥自身的额度不足以支付本次请求。 | <a href="/zh/docs/guide/feature-guide/user/token#常见问题" target="_blank" rel="noopener noreferrer">API 密钥</a> |
+| 调用时提示「模型 … 的价格尚未由管理员配置…」 | 管理员尚未为该模型设置价格。 | <a href="/zh/docs/guide/feature-guide/user/pricing#常见问题" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a>、<a href="/zh/docs/guide/feature-guide/user/personal-setting#常见问题" target="_blank" rel="noopener noreferrer">个人资料</a> |
+| 用访问令牌调用模型时提示「无效的令牌」 | 以 `nap_` 开头的访问令牌不可用于调用模型。 | <a href="/zh/docs/guide/feature-guide/user/security#常见问题" target="_blank" rel="noopener noreferrer">安全与访问</a> |
+| 游乐场中显示「请求发生错误: …」 | 按提示原文判断原因。 | <a href="/zh/docs/guide/feature-guide/user/playground#常见问题" target="_blank" rel="noopener noreferrer">游乐场</a> |
+| 运行「首个 API 请求」的命令时报错 | 命令使用列表中最前面的已启用密钥和第一个可用模型。 | <a href="/zh/docs/guide/feature-guide/user/overview#常见问题" target="_blank" rel="noopener noreferrer">概览</a> |
+| 模型在模型广场中，但调用失败 | 模型出现在模型广场中，不保证每个分组都可调用。 | <a href="/zh/docs/guide/feature-guide/user/pricing#常见问题" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a> |
+| 调用示例或导入的 API 地址为 `http://localhost:3000` | 管理员未设置服务器地址。 | <a href="/zh/docs/guide/feature-guide/user/pricing#常见问题" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a>、<a href="/zh/docs/guide/feature-guide/user/chat-apps#常见问题" target="_blank" rel="noopener noreferrer">聊天</a> |
+| 聊天应用中提示未授权或禁止访问 | 认证头、密钥状态、分组或 IP 限制不符合要求。 | <a href="/zh/docs/guide/feature-guide/user/chat-apps#常见问题" target="_blank" rel="noopener noreferrer">聊天</a> |
+| 视频、音乐或绘图任务失败 | 在任务详情中查看失败原因，失败的任务会退回额度。 | <a href="/zh/docs/guide/feature-guide/user/task-log#常见问题" target="_blank" rel="noopener noreferrer">任务日志</a> |
+</div>
+
+## 额度与费用
+
+余额、扣费和用量统计对不上的问题，均在相关页面的「常见问题」中解答。
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 问题 | 说明 | 详见 |
+| --- | --- | --- |
+| 付款后余额未增加 | 支付平台通知站点后才到账，请勿重复付款。 | <a href="/zh/docs/guide/feature-guide/user/wallet#常见问题" target="_blank" rel="noopener noreferrer">钱包</a> |
+| 兑换时提示「兑换失败，请稍后重试」 | 兑换码不存在、已使用、已过期或已禁用，或带有空格。 | <a href="/zh/docs/guide/feature-guide/user/wallet#常见问题" target="_blank" rel="noopener noreferrer">钱包</a> |
+| 订阅额度用完后调用失败 | 与「计费偏好」的设置有关。 | <a href="/zh/docs/guide/feature-guide/user/wallet#常见问题" target="_blank" rel="noopener noreferrer">钱包</a> |
+| 签到成功后余额未立即变化 | 奖励已加入余额，刷新页面后显示。 | <a href="/zh/docs/guide/feature-guide/user/personal-setting#常见问题" target="_blank" rel="noopener noreferrer">个人资料</a> |
+| 充值或调用后「概览」中的数值没有变化 | 数值取自登录时的账户信息，刷新浏览器页面后更新。 | <a href="/zh/docs/guide/feature-guide/user/overview#常见问题" target="_blank" rel="noopener noreferrer">概览</a> |
+| 显示「余额已耗尽」，但仍可正常调用 | 「剩余额度」只含钱包余额，不含订阅额度。 | <a href="/zh/docs/guide/feature-guide/user/overview#常见问题" target="_blank" rel="noopener noreferrer">概览</a> |
+| 「近 24 小时消耗」为 0，或与使用日志不一致 | 按整点小时汇总，新的调用几分钟后计入。 | <a href="/zh/docs/guide/feature-guide/user/overview#常见问题" target="_blank" rel="noopener noreferrer">概览</a> |
+| 费用与预期不一致 | 分组倍率、缓存、工具调用和档位计费都会影响费用。 | <a href="/zh/docs/guide/feature-guide/user/log#常见问题" target="_blank" rel="noopener noreferrer">使用日志</a> |
+| 「用量」与费用合计或数据看板不一致 | 统计范围和汇总时间不同。 | <a href="/zh/docs/guide/feature-guide/user/log#常见问题" target="_blank" rel="noopener noreferrer">使用日志</a>、<a href="/zh/docs/guide/feature-guide/user/dashboard#常见问题" target="_blank" rel="noopener noreferrer">数据看板</a> |
+| 模型广场中的价格与实际扣费不一致 | 按调用时所用的分组计费。 | <a href="/zh/docs/guide/feature-guide/user/pricing#常见问题" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a> |
+| 调用失败的请求是否扣费 | 返回错误的请求不扣费。 | <a href="/zh/docs/guide/feature-guide/user/log#常见问题" target="_blank" rel="noopener noreferrer">使用日志</a> |
+| 失败的任务是否扣费 | 任务失败或超时后，已扣除的额度全额退回。 | <a href="/zh/docs/guide/feature-guide/user/task-log#常见问题" target="_blank" rel="noopener noreferrer">任务日志</a> |
+</div>
+
+## 账号与登录
+
+登录、注册、验证和登录状态的问题。
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="提示「会话已过期！」，或被退出登录">
+**提示原文**：「会话已过期！」（英文 Session expired!），随后回到登录页。
+
+**可能原因**：
+- 自登录起已满 30 天。
+- 在其他设备的「安全与访问」页撤销了该会话，或点击了「退出其他会话」。
+- 在其他设备上修改了密码，启用或禁用了两步验证，重新生成了备用码，或注册、解绑了 Passkey。
+- 通过忘记密码重置了密码，或管理员重置了账户的两步验证或 Passkey。
+
+**处理方法**：
+1. 重新登录。
+2. 不是本人的操作时，登录后立即修改密码，并在<a href="/zh/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">审计日志</a>中核对登录记录。
+3. 登录状态的保持时间和会话管理见<a href="/zh/docs/guide/feature-guide/user/security#管理登录会话" target="_blank" rel="noopener noreferrer">安全与访问</a>。
+</Accordion>
+
+</Accordions>
+
+**其他页面已解答的问题：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 问题 | 说明 | 详见 |
+| --- | --- | --- |
+| 登录时提示「用户名或密码错误，或用户已被封禁」 | 提示不区分具体原因。 | <a href="/zh/docs/guide/feature-guide/user/auth#常见问题" target="_blank" rel="noopener noreferrer">注册与登录</a> |
+| 登录时提示「请求过于频繁」「活跃登录会话数量已达上限。…」等 | 按提示原文判断原因。 | <a href="/zh/docs/guide/feature-guide/user/auth#常见问题" target="_blank" rel="noopener noreferrer">注册与登录</a> |
+| 使用第三方账号登录失败 | 按提示原文判断原因。 | <a href="/zh/docs/guide/feature-guide/user/auth#常见问题" target="_blank" rel="noopener noreferrer">注册与登录</a> |
+| 登录页没有「注册」，或提示注册已关闭 | 站点未开放注册，或仅允许第三方账号注册。 | <a href="/zh/docs/guide/feature-guide/user/auth#常见问题" target="_blank" rel="noopener noreferrer">注册与登录</a> |
+| 收不到注册验证码或重置邮件 | 检查垃圾邮件，或站点未配置邮件服务。 | <a href="/zh/docs/guide/feature-guide/user/auth#常见问题" target="_blank" rel="noopener noreferrer">注册与登录</a> |
+| 丢失验证器设备，无法完成登录验证 | 使用备用码登录后重新设置。 | <a href="/zh/docs/guide/feature-guide/user/security#常见问题" target="_blank" rel="noopener noreferrer">安全与访问</a> |
+| 使用 Passkey 登录失败，或更换网址后无法使用 | Passkey 与注册时的网站域名绑定。 | <a href="/zh/docs/guide/feature-guide/user/auth#常见问题" target="_blank" rel="noopener noreferrer">注册与登录</a>、<a href="/zh/docs/guide/feature-guide/user/security#常见问题" target="_blank" rel="noopener noreferrer">安全与访问</a> |
+| 收不到绑定邮箱的验证码 | 检查垃圾邮件和邮箱规则。 | <a href="/zh/docs/guide/feature-guide/user/security#常见问题" target="_blank" rel="noopener noreferrer">安全与访问</a> |
+| 出现不认识的登录记录或登录会话 | 撤销会话并修改密码。 | <a href="/zh/docs/guide/feature-guide/user/audit-log#常见问题" target="_blank" rel="noopener noreferrer">审计日志</a>、<a href="/zh/docs/guide/feature-guide/user/security#常见问题" target="_blank" rel="noopener noreferrer">安全与访问</a> |
+| 如何修改显示名称、用户名、邮箱或分组 | 邮箱在「安全与访问」中修改，其余请联系管理员。 | <a href="/zh/docs/guide/feature-guide/user/personal-setting#常见问题" target="_blank" rel="noopener noreferrer">个人资料</a> |
+</div>
+
+## 界面与显示
+
+页面打不开、找不到菜单和显示相关的问题。
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="页面显示「403」「禁止访问」，或「404」「糟糕！页面未找到！」">
+**提示原文**：「禁止访问」（英文 Access Forbidden），下方为「您没有必要的权限 查看此资源。」；或「糟糕！页面未找到！」（英文 Oops! Page Not Found!），下方为「您要查找的页面似乎 不存在或可能已被移除。」
+
+**可能原因**：
+- 打开了账户无权访问的页面，如收藏夹或他人发来的管理页面地址。
+- 打开的地址不存在，如旧版本的地址或输入错误。
+
+**处理方法**：
+1. 点击「返回」或「返回主页」。
+2. 从侧边栏或顶部导航打开需要的页面，入口位置见<a href="/zh/docs/guide/feature-guide/user/quick-start#认识控制台界面" target="_blank" rel="noopener noreferrer">快速上手</a>。
+3. 需要访问管理页面时，请联系管理员。
+</Accordion>
+
+<Accordion title="页面显示「糟糕！出错了」或「请求过于频繁」">
+**提示原文**：「糟糕！出错了」（英文 Oops! Something went wrong），下方为「请稍后再试。」；或「请求过于频繁」（英文 Too many requests），下方为「请稍候再试。」。操作按钮时也可能只提示一句含 429 的英文（仅英文）。
+
+**可能原因**：
+- 站点刚升级，浏览器仍在使用旧版本的页面文件。
+- 网络中断。
+- 同一网络出口（如学校、公司或代理）短时间内访问次数过多，站点按来访地址限制访问频率，默认 3 分钟内最多打开 120 次页面、调用 360 次接口。
+
+**处理方法**：
+1. 等待几分钟后刷新页面。
+2. 仍然出错时，强制刷新页面（Windows 按 Ctrl+F5，Mac 按 ⌘+Shift+R），或清除该站点的浏览器缓存后重试。
+3. 如仍无法解决，请联系管理员。
+</Accordion>
+
+<Accordion title="页面中的时间与所在地区的时间不一致">
+**说明**：使用日志、审计日志等页面中的时间，按浏览器所在电脑的时区显示；每日签到按服务器的日期计算；概览和数据看板的统计按整点小时汇总。
+
+**处理方法**：
+1. 检查电脑的时区和时间设置。
+2. 签到日期和统计时段与本地时间不同时，以服务器时间为准。
+</Accordion>
+
+</Accordions>
+
+**其他页面已解答的问题：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 问题 | 说明 | 详见 |
+| --- | --- | --- |
+| 侧边栏中的某个页面不见了 | 管理员或本人在「左侧边栏个人设置」中关闭了该页面。 | <a href="/zh/docs/guide/feature-guide/user/personal-setting#常见问题" target="_blank" rel="noopener noreferrer">个人资料</a> |
+| 顶部导航没有「模型广场」「排行榜」，或打开后回到首页 | 管理员关闭了对应的入口。 | <a href="/zh/docs/guide/feature-guide/user/pricing#常见问题" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a> |
+| 找不到某个按钮或菜单 | 顶部栏和侧边栏中各项的位置和显示条件。 | <a href="/zh/docs/guide/feature-guide/user/quick-start#认识控制台界面" target="_blank" rel="noopener noreferrer">快速上手</a> |
+| 点击「游乐场」后回到了「概览」页 | 管理员关闭了游乐场。 | <a href="/zh/docs/guide/feature-guide/user/playground#常见问题" target="_blank" rel="noopener noreferrer">游乐场</a> |
+| 界面语言已切换，接口返回的错误消息仍为英文 | 错误消息仅有简体中文、繁体中文和英文。 | <a href="/zh/docs/guide/feature-guide/user/personal-setting#常见问题" target="_blank" rel="noopener noreferrer">个人资料</a> |
+| 游乐场的对话记录不见了 | 对话记录仅保存在当前浏览器中。 | <a href="/zh/docs/guide/feature-guide/user/playground#常见问题" target="_blank" rel="noopener noreferrer">游乐场</a> |
+| 不清楚「令牌」「配额」「余额」等叫法 | 本指南的用词和界面上的其他叫法。 | <a href="/zh/docs/guide/feature-guide/user/quick-start#几个基本概念" target="_blank" rel="noopener noreferrer">快速上手</a> |
+</div>
+
+## 相关文档
+
+- <a href="/zh/docs/guide/feature-guide/user/quick-start" target="_blank" rel="noopener noreferrer">快速上手</a>：从注册登录到第一次调用模型的步骤，以及控制台界面。
+- <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>：创建和管理 API 密钥，查看调用方式。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：查看每次调用的扣费明细和失败记录。
+- <a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>：充值、兑换额度，查看订阅。
+- <a href="/zh/docs/api" target="_blank" rel="noopener noreferrer">API 参考</a>：各接口的请求参数和返回格式。

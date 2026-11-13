@@ -1,64 +1,390 @@
 ---
 title: 注册与登录
-description: 支持账号注册、忘记密码重置、账号密码登录以及Passkey和多种第三方 OAuth 一键登录。
+description: 注册账户，使用账号密码、第三方账号或 Passkey 登录并完成登录验证，忘记密码时通过邮箱重置。
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-支持账号注册、忘记密码重置、账号密码登录以及Passkey和多种第三方 OAuth 一键登录，首次使用请先完成注册。
+- 从站点右上角的「登录」进入。
+- 注册账户，使用账号密码、第三方账号或 Passkey 登录，忘记密码时通过邮箱重置。
+- 可用的登录方式、是否开放注册、是否需要邮箱验证和人机验证，均由管理员配置，各站点不同。
 
-## 登录
-
-### 账号密码登录
-
-1. 打开平台首页，点击右上角的「登录」按钮，或直接访问 `/sign-in`。
-2. 输入用户名或电子邮件和密码。
-3. 若页面显示 ​Cloudflare Turnstile，需要完成人机验证。
-4. 先点击已阅读并同意接受用户协议和隐私政策后，再点击「登录」。
-5. 账号启用 2FA 时，登录会额外需要输入一次性验证码或备份码。
-
-![登录页](/assets/guide/feature-guide/login.png)
-
-### Passkey 和第三方 OAuth 登录
-
-登录页会显示平台已启用的 GitHub、Discord、LinuxDO 等第三方平台或Passkey图标。如需使用第三方账号或Passkey登录:
-1. 点击已阅读并同意接受用户协议和隐私政策。
-2. 点击页面下方对应平台的图标(GitHub、Discord、LinuxDO 等)或Passkey图标。
-3. 使用第三方账号时，跳转至第三方授权页面完成授权；使用 Passkey 时，按浏览器或设备提示完成验证。
-
-![OAuth登录页](/assets/guide/feature-guide/login.png)
-
-<Callout type="info">
-  Passkey和第三方OAuth登录方式以及是否开启人机验证由平台超级管理员（Root）在「系统设置」 → 「身份验证」中启用。未启用的方式不会出现在登录页。
+<Callout type="info" title="提示">
+- Passkey 是用设备的指纹、面容、PIN 或安全密钥登录的方式，无需输入密码，需先登录后在「安全与访问」页启用。
+- 已登录时打开登录页或注册页，直接进入控制台。
+- 登录页无某种登录方式时：<br/>仅在管理员开启对应的登录方式后显示，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>。
+- 登录页无「没有账号？注册」时：<br/>站点未开放注册，或管理员开启了自用模式，请联系管理员创建账户。
 </Callout>
 
-## 注册
+## 注册与登录概览
 
-### 注册流程
+- 注册与登录-登录
 
-1. 在登录页点击「注册」，或直接访问 `/sign-up`。
-2. 填写用户名、密码和确认密码。
-3. 若平台设置要求邮箱验证，填写邮箱、发送验证码并输入收到的验证码。
-4. 若平台启用了 ​Cloudflare Turnstile，需要完成人机验证。
-5. 先点击已阅读并同意接受用户协议和隐私政策后，再点击「创建账户」完成注册。
+![注册与登录-登录页面](/assets/guide/feature-guide/login.png)
 
-![注册页](/assets/guide/feature-guide/register.png)
+登录页从上到下为其他登录方式、账号密码登录和协议确认，可：
 
-<Callout type="info">
-  是否允许密码注册、OAuth 注册、邮箱验证以及邮箱域名/别名限制，均由 Root 的身份验证设置决定。
+- [使用账号密码登录](#使用账号密码登录)
+- [使用第三方账号或 Passkey 登录](#使用第三方账号或-passkey-登录)
+- [完成登录验证](#完成登录验证)
+- [注册账户](#注册账户)
+- [重置忘记的密码](#重置忘记的密码)
+- [查看和退出登录会话](#查看和退出登录会话)
+
+<Callout type="info" title="提示">
+登录失败、收不到验证码或重置邮件时，查看[常见问题](#常见问题)
 </Callout>
 
-### 登录会话管理
+**区域说明：**
 
-登录成功后会建立独立会话。已登录用户可以点击左侧边栏「个人资料」 → 「登录会话」区域查看当前与其他设备的登录会话，撤销单个会话或一次退出其他会话；撤销当前会话后会返回登录页。
+下表按登录页从上到下的顺序排列。截图中管理员开启了 Passkey、GitHub、LinuxDO 和人机验证，并配置了用户协议和隐私政策。
 
-![登录会话页](/assets/guide/feature-guide/login-session.png)
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 区域 | 定义 | 显示条件 | 备注 |
+| --- | --- | --- | --- |
+| 标题 | 「登录」及其下方的「没有账号？注册」。 | 「没有账号？注册」仅在站点开放注册、且管理员未开启自用模式时显示。 | 点击「注册」打开注册页。页面左上角的站点名称可返回首页。 |
+| 使用 Passkey 登录 | 用设备的指纹、面容、PIN 或安全密钥登录。 | 仅在管理员开启 Passkey 后显示。 | 设备或浏览器不支持时不可点击，下方显示「此设备不支持通行密钥。」。有多个可用的通行密钥域名时，按钮下方显示「使用其他网站的通行密钥」，点击后可选择域名。 |
+| 第三方账号按钮 | 分隔线「或继续使用」下方的「使用 … 继续」，如「使用 GitHub 继续」「使用 微信 继续」。 | 仅在管理员开启对应的登录方式后显示，截图中为 GitHub 和 LinuxDO。 | 各方式的差异见[使用第三方账号或 Passkey 登录](#使用第三方账号或-passkey-登录)。 |
+| 用户名或电子邮件 | 账户的用户名，或账户绑定的邮箱。 | 管理员未关闭密码登录时显示，与「密码」「登录」同时显示。 | 占位文字为「输入您的用户名或电子邮件」。 |
+| 密码 | 账户的登录密码。 | 同上。 | 占位文字为「输入密码」，右侧的眼睛图标可显示或隐藏密码，右上方为「忘记密码？」。 |
+| 登录 | 提交用户名和密码。 | 同上。 | 见[使用账号密码登录](#使用账号密码登录)。 |
+| 人机验证 | Cloudflare Turnstile 人机验证，通过后显示「成功!」。 | 仅在管理员开启人机验证后显示，位于「登录」下方。 | 仅用于账号密码登录，第三方账号和 Passkey 登录不需要。 |
+| 协议确认 | 勾选框「我已阅读并同意 用户协议 and the 隐私政策.」，以及页面底部的一行说明。 | 仅在管理员配置了用户协议或隐私政策后显示；只配置一项时仅显示该项。 | 点击勾选框中的协议名称，在新标签页中查看内容。勾选框和底部说明中的英文为界面原文。 |
+</div>
 
-## 忘记密码重置
+## 使用账号密码登录
 
-1. 在登录页点击「忘记密码」。
-2. 输入与账户关联的邮箱并提交。
-3. 打开系统发送的重置链接。
-4. 在重置页面设置新密码，然后重新登录。
+**操作流程：**
+1. 点击站点右上角的「登录」，打开登录页。
+2. 在「用户名或电子邮件」中填写用户名或账户绑定的邮箱。
+3. 在「密码」中填写密码。
+4. 页面显示人机验证时，按提示完成验证，直到显示「成功!」。
+5. 页面显示协议勾选框时，勾选「我已阅读并同意 …」。
+6. 点击「登录」。
+7. 账户已启用两步验证或已注册 Passkey 时，按[完成登录验证](#完成登录验证)操作。
 
-![忘记密码页](/assets/guide/feature-guide/forgot-password.png)
+<Callout type="info" title="提示">
+- 登录成功后提示「欢迎回来！」并进入控制台；从需要登录的页面跳转过来时，登录后回到原页面。
+- 登录页不提供「记住我」。登录状态自登录起保持 30 天，由系统固定，不可修改，到期后需重新登录。
+- 每次点击「登录」后，人机验证需重新通过。
+- 管理员关闭密码登录时，登录页不显示「用户名或电子邮件」「密码」和「忘记密码？」，请使用其他登录方式。
+</Callout>
+
+## 使用第三方账号或 Passkey 登录
+
+**操作流程：**
+1. 页面显示协议勾选框时，先勾选「我已阅读并同意 …」。
+2. 点击「使用 Passkey 登录」，或「或继续使用」下方的「使用 … 继续」。
+3. 按下表完成验证或授权。
+4. 账户已启用两步验证或已注册 Passkey 时（使用 Passkey 登录除外），按[完成登录验证](#完成登录验证)操作。
+
+**登录方式说明：**
+
+下表按登录页中从上到下的顺序排列。
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+| 登录方式 | 显示条件 | 验证或授权方式 | 首次使用 |
+| --- | --- | --- | --- |
+| Passkey | 管理员开启 Passkey。 | 按浏览器或系统的提示，用指纹、面容、PIN 或安全密钥确认。 | 不可用于注册。需先用其他方式登录，在<a href="/zh/docs/guide/feature-guide/user/security#启用-passkey" target="_blank" rel="noopener noreferrer">安全与访问</a>中启用 Passkey。用 Passkey 登录后不再要求登录验证。 |
+| 微信 | 管理员开启微信登录。 | 在「微信登录」窗口中扫描二维码，按「扫描二维码关注官方账号，回复“验证码”以接收您的验证码。」获取验证码，填写后点击「确认」。 | 站点开放注册时自动创建账户。 |
+| GitHub、Discord、OIDC、LinuxDO 及管理员添加的其他方式 | 管理员开启对应的方式。OIDC 和其他方式的按钮名称由管理员设置。 | 当前页面跳转到第三方网站，登录并授权后返回本站，显示「正在使用 … 登录」。 | 站点开放注册时自动创建账户，用户名和显示名称优先取自第三方账号，不可用时自动生成；邮箱取自第三方账号，该邮箱已被其他账户使用时登录失败。 |
+| Telegram | 管理员开启 Telegram 登录。 | 当前页面跳转到 Telegram，授权后返回本站。 | 不可用于注册。需先用其他方式登录，在<a href="/zh/docs/guide/feature-guide/user/security#绑定邮箱和第三方账号" target="_blank" rel="noopener noreferrer">安全与访问</a>中绑定 Telegram。 |
+</div>
+
+<Callout type="info" title="提示">
+- 已有账户时，请先用原方式登录，在「安全与访问」页绑定该第三方账号后再用它登录；直接用未绑定的第三方账号登录，会创建新账户，或因邮箱已被使用而失败。
+- 自动创建的账户无密码，需要时在「安全与访问」页设置，见<a href="/zh/docs/guide/feature-guide/user/security#更改或设置密码" target="_blank" rel="noopener noreferrer">更改或设置密码</a>。
+- 第三方授权需在 10 分钟内完成，超时或重复使用授权页面时，请返回登录页重新点击。
+</Callout>
+
+## 完成登录验证
+
+账户已启用两步验证或已注册 Passkey 时，用账号密码、微信或第三方账号登录后，页面显示「安全验证」并弹出「完成登录」窗口，说明为「请验证身份以完成登录。」。
+
+**操作流程：**
+1. 在窗口顶部选择「身份验证器代码」或「Passkey」，仅显示账户已启用的方式。
+2. 选择「身份验证器代码」时，在「认证器验证码或备用码」中填写验证器中的 6 位验证码，或一个未使用的备用码。
+3. 点击「验证」；选择「Passkey」时，再按浏览器或系统的提示完成确认。
+
+<Callout type="info" title="提示">
+- 请在 5 分钟内完成验证，超时提示「登录流程已过期，请重新登录。」。刷新页面后回到登录页，需重新登录。
+- 连续输错 5 次后锁定 5 分钟，提示「两步验证已暂时锁定。」。
+- 每个备用码仅可使用一次。启用两步验证和保存备用码见<a href="/zh/docs/guide/feature-guide/user/security#启用两步验证" target="_blank" rel="noopener noreferrer">安全与访问</a>。
+</Callout>
+
+## 注册账户
+
+- 注册与登录-注册
+
+![注册与登录-注册页面](/assets/guide/feature-guide/registration-and-login-register.png)
+
+**操作流程：**
+1. 点击登录页标题下方的「注册」，或首页的「开始使用」，打开「创建一个账户」页。
+2. 填写「用户名」「密码」和「确认密码」。
+3. 页面显示「电子邮件（验证必需）」时，填写邮箱，点击「发送验证码」，再填写邮件中的验证码。
+4. 页面显示人机验证时，按提示完成验证。
+5. 页面显示协议勾选框时，勾选「我已阅读并同意 …」。
+6. 点击「创建账户」。
+7. 在跳转后的登录页中，用刚注册的用户名和密码登录。
+
+<Callout type="info" title="提示">
+- 邮箱和验证码仅在管理员开启邮箱验证后显示，位于「确认密码」下方；截图中未开启邮箱验证，因此无这两项。
+- 注册成功后提示「账户已创建！请登录」，不自动登录。注册的账户均为普通用户。
+- 注册页不提供邀请码输入框。通过他人的邀请链接打开注册页并注册时，自动记录邀请关系，见<a href="/zh/docs/guide/feature-guide/user/wallet#转移邀请奖励" target="_blank" rel="noopener noreferrer">钱包</a>。
+- 也可点击「创建账户」下方的第三方账号按钮，首次登录即创建账户，见[使用第三方账号或 Passkey 登录](#使用第三方账号或-passkey-登录)。
+- 站点未开启邮箱验证时，账户不绑定邮箱，忘记密码时无法通过邮箱重置。请在登录后到<a href="/zh/docs/guide/feature-guide/user/security#绑定邮箱和第三方账号" target="_blank" rel="noopener noreferrer">安全与访问</a>绑定邮箱。
+</Callout>
+
+**配置项说明：**
+
+页面不分区，下表按页面中从上到下的顺序排列。
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 用户名 | 登录用的名称，同时作为初始的显示名称。 | 必填，占位文字为「输入您的用户名」。最长 20 个字符，首尾空格自动去除；不可与已有或已注销账户的用户名相同，否则提示「用户名已存在，或已注销」；超长时提示「输入不合法 …」。 | 空 |
+| 密码 | 登录密码。 | 必填，8–128 个字符，占位文字为「输入密码（8–128 个字符）」；长度不符时提示「密码长度必须为 8–128 个字符。」。 | 空 |
+| 确认密码 | 再次输入密码。 | 必填，与「密码」不一致时提示「两次输入的密码不一致。」。 | 空 |
+| 电子邮件（验证必需） | 账户绑定的邮箱，用于接收验证码和重置密码。 | 仅在管理员开启邮箱验证后显示，必填，占位文字为「name@example.com」，最长 50 个字符。管理员可限制邮箱域名，或不允许 @ 前含「+」「.」，不符合时提示「此邮箱地址不符合管理员设置的邮箱规则。」；已被其他账户使用时提示「邮箱地址已被占用」。 | 空 |
+| 验证码 | 邮件中的 6 位验证码，可能含字母。 | 与邮箱同时显示，必填。点击右侧「发送验证码」获取，10 分钟内有效，重新发送后旧验证码失效；发送后按钮显示「重新发送 (…s)」，30 秒后可再次发送。 | 空 |
+| 人机验证 | Cloudflare Turnstile 人机验证。 | 仅在管理员开启人机验证后显示，位于协议确认上方。需通过后才能「发送验证码」和「创建账户」，点击「发送验证码」后需重新通过。 | — |
+| 协议确认 | 勾选框「我已阅读并同意 …」，以及页面底部的一行说明。 | 仅在管理员配置了用户协议或隐私政策后显示，勾选后才能「创建账户」或使用第三方账号；未勾选时「创建账户」不可点击。 | 未勾选 |
+</div>
+
+## 重置忘记的密码
+
+- 注册与登录-忘记密码
+
+![注册与登录-忘记密码页面](/assets/guide/feature-guide/registration-and-login-forgot-password-reset.png)
+
+**操作流程：**
+1. 点击登录页「密码」右上方的「忘记密码？」，打开「忘记密码」页。
+2. 在「Email」中填写账户绑定的邮箱。
+3. 页面显示人机验证时，按提示完成验证。
+4. 点击「发送重置邮件」。
+5. 打开主题为「… 密码重置」的邮件，点击邮件中的「此处」。
+6. 在「重置密码」页核对「邮箱」，点击「确认重置密码」。
+7. 点击「新密码」右侧的复制按钮，保存系统生成的新密码。
+8. 点击「返回登录」，用新密码登录。
+9. 登录后到<a href="/zh/docs/guide/feature-guide/user/security#更改或设置密码" target="_blank" rel="noopener noreferrer">安全与访问</a>将密码修改为自己的密码。
+
+<Callout type="warn" title="注意">
+- 新密码由系统生成，为 12 位字母和数字，不可自行设置；点击「确认重置密码」后旧密码立即失效。
+- 新密码仅在「重置密码」页显示，系统会尝试自动复制到剪贴板，离开页面前请确认已保存。
+- 重置后，该账户在所有设备上的登录会话全部退出。两步验证和 Passkey 不受影响，登录时仍需验证。
+</Callout>
+
+<Callout type="info" title="提示">
+- 重置链接 10 分钟内有效，仅可使用一次；重新发送重置邮件后，之前的链接失效。
+- 无论邮箱是否绑定了账户，页面都提示「重置邮件已发送，请检查您的收件箱」，仅绑定了账户的邮箱会收到邮件。
+- 「忘记密码？」仅在管理员未关闭密码登录时显示；管理员配置了邮件服务后才能发出邮件。
+</Callout>
+
+## 查看和退出登录会话
+
+- 注册与登录-登录会话
+
+![注册与登录-登录会话页面](/assets/guide/feature-guide/registration-and-login-login-session-management.png)
+
+每次登录都会为当前设备建立一个登录会话。登录后，在侧边栏「个人」→「安全与访问」的「登录会话」中，可查看正在登录该账户的设备，点击其他设备右侧的「撤销」、当前设备右侧的「登出」，或点击「退出其他会话」。操作方法和各列含义见<a href="/zh/docs/guide/feature-guide/user/security#管理登录会话" target="_blank" rel="noopener noreferrer">安全与访问</a>。
+
+<Callout type="info" title="提示">
+- 发现不认识的设备时，请撤销该会话并修改密码。
+- 重置密码后，所有设备的登录会话全部退出。
+- 同时登录的设备过多时无法再登录，处理方法见[常见问题](#常见问题)。
+</Callout>
+
+## 操作项说明
+
+### 登录页与注册页
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 操作 | 位置 | 说明 |
+| --- | --- | --- |
+| 站点名称 | 页面左上角 | 返回首页。 |
+| 注册 | 登录页标题下方 | 打开注册页，仅在站点开放注册、且管理员未开启自用模式时显示。 |
+| 登录 | 注册页标题下方 | 返回登录页。 |
+| 使用 Passkey 登录、使用 … 继续 | 登录页账号密码上方；注册页「创建账户」下方 | 见[使用第三方账号或 Passkey 登录](#使用第三方账号或-passkey-登录)。 |
+| 显示或隐藏密码 | 密码框右侧的眼睛图标 | 切换密码的显示方式。 |
+| 忘记密码？ | 登录页「密码」右上方 | 打开忘记密码页，见[重置忘记的密码](#重置忘记的密码)。 |
+| 发送验证码 | 注册页验证码框右侧 | 向所填邮箱发送验证码，30 秒后可重新发送。 |
+| 用户协议、隐私政策 | 协议勾选框中 | 在新标签页中打开协议内容。 |
+| 登录、创建账户 | 表单下方 | 提交登录或注册。 |
+</div>
+
+### 忘记密码页与重置密码页
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 操作 | 位置 | 说明 |
+| --- | --- | --- |
+| 发送重置邮件 | 忘记密码页「Email」下方 | 发送重置邮件，30 秒内显示「重新发送 (…s)」。 |
+| 注册 | 忘记密码页标题下方 | 打开注册页。 |
+| 确认重置密码 | 重置密码页 | 生成新密码并替换旧密码；点击后 30 秒内显示「重试 (…s)」。链接不完整时不可点击，并显示「无效的重置链接，请请求新的密码重置。」。 |
+| 复制 | 「新密码」右侧 | 复制新密码，复制成功后提示「密码已复制到剪贴板：…」。 |
+| 返回登录 | 重置成功后的按钮 | 返回登录页。 |
+</div>
+
+## 常见问题
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="登录时提示「用户名或密码错误，或用户已被封禁」">
+**提示原文**：「用户名或密码错误，或用户已被封禁」（英文 Username or password is incorrect, or user has been banned）
+
+**可能原因**：
+- 用户名、邮箱或密码填写错误，提示不区分具体原因。
+- 账户已被管理员禁用，或已注销。
+- 账户无密码，如通过第三方账号注册且未设置密码。
+- 使用邮箱登录时，邮箱中含大写字母，部分站点区分邮箱的大小写。
+
+**处理方法**：
+1. 核对用户名和密码后重试；使用邮箱登录时，请全部使用小写字母，或改用用户名登录。
+2. 通过第三方账号注册的账户，请使用原第三方账号登录。
+3. 忘记密码时，按[重置忘记的密码](#重置忘记的密码)操作。
+4. 如仍无法解决，请联系管理员确认账户状态。
+</Accordion>
+
+<Accordion title="登录时提示其他错误">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「管理员关闭了密码登录」（英文 Password login has been disabled by administrator） | 站点仅允许使用其他方式登录。 | 使用登录页上的第三方账号或 Passkey 登录。 |
+| 「请先同意法律条款」（英文 Please agree to the legal terms first） | 未勾选协议勾选框。 | 勾选后重新登录。 |
+| 「请稍等，人机验证正在初始化...」（英文 Please wait a moment, human check is initializing...） | 人机验证尚未完成。 | 等待显示「成功!」后重试；一直加载时刷新页面。 |
+| 「Turnstile 校验失败，请刷新重试！」（英文 Turnstile verification failed, please refresh and try again!） | 人机验证已失效或未通过。 | 刷新页面，重新完成人机验证。 |
+| 「请求过于频繁」（英文 Too many requests） | 短时间内操作次数过多。 | 稍后重试。 |
+| 「活跃登录会话数量已达上限。…」（英文 Too many active login sessions. …） | 账户同时登录的设备过多。 | 在已登录的设备上打开「安全与访问」页，在「登录会话」中点击「退出其他会话」；无法使用已登录的设备时，重置密码以退出所有会话。 |
+| 「近期创建的登录会话过多。请等待滚动时间窗口结束后再试。」（英文 Too many login sessions were created recently. Please wait for the rolling window to pass, then try again.） | 短时间内登录次数过多。 | 等待一段时间后重试。 |
+</Accordion>
+
+<Accordion title="使用第三方账号登录失败">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「管理员未开启通过 … 登录以及注册」（英文 … login and registration has not been enabled by administrator） | 管理员关闭了该登录方式。 | 改用其他方式登录，或联系管理员。 |
+| 「state 参数为空或不匹配」（英文 State parameter is empty or mismatched） | 授权超过 10 分钟，或重复打开了授权页面。 | 返回登录页，重新点击对应的按钮。 |
+| 「请求超时，请刷新页面后重新发起 GitHub 登录」（英文 Request timed out, please refresh and restart GitHub login） | 点击后长时间未跳转到 GitHub。 | 刷新页面后重新点击。 |
+| 「无法连接至 … 服务器，请稍后重试」（英文 Unable to connect to … server, please try again later） | 站点无法连接第三方服务。 | 稍后重试；仍失败时联系管理员。 |
+| 「管理员关闭了新用户注册」（英文 New user registration has been disabled by administrator） | 首次使用该第三方账号，且站点未开放注册。 | 用已有账户登录后，在「安全与访问」页绑定该第三方账号；或联系管理员。 |
+| 「邮箱地址已被占用」（英文 Email address is already in use） | 第三方账号的邮箱已被其他账户使用。 | 用该邮箱所在的账户登录，在「安全与访问」页绑定该第三方账号。 |
+| 「此 Telegram 账号尚未绑定，请先通过其他方式登录并绑定。」（英文 This Telegram account is not linked. Sign in using another method and link it first.） | Telegram 不可用于注册。 | 先用其他方式登录，在「安全与访问」页绑定 Telegram。 |
+| 「Linux DO 信任等级未达到管理员设置的最低信任等级」（英文 Linux DO trust level does not meet the minimum required by administrator） | LinuxDO 账号的信任等级低于站点要求。 | 改用其他方式登录，或联系管理员。 |
+| 「用户已被封禁」（英文 User has been banned）<br/>「用户已注销」（英文 User has been deleted） | 对应的账户已被禁用或注销。 | 联系管理员。 |
+</Accordion>
+
+<Accordion title="登录验证时提示「验证失败，请重试。」或已锁定">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「验证失败，请重试。」（英文 Verification failed. Please try again.） | 验证码或备用码填写错误，或手机时间不准确。 | 填写验证器中最新的 6 位验证码；校准手机时间后重试。 |
+| 「两步验证已暂时锁定。」（英文 Two-factor authentication is temporarily locked.） | 连续 5 次验证失败。 | 等待 5 分钟后重试，或改用 Passkey。 |
+| 「登录流程已过期，请重新登录。」（英文 Login flow expired. Please sign in again.） | 超过 5 分钟未完成验证。 | 点击「重新登录」后重新登录。 |
+</Accordion>
+
+<Accordion title="丢失验证器设备，无法完成登录验证">
+**说明**：重置密码不会关闭两步验证。
+
+**处理方法**：
+1. 在「认证器验证码或备用码」中填写一个未使用的备用码。
+2. 登录后按<a href="/zh/docs/guide/feature-guide/user/security#常见问题" target="_blank" rel="noopener noreferrer">安全与访问</a>常见问题中「丢失验证器设备」的方法重新设置两步验证。
+3. 备用码已用完或丢失时，请联系管理员重置两步验证。
+</Accordion>
+
+<Accordion title="使用 Passkey 登录失败">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「此设备不支持通行密钥。」（英文 Passkey is not supported on this device.） | 浏览器或设备不支持通行密钥。 | 改用支持的浏览器和设备，或使用其他方式登录。 |
+| 「Passkey 登录已取消或超时」（英文 Passkey login was cancelled or timed out） | 在浏览器或系统的提示中取消了操作，或未及时完成。 | 重新点击「使用 Passkey 登录」。 |
+| 「Passkey 认证已关闭。」（英文 Passkey authentication is disabled.） | 管理员关闭了 Passkey。 | 使用其他方式登录。 |
+| 「此用户账户已被禁用。」（英文 This user account is disabled.） | 账户已被管理员禁用。 | 联系管理员。 |
+| 更换网址后无法使用 | Passkey 与注册时的网站域名绑定。 | 通过注册 Passkey 时的网址访问，或使用其他方式登录。 |
+</Accordion>
+
+<Accordion title="登录页没有「注册」，或注册时提示注册已关闭">
+**提示原文**：「管理员关闭了新用户注册」（英文 New user registration has been disabled by administrator）或「管理员关闭了通过密码进行注册，请使用第三方账户验证的形式进行注册」（英文 Password registration has been disabled by administrator, please use third-party account verification）
+
+**可能原因**：
+- 站点未开放注册。从首页「开始使用」等入口仍可打开注册页，但提交后提示注册已关闭。
+- 站点仅允许通过第三方账号注册。
+- 管理员开启了自用模式，登录页不显示「注册」，从首页「开始使用」仍可打开注册页。
+
+**处理方法**：
+1. 仅关闭了密码注册时，点击注册页或登录页上的第三方账号按钮完成注册。
+2. 需要账户时，请联系管理员创建。
+</Accordion>
+
+<Accordion title="注册时提示用户名、邮箱或验证码错误">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「用户名已存在，或已注销」（英文 Username already exists or has been deleted） | 用户名已被使用，或曾被已注销的账户使用。 | 更换用户名。 |
+| 「输入不合法 …」（英文 Invalid input …） | 用户名超过 20 个字符。 | 缩短用户名后重试。 |
+| 「邮箱地址已被占用」（英文 Email address is already in use） | 邮箱已绑定其他账户。 | 更换邮箱，或用该邮箱所在的账户登录。 |
+| 「管理员开启了邮箱验证，请输入邮箱地址和验证码」（英文 Email verification is enabled, please enter email address and verification code） | 未填写邮箱或验证码。 | 填写邮箱，点击「发送验证码」并填写验证码。 |
+| 「验证码错误或已过期」（英文 Verification code is incorrect or has expired） | 验证码填写错误、超过 10 分钟，或重新发送后使用了旧验证码。 | 重新发送，填写最新邮件中的验证码。 |
+</Accordion>
+
+<Accordion title="收不到注册验证码，或发送验证码时提示错误">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「此邮箱地址不符合管理员设置的邮箱规则。」（英文 This email address is not allowed by the administrator's email policy.） | 站点限制了可用的邮箱域名，或不允许 @ 前含「+」「.」。 | 更换符合要求的邮箱，或联系管理员。 |
+| 「请输入有效的电子邮件地址」（英文 Please enter a valid email address） | 邮箱格式错误或超过 50 个字符。 | 核对后重新填写。 |
+| 「发送过于频繁，请等待 … 秒后再试」（英文 Please wait … seconds before requesting another verification code.）<br/>「请稍后再请求验证码。」（英文 Please wait before requesting another verification code.） | 短时间内多次发送。 | 等待后重新发送。 |
+| 「SMTP 服务器未配置」（英文 SMTP server is not configured） | 站点未配置邮件服务。 | 联系管理员。 |
+| 提示「验证邮件已发送」后仍收不到 | 邮件被归入垃圾邮件，或邮件服务出错。 | 检查垃圾邮件；仍未收到时联系管理员。 |
+</Accordion>
+
+<Accordion title="提示「重置邮件已发送」，但收不到邮件">
+**提示原文**：「重置邮件已发送，请检查您的收件箱」（英文 Reset email sent, please check your inbox）
+
+**说明**：为保护账户信息，无论邮箱是否绑定了账户，页面都显示此提示。
+
+**可能原因**：
+- 该邮箱未绑定任何账户，如注册时站点未开启邮箱验证，之后也未绑定邮箱。
+- 邮件被归入垃圾邮件。
+- 站点未配置邮件服务，或发送失败。
+
+**处理方法**：
+1. 确认填写的是账户绑定的邮箱，并检查垃圾邮件。
+2. 等待倒计时结束后重新发送；提示「Turnstile 校验失败，请刷新重试！」时，刷新页面后重新发送。
+3. 能用第三方账号或 Passkey 登录时，登录后在「安全与访问」页设置密码并绑定邮箱。
+4. 如仍无法解决，请联系管理员。
+</Accordion>
+
+<Accordion title="打开重置链接后提示链接无效，或链接无法打开">
+**说明**：请根据提示原文或现象判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「重置链接非法或已过期」（英文 Password reset link is invalid or has expired） | 链接超过 10 分钟、已使用过，或之后又发送过新的重置邮件。 | 回到忘记密码页重新发送，使用最新邮件中的链接。 |
+| 「无效的重置链接，请请求新的密码重置。」（英文 Invalid reset link, please request a new password reset.） | 链接不完整，如复制时被截断。 | 点击邮件中的「此处」，或完整复制邮件中的链接。 |
+| 链接以 `http://localhost:3000` 等非本站地址开头，无法打开 | 管理员未设置站点的服务器地址。 | 将链接开头的地址替换为当前站点的网址后打开，或联系管理员。 |
+</Accordion>
+
+<Accordion title="重置后没有保存新密码">
+**说明**：新密码仅在「重置密码」页显示，重置链接仅可使用一次，旧密码已失效。
+
+**处理方法**：
+1. 回到忘记密码页，重新发送重置邮件。
+2. 按[重置忘记的密码](#重置忘记的密码)再次重置，并在离开页面前复制新密码。
+</Accordion>
+
+</Accordions>
+
+## 相关文档
+
+- <a href="/zh/docs/guide/feature-guide/user/security" target="_blank" rel="noopener noreferrer">安全与访问</a>：修改密码，绑定邮箱和第三方账号，启用两步验证和 Passkey，管理登录会话。
+- <a href="/zh/docs/guide/feature-guide/user/wallet#转移邀请奖励" target="_blank" rel="noopener noreferrer">钱包</a>：复制邀请链接，查看邀请奖励。
+- <a href="/zh/docs/guide/feature-guide/admin/user#重置-2fa" target="_blank" rel="noopener noreferrer">用户管理</a>：管理员创建账户，重置用户的两步验证。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>：Root 开启注册、密码登录、邮箱验证、第三方登录、Passkey 和人机验证。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-site#系统信息" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>：Root 设置用户协议和隐私政策。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-operations#邮件与通知" target="_blank" rel="noopener noreferrer">运维配置</a>：Root 配置发送验证码和重置邮件的邮件服务。

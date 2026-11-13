@@ -4,14 +4,15 @@ description: 管理模型资料、名称匹配、定价入口、资料与价格�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 模型管理仅 Admin 和 Root 可访问，从侧边栏「管理员」 → 「模型」或访问 `/models/metadata` 进入。
 - 页面维护本站的模型资料、名称匹配、模型广场展示、供应商和预填充分组，并提供定价入口、资料与价格同步和 io.net 模型部署。
-- 渠道中的实际模型、分组和路由由[渠道管理](/zh/docs/guide/feature-guide/admin/channel)维护；价格规则见[计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)和[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)。
+- 渠道中的实际模型、分组和路由由<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>维护；价格规则见<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>和<a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>。
 
 ## 模型管理概览
 
-页面顶部有「模型」「供应商」「部署」三个标签，地址分别为 `/models/metadata`、`/models/vendors`、`/models/deployments`。「模型」标签右上角为「同步资料」「同步价格」「添加模型」和「⋯」菜单（「缺失的模型」「预填充分组」），下方为搜索框、筛选和模型列表。
+页面顶部有「模型」「供应商」「部署」三个标签，地址分别为 `/models/metadata`、`/models/vendors`、`/models/deployments`。「模型」标签右上角为「同步资料」「同步价格」「添加模型」和 ⋯ 菜单（「缺失的模型」「预填充分组」），下方为搜索框、筛选和模型列表。
 
 - 模型管理-模型列表
 
@@ -21,7 +22,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 模型资料、供应商、预填充分组和模型部署，Admin 与 Root 都可以管理；模型定价只有 Root 可以修改。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 位置 | Root | Admin |
 | --- | --- | --- |
@@ -37,7 +38,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 除已有模型资料的记录外，列表还会列出渠道（含已禁用渠道）模型列表中出现、但没有精确同名资料的模型名称。这类行标为「缺元数据」，只能「补充资料」或复制名称。列表不支持按列排序：已有资料的记录按 ID 倒序，之后是「缺元数据」行按名称排序；默认每页 20 条。
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 列 | 说明 |
 | --- | --- |
@@ -62,7 +63,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 已隐藏 | 已通过模型资料中的「广场展示」开关隐藏。 |
 | 部分展示 | 仅非完全匹配规则：匹配到的模型中，部分已隐藏或暂无可用渠道。 |
 
-<Callout type="info">
+<Callout type="info" title="提示">
   「广场展示」只控制模型广场中的展示，不影响 API 调用权限。用户能否调用某个模型，由渠道、分组和 API 密钥的限制决定。
 </Callout>
 
@@ -82,12 +83,11 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 - 「编辑」：打开编辑抽屉的「模型资料」标签；「缺元数据」行显示为「补充资料」，打开带有该模型名的创建抽屉。
 - 「定价」：仅 Root 可见，打开同一抽屉并定位到「定价」标签。
-- 「⋯」菜单：「从模型广场隐藏」或「在模型广场显示」（只修改「广场展示」开关），以及「删除」；「缺元数据」行没有此菜单。
+- ⋯ 菜单：「从模型广场隐藏」或「在模型广场显示」（只修改「广场展示」开关），以及「删除」；「缺元数据」行没有此菜单。
 
 勾选行后，列表底部显示批量操作：
 
-
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 操作 | 说明 |
 | --- | --- |
@@ -118,8 +118,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-编辑模型-模型资料页面](/assets/guide/feature-guide/model-management-edit-model-model-information.png)
 
-
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 字段 | 默认值 | 校验 | 说明 |
 | --- | --- | --- | --- |
@@ -170,7 +169,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 - 只有 Root 可以编辑；Admin 打开此标签只看到「模型定价由超级管理员管理。」
 - 完全匹配规则的模型直接编辑本模型的价格；其他规则需先在「选择模型」中选择一个匹配到的具体模型，再配置它的价格。
 - 顶部显示当前生效的计费摘要；「恢复默认定价」移除此模型的自定义价格并恢复内置默认值，没有默认价格的模型会变为未定价。
-- 下方编辑器与[计费与支付配置 → 模型价格](/zh/docs/guide/feature-guide/system-settings/settings-billing#模型价格)相同，字段和计费方式见该页与[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)。点击「保存模型价格」保存，与「模型价格」中修改的是同一份配置。
+- 下方编辑器与<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#模型价格" target="_blank" rel="noopener noreferrer">计费与支付配置 → 模型价格</a>相同，字段和计费方式见该页与<a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>。点击「保存模型价格」保存，与「模型价格」中修改的是同一份配置。
 - 打开抽屉后如果此模型的价格在其他地方被修改，保存会失败，点击「重新加载定价」后再修改。
 
 ### 渠道与分组
@@ -179,14 +178,13 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-编辑模型-渠道与分组页面](/assets/guide/feature-guide/model-management-edit-model-channels-and-groups.png)
 
-此标签只读，内容由已启用渠道推导：广场展示状态、「绑定渠道」（渠道及其类型）、「启用分组」和「支持的端点」；非完全匹配规则另列「匹配模型」。创建或导入模型资料不会创建可调用的渠道，模型要被调用，需在[渠道管理](/zh/docs/guide/feature-guide/admin/channel)中把它加入渠道。
+此标签只读，内容由已启用渠道推导：广场展示状态、「绑定渠道」（渠道及其类型）、「启用分组」和「支持的端点」；非完全匹配规则另列「匹配模型」。创建或导入模型资料不会创建可调用的渠道，模型要被调用，需在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>中把它加入渠道。
 
 ## 删除模型
 
-在行「⋯」菜单中点击「删除」删除单个模型，或勾选后点击「删除选定的模型」批量删除（一次 1–1000 个）。「缺元数据」行没有模型资料，不能删除。确认框「删除模型？」中有两个可选项，默认都不勾选：
+在行 ⋯ 菜单中点击「删除」删除单个模型，或勾选后点击「删除选定的模型」批量删除（一次 1–1000 个）。「缺元数据」行没有模型资料，不能删除。确认框「删除模型？」中有两个可选项，默认都不勾选：
 
-
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 选项 | 说明 |
 | --- | --- |
@@ -198,7 +196,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 - 两项都不勾选时，只删除模型资料；渠道中的模型名称、能力和价格都保留。只要启用的渠道仍引用该名称，它会重新出现在列表的「缺元数据」行和「缺失的模型」中。
 - 删除后可以重新创建同名模型资料。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
   「同时从所有渠道移除」会直接修改渠道的模型列表，删除后该模型不能再通过这些渠道调用；需要恢复时，要在渠道中重新添加模型名称。
 </Callout>
 
@@ -208,7 +206,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-缺失的模型页面](/assets/guide/feature-guide/model-management-missing-models.png)
 
-在「模型」标签右上角点击「⋯ → 缺失的模型」打开。列表显示已启用渠道正在使用、但没有**精确同名**模型资料的模型名称；被前缀、包含或后缀规则覆盖的名称仍会列出。
+在「模型」标签右上角点击 ⋯ →「缺失的模型」打开。列表显示已启用渠道正在使用、但没有**精确同名**模型资料的模型名称；被前缀、包含或后缀规则覆盖的名称仍会列出。
 
 - 可按名称搜索，每页 20 条。
 - 点击行内「配置」，打开带有该模型名的「创建模型」抽屉。
@@ -272,7 +270,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 检查将要创建或更新的模型、字段和新增供应商，点击「应用 N 个模型的变更」。所有变更在一次提交中写入，任何一项写入失败，本次变更都不会应用。
 
-<Callout type="info">
+<Callout type="info" title="提示">
   预览后如果官方目录或本站模型资料发生变化，应用会失败并提示重新预览；点击「重新预览」回到第 1 步重新选择即可。
 </Callout>
 
@@ -284,8 +282,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 显示「资料同步完成」、创建与更新的模型数量、新增的供应商，以及每个模型已应用的变更。未处理的模型不在结果中列出，原因见第 1 步的「计划操作」。
 
-<Callout type="info">
-  官方目录不是当前实例已配置的渠道清单。同步后的模型仍需在[渠道管理](/zh/docs/guide/feature-guide/admin/channel)中配置渠道才能调用。
+<Callout type="info" title="提示">
+  官方目录不是本站已配置的渠道清单。同步后的模型仍需在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>中配置渠道才能调用。
 </Callout>
 
 ## 同步价格
@@ -296,7 +294,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 「同步价格」仅 Root 可见，点击打开「同步模型定价」对话框：
 
-- 与[计费与支付配置 → 上游价格同步](/zh/docs/guide/feature-guide/system-settings/settings-billing#上游价格同步)是同一功能：选择价格来源、对比当前价格、按模型选择来源，预览确认后保存。字段和操作细节以该页为准。
+- 与<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#上游价格同步" target="_blank" rel="noopener noreferrer">计费与支付配置 → 上游价格同步</a>是同一功能：选择价格来源、对比当前价格、按模型选择来源，预览确认后保存。字段和操作细节以该页为准。
 - 保存的价格与「模型价格」、编辑抽屉「定价」标签修改的是同一份配置。
 
 ### 选择价格来源
@@ -321,7 +319,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-预填充分组管理页面](/assets/guide/feature-guide/model-management-prefilled-groups.png)
 
-在「模型」标签右上角点击「⋯ → 预填充分组」，打开「预填充分组管理」。预填充分组保存一组可复用的值，**不是**用户分组或渠道分组，也不影响计费。列表显示分组名称与描述、类型、条目（最多显示 6 个）和操作（编辑、删除）；点击「新建分组」创建，「刷新」重新加载。
+在「模型」标签右上角点击 ⋯ →「预填充分组」，打开「预填充分组管理」。预填充分组保存一组可复用的值，**不是**用户分组或渠道分组，也不影响计费。列表显示分组名称与描述、类型、条目（最多显示 6 个）和操作（编辑、删除）；点击「新建分组」创建，「刷新」重新加载。
 
 | 类型 | 条目内容 | 使用位置 |
 | --- | --- | --- |
@@ -335,7 +333,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-创建预填充组页面](/assets/guide/feature-guide/model-management-prefilled-groups-create-group.png)
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 字段 | 默认值 | 校验 | 说明 |
 | --- | --- | --- | --- |
@@ -356,7 +354,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 - 搜索框「搜索供应商名称或简介」；「模型归属」筛选「有关联模型」或「无关联模型」；「查看」可显示 ID、创建时间、更新时间（默认隐藏）。
 - 「关联模型」列显示归属该供应商的模型资料数量，点击跳到「模型」标签并按该供应商筛选。
-- 行「⋯」菜单为「编辑」「删除」；勾选多行后可「合并供应商」「删除供应商」。默认每页 20 条。
+- 行 ⋯ 菜单为「编辑」「删除」；勾选多行后可「合并供应商」「删除供应商」。默认每页 20 条。
 
 ### 添加供应商
 
@@ -378,7 +376,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-编辑供应商-供应商资料页面](/assets/guide/feature-guide/model-management-providers-edit-provider-provider-information.png)
 
-点击供应商名称或「⋯ → 编辑」打开以供应商名为标题的抽屉，有「供应商资料」「关联模型 (N)」两个标签。「供应商资料」的字段与创建时相同，另显示创建时间和更新时间。打开后如果该供应商被其他人修改，保存会失败，点击「重新加载供应商资料」后再修改。
+点击供应商名称或 ⋯ →「编辑」打开以供应商名为标题的抽屉，有「供应商资料」「关联模型 (N)」两个标签。「供应商资料」的字段与创建时相同，另显示创建时间和更新时间。打开后如果该供应商被其他人修改，保存会失败，点击「重新加载供应商资料」后再修改。
 
 #### 关联模型
 
@@ -390,12 +388,12 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ### 合并与删除供应商
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 操作 | 入口 | 结果 |
 | --- | --- | --- |
 | 合并供应商 | 勾选多个供应商 →「合并供应商」，在「保留此供应商」中选择要保留的一个 | 其他所选供应商的模型改为归属保留的供应商，然后删除其他供应商；保留供应商的资料不变。 |
-| 删除供应商 | 行「⋯ → 删除」或勾选后「删除供应商」 | 删除所选供应商记录。仍有关联模型的供应商不能删除，需先转移或清除这些模型的供应商归属。 |
+| 删除供应商 | 行 ⋯ →「删除」或勾选后「删除供应商」 | 删除所选供应商记录。仍有关联模型的供应商不能删除，需先转移或清除这些模型的供应商归属。 |
 
 </div>
 
@@ -409,10 +407,10 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![模型管理-模型部署未启用页面](/assets/guide/feature-guide/model-management-model-deployment.png)
 
-「部署」标签管理 io.net 上的容器部署，Admin 与 Root 都可使用。使用前，Root 需要在[系统设置 → 模型 → 模型部署](/zh/docs/guide/feature-guide/system-settings/settings-models#模型部署)中启用服务并保存 API Key。
+「部署」标签管理 io.net 上的容器部署，Admin 与 Root 都可使用。使用前，Root 需要在<a href="/zh/docs/guide/feature-guide/system-settings/settings-models#模型部署" target="_blank" rel="noopener noreferrer">系统设置 → 模型 → 模型部署</a>中启用服务并保存 API Key。
 
 - 进入标签时先检查配置和连接。未启用时显示「模型部署服务未启用」；连接失败时显示「连接失败」和错误信息，可点击「重试」。两种状态下的「前往设置」都打开系统设置中的模型部署配置，只有 Root 可以进入。
-- 创建部署不会新建或绑定渠道。需要通过 New API 调用部署的模型时，请在[渠道管理](/zh/docs/guide/feature-guide/admin/channel)中添加渠道，并把 Base URL 指向部署的公开地址。
+- 创建部署不会新建或绑定渠道。需要通过 New API 调用部署的模型时，请在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>中添加渠道，并把 Base URL 指向部署的公开地址。
 
 ### 部署列表
 
@@ -426,8 +424,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 模型部署服务启用后，点击右上角「创建部署」，填写后点击「新建」。
 
-
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 分组 | 字段 | 默认值 | 校验与说明 |
 | --- | --- | --- | --- |
@@ -450,8 +447,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ### 查看与管理部署
 
-
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 操作 | 说明 |
 | --- | --- |
@@ -464,36 +460,152 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 </div>
 
-<Callout type="warn">
-  如果渠道 Base URL 或高级自定义路由指向某个部署，终止或修改部署前必须先切换到其他可用渠道，并验证模型路由。部署属于外部资源，New API 不会因为部署状态变化而修正渠道配置。
+<Callout type="warn" title="注意">
+  如果渠道 Base URL 或高级自定义路由指向某个部署，终止或修改部署前必须先切换到其他可用渠道。部署属于外部资源，New API 不会因为部署状态变化而修正渠道配置。
 </Callout>
 
-## 故障排查
+## 保存与生效
 
+模型资料、供应商和预填充分组保存在数据库中，管理页列表保存后随即更新；模型价格保存为系统设置。编辑模型资料、隐藏或显示、同步资料和供应商变更后，模型广场在处理该请求的节点立即更新，其他节点约 1 分钟内更新，用户已打开的模型广场刷新页面后显示新内容。各操作的生效时机如下：
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
 
-| 现象 | 建议检查 |
-| --- | --- |
-| 模型不出现在模型广场 | 查看列表「广场展示」状态和说明：「已隐藏」检查「广场展示」开关；「无法展示」检查渠道是否启用、渠道模型列表是否包含该名称；「正常展示」时检查用户分组是否有权访问。 |
-| 列表中有「缺元数据」行 | 渠道中使用了没有精确同名资料的模型名称，点击「补充资料」或用「同步资料」导入；非完全匹配规则不能消除这些行。 |
-| 删除后模型又出现 | 启用的渠道仍引用该名称；需要彻底移除时，删除时勾选「同时从所有渠道移除」（仅完全匹配规则）。 |
-| 同步时模型不能勾选 | 查看「计划操作」：「已禁止资料同步」需在模型资料中开启「允许资料同步」；「上游未找到」表示官方目录没有该名称。 |
-| 「加载资料预览」失败 | 检查服务器能否访问数据源，以及部署方是否通过 `SYNC_UPSTREAM_BASE` 修改了数据源地址。 |
-| 应用同步时提示重新预览 | 预览后官方目录或本站资料发生了变化，点击「重新预览」后重新选择。 |
-| 看不到「同步价格」或「定价」 | 当前账户不是 Root；模型定价只能由 Root 修改。 |
-| 改名后价格消失 | 价格按模型名称保存，改名不会迁移；请 Root 为新名称配置价格，或改回原名。 |
-| 定价列显示「按匹配模型配置」 | 名称规则不是完全匹配；在「定价」标签中先选择具体模型再配置。 |
-| 供应商无法删除 | 仍有关联模型；先在「关联模型」中设置或清除这些模型的供应商，或改用「合并供应商」。 |
-| 「部署」显示未启用或连接失败 | 请 Root 在「系统设置 → 模型 → 模型部署」检查开关和 API Key，然后点击「重试」。 |
-| 部署终止或容器异常 | 查看部署详情、容器状态和日志，并检查是否仍有渠道指向该地址。 |
+| 操作 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 编辑模型资料 | 编辑抽屉「模型资料」标签中点击「保存资料」 | 模型广场按上述时机显示新资料。 |
+| 隐藏、显示（含批量） | 行 ⋯ 菜单中点击「从模型广场隐藏」或「在模型广场显示」，立即保存 | 只影响广场展示，不影响 API 调用。 |
+| 同步资料 | 预览后点击「应用 N 个模型的变更」 | 所选模型一次写入，任一失败则全部不写入；关闭了「允许资料同步」的模型不处理。 |
+| 供应商、供应商归属 | 添加、编辑供应商时点击「保存资料」；归属的设置、清除、合并、删除在预览后点击「应用更改」 | 模型广场的供应商筛选和图标随之更新；预览后数据有变化时应用失败，需重新预览。 |
+| 模型价格 | 「定价」标签中点击「保存模型价格」，或在同步价格中点击「确认更改」（仅 Root） | 处理该请求的节点下一次请求起按新价格计费，其他节点随系统设置同步（默认 60 秒）后生效，见<a href="/zh/docs/guide/feature-guide/admin/billing-expression#保存与生效" target="_blank" rel="noopener noreferrer">计费表达式</a>。 |
+| 删除模型 | 在确认框中点击「删除」 | 立即删除模型资料；渠道中的模型名称、能力和价格都保留，见[删除模型](#删除模型)。 |
+| 删除时勾选「同时从所有渠道移除」 | 随删除一并执行 | 在同一次操作中修改渠道的模型列表和能力；各节点何时按新配置路由，见<a href="/zh/docs/guide/feature-guide/admin/channel#保存与生效" target="_blank" rel="noopener noreferrer">渠道管理</a>。 |
+| 删除时勾选「同时移除定价」（仅 Root） | 随删除一并执行 | 处理该请求的节点立即生效，其他节点随系统设置同步（默认 60 秒）；内置定价可能恢复生效。 |
+| 预填充分组 | 新建点击「新建」，编辑点击「保存更改」 | 之后打开渠道编辑抽屉时读取新内容；已保存的渠道不受影响。 |
+| io.net 部署 | 创建、更新配置、延长、重命名和删除都直接发送到 io.net，不经过 New API 保存 | 以 io.net 返回的结果为准，不会新建或修改渠道。 |
 
 </div>
 
+## 注意事项
+
+- **「同时从所有渠道移除」直接修改渠道**：删除后需在渠道中重新添加模型名称才能恢复，见[删除模型](#删除模型)。
+- **部署是外部资源**：删除部署不可撤销；终止或修改前，先把指向它的渠道切换到其他可用渠道，见[查看与管理部署](#查看与管理部署)。
+- **模型名称是唯一标识**：修改名称不会重命名渠道中的模型，也不会迁移价格；价格始终按具体模型名称配置，见[模型资料](#模型资料)。
+- **同步资料会覆盖勾选的字段**：不希望被覆盖的模型，请关闭其「允许资料同步」，见[同步资料](#同步资料)。
+- **「广场展示」不决定调用权限**：能否调用由渠道、分组和 API 密钥的限制决定，见[广场展示状态](#广场展示状态)。
+
+## 常见问题
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="模型没有出现在模型广场">
+**说明**：先查看列表中该模型的「广场展示」状态，见[广场展示状态](#广场展示状态)。
+
+**可能原因**：
+- 状态为「已隐藏」：模型资料中的「广场展示」已关闭。
+- 状态为「无法展示」：提供该模型的渠道未启用，或渠道模型列表未包含该名称。
+- 状态为「正常展示」：用户所在分组无权访问该模型。
+
+**处理方法**：
+1. 按状态开启「广场展示」，或检查渠道与用户分组。
+</Accordion>
+
+<Accordion title="列表中出现「缺元数据」行">
+**提示原文**：对这些行执行批量操作时提示「请先为所有选中模型补充元数据。」（英文 Add metadata to all selected models first.）
+
+**可能原因**：渠道中使用了没有精确同名资料的模型名称。非完全匹配规则不能消除这些行。
+
+**处理方法**：
+1. 点击「补充资料」，或用「同步资料」导入。
+2. 批量操作时取消勾选「缺元数据」行。
+</Accordion>
+
+<Accordion title="删除模型后它又出现在列表中">
+**可能原因**：启用的渠道仍引用该名称。
+
+**处理方法**：
+1. 需要彻底移除时，删除时勾选「同时从所有渠道移除」（仅完全匹配规则可用）。
+</Accordion>
+
+<Accordion title="同步时模型不能勾选">
+**可能原因**：
+- 「计划操作」为「已禁止资料同步」：该模型的「允许资料同步」已关闭。
+- 「计划操作」为「上游未找到」：官方目录中没有该名称。
+
+**处理方法**：
+1. 需要同步时，在模型资料中开启「允许资料同步」。
+</Accordion>
+
+<Accordion title="点击「加载资料预览」失败">
+**提示原文**：「预览元信息失败」（英文 Failed to preview metadata）；服务端返回了原因时显示服务端英文原文。
+
+**可能原因**：服务器无法访问数据源，或部署方通过 `SYNC_UPSTREAM_BASE` 修改了数据源地址。
+
+**处理方法**：
+1. 检查服务器能否访问数据源。
+</Accordion>
+
+<Accordion title="应用同步时提示重新预览">
+**提示原文**：`Upstream metadata changed; preview again` 或 `metadata changed; preview again before applying`（仅英文）
+
+**可能原因**：预览后官方目录或本站模型资料发生了变化。
+
+**处理方法**：
+1. 点击「重新预览」，回到第 1 步重新选择。
+</Accordion>
+
+<Accordion title="看不到「同步价格」按钮或「定价」标签">
+**提示原文**：Admin 打开「定价」标签时显示「模型定价由超级管理员管理。」（英文 Model pricing is managed by a super administrator.）
+
+**可能原因**：当前账户不是 Root。模型定价仅 Root 可以修改。
+
+**处理方法**：
+1. 请 Root 操作。
+</Accordion>
+
+<Accordion title="修改模型名称后价格消失">
+**可能原因**：价格按模型名称保存，修改名称不会迁移价格。
+
+**处理方法**：
+1. 请 Root 为新名称配置价格，或改回原名。
+</Accordion>
+
+<Accordion title="定价列显示「按匹配模型配置」">
+**可能原因**：名称规则不是完全匹配。
+
+**处理方法**：
+1. 在「定价」标签中先选择具体模型，再配置价格。
+</Accordion>
+
+<Accordion title="供应商无法删除">
+**提示原文**：「供应商仍有关联的 … 条模型记录，请先转移或清除归属。」（英文 Vendors still have … linked model records. Transfer or clear their assignments first.）
+
+**可能原因**：仍有模型关联该供应商。
+
+**处理方法**：
+1. 在「关联模型」中设置或清除这些模型的供应商。
+2. 或改用「合并供应商」。
+</Accordion>
+
+<Accordion title="「部署」标签提示未启用或连接失败">
+**提示原文**：「模型部署服务未启用」（英文 Model deployment service is disabled）或「连接失败」（英文 Connection failed）
+
+**处理方法**：
+1. 请 Root 在「系统设置」→「模型」→「模型部署」中检查开关和 API Key。
+2. 点击「重试」。
+</Accordion>
+
+<Accordion title="部署被终止或容器异常">
+**处理方法**：
+1. 查看部署详情、容器状态和日志。
+2. 检查是否仍有渠道指向该部署的地址；有则先切换到其他可用渠道。
+</Accordion>
+
+</Accordions>
+
 ## 相关文档
 
-- [渠道管理](/zh/docs/guide/feature-guide/admin/channel)：在渠道中配置实际可调用的模型、分组与路由，使用「预设分组」。
-- [计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)：模型价格、上游价格同步、分组价格等全局计费设置。
-- [计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)：「定价」标签中计费表达式的语法与示例。
-- [模型配置](/zh/docs/guide/feature-guide/system-settings/settings-models)：启用 io.net 模型部署并配置 API Key。
-- [模型广场和排行榜](/zh/docs/guide/feature-guide/user/pricing)：用户侧如何看到模型广场中展示的模型。
+- <a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>：在渠道中配置实际可调用的模型、分组与路由，使用「预设分组」。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：模型价格、上游价格同步、分组价格等全局计费设置。
+- <a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>：「定价」标签中计费表达式的语法与示例。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型配置</a>：启用 io.net 模型部署并配置 API Key。
+- <a href="/zh/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a>：用户侧如何看到模型广场中展示的模型。

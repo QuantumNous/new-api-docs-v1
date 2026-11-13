@@ -4,8 +4,9 @@ description: 配置额度、货币显示、模型与分组价格、支付网关�
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap [&_td_code]:wrap-anywhere">
 
 计费与支付配置位于 `/system-settings/billing`，仅 Root 可访问。
 
@@ -28,8 +29,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 3. **模型费用**由请求用量和价格规则计算；
 4. **网关实收**由各支付渠道的订单决定。
 
-<Callout type="warn">
-  计费与支付配置会影响扣费、余额和支付入账。修改前后的通用记录与验证步骤见[变更前记录与验证](./system-setting#变更前记录与验证)，密钥类字段的处理见[敏感配置与审计记录](./system-setting#敏感配置与审计记录)。本域另需用测试用户核对价格，并在支付服务商允许的测试环境中验证。
+<Callout type="warn" title="注意">
+  计费与支付配置会影响扣费、余额和支付入账。修改前后的通用记录与验证步骤见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#变更前记录与验证" target="_blank" rel="noopener noreferrer">变更前记录与验证</a>，密钥类字段的处理见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#敏感配置与审计记录" target="_blank" rel="noopener noreferrer">敏感配置与审计记录</a>。
 </Callout>
 
 ## 配置分区
@@ -42,7 +43,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![额度设置](/assets/guide/feature-guide/system-settings-billing-and-payments-quota-settings.png)
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 默认或填写要求 | 说明 |
 | --- | --- | --- |
@@ -60,10 +61,9 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 1. 核对额度单位。
 2. 设置新用户配额、钱包免预扣门槛、输入预扣倍率和奖励；配置正数邀请奖励前，先到支付网关确认合规声明。
-3. 填写充值链接并保存，刷新检查非敏感字段。
-4. 用新建测试用户验证初始额度；用邀请注册验证双方奖励，用请求日志核对预扣与最终费用。
+3. 填写充值链接并保存。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 配置邀请奖励不为0时，需要先在「系统设置」→「计费与支付」→「支付网关」设置中确认合规条款。
 </Callout>
 
@@ -75,7 +75,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ![货币与展示](/assets/guide/feature-guide/system-settings-billing-and-payments-currency-and-display.png)
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 默认或填写要求 | 说明 |
 | --- | --- | --- |
@@ -83,17 +83,16 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 美元汇率 | 后端默认 `7.3`；表单最小 `0.0001` | 美元与您的支付网关货币之间的实际汇率。显示模式为「元」时，该字段名称显示为「人民币兑美元汇率」。 |
 | 自定义货币符号 | 默认 `¤`；仅自定义货币 时必填，最多 8 字符 | 显示价格时使用的前缀；仅「自定义货币」模式显示。 |
 | 每 USD 单位数 | 默认 `1`；仅自定义货币 时必填，最小 `0.0001` | 从美元到您的自定义货币的转换率，表示 `1 USD = X` 个自定义货币单位。 |
-| 显示 Token 统计信息 | 默认开启 | 在用户界面中显示令牌使用统计信息。 |
+| 显示 Token 统计信息 | 默认开启 | 决定 OpenAI 兼容的额度查询接口返回该令牌还是整个账户的额度和用量。界面说明为「在用户界面中显示令牌使用统计信息」。 |
 
 </div>
 
 **操作流程**
 
 1. 选择货币显示模式 USD、元 或 自定义货币；使用 自定义货币 时需填写自定义货币符号以及每 USD 单位数。
-2. 填写相关配置信息，核对 Token 统计信息开关，保存。
-3. 在钱包、价格页和日志中对照同一笔额度，确认货币符号、小数和换算值。
+2. 填写相关配置信息并保存。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 内部 `500000 配额点数` 在默认基准下为 `$1`。
 </Callout>
 
@@ -107,7 +106,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 - 「重置价格」：确认后把所有模型的价格恢复为系统默认值，已保存的自定义价格（包括计费表达式）会被清除。
 - 「切换到 JSON」：以 JSON 查看和编辑旧版价格字段，如「模型固定定价」「模型倍率」「补全倍率」。
 
-<Callout type="warn">
+<Callout type="warn" title="注意">
 配置或编辑模型价格时，计费模式推荐使用计费表达式；「按 Token」、「按次」为已弃用的计费模式，但仍可在对应界面将旧数据编辑转换为计费表达式。
 </Callout>
 
@@ -130,14 +129,13 @@ import { Callout } from 'fumadocs-ui/components/callout';
 ![编辑模型定价](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-model-prices-edit-model-pricing.png)
 
 1. 搜索模型并编辑，或点击「添加模型」。新建时填写准确模型名，编辑时模型名不可直接更改。
-2. 选择定价货币和模式，设置价格或表达式（编辑器用法见[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)）。「预设模板」只是起点，先核对当前供应商价格和缓存规则。
+2. 选择定价货币和模式，设置价格或表达式（编辑器用法见<a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>）。「预设模板」只是起点，先核对当前供应商价格和缓存规则。
 3. 在「Token 估算器」中输入已知用量检查费用；含请求条件时，再用「请求模拟」填写请求体、请求头和时间。
-4. 点击保存模型价格，并确认列表及刷新后的价格符合预期。
-5. 用测试请求在日志中核对真实用量、分组倍率和最终费用。
+4. 点击保存模型价格。
 
 - 基础字段
 
-<div className="[&_table]:min-w-[48rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 页面字段 | 默认或填写要求 | 说明 |
 | --- | --- | --- |
@@ -147,7 +145,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 </div>
 
-编辑器模式、预设模板、阶梯与计费分支、Token 与媒体价格、请求规则、Token 估算器与请求模拟，以及计费表达式的变量、函数和语法，见[计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)。
+编辑器模式、预设模板、阶梯与计费分支、Token 与媒体价格、请求规则、Token 估算器与请求模拟，以及计费表达式的变量、函数和语法，见<a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>。
 
 #### 未设置价格模型
 
@@ -160,7 +158,6 @@ import { Callout } from 'fumadocs-ui/components/callout';
 1. 筛选未定价模型并进入价格编辑。
 2. 单独配置，或从已核对的源模型复制价格到所选目标。
 3. 核对每个目标的协议、缓存和媒体计费差异，再保存。
-4. 刷新列表，发起测试请求确认。
 
 #### 工具价格
 
@@ -182,7 +179,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 切换到 JSON     | 以 JSON 对象形式查看或批量编辑价格。         | 对象键为工具标识，值为非负数字，例如 `{"web_search":10}`。 |
 | 切换到可视化    | 返回表格编辑模式。                           | 建议先修复 JSON 错误，再切换模式。                           |
 | 复制            | 复制 JSON 编辑区的内容。                     | 在 JSON 模式显示，可用于留存修改前的配置。                   |
-| 保存工具价格    | 提交当前完整价格配置。                       | 无效价格或 JSON 错误会阻止保存；提交后应确认成功提示，并重新打开页面核对。 |
+| 保存工具价格    | 提交当前完整价格配置。                       | 无效价格或 JSON 错误会阻止保存。 |
 
 - 操作流程
 
@@ -190,11 +187,10 @@ import { Callout } from 'fumadocs-ui/components/callout';
 2. 选择配置范围；全部模型使用通用工具标识；特定模型系列使用 `工具名:模型前缀*`。
 3. 添加或修改规则；修改已有行，或点击“添加”填写工具标识和价格；按美元/千次填写。
 4. 检查匹配与金额；按目标模型名称确认最长前缀规则，并换算单次基础费用。
-5. 保存配置；点击“保存工具价格”，确认保存成功。
-6. 复查配置与计费；重新打开页面核对保存结果，再用受控请求触发目标工具，检查消费记录；核对工具调用次数、单价、分组倍率和最终费用。
+5. 保存配置；点击“保存工具价格”。
 
-<Callout type="info">
-单项工具附加费用 = 价格（美元/千次） × 计费调用次数 ÷ 1000 × 分组倍率
+<Callout type="info" title="提示">
+单项工具附加费用 = 价格（美元/千次） × 计费调用次数 ÷ 1000 × 分组倍率<br/>
 总工具附加费用 = 各项工具附加费用之和
 </Callout>
 
@@ -270,7 +266,6 @@ import { Callout } from 'fumadocs-ui/components/callout';
 6. 选择待同步价格；勾选目标模型对应的来源，或使用来源列头批量勾选。
 7. 打开变更预览；检查底部已选数量，点击“应用同步”。
 8. 核对并确认；检查“价格来源、模型、当前计费、最终保存价格”，点击“确认更改”。
-9. 检查同步结果；确认成功提示，在“模型价格”中复查配置，必要时重新拉取比较。
 
 ### 分组定价
 
@@ -307,9 +302,8 @@ import { Callout } from 'fumadocs-ui/components/callout';
 **操作流程**
 
 1. 添加分组，设置名称、调用倍率、充值倍率和可选状态。
-2. 在[渠道管理](/zh/docs/guide/feature-guide/admin/channel)配置该组可用的渠道与模型，在[用户管理](/zh/docs/guide/feature-guide/admin/user)设置账户组。
+2. 在<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>配置该组可用的渠道与模型，在<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>设置账户组。
 3. 配置下述特殊倍率规则、分组可见性或自动分组顺序后，点击「保存分组设置」。
-4. 用不同账户组、固定组及 Auto 令牌发起请求，核对实际组、渠道和费用。
 
 #### 特殊倍率规则
 
@@ -385,9 +379,9 @@ import { Callout } from 'fumadocs-ui/components/callout';
 1. 使用超级管理员账号进入「计费与支付」 → 「支付网关」。
 2. 点击「确认合规」，阅读条款并按提示填写各段确认文字。
 3. 点击「确认并启用」，等待提交成功。
-4. 确认页面显示「合规已确认」及确认用户、时间，再继续配置支付渠道。
+4. 页面显示「合规已确认」及确认用户、时间后，再继续配置支付渠道。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 支付网关配置、充值、支付等相关功能使用前，需要先完成支付合规确认。确认后，各网关还需满足以下条件才会出现在钱包中：
 
 - EPay：已填写「Epay 端点」「易支付商户 ID」「Epay 密钥」，且「常规 › 付款方式」中至少有一项。
@@ -433,8 +427,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 折扣率 | 应付金额乘以的系数。 | `0` < 折扣率 ≤ `1` 。 | 示例：`0.85`，即支付 85%。 |
 | 优惠 | 显示折扣对应的减免比例。 | 按折扣率自动计算。 | 示例：折扣率 `0.85` 对应优惠 `15%`。 |
 
-<Callout type="info">
-- 金额计算说明：<br/>
+<Callout type="info" title="金额计算说明">
 `应付金额 = 充值金额数量 × 价格（本地货币/美元） × 用户分组充值倍率 × 匹配的折扣率`<br/>
 例如 Epay 充值 `100` 美元余额，价格（本地货币/美元）为 `7.3`、发起充值用户的分组充值倍率为 `1`，且配置 `100 → 0.85`，则应付 `620.50` 单位本地货币，到账为 `100` 美元余额。
 </Callout>
@@ -460,10 +453,9 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 1. 填写端点、商户 ID 和密钥。
 2. 核对回调基础地址，系统会在其后拼接 `/api/user/epay/notify`。
-3. 统一保存后，在钱包发起测试充值。
+3. 统一保存。
 
-<Callout type="warn">
-**Epay 安全提醒**：<br/>
+<Callout type="warn" title="Epay 安全提醒">
 Epay 是一种支付协议，不是某个固定官网。请自行核验服务提供方，不要轻信他人搭建的第三方 Epay 站点。
 </Callout>
 
@@ -492,9 +484,9 @@ Epay 是一种支付协议，不是某个固定官网。请自行核验服务提
 2. 配置 Webhook 接收支付状态通知。
 3. 填写 Stripe 的 API 密钥、Webhook 密钥和价格 ID。
 4. 设置充值单价、最低充值金额，并按需开启促销代码。
-5. 点击“保存所有设置”，统一保存后测试充值。
+5. 点击“保存所有设置”。
 
-<Callout type="info">
+<Callout type="info" title="提示">
 Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerAddress>/api/stripe/webhook`，并订阅 `checkout.session.completed` 和 `checkout.session.expired` 两个事件。
 </Callout>
 
@@ -535,7 +527,7 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 1. 在 Creem 后台配置 Webhook 地址 `<ServerAddress>/api/creem/webhook`，并填写 API 密钥和 Webhook 密钥，选择测试或正式模式。
 2. 点击“添加产品”，填入产品 ID、名称、货币和价格。
 3. 将期望到账余额换算为配额点数，填写“额度”。
-4. 核对本地售价、币种与 Creem 产品一致，统一保存后到钱包选择产品测试。
+4. 核对本地售价、币种与 Creem 产品一致，统一保存。
 
 #### Waffo Pancake
 
@@ -559,10 +551,9 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 2. 填写商户 ID 和私钥，等待校验及目录加载。
 3. 选择已有店铺和激活产品；如需新建，先填写返回地址，再点击新建按钮。
 4. 启用后钱包会自动显示 Waffo Pancake 支付方式；如需自定义显示名称、图标或最低充值，可在「常规 › 付款方式」中添加处理标识为 `waffo_pancake` 的条目。
-5. 核对产品绑定，统一保存后发起测试充值
+5. 统一保存。
 
-<Callout type="info">
-**Waffo Pancake MoR**<br/>
+<Callout type="info" title="Waffo Pancake MoR">
 - 无需注册公司即可开始全球收款。面向独立开发者、OPC 个体经营者和初创团队构建。
 - Waffo Pancake 作为你的登记商户（Merchant of Record），承担全球收款相关的合规负担，包括消费税、开票、订阅管理、退款和拒付。
 - 个人开发者可以快速上线，专注产品而不是合规事务。几分钟即可完成入驻，从一个提示词到完整集成。
@@ -590,8 +581,7 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 | 回调通知地址 | 接收 Waffo 服务端支付结果。 | 选填完整 URL，需包含 `/api/waffo/webhook` 路径。留空时根据回调基础地址或服务器地址自动构造。 | 默认：空；示例：`https://api.example.com/api/waffo/webhook`。 |
 | 支付返回地址 | 指定支付后浏览器跳转页面。 | 选填完整页面 URL；留空回退至服务器地址加 `/wallet?show_history=true`。 | 默认：空；示例：`https://api.example.com/wallet`。 |
 
-<Callout type="info">
-**Waffo 聚合网关**
+<Callout type="info" title="Waffo 聚合网关">
 - 支付聚合模式：使用你自己的注册公司（离岸实体）入驻。面向企业场景构建。
 - 请在 Waffo 后台获取 API 密钥、商户 ID 以及 RSA 密钥对，并配置回调地址。
 </Callout>
@@ -610,8 +600,7 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 
 1. 开启 Waffo，选择环境并填写对应三项凭证、商户资料和金额设置。
 2. 核对通知和返回地址，新增或编辑支付方式；弹窗确认仅更新列表。
-3. 保存所有设置，再用测试账户选择相应方式下单。
-4. 核对 `X-SIGNATURE` 验签、订单成功状态、到账额度及日志。
+3. 保存所有设置。
 
 #### 金额与入账核对
 
@@ -640,49 +629,188 @@ Stripe 需要配置 Webhook 接收支付状态通知：Webhook URL 为 `<ServerA
 
 - **操作流程**
 1. 开启签到功能，填写相应参数。
-2. 点击保存签到设置，刷新确认。
-3. 用测试用户签到，核对奖励和系统日志。
+2. 点击保存签到设置。
 
-**注意事项**
-
+<Callout type="warn" title="注意">
 - 关闭「启用签到功能」时不显示两个额度输入框，开启后才能填写。
-- 最大值大于最小值时，在包含两端的区间内随机发放；否则固定发放最小值。当前表单不会因最小值大于最大值自动报错，保存前自行核对。
+- 最大值大于最小值时，在包含两端的区间内随机发放；否则固定发放最小值。当前表单不会因最小值大于最大值自动报错。
 - 每日按服务进程的本地日期判断，不按每位用户的浏览器时区判断；多实例应保持时区一致。
 - 用户和日期的唯一约束防止同一天重复领取；开启全局 Turnstile 时，签到请求也需通过对应校验。
+</Callout>
 
-## 保存后的验证清单
+## 保存与生效
 
-- [ ] 按[变更前记录与验证](./system-setting#变更前记录与验证)完成通用的提示确认与刷新核对；模型价格遇到版本冲突时，点击「重新加载定价」后再修改。
-- [ ] 用已知 Token、缓存、媒体和工具用量验证估算及真实日志；不要把估算器当真实账单。
-- [ ] 用不同账户组和令牌组验证实际渠道、分组倍率及 Auto 顺序。
-- [ ] 比较同一额度在钱包和日志中的显示，确认未混淆显示汇率与支付单价。
-- [ ] 每个网关分别测试下单、实际收费、签名通知、订单状态与到账额度；确认返回页不是唯一成功依据。
-- [ ] 测试新用户、邀请注册、邀请额度转移及重复签到，确认奖励进入正确余额。
+保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>，浏览器何时显示新值见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#前端显示与缓存" target="_blank" rel="noopener noreferrer">前端显示与缓存</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点随系统设置同步（默认 60 秒）；各配置项读取新值的时机如下：
+
+### 额度、货币与展示
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 新用户配额 | 页头「保存更改」 | 只对之后完成注册的用户生效，已有用户的额度不变。 |
+| 邀请者奖励、受邀者奖励 | 页头「保存更改」 | 只对之后完成的邀请注册发放。 |
+| 钱包免预扣门槛（美元） | 页头「保存更改」 | 下一次请求预扣时按新值判断，进行中的请求不受影响。 |
+| 输入预扣倍率、免费模型预消耗 | 页头「保存更改」 | 下一次请求预扣时按新值计算，进行中的请求不受影响。 |
+| 充值链接 | 页头「保存更改」 | 用户下次打开钱包页时显示新链接。 |
+| 显示 Token 统计信息 | 页头「保存更改」 | OpenAI 兼容的额度查询接口从下一次调用起按新设置返回。 |
+| 货币与展示的其余字段 | 页头「保存更改」 | 用户刷新页面后按新设置显示金额，执行保存的浏览器自动更新；之后新写入的日志按新设置记录金额，已写入的不变。 |
+
+</div>
+
+### 模型与工具价格
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 模型价格 | 「保存模型价格」，一次提交所有已修改的模型；「上游价格同步」的「确认更改」相同 | 下一次请求起按新价格预扣和结算，进行中的请求按开始时确定的价格结算；用户已打开的模型广场刷新页面后显示新价格。 |
+| 重置价格 | 确认后立即执行，不经过「保存模型价格」 | 生效时机与模型价格相同。 |
+| 暴露倍率接口 | 与模型价格在同一次「保存模型价格」中提交 | 对外接口的返回内容最多缓存约 30 秒；保存模型价格时，处理该请求的节点立即更新。 |
+| 工具价格 | 「保存工具价格」 | 下一次工具调用计费起。 |
+
+</div>
+
+### 分组设置
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 倍率、特殊倍率规则 | 右上角「保存分组设置」，四个标签一起提交 | 下一次请求起按新倍率计费，进行中的请求按开始时确定的倍率结算。 |
+| 充值倍率 | 右上角「保存分组设置」 | 用户下一次估算或发起充值时按新倍率计算。 |
+| 用户可选、分组可见性 | 右上角「保存分组设置」 | 令牌每次请求都校验所属分组：分组被取消可选或删除后，使用该分组的已有令牌从下一次请求起被拒绝。 |
+| 自动分组顺序 | 右上角「保存分组设置」 | 下一次请求起按新顺序选择分组，沿用全局顺序的令牌随之变化。 |
+| 每个令牌的最大自定义分组数 | 右上角「保存分组设置」 | 下一次请求起，自带分组列表的令牌按新上限重新过滤。 |
+| 默认使用自动分组 | 右上角「保存分组设置」 | 只影响之后新建的令牌，已有令牌的分组不变。 |
+
+</div>
+
+### 支付设置
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 支付合规确认 | 「确认并启用」，单独提交，不经过「保存所有设置」 | 确认后立即解除支付、兑换码、订阅套餐和邀请奖励的限制。 |
+| 常规设置 | 「保存所有设置」 | 用户下次打开钱包页时显示新的付款方式和金额选项；下单时按新的价格、折扣和最低充值计算。 |
+| 各网关的凭证和参数 | 「保存所有设置」，密钥类字段留空则保持原值 | 下一次下单或收到支付通知时读取新值；已创建的订单沿用下单时的回调地址。 |
+
+</div>
+
+### 签到设置
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 启用签到功能 | 「保存签到设置」 | 关闭后，用户下一次签到即被拒绝；个人设置页的签到卡片刷新页面后显示或隐藏。 |
+| 签到最小额度、签到最大额度 | 「保存签到设置」 | 下一次签到起按新范围发放，已领取的不变。 |
+
+</div>
+
+### 补充说明
+
+- **未保存的修改**：额度设置、货币与展示有未保存的修改时离开页面，会弹出「未保存的更改」确认。
+- **模型价格的提示与冲突**：成功提示「模型定价已保存」，没有变更时提示「没有模型价格变更需要保存」；打开页面后同一模型的价格已被他人修改时保存会被拒绝，需点击「重新加载定价」后重新修改。
+
+## 注意事项
+
+- **「重置价格」清除全部自定义价格**：包括计费表达式，见[模型定价](#模型定价)。
+- **估算不等于账单**：「Token 估算器」不含请求规则和分组倍率，实际扣费以使用日志为准。
+- **到账以支付通知为准**：钱包到账由支付网关向站点发送的支付通知触发，支付完成后的返回页不作为到账依据；各网关的启用条件见[支付网关](#支付网关)。
 
 ## 常见问题
 
-- **保存成功但价格没变？** 区分编辑草稿与最终保存，检查模型名、当前模式、提供方覆盖及请求开始时的价格快照。
-- **关闭某项价格是否就是免费？** 不一定。移除覆盖可能恢复默认；工具价格还可能匹配更具体前缀。显式零值、未配置和删除是不同状态。
-- **公开价格接口为什么访问失败？** 检查「暴露倍率接口」开关，当前路径为 `/api/ratio_config`。
-- **100 的优惠为什么没有用于 200？** 金额优惠按原始金额精确匹配，不是最低阈值规则。
-- **Stripe 报价与付款页不一致？** 核对 Stripe Price 的货币、单价和数量，以及本地单价、充值倍率、优惠与 Stripe 优惠码的区别。
-- **Creem 产品额度填 1 为什么不是到账 1 美元？** 该字段是内部 配额点数；默认基准下系统 1 USD 对应 500000 quota。
-- **密钥框为空是否未配置？** 不一定。密钥不回显的通用规则见[敏感配置与审计记录](./system-setting#敏感配置与审计记录)。注意 Waffo 公钥清空并保存会移除原值，不能当成留空保留的私钥。
-- **用户不能选择某个组？** 核对公共可用列表、特殊规则、账户自身组、倍率配置及令牌限制；使用 Auto 还需开放 `auto`。
-- **Pancake 创建成功为何没有完成配置？** 外部资源创建、当前选择和本地绑定保存是三个阶段，需核对并保存绑定。
-- **签到每天都是最小值？** 检查最大值是否不大于最小值，并确认输入使用的是 配额点数。
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="保存成功但价格没变？">
+**可能原因**：
+- 未区分编辑草稿与最终保存。
+- 模型名、当前模式、提供方覆盖或请求开始时的价格快照与预期不符。
+</Accordion>
+
+<Accordion title="关闭某项价格是否就是免费？">
+**说明**：不一定。移除覆盖可能恢复默认；工具价格还可能匹配更具体的前缀。显式零值、未配置和删除是不同状态。
+</Accordion>
+
+<Accordion title="公开价格接口为什么访问失败？">
+**说明**：该接口当前路径为 `/api/ratio_config`。
+
+**可能原因**：「暴露倍率接口」开关未开启。
+</Accordion>
+
+<Accordion title="100 的优惠为什么没有用于 200？">
+**说明**：金额优惠按原始金额精确匹配，不是最低阈值规则。
+</Accordion>
+
+<Accordion title="Stripe 报价与付款页不一致？">
+**可能原因**：
+- Stripe Price 的货币、单价或数量与预期不符。
+- 未区分本地单价、充值倍率、优惠与 Stripe 优惠码。
+</Accordion>
+
+<Accordion title="Creem 产品额度填 1 为什么不是到账 1 美元？">
+**说明**：该字段是内部配额点数；默认基准下，系统 1 USD 对应 500000 quota。
+</Accordion>
+
+<Accordion title="密钥框为空是否未配置？">
+**说明**：不一定。密钥不回显的通用规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#敏感配置与审计记录" target="_blank" rel="noopener noreferrer">敏感配置与审计记录</a>。注意 Waffo 公钥清空并保存会移除原值，不可当成留空保留的私钥。
+</Accordion>
+
+<Accordion title="用户不能选择某个组？">
+**可能原因**：
+- 公共可用列表、特殊规则、账户自身组、倍率配置或令牌限制不允许选择该组。
+- 使用 Auto 时未开放 `auto`。
+</Accordion>
+
+<Accordion title="Pancake 创建成功为何没有完成配置？">
+**说明**：外部资源创建、当前选择和本地绑定保存是三个阶段。
+
+**处理方法**：
+1. 核对并保存绑定。
+</Accordion>
+
+<Accordion title="签到每天都是最小值？">
+**可能原因**：
+- 最大值不大于最小值。
+- 输入使用的不是配额点数。
+</Accordion>
+
+<Accordion title="保存邀请奖励时提示功能已禁用">
+**提示原文**：「支付、兑换码、订阅计划和邀请返利功能已禁用。管理员需先确认合规声明后方可启用。」（英文 Payment, redemption, subscription, and invitation reward features are disabled. The administrator must confirm compliance terms before enabling them.）
+
+**可能原因**：支付合规尚未确认，而「邀请者奖励」或「受邀者奖励」设为了大于 `0` 的值。
+
+**处理方法**：
+1. 由 Root 在「支付网关」中确认合规条款，见[支付合规确认](#支付合规确认)。
+2. 回到「额度设置」重新保存。
+</Accordion>
+
+<Accordion title="保存模型价格时提示价格已被修改">
+**提示原文**：提示中包含 `model pricing changed; reload before saving`（仅英文）。
+
+**可能原因**：打开页面后，同一模型的价格已被他人或另一个窗口修改。
+
+**处理方法**：
+1. 点击「重新加载定价」。
+2. 重新修改后保存。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 
-- [系统设置概览](./system-setting)：配置入口与生效机制。
-- [模型管理](/zh/docs/guide/feature-guide/admin/model)：模型目录与元信息。
-- [计费表达式](/zh/docs/guide/feature-guide/admin/billing-expression)：表达式变量、函数、请求规则与费用模拟。
-- [渠道管理](/zh/docs/guide/feature-guide/admin/channel)：渠道模型、分组与路由。
-- [用户管理](/zh/docs/guide/feature-guide/admin/user)：用户分组和账户维护。
-- [钱包与订阅](/zh/docs/guide/feature-guide/user/wallet)：用户充值、余额与套餐使用。
-- [订阅管理](/zh/docs/guide/feature-guide/admin/subscription)：套餐及独立支付产品。
-- [日志与异步任务](/zh/docs/guide/feature-guide/user/log)：请求用量、扣费和任务状态。
-- [模型配置](./settings-models)：全局模型行为与供应商适配。
-- [请求策略配置](./settings-request-policies)：重试与 `auto` 分组的跨分组重试。
+- <a href="/zh/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">系统设置概览</a>：配置入口与生效机制。
+- <a href="/zh/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">模型管理</a>：模型目录与元信息。
+- <a href="/zh/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">计费表达式</a>：表达式变量、函数、请求规则与费用模拟。
+- <a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>：渠道模型、分组与路由。
+- <a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>：用户分组和账户维护。
+- <a href="/zh/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">钱包</a>：用户充值、余额与套餐使用。
+- <a href="/zh/docs/guide/feature-guide/admin/subscription" target="_blank" rel="noopener noreferrer">订阅管理</a>：套餐及独立支付产品。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：请求用量和扣费明细。
+- <a href="/zh/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">任务日志</a>：异步任务的状态。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型配置</a>：全局模型行为与供应商适配。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>：重试与 `auto` 分组的跨分组重试。
 
 </div>

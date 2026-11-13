@@ -1,9 +1,10 @@
 ---
-title: 聊天应用集成
+title: 聊天
 description: 快速将 New API 配置导入到各类 AI 聊天应用中
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - New API 支持快速导入配置到多种 AI 聊天应用，方便测试和日常使用。
 
@@ -11,7 +12,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 - New API 的聊天集成有三种方式：
 1. **聊天预设一键导入配置**
-2. **API密钥一键导入配置**
+2. **API 密钥一键导入配置**
 3. **手动配置聊天应用**
 
 ### 使用前准备
@@ -19,32 +20,46 @@ import { Callout } from 'fumadocs-ui/components/callout';
 1. 登录 New API，并在「API 密钥」页面创建一个密钥。
 2. 确认密钥处于启用状态，额度充足，密钥状态未过期，并且当前 IP、分组和模型限制允许本次调用。
 
-<Callout type="info">
-  **创建和使用API密钥的具体步骤请参阅[API 密钥](/zh/docs/guide/feature-guide/user/token)页面。**
+<Callout type="info" title="提示">
+  **创建和使用 API 密钥的具体步骤请参阅 <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>页面。**
 </Callout>
 
 ### 聊天预设一键导入配置
 
-1. 点击左侧栏「聊天」展开平台已配置的聊天预设
-2. 点击目标聊天预设
-3. 浏览器会尝试在新窗口中启动已安装的外部应用
-4. 系统自动跳转到目标应用并填充配置信息
+- 聊天-聊天预设一键导入配置
 
-![聊天预设一键导入配置页](/assets/guide/feature-guide/chat-presets-configuration-import.png)
+![聊天-聊天预设一键导入配置页面](/assets/guide/feature-guide/chat-chat-presets-one-click-configuration-import.png)
 
+**操作流程：**
+1. 点击左侧栏「聊天」右侧的展开箭头，展开平台已配置的聊天预设。
+2. 点击目标聊天预设。
+3. 浏览器自动请求跳转至该聊天应用，点击「打开」。
+4. 系统自动跳转到目标应用并填充配置信息。
 
-<Callout type="info">
-  Root 可以在「系统设置」 → 「控制台内容」 → 「聊天」维护管理聊天预设。
+<Callout type="info" title="提示">
+  - 侧边栏「聊天」自动使用最新创建的已启用密钥；需要使用其他密钥时，见 [API 密钥一键导入配置](#api-密钥一键导入配置)。
+  - 名称右侧无外链图标的是网页应用，点击后在本站页面内打开；其余为桌面应用，需先在电脑上安装。
+  - 浏览器扩展（如「流畅阅读」）不显示在侧边栏，仅可在 API 密钥的 ⋯ →「聊天」中使用。
+  - 聊天预设由 Root 在「系统设置」→「控制台内容」→「聊天预设」中维护。
 </Callout>
 
-### API密钥一键导入配置
+### API 密钥一键导入配置
 
-1. 点击进入左侧栏「API 密钥」
-2. 选中需要使用的API密钥
-3. 在选中的密钥旁点击「 ... 」 → 「聊天」 → 「目标聊天应用」
-4. 快速跳转至对应应用并使用选中密钥一键导入配置
+- 聊天-API 密钥一键导入配置
 
-![API密钥一键导入配置页](/assets/guide/feature-guide/api-key-configuration-import.png)
+![聊天-API 密钥一键导入配置页面](/assets/guide/feature-guide/chat-api-key-one-click-configuration-import.png)
+
+**操作流程：**
+1. 点击进入左侧栏「API 密钥」。
+2. 选中需要使用的 API 密钥。
+3. 在选中的密钥所在行点击 ⋯ →「聊天」→ 目标聊天应用。
+4. 浏览器会尝试在新窗口中启动已安装的外部应用，点击「打开」。
+5. 快速跳转至对应应用并使用选中密钥一键导入配置。
+
+<Callout type="info" title="提示">
+  - 选中密钥指找到需要使用的密钥所在行，导入使用点击 ⋯ 所在行的密钥，无需勾选行首的复选框（截图中的勾选仅为示意）。导入时不检查密钥状态，已禁用、已过期或额度已用尽的密钥也可导入，但导入后调用会失败。
+  - 网页应用在新标签页中打开；浏览器扩展（如「流畅阅读」）直接接收 API 地址和密钥，需先安装并激活。
+</Callout>
 
 ### 手动配置聊天应用
 
@@ -52,30 +67,112 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 - 从 New API 获取以下配置信息：<br/>
 
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 配置项 | 说明 | 获取位置 |
 | --- | --- | --- |
-| API Base URL | API 接口地址 | New API地址，例如 `https://api.example.com/v1` |
+| API Base URL | API 接口地址 | 「API 密钥」页右上角「API 地址」中的地址加 `/v1`，例如 `https://api.example.com/v1`，以应用说明为准 |
 | API Key | API 密钥 | API 密钥页面 |
 | 可用模型 | 支持的模型列表 | 模型广场筛选查看密钥所在分组下的可用模型 |
+</div>
 
-- 通用配置步骤
+**操作流程：**
+1. 在目标应用中找到「设置」或「配置」入口。
+2. 找到「自定义 API」或「OpenAI 兼容接口」配置区域。
+3. 填写 API Base URL 和 API Key。
+4. 保存配置后即可使用。
 
-1. 在目标应用中找到「设置」或「配置」入口
-2. 找到「自定义 API」或「OpenAI 兼容接口」配置区域
-3. 填写 API Base URL 和 API Key
-4. 保存配置后即可使用
-
-<Callout type="info">
+<Callout type="info" title="提示">
   1. 大多数支持 OpenAI API 兼容接口的应用都可以通过填写自定义 API 地址的方式接入 New API。
   2. 如果应用要求完整端点，则使用 `https://api.example.com/v1/chat/completions`，看应用具体配置说明补充路径。
-  3. **目前已验证支持的AI应用列表及配置指南请参阅[AI应用](/zh/docs/apps)页面。**
+  3. **目前已验证支持的 AI 应用列表及配置指南请参阅 <a href="/zh/docs/apps" target="_blank" rel="noopener noreferrer">AI 应用</a>页面。**
 </Callout>
 
 ## 常见问题
 
-- **侧边栏没有聊天预设**：在「个人资料」→「左侧边栏个人设置」区域确认「聊天」模块已启用。
-- **提示没有可用密钥**：创建或启用 API 密钥，并检查额度、过期时间、模型限制和 IP 白名单。
-- **桌面应用没有启动**：先安装目标应用，并确认操作系统已注册对应的自定义协议；浏览器可能还会要求确认是否打开外部应用。
-- **网页预设空白或拒绝加载**：目标站点可能通过 CSP 或 `X-Frame-Options` 禁止 iframe。此时改用该应用的手动配置方式。
-- **FluentRead 连接后密钥无效**：确认扩展已安装并在当前页面激活；当前版本可能存在密钥前缀兼容差异，仍失败时改用手动配置或其他预设。
-- **请求返回未授权或禁止访问**：检查认证头格式、模型名称、密钥状态、分组权限和 IP 限制；Claude、Gemini 请求还要确认使用了对应的路径和请求头。
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="侧边栏没有聊天预设">
+**说明**：「API 密钥」页 ⋯ 菜单中的「聊天」同样仅在站点有聊天预设时显示（默认已内置）。
+
+**可能原因**：
+- 「个人资料」页「左侧边栏个人设置」区域中未开启「聊天区域」或「聊天」。
+- 管理员关闭了「聊天」，或删除了全部聊天预设。
+- 管理员刚修改过聊天预设，页面尚未刷新。
+
+**处理方法**：
+1. 在「个人资料」页的「左侧边栏个人设置」区域开启「聊天区域」和「聊天」并保存。
+2. 刷新浏览器页面。
+3. 仍未显示时，请联系管理员确认聊天预设的配置。
+</Accordion>
+
+<Accordion title="打开聊天时提示 No enabled API keys found">
+**提示原文**：No enabled API keys found. Create or enable one first.（仅英文）。网页应用在页面中显示「无法打开聊天」和同一句英文。
+
+**可能原因**：侧边栏「聊天」仅使用已启用的密钥，账户中没有「已启用」的密钥。
+
+**处理方法**：
+1. 在「API 密钥」页创建 API 密钥，或启用已禁用的密钥。
+2. 「已过期」「已耗尽」的密钥需先修改过期时间或额度，再执行「启用」。
+</Accordion>
+
+<Accordion title="桌面应用没有启动">
+**可能原因**：
+- 未安装目标应用，或操作系统未注册对应的自定义协议。
+- 浏览器正在等待确认是否打开外部应用。
+
+**处理方法**：
+1. 安装目标应用，并确认操作系统已注册对应的自定义协议。
+2. 浏览器询问是否打开外部应用时，选择允许。
+</Accordion>
+
+<Accordion title="网页预设空白或拒绝加载">
+**可能原因**：侧边栏中的网页应用在本站页面内显示，目标站点可能通过 CSP 或 `X-Frame-Options` 禁止在其他页面中嵌入显示。
+
+**处理方法**：
+1. 在「API 密钥」页通过该密钥的 ⋯ →「聊天」在新标签页中打开。
+2. 或改用该应用的手动配置方式，见 [手动配置聊天应用](#手动配置聊天应用)。
+</Accordion>
+
+<Accordion title="FluentRead 连接后密钥无效">
+**说明**：「流畅阅读」仅出现在「API 密钥」页的 ⋯ →「聊天」中。请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「未检测到 FluentRead 扩展。请确保已安装并激活。」 | 未安装或未激活 FluentRead 扩展。 | 安装并激活扩展后重试。 |
+| 「API 密钥已发送至 FluentRead。」，但调用仍失败 | 扩展中保存的 API 地址或密钥不正确。 | 在扩展中手动填写 API 地址和完整的 API 密钥（仅以一个 `sk-` 开头），或改用其他预设。 |
+</Accordion>
+
+<Accordion title="请求返回未授权或禁止访问">
+**可能原因**：认证头格式、模型名称、密钥状态、分组权限或 IP 限制不符合要求；Claude、Gemini 请求未使用对应的路径和请求头。
+
+**处理方法**：
+1. 检查认证头格式和模型名称。
+2. 在「API 密钥」页检查密钥状态、分组和 IP 限制。
+3. Claude、Gemini 请求还要确认使用了对应的路径和请求头。
+</Accordion>
+
+<Accordion title="点击「CC Switch」预设后打开了本站页面">
+**可能原因**：「聊天」中的「CC Switch」预设无法导入配置，点击后在新标签页中打开本站页面。
+
+**处理方法**：
+1. 使用「API 密钥」页 ⋯ 菜单第一层的「CC Switch」，见 <a href="/zh/docs/guide/feature-guide/user/token#导入到-cc-switch-或聊天应用" target="_blank" rel="noopener noreferrer">API 密钥</a>。
+</Accordion>
+
+<Accordion title="导入后应用中的 API 地址不正确">
+**可能原因**：一键导入带入的是管理员设置的服务器地址，未设置时为 `http://localhost:3000`。
+
+**处理方法**：
+1. 在应用中将地址改为「API 密钥」页「API 地址」中的地址。
+2. 该处也显示 `http://localhost:3000` 时，请联系管理员设置服务器地址。
+</Accordion>
+
+</Accordions>
+
+## 相关文档
+
+- <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>：创建 API 密钥，复制 API 地址和密钥，通过 ⋯ →「聊天」导入聊天应用。
+- <a href="/zh/docs/guide/feature-guide/user/playground" target="_blank" rel="noopener noreferrer">游乐场</a>：在网页中直接测试模型。
+- <a href="/zh/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">模型广场与排行榜</a>：查看可用的模型和价格。
+- <a href="/zh/docs/guide/feature-guide/user/personal-setting#设置左侧边栏显示的页面" target="_blank" rel="noopener noreferrer">个人资料</a>：设置左侧边栏显示的页面，包括「聊天」。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-content#聊天预设" target="_blank" rel="noopener noreferrer">控制台内容配置</a>：Root 维护聊天预设。
+- <a href="/zh/docs/apps" target="_blank" rel="noopener noreferrer">AI 应用</a>：已验证支持的 AI 应用和配置指南。

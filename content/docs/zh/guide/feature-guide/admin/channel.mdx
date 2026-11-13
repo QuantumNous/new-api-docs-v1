@@ -4,10 +4,11 @@ description: 配置 AI 服务商、插件、网关和自定义路由渠道，维
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 - 渠道是 New API 连接上游 AI 服务的配置单元。管理员可访问 `/channels`或从侧边栏进入「渠道」。
 - 本页仅说明渠道页面的配置和维护。
-- 模型目录、价格与用户分组还需要结合[模型管理](/zh/docs/guide/feature-guide/admin/model)、[计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)和[用户管理](/zh/docs/guide/feature-guide/admin/user)共同配置。
+- 模型目录、价格与用户分组还需要结合<a href="/zh/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">模型管理</a>、<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>和<a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>共同配置。
 
 ## 渠道管理概览
 
@@ -33,7 +34,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 批量操作 | 先开启选择模式，再对已选择的渠道执行启停、标签或删除；不会自动选中所有筛选结果。 |
 | 拖拽模式 | 按优先级排序时拖动渠道调整优先级，见[拖拽调整优先级](#拖拽调整优先级)。 |
 | 排序、列设置、分页 | 排序下拉可选「优先级」「ID」「名称」「余额」「响应」「上次测试」，右侧按钮切换升序或降序，默认按优先级降序；「查看」调整表格视图的列显示；分页调整每页数量。分页选择只影响当前加载的行。 |
-| 「最大重试」徽标 | 页面标题旁显示[请求策略](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试)中的「最多重试次数」。Root 点击徽标（提示为「重试设置」）可跳转到「会话与重试」；Admin 只能看到数值。 |
+| 「最大重试」徽标 | 页面标题旁显示<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试" target="_blank" rel="noopener noreferrer">请求策略</a>中的「最多重试次数」。Root 点击徽标（提示为「重试设置」）可跳转到「会话与重试」；Admin 只能看到数值。 |
 
 ### 权限与安全边界
 
@@ -48,7 +49,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `TaskPluginBind` | 创建或修改任务插件绑定，以及绑定到 New API 网关的插件扩展。 |
 | Root 与安全验证 | 查看完整渠道密钥。该接口额外要求 Root、安全验证、限流和禁止缓存；不要把 `ChannelSecretView` 描述成当前密钥接口的独立路由权限。 |
 
-<Callout type="warn">
+<Callout type="warn" title="注意保管密钥">
   列表、截图、日志和工单中不要暴露 API Key、服务账号 JSON、代理密码、请求头凭证或 Codex OAuth JSON。编辑抽屉不会回填旧密钥；留空表示保留旧值，填写新值才替换。复制渠道会复制凭证，删除渠道或 Key 后没有恢复入口。
 </Callout>
 
@@ -113,7 +114,6 @@ import { Callout } from 'fumadocs-ui/components/callout';
 2. 填写名称、Base URL、凭证、模型和分组。
 3. 对支持的类型点击获取模型，勾选实际可用模型并保存选择。
 4. 如需映射，确认源模型在模型列表中；映射目标应由上游真实支持。
-5. 保存渠道后，再进行测试，不要把表单中成功读取模型理解为渠道已完成可用性验证。
 
 ### 类型专属凭证
 
@@ -146,7 +146,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | 优先级 | 默认 `0` | 同模型、同分组候选中优先级较高的渠道先参与选择。不是全局重试次数。 |
 | 权重 | 默认 `0` | 同优先级渠道的选择权重；不是严格固定比例，重试或渠道状态会改变实际结果。 |
 | 测试模型 | 可选 | 快速测试未指定模型时使用；应填写该渠道实际支持的模型。 |
-| 自动封禁 | 默认开启 | 即顶部快捷选项「异常自动禁用」。还需在[请求策略 → 渠道健康](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康)中开启全局「失败时禁用」才会生效（全部余额更新发现余额不足时除外，见[查询余额与运行状态](#查询余额与运行状态)）；手动禁用和自动禁用是不同状态。 |
+| 自动封禁 | 默认开启 | 即顶部快捷选项「异常自动禁用」。还需在<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康" target="_blank" rel="noopener noreferrer">请求策略 → 渠道健康</a>中开启全局「失败时禁用」才会生效（全部余额更新发现余额不足时除外，见[查询余额与运行状态](#查询余额与运行状态)）；手动禁用和自动禁用是不同状态。 |
 
 映射存在三类常见风险：JSON 无效、源模型不在公开列表、上游目标名称被公开给用户。保存时界面会提示缺失源模型，也会提示公开了映射目标；应先确认用户侧模型列表，再决定是否添加或移除名称。
 
@@ -219,9 +219,7 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 ![渠道管理-插件渠道页面](/assets/guide/feature-guide/create-channel-plugin-channel.png)
 
 1. 在「插件」分类中选择已注册插件。
-2. 核对插件名称、标识、预填模型和默认 Base URL。
-3. 填写插件所需凭证、分组和其他字段。
-4. 保存后按插件支持的任务流程验证；不要使用普通 API 渠道的测试结论替代插件验证。
+2. 填写插件所需凭证、分组和其他字段。
 
 插件默认地址为空时必须填写地址；插件模型是插件声明的初始值，不代表上游凭证已经可用。插件具体支持模型、路由和请求类型可能随安装版本变化。在 `/v1/images/generations`、`/v1/images/edits`、`/v1/responses`、`/v1/videos` 等共享入口上，同一模型的普通渠道与插件渠道按分组、优先级和权重一起参与选择；选中普通渠道时，请求按普通渠道转发，不经过插件。
 
@@ -249,7 +247,6 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 
 保存前检查入口与上游协议匹配、鉴权不会泄露、相对路径有 Base URL。路由配置错误会阻止保存或导致对应入口无法转发。
 
-
 ## 渠道操作
 
 - 渠道管理-渠道操作
@@ -270,7 +267,7 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 4. 查看成功/失败、响应时间和错误详情。
 5. 删除失败模型前确认失败不是临时网络、限流、代理、端点或价格配置问题。
 
-批量测试前端每批最多运行 5 个模型；停止操作只停止后续批次，不保证取消已发出的请求。全部渠道测试是后台维护任务，不受当前列表筛选范围限制，已有同类任务时可能返回冲突。它跳过手动禁用的渠道，并按[请求策略 → 渠道健康](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康)的规则自动禁用或恢复渠道；单个渠道的测试只显示结果，不改变渠道状态。
+批量测试前端每批最多运行 5 个模型；停止操作只停止后续批次，不保证取消已发出的请求。全部渠道测试是后台维护任务，不受当前列表筛选范围限制，已有同类任务时可能返回冲突。它跳过手动禁用的渠道，并按<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康" target="_blank" rel="noopener noreferrer">请求策略 → 渠道健康</a>的规则自动禁用或恢复渠道；单个渠道的测试只显示结果，不改变渠道状态。
 
 ### 查询余额与运行状态
 
@@ -302,7 +299,6 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 1. 选择复制渠道，填写名称后缀。
 2. 确认是否重置余额和已用额度；默认后缀为 `_copy`。
 3. 确认复制。新渠道会复制原渠道的大部分配置和凭证，并获得新的 ID 与创建时间。
-4. 重新检查凭证、模型、分组、映射、路由和状态。
 
 复制带任务插件绑定的渠道还需要绑定权限。复制完成后测试时间和响应时间会重置；不要将复制动作当作凭证轮换。
 
@@ -319,7 +315,7 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 
 ![渠道管理-修复渠道一致性页面](/assets/guide/feature-guide/channel-management-fix-channel-consistency.png)
 
-「修复渠道一致性」会根据全部渠道配置重建模型能力、分组、优先级和权重索引。过程中路由可能短暂不完整；建议低峰期执行，完成后刷新列表并测试代表性模型。它不会修复上游凭证、代理或模型价格问题。
+「修复渠道一致性」会根据全部渠道配置重建模型能力、分组、优先级和权重索引。过程中路由可能短暂不完整；建议低峰期执行。它不会修复上游凭证、代理或模型价格问题。
 
 ### 标签与批量操作
 
@@ -393,30 +389,6 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 - Advanced Custom 路由、协议透传和专属模型检测。
 - 支持上游模型获取的类型及其模型更新检查。
 
-## 保存后的验证流程
-
-1. 检查连接与模型页签状态为可保存，确认名称、凭证、模型和分组。
-2. 保存后刷新页面，确认密钥空框仍表示保留而不是被清空。
-3. 使用详细测试选择一个代表性端点和模型，核对成功、失败和响应时间。
-4. 使用实际用户分组和 API Key 发起端到端请求，检查最终渠道和上游模型。
-5. 若配置映射、参数覆盖、透传、代理或高级路由，再分别验证一个启用和一个未启用场景。
-6. 上游模型更新先检测、审核新增/移除列表，再选择性应用；不要未经审核自动扩大公开模型列表。
-
-## 故障排查
-
-| 现象 | 检查顺序 |
-| --- | --- |
-| 渠道无法保存 | 检查类型专属凭证、Base URL、名称、模型、分组、JSON、代理、HTTP/2 分片及 Advanced Custom 路由。 |
-| 测试认证失败 | 检查 Base URL 是否误包含完整接口路径、凭证格式、组织/项目/区域、代理和端点类型。 |
-| 模型不可见 | 检查渠道模型、模型映射、渠道分组、用户分组、API Key 限制、模型元信息和上游目标名称。 |
-| 请求被路由到意外渠道 | 检查优先级、权重、渠道状态、标签范围、请求路径、会话规则和[重试设置](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试)；在共享入口上，普通渠道与插件渠道会一起参与选择。实际选择过程可在使用日志详情的[请求策略决策](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#请求决策记录)中查看。 |
-| 参数覆盖没有生效 | 检查是否开启请求体透传、操作顺序、条件路径、JSON 类型和实际 relay 路径。 |
-| 渠道频繁自动禁用 | 查看失败状态码、错误文本、测试模型、代理和上游限流，对照[渠道健康](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康)中的自动禁用规则；全部余额更新时余额小于等于 0 的渠道也会被自动禁用；区分自动禁用与手动禁用。 |
-| 获取模型失败 | 检查该类型是否支持模型获取、凭证、模型列表路由、Base URL 和网络；失败不会自动替换原列表。 |
-| 余额没有更新 | 确认渠道类型支持普通余额接口；Codex、vLLM/SGLang 使用其他运行信息入口。 |
-| 多 Key 渠道不可用 | 检查每个 Key 状态、自动禁用原因和剩余可用 Key；不要只看渠道总状态。 |
-| 修复后仍无法路由 | 等待能力索引重建，刷新后检查模型、分组、优先级和权重，再排查凭证与上游。 |
-
 ## 参数覆盖系统
 
 参数覆盖在请求转换后、发送上游前执行。它不是完整协议转换器，也不会自动同步客户端流式状态。可视化编辑器和 JSON 模式写入同一份 `param_override`。
@@ -426,7 +398,7 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 - 只有请求进入相应 relay 处理路径时才会执行覆盖；请求体透传会绕过普通转换和部分覆盖链路。
 - `operations` 按数组顺序执行，前一个操作的结果会成为后一个操作的输入。
 - 同时存在旧式顶层字段和 `operations` 时，旧式字段先应用，再应用 `operations`。
-- 命中会话规则时，规则中的参数覆盖模板会与渠道参数覆盖合并，见[会话与重试](/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试)。
+- 命中会话规则时，规则中的参数覆盖模板会与渠道参数覆盖合并，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试" target="_blank" rel="noopener noreferrer">会话与重试</a>。
 - 条件默认使用 `OR`；`logic: "AND"` 才要求全部条件满足。
 - 条件读取当前请求 JSON 和运行上下文；前序操作修改模型后，后续条件可能读取修改后的值。`original_model`、`upstream_model` 等上下文值不是自动写入请求 JSON 的字段。
 - `return_error` 会提前返回自定义错误；其状态码和错误字段仍受后端解析范围约束，不应仅依据输入框可接受的范围宣称所有值都可用。
@@ -438,7 +410,7 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 
 ![渠道管理-参数覆盖页面](/assets/guide/feature-guide/create-channel-request-and-response-parameter-overrides-visual-editor.png)
 
-可视化模式适合逐条编辑；JSON 模式适合复制完整规则。保存前确认规则数量、操作类型、路径、值、条件逻辑和保留原值开关。复杂规则先在测试渠道验证，再应用到生产渠道。
+可视化模式适合逐条编辑；JSON 模式适合复制完整规则。
 
 ### 操作速查
 
@@ -450,7 +422,7 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 | `trim_prefix`、`trim_suffix` | `path`、`value` | 删除匹配的前缀或后缀。 |
 | `ensure_prefix`、`ensure_suffix` | `path`、`value` | 不存在时补充前缀或后缀。 |
 | `trim_space`、`to_lower`、`to_upper` | `path` | 清理或转换字符串。 |
-| `replace`、`regex_replace` | `path`、`from`、`to` | 普通替换或正则替换；先用代表性请求验证。 |
+| `replace`、`regex_replace` | `path`、`from`、`to` | 普通替换或正则替换。 |
 | `prune_objects` | `path`、条件 | 按条件清理对象项。 |
 | `set_header`、`delete_header` | Header 名和值 | 修改覆盖头；不能保证删除适配器后续重新生成的原生头。 |
 | `copy_header`、`move_header` | `from`、`to` | 在运行时请求头覆盖表中复制或移动。 |
@@ -471,16 +443,198 @@ New API 还可以绑定支持 `new_api` 上游的任务插件扩展。扩展仍�
 | JSON 路径 | 支持 `messages.0.content`、`messages.-1.content` 等路径。 |
 | 运行上下文 | 可按原始模型、上游模型、用户/分组等上下文条件匹配；不要把这些名称当作请求体固定字段。 |
 
-<Callout type="warn">
-  参数覆盖可以改变请求语义、请求头和错误处理。不要用它切换 `stream`，不要把客户端密钥透传到不可信上游，也不要在没有真实请求验证的情况下直接启用正则替换、Header 同步或自定义错误。
+<Callout type="warn" title="注意">
+  参数覆盖可以改变请求语义、请求头和错误处理。不要用它切换 `stream`，不要把客户端密钥透传到不可信上游，正则替换、Header 同步和自定义错误也应谨慎启用。
 </Callout>
+
+## 保存与生效
+
+渠道保存在数据库中。未启用内存缓存时，各节点每次请求直接读取数据库，下表操作在各节点从下一次请求起生效；启用内存缓存（含启用 Redis 的部署）时，处理该请求的节点立即刷新，其他节点按同步周期（默认 60 秒）重新载入渠道。各操作的生效时机和例外如下：
+
+### 管理员操作
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| 操作 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 创建渠道（含批量创建） | 抽屉中点击「创建渠道」 | 启用内存缓存时，各节点（包括处理该请求的节点）在下一次同步后才开始使用新渠道。 |
+| 编辑渠道 | 抽屉中点击「更新渠道」，四个页签一次保存 | 下一次请求起按新配置路由。 |
+| 修改优先级和权重、标签操作、启用、禁用、删除、复制、多 Key 管理 | 在列表中修改，或确认后立即写入，不经过抽屉保存 | 下一次请求起按新配置路由。 |
+| 获取模型、上游模型更新 | 点击「保存模型」或「确认应用所选变更」后才写回渠道 | 下一次请求起按新的模型列表路由。 |
+| 修复渠道一致性 | 点击后同步执行，完成后提示「渠道一致性修复完成：… 个成功，… 个失败」 | 提示出现后，下一次请求起按重建后的能力索引路由。 |
+
+</div>
+
+### 自动变更与后台任务
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| 操作 | 保存方式 | 生效时机 |
+| --- | --- | --- |
+| 自动禁用 | 请求失败、「测试所有渠道」或「更新所有余额」满足自动禁用条件时自动执行 | 发现问题的节点立即停止使用该渠道。 |
+| 自动恢复 | 开启「成功后重新启用」后，定期测试或「测试所有渠道」成功时自动执行 | 启用内存缓存时，各节点（包括执行测试的节点）在下一次同步后才恢复使用该渠道。 |
+| 自动同步上游模型 | 开启「自动同步上游模型」后，由 Master 实例定时检测，默认每 30 分钟一次 | 新模型加入渠道模型列表后，下一次请求起参与路由；启用内存缓存时，Master 实例以外的节点在下一次同步后才使用。 |
+| 测试所有渠道、检测所有上游更新 | 点击后提交为后台任务 | 由 Master 实例领取：处理该请求的节点是 Master 实例时立即开始，否则约 15 秒内开始；已有同类任务时提交会被拒绝。手动检测只记录待新增和待移除的模型，应用后才改动模型列表。 |
+| 更新所有余额 | 点击后同步执行 | 逐个渠道查询，全部完成后才返回；余额不足的渠道会被自动禁用。 |
+| 测试连接、查询余额（单个渠道） | 在测试对话框中测试，或点击余额 | 只更新测试时间、响应时间或余额，不改变渠道状态，不影响路由。 |
+
+</div>
+
+### 补充说明
+
+- **抽屉保存**：四个页签共用一个表单，成功提示「渠道创建成功」或「渠道更新成功」；保存失败时抽屉保持打开，并显示失败原因。
+- **不自动测试**：保存只写入配置，不连接上游，也不自动测试；需要时在[测试连接](#测试连接)中手动测试。
+- **正在进行的连接**：禁用或删除渠道（含自动禁用）时，该渠道上正在进行的 Realtime 和 Responses WebSocket 连接会被关闭；启用 Redis 时，其他节点上的这类连接一并关闭。
+- **同步完成前**：启用内存缓存时，各节点的路由可能暂时不一致。
+
+## 注意事项
+
+- **批量操作作用于全部渠道**：「测试所有渠道」「更新所有余额」「检测所有上游更新」「应用所有上游更新」「删除所有已禁用」「修复渠道一致性」都不受当前列表筛选限制，建议在低峰期执行。
+- **测试和余额更新可能改变渠道状态**：「测试所有渠道」可能自动禁用或恢复渠道，「更新所有余额」可能自动禁用余额不足的渠道，见[自动变更与后台任务](#自动变更与后台任务)。
+- **自动同步会直接改动模型列表**：开启「自动同步上游模型」后，定时检测发现的新模型会直接加入渠道模型列表（只新增、不移除，已忽略的模型除外）。
+- **「应用所有上游更新」不逐项审核**：一次应用所有已检测渠道的待新增和待移除模型；需要逐项审核时，在「预览上游模型变更」中勾选后点击「确认应用所选变更」。
+- **敏感操作需要 `ChannelSensitiveWrite`**：没有该权限的 Admin 不能创建、复制或删除渠道，也不能保存凭证、类型、Base URL、代理、请求头覆盖、参数覆盖等敏感项的修改，见[权限与安全边界](#权限与安全边界)。
+- **删除不可恢复，复制会带走凭证**：删除渠道后无法从 New API 恢复；复制渠道会复制原渠道的凭证，不能当作凭证轮换，见[启用、禁用与删除](#启用禁用与删除)和[复制渠道](#复制渠道)。
+
+## 常见问题
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="创建或更新渠道时无法保存">
+**说明**：保存前先在页面中校验，再由服务端校验，常见提示如下。
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「请先修复高亮字段后再保存」（英文 Please fix the highlighted fields before saving） | 名称、模型、分组未填写，新建时未填写凭证；或 JSON 字段、代理地址、HTTP/2 连接分片、高级自定义路由不符合要求。 | 按高亮字段逐项修正。 |
+| 「无权进行此操作，权限不足」（英文 Unauthorized, insufficient privileges） | 修改了凭证、类型、Base URL、代理、请求头覆盖或参数覆盖等敏感项，账户没有 `ChannelSensitiveWrite`。 | 请 Root 授予权限或代为修改。 |
+| 「部署地区不能为空」「部署地区必须包含 default 字段」 | Vertex AI 的「部署区域」为空，或 JSON 中缺少 `default`。 | 填写区域；使用 JSON 时加入 `default`。 |
+| 「渠道额外设置格式错误：…」 | 渠道额外设置不是合法的 JSON。 | 修正后重新保存。 |
+| `Codex key must be a valid JSON object`、`New API channel base URL cannot be empty` 等（仅英文） | 类型专属凭证或 Base URL 不符合要求，如 Codex 凭证不是含 `access_token`、`account_id` 的 JSON，New API、vLLM、SGLang 渠道未填写 Base URL。 | 按提示修正对应字段。 |
+</Accordion>
+
+<Accordion title="测试渠道时认证失败">
+**说明**：测试失败时提示「… 测试失败」（英文 … test failed），并附上游返回的错误详情。
+
+**可能原因**：
+- Base URL 误包含完整接口路径。
+- 凭证格式不正确，或组织、项目、区域填写有误。
+- 代理或端点类型与上游不符。
+
+**处理方法**：
+1. 按错误详情修正对应字段。
+2. 用详细测试换一个端点类型或模型重新测试，见[测试连接](#测试连接)。
+</Accordion>
+
+<Accordion title="用户看不到某个模型">
+**说明**：调用方获取的模型列表只包含其分组中已启用渠道提供、且已配置价格的模型。模型广场是否展示另由模型管理中的「广场展示」决定，见<a href="/zh/docs/guide/feature-guide/admin/model#广场展示状态" target="_blank" rel="noopener noreferrer">模型管理</a>。
+
+**可能原因**：
+- 渠道模型列表未包含该名称；使用模型映射时，映射的源名称也需加入模型列表。
+- 渠道分组与用户分组或 API 密钥的分组不匹配。
+- API 密钥限制了可用模型。
+- 提供该模型的渠道已禁用。
+- 模型未配置价格。站点开启「自用模式」或用户开启「接受未定价模型」时不受此限制。
+
+**处理方法**：
+1. 核对渠道的模型、分组和状态，以及 API 密钥的模型限制。
+2. 未配置价格时，请 Root 在<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#模型定价" target="_blank" rel="noopener noreferrer">计费与支付配置</a>中配置价格。
+</Accordion>
+
+<Accordion title="请求被路由到意外的渠道">
+**可能原因**：
+- 优先级、权重、渠道状态或标签范围与预期不符。
+- 请求路径不同，或命中了会话规则，或触发了<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#会话与重试" target="_blank" rel="noopener noreferrer">重试设置</a>。
+- 在共享入口上，普通渠道与插件渠道一起参与选择。
+
+**处理方法**：
+1. 在使用日志详情的<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#请求决策记录" target="_blank" rel="noopener noreferrer">请求策略决策</a>中查看实际选择过程。
+</Accordion>
+
+<Accordion title="参数覆盖没有生效">
+**可能原因**：
+- 开启了请求体透传，绕过了参数覆盖。
+- 操作顺序、条件路径或 JSON 类型与预期不符。
+- 请求没有进入执行参数覆盖的 relay 处理路径。
+
+**处理方法**：
+1. 对照[生效顺序与边界](#生效顺序与边界)逐项检查。
+</Accordion>
+
+<Accordion title="渠道频繁被自动禁用">
+**可能原因**：
+- 上游返回的状态码或错误文本命中了<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康" target="_blank" rel="noopener noreferrer">渠道健康</a>中的自动禁用规则，如测试模型、代理或上游限流导致的失败。
+- 执行「更新所有余额」时余额小于等于 0，渠道被自动禁用，原因为「余额不足」。
+
+**处理方法**：
+1. 查看渠道的禁用原因，区分自动禁用与手动禁用。
+2. 对照渠道健康中的规则调整渠道或测试设置。
+</Accordion>
+
+<Accordion title="获取模型失败">
+**提示原文**：「获取模型失败」（英文 Failed to fetch models）或「此渠道类型不支持获取模型」（英文 This channel type does not support fetching models）；服务端或上游返回了原因时，显示该原文。
+
+**说明**：获取失败不会替换已保存的模型列表。
+
+**可能原因**：
+- 该渠道类型不支持获取模型。
+- 凭证、Base URL 或网络有误。
+- 高级自定义渠道缺少模型列表路由。
+
+**处理方法**：
+1. 修正后重新获取。
+</Accordion>
+
+<Accordion title="余额没有更新">
+**提示原文**：「多密钥渠道不支持余额查询」（英文 Multi-key channels do not support balance queries）；任务插件渠道为 `Task Plugin channels do not support balance queries`（仅英文）。
+
+**可能原因**：
+- 该渠道类型不支持普通余额接口，或是多 Key 渠道、任务插件渠道。
+- Codex、vLLM/SGLang 使用其他运行信息入口，见[查询余额与运行状态](#查询余额与运行状态)。
+</Accordion>
+
+<Accordion title="多 Key 渠道不可用">
+**可能原因**：渠道中的 Key 已被禁用或自动禁用，没有剩余可用的 Key。渠道总状态不能反映每个 Key 的状态。
+
+**处理方法**：
+1. 查看每个 Key 的状态和自动禁用原因，见[状态管理与删除风险](#状态管理与删除风险)。
+</Accordion>
+
+<Accordion title="执行「修复渠道一致性」后仍无法路由">
+**说明**：修复在点击后同步完成。启用内存缓存的多实例部署中，其他节点在同步周期（默认 60 秒）后才使用新的索引。已有修复在运行时提示「已经有一个修复任务在运行中，请稍后再试」（英文 A repair task is already running. Please try again later）。
+
+**可能原因**：渠道的模型、分组、优先级或权重与预期不符，或凭证、上游有问题。修复只重建索引，不修复这些配置。
+
+**处理方法**：
+1. 刷新列表，检查模型、分组、优先级和权重。
+2. 排查凭证与上游。
+</Accordion>
+
+<Accordion title="保存渠道后，部分请求仍按旧配置路由">
+**说明**：启用内存缓存（含启用 Redis 的部署）时，各节点按同步周期（默认 60 秒）从数据库重新载入渠道，同步完成前不同节点的路由可能不一致。未启用内存缓存时，路由直接读取数据库。
+
+**处理方法**：
+1. 等待一个同步周期后重试。
+</Accordion>
+
+<Accordion title="执行「测试所有渠道」时提示已有任务正在运行">
+**提示原文**：「已有通道测试任务正在运行或等待中，不能启动本次手动任务」（英文 A channel test task is already running or queued. Cannot start this manual task）；执行「检测所有上游更新」时为「已有模型更新任务正在运行或等待中，不能启动本次手动任务」（英文 A model update task is already running or queued. Cannot start this manual task）。
+
+**可能原因**：同类型的系统任务（含定时触发的任务）正在运行或等待执行。
+
+**处理方法**：
+1. 在<a href="/zh/docs/guide/feature-guide/admin/system-info" target="_blank" rel="noopener noreferrer">系统信息</a>的「系统任务」中查看进度。
+2. 任务结束后重新执行。
+</Accordion>
+
+</Accordions>
 
 ## 相关文档
 
-- [模型管理](/zh/docs/guide/feature-guide/admin/model)：模型目录、供应商和模型部署。
-- [用户管理](/zh/docs/guide/feature-guide/admin/user)：用户分组、权限和用户状态。
-- [任务插件管理](/zh/docs/guide/feature-guide/admin/task-plugins)：插件安装、声明和绑定条件。
-- [计费与支付配置](/zh/docs/guide/feature-guide/system-settings/settings-billing)：模型价格、分组倍率和支付配置。
-- [请求策略配置](/zh/docs/guide/feature-guide/system-settings/settings-request-policies)：会话保持与重试、定期渠道测试、自动禁用与自动恢复。
-- [模型配置](/zh/docs/guide/feature-guide/system-settings/settings-models)：全局模型行为、供应商适配和模型部署。
-- [日志与异步任务](/zh/docs/guide/feature-guide/user/log)：请求、用量、扣费和任务状态。
+- <a href="/zh/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">模型管理</a>：模型目录、供应商和模型部署。
+- <a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>：用户分组、权限和用户状态。
+- <a href="/zh/docs/guide/feature-guide/admin/task-plugins" target="_blank" rel="noopener noreferrer">任务插件管理</a>：插件安装、声明和绑定条件。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：模型价格、分组倍率和支付配置。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>：会话保持与重试、定期渠道测试、自动禁用与自动恢复。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型配置</a>：全局模型行为、供应商适配和模型部署。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：请求、用量和扣费明细。
+- <a href="/zh/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">任务日志</a>：绘图、音乐和视频等异步任务的状态。

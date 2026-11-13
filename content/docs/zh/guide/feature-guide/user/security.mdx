@@ -1,0 +1,789 @@
+---
+title: 安全与访问
+description: 修改密码、绑定邮箱和第三方账号，启用两步验证和 Passkey，管理登录会话和访问令牌，设置是否记录 IP 地址，或删除账户。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- 从侧边栏「个人」→「安全与访问」进入。
+- 管理登录密码、账户绑定、两步验证、Passkey、登录会话和访问令牌，设置是否记录 IP 地址，或删除账户。
+- 修改密码、绑定账号、创建访问令牌等敏感操作前需先验证身份，多数操作在弹出的「安全验证」窗口中完成。
+
+<Callout type="info" title="提示">
+- 「访问令牌」以 `nap_` 开头，用于在脚本中管理账户，不可用于调用模型；调用模型请使用以 `sk-` 开头的 <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>。
+- 页面右侧的「安全验证」区域用于管理 Passkey 和两步验证；执行敏感操作时弹出的身份确认窗口也叫「安全验证」，本页称为「安全验证」窗口。
+- 第三方账号绑定和 Passkey 仅在管理员开启对应的登录方式后可用，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>。
+- 左侧边栏无「安全与访问」页时：<br/>到「个人资料」页的「左侧边栏个人设置」区域中，开启「个人中心区域」和「安全与访问」并保存。
+</Callout>
+
+## 安全与访问概览
+
+- 安全与访问-概览
+
+![安全与访问-概览页面](/assets/guide/feature-guide/personal-security-and-access.png)
+
+页面左侧为「登录与认证」「会话与访问」「账户操作」，右侧为「安全验证」「隐私」，可：
+
+- [完成安全验证](#完成安全验证)
+- [更改或设置密码](#更改或设置密码)
+- [绑定邮箱和第三方账号](#绑定邮箱和第三方账号)
+- [启用两步验证](#启用两步验证)
+- [重新生成备用码](#重新生成备用码)
+- [禁用两步验证](#禁用两步验证)
+- [启用 Passkey](#启用-passkey)
+- [解绑 Passkey](#解绑-passkey)
+- [管理登录会话](#管理登录会话)
+- [创建和管理访问令牌](#创建和管理访问令牌)
+- [查看访问令牌的访问记录](#查看访问令牌的访问记录)
+- [设置是否记录 IP 地址](#设置是否记录-ip-地址)
+- [删除账户](#删除账户)
+
+<Callout type="info" title="提示">
+验证失败、绑定失败或访问令牌调用出错时，查看[常见问题](#常见问题)
+</Callout>
+
+**字段说明：**
+
+页面上每张卡片一行，下表按左侧从上到下、再右侧从上到下的顺序排列；窄屏下按同样顺序单列显示。
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 卡片 | 所属区域 | 定义 | 填写要求和限制 | 备注 |
+| --- | --- | --- | --- | --- |
+| 更改密码 | 登录与认证 | 修改登录密码。 | 需完成安全验证。 | 账户无密码（如仅用第三方账号注册）时显示为「设置密码」。 |
+| 账户绑定 | 登录与认证 | 账户绑定的邮箱和第三方账号。 | 「邮箱」始终显示，其他账号仅在管理员开启对应登录方式后显示。 | 已绑定的显示账号和「已绑定」，未绑定的显示「未绑定」。截图中的「GitHub Enterprise」是管理员添加的第三方登录方式。 |
+| 登录会话 | 会话与访问 | 当前登录该账户的设备。 | 登录时自动产生，到期后失效。 | 当前浏览器的会话带「当前」标记。 |
+| 访问令牌 | 会话与访问 | 在脚本中调用面板 API 时使用的凭证。 | 每个账户最多 20 个。 | 显示名称、`nap_…`、权限、创建时间、过期时间和最近使用情况。截图中的「充值与订阅管理」为管理员才能授予的权限。 |
+| 删除账户 | 账户操作 | 注销当前账户。 | 需输入用户名并完成安全验证。 | Root 账户不可删除。 |
+| Passkey 登录 | 安全验证 | 使用设备的指纹、面容、PIN 或安全密钥登录，无需输入密码。 | 每个账户仅可注册 1 个。 | 「通行密钥认证」后显示「已启用」或「已禁用」，以及「上次使用时间：」。 |
+| 两步验证 | 安全验证 | 登录和敏感操作时，除密码外再输入验证器中的动态码。 | — | 已启用时显示「剩余备份代码：…」。窗口和按钮中也称「双重身份验证」「2FA」；本页所称「备用码」在界面中显示为「备份代码」或「备用代码」。 |
+| 记录 IP 地址 | 隐私 | 使用日志是否记录调用方的 IP 地址。 | 修改后点击「保存设置」。 | 默认关闭。 |
+</div>
+
+## 完成安全验证
+
+- 安全与访问-安全验证
+
+![安全与访问-安全验证页面](/assets/guide/feature-guide/personal-security-and-access-security-verification.png)
+
+执行下表中的操作时弹出「安全验证」窗口，说明为「执行此敏感操作前，请先验证身份。」；删除账户时窗口标题为「删除账户」。截图为该窗口在不同账户状态下的三种样子。
+
+**操作流程：**
+1. 有多种验证方式时，在「安全验证」窗口顶部选择验证方式。
+2. 按所选方式填写验证码或密码，或按设备提示完成 Passkey 验证。
+3. 点击「验证」；选择「已绑定账号」时，点击「使用 … 继续」并在弹出的窗口中完成授权。
+
+<Callout type="info" title="提示">
+- 验证通过后，请在 1 分钟内完成本次操作。每次验证仅可用于一次操作，修改了操作内容（如权限、邮箱）时需重新验证。
+- 账户已启用两步验证或已注册 Passkey 时，仅可使用这两种方式验证，不可使用密码。
+- 账户已注册 Passkey 时，默认选中「Passkey」。
+</Callout>
+
+**验证方式说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 验证方式 | 出现条件 | 填写内容 |
+| --- | --- | --- |
+| 身份验证器代码 | 账户已启用两步验证。 | 在「认证器验证码或备用码」中填写验证器中的 6 位验证码，或一个未使用的备用码。重新生成备用码时仅可填写 6 位验证码。连续输错 5 次后锁定 5 分钟。 |
+| Passkey | 账户已注册 Passkey，且管理员开启了 Passkey。 | 按浏览器或系统的提示完成指纹、面容、PIN 或安全密钥确认。站点有多个通行密钥域名时，可点击「使用其他网站的通行密钥」选择域名。 |
+| 密码 | 账户未启用两步验证、未注册 Passkey，且有密码。 | 当前的登录密码。更改密码时直接使用窗口中填写的「当前密码」验证，不再弹出「安全验证」窗口。 |
+| 已绑定账号 | 账户未启用两步验证、未注册 Passkey，且无密码。 | 点击「使用 … 继续」，在弹出的窗口中用已绑定的第三方账号授权。 |
+</div>
+
+**需要安全验证的操作：**
+
+| 操作 | 可用的验证方式 |
+| --- | --- |
+| 设置或更改密码、绑定邮箱和第三方账号、解绑第三方账号、启用两步验证、启用 Passkey、创建访问令牌、修改访问令牌权限、撤销访问令牌、删除账户 | 已启用两步验证或已注册 Passkey 时，使用这两种方式；否则使用密码，无密码时使用已绑定账号。 |
+| 解绑 Passkey | 仅两步验证或 Passkey。 |
+| 重新生成备用码、禁用两步验证 | 仅两步验证或 Passkey。重新生成备用码时，两步验证仅可填写 6 位验证码，不可使用备用码。 |
+| 仅修改访问令牌名称、退出登录会话、保存「记录 IP 地址」、查看访问记录 | 不需要安全验证。 |
+
+## 更改或设置密码
+
+- 安全与访问-更改密码
+
+![安全与访问-更改密码页面](/assets/guide/feature-guide/personal-security-and-access-change-password.png)
+
+**操作流程：**
+1. 点击「登录与认证」中的「更改密码」；账户无密码时点击「设置密码」。
+2. 在窗口中填写「当前密码」「新密码」和「确认新密码」；设置密码时不显示「当前密码」。
+3. 点击窗口底部的「更改密码」或「设置密码」。
+4. 弹出「安全验证」窗口时完成验证。
+
+<Callout type="info" title="提示">
+- 更改密码时，账户未启用两步验证、未注册 Passkey 的，直接用填写的「当前密码」验证，不弹出「安全验证」窗口；已启用两步验证或已注册 Passkey 的，弹出「安全验证」窗口，需使用这两种方式验证。设置密码时在弹出的「安全验证」窗口中验证。
+- 修改成功后，其他设备上的登录会话全部退出，当前设备保持登录；系统向账户邮箱发送通知邮件。
+- 管理员关闭密码登录时，「安全验证」窗口中的「密码」方式不可用。
+</Callout>
+
+**配置项说明：**
+
+「更改密码」「设置密码」窗口的配置项如下，下表按窗口中的顺序排列。
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 当前密码 | 账户现在的登录密码。 | 仅更改密码时显示，必填；为空时提示「请输入当前密码」，错误时提示「当前密码不正确。」。 | 空 |
+| 新密码 | 要设置的登录密码。 | 必填，8–128 个字符，窗口提示「使用 8–128 个字符。」；长度不符时提示「密码长度必须为 8–128 个字符。」，与当前密码相同时提示「新密码必须与当前密码不同」。 | 空 |
+| 确认新密码 | 再次输入新密码。 | 必填，与「新密码」不一致时提示「密码不匹配」。 | 空 |
+</div>
+
+## 绑定邮箱和第三方账号
+
+- 安全与访问-绑定邮箱
+
+![安全与访问-绑定邮箱页面](/assets/guide/feature-guide/personal-security-and-access-account-binding.png)
+
+「账户绑定」中始终显示「邮箱」；GitHub、Discord、OIDC、Telegram、LinuxDO、微信和管理员添加的其他登录方式，仅在管理员开启后显示。
+
+**绑定或更改邮箱操作流程：**
+1. 点击「邮箱」右侧的「绑定」；已绑定时点击「更改」。
+2. 在「电子邮件地址」中填写邮箱，点击「继续」。
+3. 在「安全验证」窗口中完成验证。
+4. 在「新邮箱验证码」中填写新邮箱收到的 6 位验证码；更改邮箱且未使用两步验证或 Passkey 验证时，还需在「当前邮箱验证码」中填写原邮箱收到的验证码。
+5. 点击「确认邮箱」。
+
+**绑定第三方账号操作流程：**
+1. 点击第三方账号右侧的「绑定」。
+2. 在「安全验证」窗口中完成验证。
+3. 在「继续绑定账户」窗口中点击「继续」。
+4. 在弹出的授权窗口中登录第三方账号并授权。
+
+**绑定微信操作流程：**
+1. 点击「微信」右侧的「绑定」。
+2. 扫描「绑定微信」窗口中的二维码，按提示获取验证码。
+3. 在「验证码」中填写验证码，点击「绑定」。
+4. 在「安全验证」窗口中完成验证。
+
+**解绑第三方账号操作流程：**
+1. 点击已绑定账号右侧的「解绑」。
+2. 在「确认解绑」窗口中确认。
+3. 在「安全验证」窗口中完成验证。
+
+<Callout type="info" title="提示">
+- 邮箱验证码 10 分钟内有效，60 秒后可点击「重新发送验证码」；连续输错 5 次需点击「重新开始」。绑定完成后，系统向新、旧邮箱发送通知邮件。
+- GitHub、Discord、OIDC、Telegram、LinuxDO 和微信绑定后，按钮显示「已绑定」且不可点击，页面不提供解绑，如需解除请联系管理员。仅管理员添加的其他登录方式显示「解绑」。
+- 不可解绑账户的最后一种登录方式，否则提示「请先添加其他登录方式，再解除此账户绑定。」。
+- 每个第三方账号仅可绑定一个账户。
+</Callout>
+
+## 启用两步验证
+
+- 安全与访问-两步验证未启用
+
+![安全与访问-两步验证未启用页面](/assets/guide/feature-guide/personal-security-and-access-2fa-not-enabled.png)
+
+- 安全与访问-设置双重身份验证
+
+![安全与访问-设置双重身份验证页面](/assets/guide/feature-guide/personal-security-and-access-enable-2fa.png)
+
+**操作流程：**
+1. 点击「两步验证」中的「启用」。
+2. 在「安全验证」窗口中完成验证。
+3. 第 1 步「扫描二维码」：用身份验证器应用（如 Google Authenticator、Microsoft Authenticator）扫描二维码，或点击密钥旁的复制按钮后在应用中手动添加，点击「下一步」。
+4. 第 2 步「保存备份代码」：点击「复制所有代码」，将 4 个备用码保存到安全的地方，点击「下一步」。
+5. 第 3 步「验证设置」：在「验证码」中填写验证器中的 6 位数字，点击「启用 2FA」。
+
+<Callout type="warn" title="保存备用码">
+- 每个备用码仅可使用一次。验证器不可用时，可在登录或「安全验证」窗口中用备用码代替验证码。
+- 关闭窗口后无法再次查看这些备用码，丢失后请重新生成。
+</Callout>
+
+<Callout type="info" title="提示">
+- 完成安全验证后，请在 5 分钟内完成三步；超时时提示「设置已过期，请扫描新的二维码并保存新的备用码。」，并生成新的二维码和备用码，旧的作废。
+- 验证码每 30 秒更新一次，手机时间不准确时可能验证失败。
+- 启用成功后，其他设备上的登录会话全部退出。
+</Callout>
+
+## 重新生成备用码
+
+- 安全与访问-两步验证已启用
+
+![安全与访问-两步验证已启用页面](/assets/guide/feature-guide/personal-security-and-access-2fa-enabled.png)
+
+- 安全与访问-重新生成备用代码
+
+![安全与访问-重新生成备用代码页面](/assets/guide/feature-guide/personal-security-and-access-2fa-regenerate-backup-codes.png)
+
+**操作流程：**
+1. 点击「两步验证」中的「重新生成备用代码」。
+2. 在确认窗口中点击「生成新代码」。
+3. 在「安全验证」窗口中填写验证器中的 6 位验证码，或使用 Passkey 验证。
+4. 在「您的新备份代码已准备就绪」窗口中点击「复制所有代码」并保存，点击「完成」。
+
+<Callout type="info" title="提示">
+- 生成后旧的备用码全部失效，新的备用码为 4 个；关闭窗口后无法再次查看。
+- 此处不可使用备用码验证。
+- 生成后，其他设备上的登录会话全部退出。
+</Callout>
+
+## 禁用两步验证
+
+- 安全与访问-禁用双重身份验证
+
+![安全与访问-禁用双重身份验证页面](/assets/guide/feature-guide/personal-security-and-access-2fa-disable-2fa.png)
+
+**操作流程：**
+1. 点击「两步验证」中的「禁用 2FA」。
+2. 在「禁用双重身份验证」窗口中勾选「我了解，关闭 2FA 将移除身份验证器验证方式及其备用码。」。
+3. 点击「禁用 2FA」。
+4. 在「安全验证」窗口中填写验证码或备用码，或使用 Passkey 验证。
+
+<Callout type="warn" title="注意">
+- 禁用后，验证器密钥和所有备用码被删除，登录时不再需要验证码，账户的安全性降低。
+- 禁用后，其他设备上的登录会话全部退出。如需重新启用，验证器中需添加新的二维码。
+</Callout>
+
+## 启用 Passkey
+
+- 安全与访问-Passkey 未启用
+
+![安全与访问-Passkey 未启用页面](/assets/guide/feature-guide/personal-security-and-access-passkey-not-enabled.png)
+
+- 安全与访问-启用 Passkey
+
+![安全与访问-启用 Passkey 页面](/assets/guide/feature-guide/personal-security-and-access-enable-passkey.png)
+
+**操作流程：**
+1. 点击「Passkey 登录」中的「启用 Passkey」。
+2. 在「安全验证」窗口中完成验证。
+3. 按浏览器或系统的提示，用指纹、面容、PIN 或安全密钥完成确认。
+
+<Callout type="info" title="提示">
+- 仅在管理员开启 Passkey 后可用；未开启时「安全验证」窗口提示「Passkey 认证已关闭。」，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-auth#通行密钥认证" target="_blank" rel="noopener noreferrer">身份验证配置</a>。
+- 浏览器和系统的提示窗口因设备而异，截图中为 Windows 的提示。
+- 设备或浏览器不支持时，显示「此设备不支持通行密钥」，「启用 Passkey」不可点击。站点未通过 HTTPS 访问时可能无法注册，请联系管理员。
+- 每个账户仅可注册 1 个 Passkey；更换设备时，请先解绑再重新注册。Passkey 与注册时的网站域名绑定，站点更换地址后可能无法使用。
+- 注册成功后，其他设备上的登录会话全部退出。
+</Callout>
+
+## 解绑 Passkey
+
+- 安全与访问-Passkey 已启用
+
+![安全与访问-Passkey 已启用页面](/assets/guide/feature-guide/personal-security-and-access-passkey-enabled.png)
+
+- 安全与访问-解绑 Passkey
+
+![安全与访问-解绑 Passkey 页面](/assets/guide/feature-guide/personal-security-and-access-passkey-unbind.png)
+
+**操作流程：**
+1. 点击「Passkey 登录」中的「解绑 Passkey」。
+2. 在「移除通行密钥？」窗口中点击「移除」。
+3. 在「安全验证」窗口中使用两步验证或 Passkey 完成验证。
+
+<Callout type="warn" title="注意">
+- 解绑后无法再用 Passkey 登录，其他设备上的登录会话全部退出。
+- 确认窗口提示下次需使用密码登录。账户无密码时，请先设置密码或确认有其他可用的登录方式。
+</Callout>
+
+## 管理登录会话
+
+**退出单个会话操作流程：**
+1. 在「登录会话」中，点击其他设备右侧的「撤销」，或当前设备右侧的「登出」。
+2. 在确认窗口中确认。
+
+**退出其他会话操作流程：**
+1. 点击「登录会话」右上角的「退出其他会话」。
+2. 在「退出其他会话？」窗口中点击「退出其他会话」。
+
+<Callout type="info" title="提示">
+- 退出后该设备立即失去访问权限，需重新登录；退出当前设备后跳转到登录页。
+- 退出会话不需要安全验证。
+- 列表仅显示未到期、未退出的会话；会话到期后自动失效。
+- 发现不认识的设备时，请撤销该会话并修改密码。
+</Callout>
+
+**字段说明：**
+
+每个会话一行，下表按从上到下的顺序排列。
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 字段 | 定义 | 填写要求和限制 | 备注 |
+| --- | --- | --- | --- |
+| 设备 | 登录时使用的浏览器和系统，如「Chrome · Windows」。 | 由系统识别。 | 无法识别时显示「浏览器」或「未知设备」。当前浏览器的会话带「当前」标记。 |
+| IP | 登录或最近一次刷新会话时的 IP 地址。 | 由系统自动记录，不受「记录 IP 地址」设置影响。 | 无法获取时显示「未知」。 |
+| 登录方式 | 创建该会话时使用的登录方式。 | 由系统自动记录。 | 如「密码」「双重身份验证」「Passkey」「微信」「Telegram」「OAuth · GitHub」。 |
+| 最后活跃于 | 该会话最近一次使用的时间。 | 由系统自动记录。 | 显示为相对时间，如「15分钟前」。 |
+| 到期时间 | 会话失效的时间。 | 自登录起 30 天，由系统固定，不可修改。 | 到期后需重新登录。 |
+</div>
+
+## 创建和管理访问令牌
+
+- 安全与访问-访问令牌
+
+![安全与访问-访问令牌页面](/assets/guide/feature-guide/personal-security-and-access-access-token.png)
+
+- 安全与访问-创建访问令牌
+
+![安全与访问-创建访问令牌页面](/assets/guide/feature-guide/personal-security-and-access-access-token-create.png)
+
+访问令牌用于在脚本中调用面板 API（即账户管理接口），如查询个人资料、余额和日志，每个令牌仅拥有创建时勾选的权限，不可用于调用模型。
+
+**创建操作流程：**
+1. 点击「访问令牌」右上角的「创建访问令牌」。
+2. 填写「令牌名称」，选择「过期时间」。
+3. 在「权限」中点击需要授予的动作，如「个人资料」的「查看」。
+4. 点击窗口底部的「创建访问令牌」。
+5. 在「安全验证」窗口中完成验证。
+6. 在「访问令牌」窗口中点击「复制令牌」，保存后点击「关闭」。
+
+<Callout type="warn" title="注意保管访问令牌">
+- 令牌仅在创建时显示一次，关闭窗口后无法再次查看；丢失时请撤销后重新创建。
+- 获得访问令牌的人可在其权限范围内操作该账户。「账户安全」的「编辑」包含修改密码、两步验证设置和删除账户等操作，请谨慎授予。
+</Callout>
+
+<Callout type="info" title="提示">
+- 调用时在请求头中填写 `Authorization: Bearer nap_…`。
+- 每个账户最多 20 个访问令牌，已过期 7 天内的令牌仍计入；达到上限时「创建访问令牌」不可点击。
+- 访问令牌不可用于管理访问令牌和登录会话，这些操作需登录网页后进行。
+</Callout>
+
+**编辑操作流程：**
+1. 点击令牌右侧的 ⋯，选择「编辑」。
+2. 在「编辑访问令牌」窗口中修改「令牌名称」或「权限」。
+3. 点击「保存」；修改了权限时，在「安全验证」窗口中完成验证。
+
+**撤销操作流程：**
+1. 点击令牌右侧的 ⋯，选择「撤销」。
+2. 在确认窗口中核对提示「撤销此访问令牌？使用它的脚本会立即失效。」，确认撤销。
+3. 在「安全验证」窗口中完成验证。
+
+<Callout type="warn" title="注意">
+撤销后令牌立即失效并被删除，无法恢复，使用该令牌的脚本立即无法调用。
+</Callout>
+
+<Callout type="info" title="提示">
+升级前创建的旧版令牌显示在列表顶部，带「旧版令牌」标记，并提示「旧版令牌将于 … 停用，请创建新令牌替换。」。停用后无法使用，请创建新令牌替换并撤销旧版令牌。
+</Callout>
+
+**列表字段说明：**
+
+每个令牌一行，下表按从上到下的顺序排列。
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 字段 | 定义 | 填写要求和限制 | 备注 |
+| --- | --- | --- | --- |
+| 名称 | 令牌的名称。 | 创建或编辑时填写。 | 右侧显示 `nap_…` 和令牌末尾几位，用于辨认令牌。 |
+| 权限 | 令牌已授予的资源。 | 创建或编辑时勾选。 | 最多显示 3 个资源名，其余合并为「+…」。 |
+| 创建于、过期时间 | 令牌的创建时间和失效时间。 | 由系统记录；过期时间创建后不可修改。 | 显示「创建于 …」和「… 过期」；永不过期显示黄色「永不过期」，已过期显示红色「已过期」，见[访问令牌状态](#访问令牌状态)。 |
+| 最后使用 | 令牌最近一次被使用的时间和 IP 地址。 | 由系统自动记录，不受「记录 IP 地址」设置影响。 | 显示「最后使用于 … · IP」；未使用过显示「从未使用」。 |
+</div>
+
+**配置项说明：**
+
+「创建访问令牌」窗口的配置项如下，下表按窗口中的顺序排列。
+
+<div id="访问令牌配置项说明" className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 令牌名称 | 用于区分令牌的名称。 | 必填，1–64 个字符；为空时提示「请输入名称」，过长时提示「名称不能超过 64 个字符」。名称可重复。 | 空 |
+| 过期时间 | 令牌的失效时间。 | 可选「30 天」「90 天」「180 天」「1 年」「自定义」「永不过期」。「自定义」需至少在 1 小时之后，否则提示「请选择至少一小时之后的时间」；选择「永不过期」时提示「永不过期的令牌在撤销前一直有效，建议设置过期时间。」。 | 「30 天」 |
+| 权限 | 令牌可执行的操作。 | 至少选择一项，否则提示「至少选择一项权限」。按分组列出，分组标题旁显示「已选 … / …」，可点击「全选」「清空」；资源名旁的图标可查看各动作的说明。各项见下表。 | 未选择 |
+</div>
+
+**权限说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 分组 | 资源 | 动作 | 说明 |
+| --- | --- | --- | --- |
+| 个人 | 个人资料 | 查看、编辑 | 查看个人资料、分组和可用模型；修改显示名称和个人设置。 |
+| 个人 | API 密钥 | 查看、编辑、查看完整密钥 | 查看 API 密钥及其设置，不含完整密钥；创建、编辑和删除 API 密钥；查看完整的 API 密钥。 |
+| 个人 | 用量 | 查看 | 查看使用日志、统计、任务和审计日志。 |
+| 个人 | 钱包 | 查看、编辑 | 查看余额、充值记录、订阅和邀请信息；充值、支付订阅、签到和划转邀请奖励。 |
+| 个人 | 账户安全 | 查看、编辑 | 查看 Passkey、两步验证和登录绑定状态；包含需要安全验证的变更，如密码、两步验证设置和删除账户。 |
+| 管理（仅管理员可见） | 用户、充值与订阅管理、模型、部署、日志、兑换码、分组等 | 按资源而定 | 对应管理员的管理功能，仅列出并允许授予该管理员自身拥有的权限。 |
+| 系统（仅 Root 可见） | 系统设置、任务插件、运维 | 查看、编辑 | 对应 Root 的系统管理功能。 |
+</div>
+
+**编辑窗口说明：**
+
+「编辑访问令牌」窗口的配置项与创建窗口相同，见[创建窗口的配置项说明](#访问令牌配置项说明)，下表仅列出不同之处。
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 配置项 | 「创建访问令牌」窗口 | 「编辑访问令牌」窗口 |
+| --- | --- | --- |
+| 令牌名称 | 必填。 | 可修改；仅修改名称时保存不需要安全验证。 |
+| 过期时间 | 选择后生效。 | 不显示，不可修改。 |
+| 权限 | 至少选择一项，创建时需安全验证。 | 可修改，窗口提示「修改权限后保存需要安全验证」。 |
+</div>
+
+<Callout type="info" title="提示">
+令牌本身不可修改；需要更换令牌时，请创建新令牌后撤销旧令牌。
+</Callout>
+
+## 查看访问令牌的访问记录
+
+- 安全与访问-访问记录
+
+![安全与访问-访问记录页面](/assets/guide/feature-guide/personal-security-and-access-access-token-access-records.png)
+
+- 安全与访问-访问记录详情
+
+![安全与访问-访问记录详情页面](/assets/guide/feature-guide/personal-security-and-access-access-token-access-records-details.png)
+
+**操作流程：**
+1. 点击「访问令牌」右上角的「访问记录」，查看所有令牌的记录；或点击令牌右侧的 ⋯，选择「访问记录」，查看该令牌的记录。
+2. 按需设置时间范围、结果和令牌范围，列表自动刷新。
+3. 点击记录所在行「详情」列的「详情」，打开「日志详情」窗口。
+
+<Callout type="info" title="提示">
+- 使用访问令牌的每个请求都会记录一条，包括被拒绝的请求；被拒绝时详情中显示失败原因。抽屉顶部说明为「仅显示此功能启用后的审计记录，历史记录仍在通用日志中。」。
+- 这些记录也出现在<a href="/zh/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">审计日志</a>的「访问令牌」分类中，「日志详情」窗口的内容见审计日志的「查看审计详情」。
+</Callout>
+
+**筛选项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 筛选项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 时间范围 | 按请求时间筛选。 | 起始时间晚于结束时间时提示「结束时间必须晚于开始时间」。 | 空，即不限时间 |
+| 结果 | 按请求结果筛选。 | 单选「全部结果」「成功」「失败」。 | 「全部结果」 |
+| 令牌范围 | 按令牌筛选。 | 单选「全部令牌」「当前令牌」「历史令牌」。从卡片右上角进入时仅可选「全部令牌」；从某个令牌进入时，「当前令牌」为该令牌，「历史令牌」为其他令牌（含已撤销的）。 | 从令牌菜单进入时为「当前令牌」，否则为「全部令牌」 |
+</div>
+
+**字段说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 字段 | 定义 | 填写要求和限制 | 备注 |
+| --- | --- | --- | --- |
+| 时间 | 请求发生的时间。 | 由系统自动记录。 | — |
+| IP | 发起请求的 IP 地址。 | 由系统自动记录，不受「记录 IP 地址」设置影响。 | — |
+| 客户端 | 发起请求的程序信息。 | 由系统自动记录。 | 手机上不显示该列。 |
+| 请求方法、路由 | 请求的方法和接口地址。 | 由系统自动记录。 | — |
+| HTTP | 请求返回的状态码。 | 由系统自动记录。 | — |
+| 结果 | 请求是否成功。 | 由系统判断。 | 「成功」或「失败」。 |
+| 详情 | 查看该记录的完整信息。 | — | 点击「详情」打开「日志详情」窗口。 |
+</div>
+
+## 设置是否记录 IP 地址
+
+**操作流程：**
+1. 在「隐私」区域开启或关闭「记录 IP 地址」。
+2. 点击「保存设置」。
+
+<Callout type="info" title="提示">
+- 默认关闭。开启后，之后产生的使用日志「消耗」「错误」记录会保存调用方的 IP 地址，在<a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>的「日志详情」中显示；开启前的记录不会补充。
+- 仅影响使用日志。登录会话、访问令牌和审计日志中的 IP 地址始终记录，不受该设置影响。
+</Callout>
+
+## 删除账户
+
+**操作流程：**
+1. 点击「账户操作」中的「删除账户」。
+2. 在确认窗口的输入框中输入完整的用户名（区分大小写）。
+3. 点击「删除账户」。
+4. 在标题为「删除账户」的「安全验证」窗口中完成验证。
+
+<Callout type="warn" title="注意">
+- 删除后无法恢复。账户的所有登录会话和访问令牌立即失效，页面退出到登录页。
+- 已删除账户的用户名不可再次注册；站点开启邮箱验证时，该账户的邮箱也不可再用于注册。注册时提示「用户名已存在，或已注销」。
+- 删除前，请确认账户的余额和订阅已不再需要。
+- Root 账户不可删除，执行时提示「你没有执行此操作的权限。」。
+</Callout>
+
+## 操作项说明
+
+### 页面按钮与筛选
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 操作 | 位置 | 说明 |
+| --- | --- | --- |
+| 更改密码 / 设置密码 | 「登录与认证」的密码卡片右侧 | 见[更改或设置密码](#更改或设置密码)。 |
+| 绑定 / 更改 / 解绑 | 「账户绑定」中各账号右侧 | 见[绑定邮箱和第三方账号](#绑定邮箱和第三方账号)。绑定过程中所有按钮暂时不可点击；已绑定的 GitHub、Discord、OIDC、Telegram、LinuxDO、微信显示「已绑定」，不可点击。 |
+| 退出其他会话 | 「登录会话」右上角 | 无其他会话时不可点击，见[管理登录会话](#管理登录会话)。 |
+| 访问记录 | 「访问令牌」右上角 | 打开所有令牌的「访问记录」，见[查看访问令牌的访问记录](#查看访问令牌的访问记录)。 |
+| 创建访问令牌 | 「访问令牌」右上角 | 达到 20 个时不可点击，见[创建和管理访问令牌](#创建和管理访问令牌)。 |
+| 删除账户 | 「账户操作」卡片右侧 | 见[删除账户](#删除账户)。 |
+| 启用 Passkey / 解绑 Passkey | 「Passkey 登录」卡片 | 见[启用 Passkey](#启用-passkey)、[解绑 Passkey](#解绑-passkey)。 |
+| 启用 | 「两步验证」卡片 | 见[启用两步验证](#启用两步验证)。 |
+| 重新生成备用代码、禁用 2FA | 「两步验证」卡片，启用后显示 | 见[重新生成备用码](#重新生成备用码)、[禁用两步验证](#禁用两步验证)。 |
+| 记录 IP 地址、保存设置 | 「隐私」卡片 | 见[设置是否记录 IP 地址](#设置是否记录-ip-地址)。 |
+| 时间范围、结果、令牌范围 | 「访问记录」抽屉顶部 | 见[查看访问令牌的访问记录](#查看访问令牌的访问记录)。 |
+| 重置、搜索 | 「访问记录」抽屉的筛选区 | 「重置」清除筛选条件，「搜索」按当前条件重新查询。 |
+| 查看 | 「访问记录」抽屉的筛选区 | 在「切换列」中选择要显示的列，「详情」列不可隐藏。 |
+| 每页行数、翻页 | 「访问记录」抽屉底部 | 「每页行数」默认为 20；「总计」为符合条件的记录数。 |
+| 重试 | 页面或卡片加载失败时 | 重新加载该部分内容。 |
+</div>
+
+### 行操作
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 操作 | 位置 | 说明 |
+| --- | --- | --- |
+| 撤销 | 「登录会话」中其他设备右侧 | 确认「撤销此会话？」后，该设备立即退出。 |
+| 登出 | 「登录会话」中当前设备右侧 | 确认「退出当前设备？」后，退出并跳转到登录页。 |
+| 编辑 | 访问令牌右侧的 ⋯ 菜单 | 打开「编辑访问令牌」窗口。 |
+| 访问记录 | 访问令牌右侧的 ⋯ 菜单 | 打开该令牌的「访问记录」。 |
+| 撤销 | 访问令牌右侧的 ⋯ 菜单 | 确认并完成安全验证后删除该令牌，不可恢复。 |
+| 访问记录、撤销 | 「旧版令牌」行右侧 | 仅账户有旧版令牌时显示，作用同上。 |
+| 详情 | 「访问记录」的「详情」列 | 打开「日志详情」窗口。 |
+| 复制 | 「日志详情」窗口中值右侧的复制按钮 | 复制客户端、路由、请求 ID、令牌标识等内容。 |
+</div>
+
+## 状态项说明
+
+### 两步验证状态
+
+「两步验证」卡片中「两步验证」后的标记：
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 状态 | 含义 | 备注 |
+| --- | --- | --- |
+| 已禁用 | 未启用两步验证。 | 点击「启用」，见[启用两步验证](#启用两步验证)。 |
+| 已启用 | 已启用，登录和敏感操作需填写验证码。 | 同时显示「剩余备份代码：…」。 |
+| 锁定 | 连续 5 次验证失败，两步验证暂时不可用。 | 与「已启用」同时显示，5 分钟后自动解除；期间可改用 Passkey。 |
+</div>
+
+### Passkey 状态
+
+「Passkey 登录」卡片中「通行密钥认证」后的标记：
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 状态 | 含义 | 备注 |
+| --- | --- | --- |
+| 已禁用 | 账户未注册 Passkey。 | 点击「启用 Passkey」。 |
+| 已启用 | 账户已注册 Passkey。 | 显示「上次使用时间：」，从未使用时显示「尚未使用」。 |
+</div>
+
+### 账户绑定状态
+
+「账户绑定」中各账号下方的状态：
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 状态 | 含义 | 备注 |
+| --- | --- | --- |
+| 未绑定 | 尚未绑定该账号。 | 点击「绑定」。 |
+| 已绑定 | 已绑定，显示绑定的邮箱或账号标识。 | 邮箱可「更改」；管理员添加的登录方式可「解绑」；其他第三方账号不可在本页解绑，请联系管理员。 |
+</div>
+
+### 访问令牌状态
+
+访问令牌时间行中的显示：
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 状态 | 含义 | 备注 |
+| --- | --- | --- |
+| … 过期 | 令牌有效，到该时间失效。 | — |
+| 永不过期 | 令牌在撤销前一直有效。 | 黄色。 |
+| 已过期 | 已超过过期时间，调用时提示「访问令牌已过期」。 | 红色。不可修改过期时间，请创建新令牌；过期 7 天后从列表中删除。 |
+| 旧版令牌 | 升级前创建的令牌，无权限范围。 | 显示停用日期，停用后调用时提示「旧版访问令牌已停用，请在安全设置中创建新的访问令牌」，请创建新令牌替换。 |
+</div>
+
+## 常见问题
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="「安全验证」窗口提示「此操作没有可用的验证方式。」">
+**提示原文**：「此操作没有可用的验证方式。」（英文 No verification method is available for this action.），其后列出各方式不可用的原因。
+
+**说明**：请根据列出的原因处理：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「密码认证已禁用。」（英文 Password authentication is disabled.） | 管理员关闭了密码登录，且账户未启用两步验证、未注册 Passkey。 | 联系管理员；能登录时先启用两步验证。 |
+| 「Passkey 认证已关闭。」（英文 Passkey authentication is disabled.） | 管理员未开启 Passkey。 | 改用其他验证方式，或联系管理员。 |
+| 「没有可用的已绑定 OAuth 提供方。」（英文 No linked OAuth provider is available.） | 账户无密码，且无已绑定并开启的第三方账号。 | 联系管理员。 |
+| 「两步验证已暂时锁定。」（英文 Two-factor authentication is temporarily locked.） | 连续 5 次验证失败。 | 等待 5 分钟后重试，或改用 Passkey。 |
+</Accordion>
+
+<Accordion title="验证时提示「验证失败，请重试。」">
+**提示原文**：「验证失败，请重试。」（英文 Verification failed. Please try again.）
+
+**可能原因**：
+- 验证码、备用码或密码填写错误。
+- 手机时间不准确，验证器生成的验证码已失效。
+
+**处理方法**：
+1. 核对后重新填写；验证码每 30 秒更新一次，请填写最新的验证码。
+2. 校准手机时间后重试。连续失败 5 次将锁定 5 分钟。
+</Accordion>
+
+<Accordion title="提示「安全验证已过期，请重新验证。」">
+**说明**：验证通过后需在 1 分钟内完成操作，每次验证仅可用于一次操作。请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「安全验证已过期，请重新验证。」（英文 Security verification has expired. Please verify again.） | 验证后超过 1 分钟才完成操作。 | 重新验证后立即完成操作。 |
+| 「安全验证已失效，请重新验证。」（英文 Security verification is no longer valid. Please verify again.） | 本次验证已被使用。 | 重新执行操作并验证。 |
+| 「验证与本次操作的具体内容不匹配，请重新验证。」（英文 Verification does not match this action's details. Please verify again.） | 验证后修改了操作内容，如权限或邮箱。 | 确认操作内容后重新验证。 |
+</Accordion>
+
+<Accordion title="丢失验证器设备，无法输入验证码">
+**说明**：登录和「安全验证」窗口中，可用未使用的备用码代替验证码，每个备用码仅可使用一次。
+
+**处理方法**：
+1. 登录时，在两步验证页填写一个未使用的备用码。
+2. 在本页执行「禁用 2FA」，在「安全验证」窗口中填写另一个备用码。
+3. 用新设备重新启用两步验证，并保存新的备用码。
+4. 备用码已用完或丢失时，请联系管理员重置两步验证。
+</Accordion>
+
+<Accordion title="启用两步验证时提示「设置已过期…」或「认证器验证码错误。」">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「设置已过期，请扫描新的二维码并保存新的备用码。」（英文 Setup expired. Scan the new QR code and save the new backup codes.）<br/>「两步验证设置已过期或变更，请重新设置。」（英文 The two-factor setup has expired or changed. Start setup again.） | 完成安全验证后超过 5 分钟，或重新发起了设置。 | 删除验证器中刚添加的条目，扫描新的二维码并保存新的备用码。 |
+| 「认证器验证码错误。」（英文 The authenticator code is incorrect.） | 验证码填写错误或已过期。 | 填写验证器中最新的 6 位验证码；仍失败时校准手机时间。 |
+</Accordion>
+
+<Accordion title="无法启用 Passkey">
+**说明**：请根据提示原文或现象判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「此设备不支持通行密钥」（英文 Passkey not supported on this device） | 浏览器或设备不支持通行密钥。 | 改用支持生物识别或安全密钥的浏览器和设备。 |
+| 「Passkey 认证已关闭。」（英文 Passkey authentication is disabled.） | 管理员未开启 Passkey。 | 联系管理员。 |
+| 「通行密钥注册已取消」（英文 Passkey registration was cancelled） | 在浏览器或系统的提示中取消了操作。 | 重新点击「启用 Passkey」。 |
+| 「注册流程已过期，请重试。」（英文 Registration flow expired. Please try again.） | 注册流程未能正常开始。 | 重新点击「启用 Passkey」；仍失败时联系管理员。 |
+| 站点地址以 http:// 开头时注册失败 | 站点未使用 HTTPS。 | 联系管理员。 |
+</Accordion>
+
+<Accordion title="更换网址后 Passkey 无法使用">
+**提示原文**：「此通行密钥域名无法在当前网站使用。请前往原网站或选择其他验证方式。」（英文 This Passkey domain is not available on this website. Use its original website or another verification method.）
+
+**可能原因**：Passkey 与注册时的网站域名绑定，当前网址与注册时不同。
+
+**处理方法**：
+1. 通过注册 Passkey 时的网址访问站点。
+2. 或在「安全验证」窗口中改用其他验证方式，解绑后在新网址重新注册 Passkey。
+</Accordion>
+
+<Accordion title="收不到邮箱验证码，或提示验证码错误">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「验证邮件发送失败，请重新开始邮箱验证。」（英文 Verification email could not be sent. Start email verification again.） | 站点的邮件服务出错。 | 点击「重新开始」；仍失败时联系管理员。 |
+| 「请稍后再请求验证码。」（英文 Please wait before requesting another verification code.） | 60 秒内重复获取验证码。 | 等倒计时结束后点击「重新发送验证码」。 |
+| 「邮箱验证码不正确。」（英文 Email verification code is incorrect.） | 验证码填写错误。 | 核对邮件中的 6 位验证码后重新填写。 |
+| 「验证码错误次数过多，请重新开始邮箱验证。」（英文 Too many incorrect codes. Start email verification again.） | 连续输错 5 次。 | 点击「重新开始」。 |
+| 「邮箱验证已结束，请重新开始。」（英文 Email verification has ended. Start again to continue.） | 超过 10 分钟未完成验证。 | 点击「重新开始」。 |
+
+邮件可能被归入垃圾邮件，请一并检查。
+</Accordion>
+
+<Accordion title="绑定邮箱或第三方账号时提示已被使用">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「此邮箱地址已被使用。」（英文 This email address is already in use.） | 该邮箱已绑定其他账户。 | 更换邮箱。 |
+| 「此邮箱地址不符合管理员设置的邮箱规则。」（英文 This email address is not allowed by the administrator's email policy.） | 站点限制了可用的邮箱域名或别名。 | 更换符合要求的邮箱，或联系管理员。 |
+| 「此第三方账户已被绑定。」（英文 This external account is already bound.）<br/>「此 Telegram 账户已被绑定。」（英文 This Telegram account is already bound.） | 该第三方账号已绑定其他账户。 | 使用其他第三方账号，或先在原账户中解除绑定。 |
+| 「OAuth 弹窗被浏览器拦截」（英文 OAuth pop-up was blocked） | 浏览器拦截了授权窗口。 | 允许本站弹出窗口后，重新点击「继续」。 |
+</Accordion>
+
+<Accordion title="无法解绑第三方账号">
+**提示原文**：「请先添加其他登录方式，再解除此账户绑定。」（英文 Add another login method before unlinking this account.）
+
+**可能原因**：
+- 该账号是账户最后一种可用的登录方式。
+- GitHub、Discord、OIDC、Telegram、LinuxDO 和微信绑定后，页面不提供解绑，按钮显示「已绑定」。
+
+**处理方法**：
+1. 先设置密码或绑定其他登录方式，再解绑。
+2. 需要解除 GitHub、Discord、OIDC、Telegram、LinuxDO 或微信的绑定时，请联系管理员。
+</Accordion>
+
+<Accordion title="修改密码时提示错误">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「当前密码不正确。」（英文 Current password is incorrect.） | 「当前密码」填写错误。 | 重新填写；忘记密码时退出登录，在登录页重置密码。 |
+| 「密码长度必须为 8–128 个字符。」（英文 Password must contain between 8 and 128 characters.） | 新密码过短或过长。 | 填写 8–128 个字符的密码。 |
+| 「新密码必须与当前密码不同」（英文 New password must be different from current password） | 新旧密码相同。 | 填写新的密码。 |
+| 「密码不匹配」（英文 Passwords do not match） | 两次填写的新密码不一致。 | 重新填写「确认新密码」。 |
+| 「密码设置已变化，请刷新页面后重试。」（英文 Password settings have changed. Reload the page and try again.） | 账户的密码已在其他窗口中被修改或设置。 | 刷新页面后重试。 |
+</Accordion>
+
+<Accordion title="修改密码或启用两步验证后，其他设备被退出登录">
+**说明**：修改密码，启用、禁用两步验证，重新生成备用码，注册或解绑 Passkey 后，其他设备上的登录会话全部退出，当前设备保持登录。
+
+**处理方法**：
+1. 在其他设备上重新登录。
+</Accordion>
+
+<Accordion title="用访问令牌调用模型时提示「无效的令牌」">
+**提示原文**：「无效的令牌」（英文 Invalid token）
+
+**可能原因**：使用的是以 `nap_` 开头的访问令牌。访问令牌仅可调用面板 API，不可用于调用模型。
+
+**处理方法**：
+1. 在 <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>页创建以 `sk-` 开头的密钥，用于调用模型。
+</Accordion>
+
+<Accordion title="用访问令牌调用接口时被拒绝">
+**说明**：被拒绝的请求也会出现在该令牌的「访问记录」中，请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「访问令牌缺少所需权限：…」（英文 The access token lacks the required permission: …） | 令牌未授予该操作所需的权限。 | 编辑令牌补充权限，保存时需安全验证。 |
+| 「需要控制台登录会话」（英文 a dashboard login session is required） | 该操作仅可在登录网页后进行，如管理访问令牌和登录会话。 | 登录网页后操作。 |
+| 「访问令牌已过期」（英文 Unauthorized, the access token has expired） | 令牌已过期。 | 创建新令牌，替换脚本中的令牌。 |
+| 「旧版访问令牌已停用，请在安全设置中创建新的访问令牌」（英文 Legacy access tokens have been retired. Create a new access token in security settings） | 使用的是已停用的旧版令牌。 | 在本页创建新令牌。 |
+| 「无权进行此操作，access token 无效」（英文 Unauthorized, invalid access token） | 令牌已撤销或填写错误。 | 核对请求头中的令牌；令牌已撤销时重新创建。 |
+</Accordion>
+
+<Accordion title="无法创建访问令牌">
+**说明**：请根据提示原文判断原因：
+
+| 提示原文 | 可能原因 | 处理方法 |
+| --- | --- | --- |
+| 「最多可创建 … 个访问令牌」（英文 You can create up to … access tokens） | 已有 20 个令牌，已过期 7 天内的令牌也计入。 | 撤销不再使用的令牌。 |
+| 「请选择至少一小时之后的时间」（英文 Choose a time at least one hour from now） | 自定义的过期时间不足 1 小时。 | 选择 1 小时以后的时间，或选择预设时长。 |
+| 「至少选择一项权限」（英文 Select at least one permission） | 未勾选任何权限。 | 至少勾选一项。 |
+| 「你无法授予其中一项或多项权限。」（英文 You cannot grant one or more of these permissions.） | 勾选了账户自身不具备的权限。 | 取消这些权限后重试。 |
+</Accordion>
+
+<Accordion title="创建访问令牌后忘记复制">
+**提示原文**：「请立即复制此令牌，之后将不再显示。」（英文 Copy this token now. It will not be shown again.）
+
+**说明**：令牌明文仅在创建时显示一次，之后无法查看。
+
+**处理方法**：
+1. 撤销该令牌。
+2. 重新创建令牌，并在「访问令牌」窗口中点击「复制令牌」保存。
+</Accordion>
+
+<Accordion title="出现不认识的登录会话">
+**可能原因**：
+- 本人在其他设备或浏览器上登录过。
+- 密码或第三方账号已泄露。
+
+**处理方法**：
+1. 在「登录会话」中撤销该会话，或点击「退出其他会话」。
+2. 修改密码。
+3. 启用两步验证或 Passkey。
+4. 在<a href="/zh/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">审计日志</a>中核对登录记录，撤销不认识的访问令牌。
+5. 如仍无法解决，请联系管理员。
+</Accordion>
+
+<Accordion title="关闭「记录 IP 地址」后，登录会话和访问记录中仍显示 IP">
+**说明**：「记录 IP 地址」仅影响使用日志。登录会话、访问令牌的最后使用 IP、访问记录和审计日志始终记录 IP 地址，不受该设置影响。
+</Accordion>
+
+<Accordion title="无法删除账户">
+**提示原文**：「你没有执行此操作的权限。」（英文 You do not have permission to perform this action.）
+
+**可能原因**：
+- 当前账户为 Root 账户，不可删除。
+- 「删除账户」按钮不可点击：输入的用户名与账户用户名不完全一致（区分大小写）。
+
+**处理方法**：
+1. 核对用户名后重新输入，注意大小写一致。
+2. 当前账户为 Root 时不可删除，提示属正常。
+</Accordion>
+
+</Accordions>
+
+## 相关文档
+
+- <a href="/zh/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API 密钥</a>：创建调用模型用的 `sk-` 密钥，与访问令牌不同。
+- <a href="/zh/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">审计日志</a>：查看登录、账户安全设置和访问令牌的操作记录。
+- <a href="/zh/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">使用日志</a>：开启「记录 IP 地址」后，在日志详情中查看调用方 IP。
+- <a href="/zh/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">个人资料</a>：设置通知方式和左侧边栏显示的页面。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>：Root 开启第三方登录、Passkey 和密码登录。
