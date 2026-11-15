@@ -9,6 +9,7 @@
     "redemption",
     "subscription",
     "system-info",
-    "task-plugins"
+    "task-plugins",
+    "request-processing"
   ]
 }

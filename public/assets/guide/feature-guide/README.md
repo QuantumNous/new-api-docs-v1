@@ -87,7 +87,7 @@
 
 ## 管理员指南
 
-页面顺序：计费表达式、渠道管理、模型管理、用户管理、兑换码管理、订阅管理、系统信息、任务插件管理。渠道管理页另有一个视频 `channel-management-drag-and-drop-mode.mp4`，见「其他」。
+页面顺序：计费表达式、渠道管理、模型管理、用户管理、兑换码管理、订阅管理、系统信息、任务插件管理、请求处理。渠道管理页另有一个视频 `channel-management-drag-and-drop-mode.mp4`，见「其他」。
 
 | 文件名 | 内容 |
 | --- | --- |
@@ -163,24 +163,33 @@
 | `system-information.png` | 系统信息-实例与系统任务 |
 | `system-information-instance-monitoring.png` | 系统信息-实例监控 |
 | `system-information-delete-instance.png` | 系统信息-清理失联实例 |
-| `task-plugins-create-plugin-channel.png` | 任务插件-创建任务插件渠道 |
-| `task-plugins-table-view.png` | 任务插件-表格视图 |
-| `task-plugins-card-view.png` | 任务插件-卡片视图 |
-| `task-plugins-upload-plugin.png` | 任务插件-上传插件 |
-| `task-plugins-upload-new-version.png` | 任务插件-上传新版本 |
-| `task-plugins-plugin-marketplace.png` | 任务插件-插件市场 |
-| `task-plugins-plugin-marketplace-install-plugin-details.png` | 任务插件-安装插件-插件详情 |
-| `task-plugins-plugin-marketplace-install-version-diff.png` | 任务插件-安装插件-版本差异 |
-| `task-plugins-plugin-marketplace-install-full-source-code.png` | 任务插件-安装插件-完整源码 |
-| `task-plugins-plugin-marketplace-install-changelog.png` | 任务插件-安装插件-更新日志 |
-| `task-plugins-plugin-marketplace-manage-sources.png` | 任务插件-市场源 |
-| `task-plugins-plugin-details-overview.png` | 任务插件-插件详情-概览 |
-| `task-plugins-plugin-details-billing-parameters.png` | 任务插件-插件详情-计费参数 |
-| `task-plugins-plugin-details-plugin-source.png` | 任务插件-插件详情-插件源码 |
-| `task-plugins-plugin-details-version-history.png` | 任务插件-插件详情-版本历史 |
-| `task-plugins-plugin-details-source-diff.png` | 任务插件-插件详情-源码差异 |
-| `task-plugins-plugin-details-plugin-sandbox.png` | 任务插件-插件详情-插件沙盒 |
-| `task-plugins-delete-current-custom-version.png` | 任务插件-删除插件版本 |
+| `plugins-create-plugin-channel.png` | 任务插件-创建任务插件渠道 |
+| `plugins-table-view.png` | 任务插件-表格视图 |
+| `plugins-card-view.png` | 任务插件-卡片视图 |
+| `plugins-upload-plugin.png` | 任务插件-上传插件 |
+| `plugins-upload-new-version.png` | 任务插件-上传新版本 |
+| `plugins-plugin-marketplace.png` | 任务插件-插件市场 |
+| `plugins-plugin-marketplace-install-plugin-details.png` | 任务插件-安装插件-插件详情 |
+| `plugins-plugin-marketplace-install-version-diff.png` | 任务插件-安装插件-版本差异 |
+| `plugins-plugin-marketplace-install-full-source-code.png` | 任务插件-安装插件-完整源码 |
+| `plugins-plugin-marketplace-install-changelog.png` | 任务插件-安装插件-更新日志 |
+| `plugins-plugin-marketplace-manage-sources.png` | 任务插件-市场源 |
+| `plugins-plugin-details-overview.png` | 任务插件-插件详情-概览 |
+| `plugins-plugin-details-billing-parameters.png` | 任务插件-插件详情-计费参数 |
+| `plugins-plugin-details-plugin-source.png` | 任务插件-插件详情-插件源码 |
+| `plugins-plugin-details-version-history.png` | 任务插件-插件详情-版本历史 |
+| `plugins-plugin-details-source-diff.png` | 任务插件-插件详情-源码差异 |
+| `plugins-plugin-details-plugin-sandbox.png` | 任务插件-插件详情-插件沙盒 |
+| `plugins-delete-current-custom-version.png` | 任务插件-删除插件版本 |
+| `request-processing-list.png` | 请求处理-实例列表 |
+| `request-processing-add-instance.png` | 请求处理-添加请求处理 |
+| `request-processing-add-request-filtering.png` | 请求处理-请求过滤配置 |
+| `request-processing-add-request-redaction.png` | 请求处理-请求脱敏配置 |
+| `request-processing-add-content-moderation.png` | 请求处理-内容审核配置 |
+| `request-processing-add-global-parameter-overrides.png` | 请求处理-全局参数覆盖配置 |
+| `request-processing-add-auto-reasoning-effort.png` | 请求处理-自动推理强度配置 |
+| `request-processing-add-image-compression.png` | 请求处理-图片压缩配置 |
+| `request-processing-dry-run.png` | 请求处理-试运行 |
 
 ## 系统设置指南
 
