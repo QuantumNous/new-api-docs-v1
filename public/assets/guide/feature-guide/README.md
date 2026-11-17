@@ -225,6 +225,7 @@
 | `system-settings-billing-and-payments-quota-settings.png` | 计费与支付-额度设置 |
 | `system-settings-billing-and-payments-currency-and-display.png` | 计费与支付-货币与展示 |
 | `system-settings-billing-and-payments-model-pricing-model-prices.png` | 计费与支付-模型价格 |
+| `system-settings-billing-and-payments-model-pricing-model-prices-confirm-price-changes.png` | 计费与支付-模型定价-模型价格-确认价格变更 |
 | `system-settings-billing-and-payments-model-pricing-models-without-prices.png` | 计费与支付-未设置价格模型 |
 | `system-settings-billing-and-payments-model-pricing-tool-prices.png` | 计费与支付-工具价格 |
 | `system-settings-billing-and-payments-model-pricing-upstream-price-sync.png` | 计费与支付-上游价格同步 |
