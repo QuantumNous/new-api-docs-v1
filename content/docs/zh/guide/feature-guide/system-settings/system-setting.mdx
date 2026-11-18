@@ -6,33 +6,35 @@ description: 了解系统设置（仅 Root 可用）的入口与权限、八个�
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-- 「系统设置」的地址为 `/system-settings`，仅 Root 可访问。
+- 「系统设置」仅 Root 可访问。
 - 本页说明系统设置的各设置域通用的保存、生效、敏感配置和变更验证规则；具体字段说明见对应设置域的文档。
 
 ## 入口与权限
 
-仅Root 可以从以下三处进入系统设置，都会打开「站点与品牌 › 系统信息」：
+仅 Root 可以从以下三处进入系统设置，都会打开「站点与品牌 › 系统信息」：
 
 1. 侧边栏「管理员」分组末尾的「系统设置」。
 2. 右上角头像菜单中的「系统设置」。
 3. 顶栏「搜索」或快捷键 ⌘/Ctrl+K 打开的命令面板，其中列出的页面与侧边栏相同。
 
+有价格待处理的模型时，侧边栏「系统设置」、左侧导航的「计费与支付」及其「模型定价」分区显示待处理的模型数。
+
 ## 设置域与分区
 
-侧边栏「系统管理」分组下共有 8 个设置域，下表按侧边栏顺序列出各设置域的地址、分区和职责。点击设置域名称进入对应文档；标「（默认）」的是直接访问设置域地址时打开的分区。
+侧边栏「系统管理」分组下共有 8 个设置域，下表按侧边栏顺序列出各设置域的分区和职责。点击设置域名称进入对应文档；标「（默认）」的是进入设置域时默认打开的分区。
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-| 设置域 | 地址 | 分区（按侧边栏顺序） | 主要职责 |
-| --- | --- | --- | --- |
-| <a href="/zh/docs/guide/feature-guide/system-settings/settings-site" target="_blank" rel="noopener noreferrer">站点与品牌</a> | `/system-settings/site` | 系统信息（默认）、系统公告、顶部导航、侧边栏模块 | 站点身份、公开内容与法律文档、系统公告、顶部导航和侧边栏模块。 |
-| <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证</a> | `/system-settings/auth` | 基本身份验证（默认）、OAuth 集成、通行密钥认证、机器人保护、自定义 OAuth | 密码登录与注册、第三方 OAuth、通行密钥、人机验证和自定义 OAuth 提供商。 |
-| <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付</a> | `/system-settings/billing` | 额度设置（默认）、货币与展示、模型定价、分组定价、支付网关、签到奖励 | 额度与货币显示、模型与分组价格、支付网关和签到奖励。 |
-| <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型</a> | `/system-settings/models` | 全局模型配置（默认）、Gemini、Claude、Grok、模型部署 | 全局模型行为、供应商协议适配和 io.net 模型部署。 |
-| <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略</a> | `/system-settings/request-policies` | 请求检查、会话与重试（默认）、渠道健康 | 请求文本过滤、会话保持与重试、渠道健康检查与自动禁用。 |
-| <a href="/zh/docs/guide/feature-guide/system-settings/settings-security" target="_blank" rel="noopener noreferrer">安全与限制</a> | `/system-settings/security` | 速率限制（默认）、SSRF 保护、令牌限制 | 模型请求速率限制、出站请求的 SSRF 保护和每用户令牌数量上限。 |
-| <a href="/zh/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">控制台内容</a> | `/system-settings/content` | 数据仪表板（默认）、公告、API 地址、常见问答、Uptime Kuma、聊天预设、绘图 | 数据仪表板的启用与刷新，控制台概览中的公告、API 地址、常见问答和 Uptime Kuma 面板，以及聊天预设和绘图。 |
-| <a href="/zh/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">运维</a> | `/system-settings/operations` | 系统行为（默认）、模型性能指标、邮件与通知、Worker 代理、日志维护、性能、系统维护 | 运行模式、模型性能指标、邮件与额度提醒、Worker 代理、日志清理、性能保护和版本检查。 |
+| 设置域 | 分区（按侧边栏顺序） | 主要职责 |
+| --- | --- | --- |
+| <a href="/zh/docs/guide/feature-guide/system-settings/settings-site" target="_blank" rel="noopener noreferrer">站点与品牌</a> | 系统信息（默认）、系统公告、顶部导航、侧边栏模块 | 站点身份、公开内容与法律文档、系统公告、顶部导航和侧边栏模块。 |
+| <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证</a> | 基本身份验证（默认）、OAuth 集成、通行密钥认证、机器人保护、自定义 OAuth | 密码登录与注册、第三方 OAuth、通行密钥、人机验证和自定义 OAuth 提供商。 |
+| <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付</a> | 额度设置（默认）、货币与展示、模型定价、分组定价、支付网关、签到奖励 | 额度与货币显示、模型与分组价格、支付网关和签到奖励。 |
+| <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型</a> | 全局模型配置（默认）、Gemini、Claude、Grok、模型部署 | 全局模型行为、供应商协议适配和 io.net 模型部署。 |
+| <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略</a> | 会话与重试（默认）、渠道健康 | 会话保持与重试、渠道健康检查与自动禁用。 |
+| <a href="/zh/docs/guide/feature-guide/system-settings/settings-security" target="_blank" rel="noopener noreferrer">安全与限制</a> | 速率限制（默认）、SSRF 保护、令牌限制 | 模型请求速率限制、出站请求的 SSRF 保护和每用户令牌数量上限。 |
+| <a href="/zh/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">控制台内容</a> | 数据仪表板（默认）、公告、API 地址、常见问答、Uptime Kuma、聊天预设、绘图 | 数据仪表板的启用与刷新，控制台概览中的公告、API 地址、常见问答和 Uptime Kuma 面板，以及聊天预设和绘图。 |
+| <a href="/zh/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">运维</a> | 系统行为（默认）、模型性能指标、邮件与通知、Worker 代理、日志维护、性能、系统维护 | 运行模式、模型性能指标、邮件与额度提醒、Worker 代理、日志清理、性能保护和版本检查。 |
 
 </div>
 
@@ -45,11 +47,11 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 保存方式 | 适用分区 | 表现 | 详见 |
 | --- | --- | --- | --- |
 | 逐项保存（默认） | 下列以外的所有分区 | 见表后说明。 | — |
-| 整体保存 | 请求策略的三个分区（各自保存） | 每次提交的修改项先整体校验，再在一个事务中写入；任一项不合法，全部不写入。成功提示「保存成功」。没有版本冲突检测，后保存的覆盖先保存的。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#保存与生效" target="_blank" rel="noopener noreferrer">请求策略配置</a> |
-| 批量保存并检测冲突 | 计费与支付 › 模型定价中的模型价格 | 多个模型的价格修改一次提交，在一个事务中写入；如果打开页面后价格已被他人修改，保存会被拒绝，需要重新加载后再修改。成功提示「模型定价已保存」。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a> |
+| 整体保存 | 请求策略的两个分区（各自保存） | 每次提交的修改项先整体校验，再在一个事务中写入；任一项不合法，全部不写入。成功提示「保存成功」。没有版本冲突检测，后保存的覆盖先保存的。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#保存与生效" target="_blank" rel="noopener noreferrer">请求策略配置</a> |
+| 批量保存并检测冲突 | 计费与支付 › 模型定价中的模型价格 | 有价格改动时，先在「确认价格变更」中核对每个模型的「当前价格」和「保存后价格」，点击「确认保存」后才提交；多个模型的价格修改一次提交，在一个事务中写入；如果打开页面后价格已被他人修改，保存会被拒绝，需要重新加载后再修改。成功提示「模型定价已保存」。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a> |
 | 开关即时保存，列表单独保存 | 控制台内容 › 公告、API 地址、常见问答、Uptime Kuma | 「已启用」开关切换后立即保存；列表中的新增、编辑、删除只修改页面数据，点击卡片内的「保存设置」后才写入。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">控制台内容配置</a> |
 | 按条目保存 | 身份验证 › 自定义 OAuth | 在列表和对话框中逐个新增、编辑、删除提供商，页头没有保存按钮。生效范围见[生效范围与多实例同步](#生效范围与多实例同步)。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a> |
-| 保存前确认 | 身份验证 › 通行密钥认证中的域名设置 | 修改域名设置时，如果会使已有通行密钥失效，需要先确认才会写入。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a> |
+| 保存前确认 | 身份验证 › 通行密钥认证中的域名设置 | 修改域名设置会改变生效域名、清空主域名或移除兼容域名时，需要先确认才会写入。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a> |
 | 无保存按钮 | 运维 › 系统维护 | 只显示当前版本、启动时间和更新检查。 | <a href="/zh/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">运维配置</a> |
 
 </div>
@@ -63,16 +65,19 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 ### 生效范围与多实例同步
 
 1. 设置以键值形式保存在主数据库中。处理保存请求的节点写入数据库后立即更新内存中的值，不需要重启。
-2. 其他节点每隔 `SYNC_FREQUENCY` 秒（默认 60 秒）从数据库重新载入全部设置，也包括请求策略、模型价格、通行密钥域名等使用专用保存方式写入的设置。各设置域页面把这一过程简称为「随系统设置同步（默认 60 秒）」。
+2. 保存后，其他节点约 3 秒内从数据库重新载入设置：每次保存都会登记一条同步任务，各节点约每 3 秒检查一次，发现新的修改即重新载入。这也包括请求策略、模型价格、通行密钥域名等使用专用保存方式写入的设置。各设置域页面把这一过程简称为「约 3 秒内随系统设置同步（最迟一个同步周期，默认 60 秒）」。
+   - 各节点另外每隔 `SYNC_FREQUENCY` 秒（默认 60 秒）重新载入全部设置作为兜底：同步任务没有写入成功，或集群中有尚未升级、不检查同步任务的旧版本节点时，修改在下一个周期载入。
+   - `SYNC_FREQUENCY` 是环境变量，单位为秒，界面中没有对应设置；它只在启动时读取，修改后需重启。
    - 这项同步与是否启用 Redis 无关，前提是所有节点连接同一个主数据库。
-   - 同步完成前，各节点读到的值可能不一致。
+   - 载入完成前，各节点读到的值可能不一致；各节点是否已载入，可在<a href="/zh/docs/guide/feature-guide/admin/system-info#节点同步" target="_blank" rel="noopener noreferrer">系统信息</a>实例表的「同步」列查看。某个节点载入出错时，该列显示「更新失败」，该节点在下一轮检查时重试。
 3. Master 实例和 Worker 实例（`NODE_TYPE`）在保存和同步设置时没有区别，可以在任一节点保存。
+
+「身份验证 › 自定义 OAuth」的新增、编辑、删除也会登记同步任务，其他节点约 3 秒内自动加载，不需要重启；它没有周期兜底，集群中尚未升级的旧版本节点仍需重启后才会加载。
 
 以下修改不随同步生效，需要重启：
 
-1. 「身份验证 › 自定义 OAuth」的新增、编辑、删除只在处理该请求的节点生效；其他节点需要重启后才会加载。详见<a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>。
-2. 「请求策略 › 会话与重试」中的「最多缓存会话数」修改后需要重启（使用 Redis 时不涉及），详见<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#保存与生效" target="_blank" rel="noopener noreferrer">请求策略配置</a>。
-3. 部署环境变量只在启动时读取，修改后需要重启，界面中也不显示，例如 `SYNC_FREQUENCY`、`NODE_TYPE` 和 `GLOBAL_API_RATE_LIMIT` 等全局限流变量。
+1. 「请求策略 › 会话与重试」中的「最多缓存会话数」修改后需要重启（使用 Redis 时不涉及），详见<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#保存与生效" target="_blank" rel="noopener noreferrer">请求策略配置</a>。
+2. 部署环境变量只在启动时读取，修改后需要重启，界面中也不显示，例如 `SYNC_FREQUENCY`、`NODE_TYPE` 和 `GLOBAL_API_RATE_LIMIT` 等全局限流变量。
    - 少数环境变量会覆盖界面中的值，例如 `CHANNEL_TEST_FREQUENCY`、`CHANNEL_TEST_ENABLED`，详见<a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies#渠道健康" target="_blank" rel="noopener noreferrer">渠道健康</a>。
 
 ### 前端显示与缓存
@@ -85,7 +90,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **敏感配置**
 
-- 配置键名以 `Token`、`Secret`、`Key`、`secret` 或 `api_key` 结尾的设置（主要是各类密钥、令牌和凭证字段）不会通过设置读取接口返回：整项省略，而不是打码显示，因此界面中这些字段始终为空。
+- 配置键名以 `Token`、`Secret`、`Key`、`secret`、`api_key` 或 `private_key` 结尾的设置（主要是各类密钥、令牌和凭证字段）不会通过设置读取接口返回：整项省略，而不是打码显示，因此界面中这些字段始终为空。
 - 这类字段通常留空表示保留已保存的值，只有输入新值才会提交；部分字段下方提示「留空以保留现有密钥」「留空以保留现有凭证」或「除非正在轮换密钥，否则留空」。例外：「运维 › Worker 代理」中的「Worker URL」为空时保存，「Worker 访问密钥」会被一并清空。自定义 OAuth 的客户端密钥同样不回显，编辑时留空即保留。
 - 设置值在数据库中以明文保存，应同等保护数据库和备份。
 
@@ -114,15 +119,15 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 保存后按以下步骤验证：
 
 1. 确认提示。逐项保存时，每个修改的字段都应有一条「设置更新成功」；出现失败提示时，失败的字段及其后的字段都没有保存。
-2. 刷新页面，核对非敏感字段；敏感字段始终为空，无法通过刷新核对。重要修改在一个同步周期后再刷新复核。
+2. 刷新页面，核对非敏感字段；敏感字段始终为空，无法通过刷新核对。多实例部署时，重要修改在其他节点载入后再刷新复核。
 3. 到真正受影响的入口验证，例如登录、发信、支付沙箱、回调和模型请求。
-4. 多实例部署时，等待一个同步周期后在其他节点验证；修改自定义 OAuth 后，需要先重启其他节点再验证。
+4. 多实例部署时，在<a href="/zh/docs/guide/feature-guide/admin/system-info#节点同步" target="_blank" rel="noopener noreferrer">系统信息</a>实例表的「同步」列确认各节点已载入，再在其他节点验证。
 5. 涉及身份验证、支付、计费、请求策略、SSRF 或对外回调的修改，先在测试实例或维护窗口验证。
 
 ## 注意事项
 
 - **逐项保存不回滚**：一次保存多个字段时，前面的字段已写入；某个字段失败后，其后的字段不再提交，见[保存方式](#保存方式)。
-- **多节点有同步延迟，个别项需要重启**：其他节点随系统设置同步（默认 60 秒）；自定义 OAuth、「最多缓存会话数」和环境变量修改后需要重启，见[生效范围与多实例同步](#生效范围与多实例同步)。
+- **多节点有同步延迟，个别项需要重启**：其他节点约 3 秒内随系统设置同步（最迟一个同步周期，默认 60 秒）；「最多缓存会话数」和环境变量修改后需要重启，见[生效范围与多实例同步](#生效范围与多实例同步)。
 - **显示类设置需刷新页面**：浏览器会缓存站点状态，保存后其他用户最迟刷新页面后显示新值，见[前端显示与缓存](#前端显示与缓存)。
 - **环境变量可能覆盖界面值**：如 `CHANNEL_TEST_FREQUENCY`、`CHANNEL_TEST_ENABLED`，此时修改界面中的值不一定生效。
 - **密钥字段不回显**：留空表示保留已保存的值；「Worker URL」为空时保存会一并清空「Worker 访问密钥」，见[敏感配置与审计记录](#敏感配置与审计记录)。
@@ -173,12 +178,14 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 <Accordion title="多个节点表现暂时不一致">
 **可能原因**：
+- 某个节点载入失败，系统信息实例表的「同步」列显示「更新失败」。
+- 集群中有尚未升级的旧版本节点，只按 `SYNC_FREQUENCY` 周期载入设置，自定义 OAuth 的修改要重启后才加载。
 - 各节点未连接同一个主数据库。
-- `SYNC_FREQUENCY` 的设置与预期不符。
 
 **处理方法**：
-1. 等待一个同步周期（默认 60 秒）。服务端日志每个周期输出一行 `syncing options from database`（设置 `DEFAULT_LANGUAGE=zh-CN` 时为「正在从数据库同步配置项」）。
-2. 修改自定义 OAuth 后，重启其他节点。
+1. 在<a href="/zh/docs/guide/feature-guide/admin/system-info#同步状态" target="_blank" rel="noopener noreferrer">系统信息</a>的实例表中悬停「同步」列，查看失败的项目和错误，并检查该节点的服务端日志。
+2. 等待一个同步周期（默认 60 秒）。服务端日志每个周期输出一行 `syncing options from database`（设置 `DEFAULT_LANGUAGE=zh-CN` 时为「正在从数据库同步配置项」）。
+3. 旧版本节点上仍未加载自定义 OAuth 的修改时，重启该节点。
 </Accordion>
 
 <Accordion title="密钥字段为空">
@@ -211,4 +218,5 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - <a href="/zh/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">用户管理</a>：Root 与 Admin 的角色和权限。
 - <a href="/zh/docs/guide/feature-guide/user/audit-log#事件分类" target="_blank" rel="noopener noreferrer">审计日志</a>：查看修改系统设置等管理员操作的审计记录。
 - <a href="/zh/docs/installation/config-maintenance/environment-variables" target="_blank" rel="noopener noreferrer">环境变量</a>：`SYNC_FREQUENCY`、`NODE_TYPE` 等启动参数。
+- <a href="/zh/docs/guide/feature-guide/admin/system-info" target="_blank" rel="noopener noreferrer">系统信息</a>：实例表「同步」列与节点同步规则。
 - <a href="/zh/docs/installation/deployment-methods/cluster-deployment" target="_blank" rel="noopener noreferrer">集群部署</a>：多节点共享数据库与同步频率。

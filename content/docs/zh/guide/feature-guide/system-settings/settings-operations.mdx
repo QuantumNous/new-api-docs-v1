@@ -1,38 +1,47 @@
 ---
 title: 运维配置
-description: Root 配置系统模式、模型性能指标、邮件发送（SMTP / Resend）与余额提醒、Worker、日志维护、性能保护和版本检查。
+description: Root 配置系统模式、模型性能指标、邮件发送（SMTP / Resend）与余额提醒、Worker、日志维护与系统任务记录、性能保护和版本检查。
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-运维配置位于 `/system-settings/operations`，仅 Root 可访问。
+- 仅 Root 可访问，从侧边栏「管理员」→「系统设置」进入，在左侧导航中选择「运维」下的分区。
+- 配置系统模式、模型性能指标、邮件发送与余额提醒、Worker 代理、日志维护、性能保护和版本检查。
+- 日志清理、缓存清理和执行 GC 都立即执行，不可撤销。
 
-## 运维配置简介
+<Callout type="warn" title="注意">
+- 这些即时运维操作不属于可撤销的表单草稿。
+- 执行前先确认目标、影响范围和恢复方案，并避免在高峰期反复操作。
+</Callout>
 
-该工作区包含「系统行为」「模型性能指标」「邮件与通知」「Worker 代理」「日志维护」「性能」和「系统维护」七个分区。用于配置系统模式、模型性能指标、邮件发送与余额提醒、Worker、日志维护、性能保护和版本检查。
+## 运维配置概览
+
+运维分为七个分区，在左侧导航「运维」下切换，默认打开「系统行为」。
+
+**区域说明：**
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-| 分区 | 入口 | 主要用途 |
+| 分区 | 作用 | 分区内标签 |
 | --- | --- | --- |
-| [系统行为](#系统行为) | `/system-settings/operations/behavior` | 侧边栏默认偏好、演示站与自用模式。 |
-| [模型性能指标](#模型性能指标) | `/system-settings/operations/alerts` | 模型性能指标的记录、刷库与保留。 |
-| [邮件与通知](#邮件与通知) | `/system-settings/operations/email` | 邮件发送方式（SMTP / Resend）与余额不足提醒。 |
-| [Worker 代理](#worker-代理) | `/system-settings/operations/worker` | 指定下载与通知链路的外部代理。 |
-| [日志维护](#日志维护) | `/system-settings/operations/logs` | 消费日志开关、用户日志导出与查询范围、数据库日志与服务器文件清理。 |
-| [性能](#性能) | `/system-settings/operations/performance` | 请求体缓存、资源保护和进程统计。 |
-| [系统维护](#系统维护) | `/system-settings/operations/update-checker` | 版本信息与更新检查。 |
+| [系统行为](#系统行为) | 侧边栏默认偏好、演示站与自用模式。 | — |
+| [模型性能指标](#模型性能指标) | 模型性能指标的记录、刷库与保留。 | — |
+| [邮件与通知](#邮件与通知) | 邮件发送方式（SMTP / Resend）与余额不足提醒。 | — |
+| [Worker 代理](#worker-代理) | 指定下载与通知链路的外部代理。 | — |
+| [日志维护](#日志维护) | 消费日志开关、用户日志导出与查询范围、系统任务记录保留天数、数据库日志与服务器文件清理。 | — |
+| [性能](#性能) | 请求体缓存、资源保护和进程统计。 | — |
+| [系统维护](#系统维护) | 版本信息与更新检查。 | — |
 
 </div>
 
-<Callout type="warn" title="注意">
-  日志删除、缓存清理和强制 GC 都是即时运维操作，不属于可撤销的表单草稿。执行前先确认目标、影响范围和恢复方案，并避免在高峰期反复操作。
+<Callout type="info" title="提示">
+- 保存后无法发信、余额提醒未发送、日志清理一直等待或资源保护未生效时，查看[常见问题](#常见问题)。
 </Callout>
 
 ## 配置分区
 
-运维域下有七个独立分区：
+本节按左侧导航的顺序介绍七个分区，各分区的保存按钮和生效时机见[保存与生效](#保存与生效)。
 
 ### 系统行为
 
@@ -40,15 +49,19 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![系统行为配置](/assets/guide/feature-guide/system-settings-operations-system-behavior.png)
 
-系统行为分区包含三个开关：
+**操作流程：**
+1. 按需开启或关闭三个开关。
+2. 点击页头「保存更改」。
+
+**配置项说明：**
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-| 页面字段 | 配置键 | 默认值 | 实际作用与边界 |
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
-| 默认折叠侧边栏 | `DefaultCollapseSidebar` | `false` | 界面说明为「默认情况下为新用户折叠侧边栏」。 |
-| 演示站点模式 | `DemoSiteEnabled` | `false` | 界面说明为「启用功能受限的演示模式」。 |
-| 自用模式 | `SelfUseModeEnabled` | `false` | 未设置价格的模型按默认倍率 `37.5` 计费并出现在模型列表中，不再因未定价被拒绝；登录页隐藏「注册」链接，但不关闭注册接口。 |
+| 默认折叠侧边栏 | 界面说明为「默认情况下为新用户折叠侧边栏」。 | 开关；当前前端不读取该设置，见[常见问题](#常见问题)。 | 关闭 |
+| 演示站点模式 | 界面说明为「启用功能受限的演示模式」。当前版本不限制任何功能；未设置自定义页脚时，页脚显示「关于我们」「文档」「相关项目」三列链接。 | 开关。 | 关闭 |
+| 自用模式 | 界面说明为「优化系统以适应自托管单用户使用」。未设置价格的模型按默认倍率 `37.5` 计费并出现在模型列表中，不再因未定价被拒绝；登录页隐藏「注册」链接，但不关闭注册接口。 | 开关。 | 关闭 |
 
 </div>
 
@@ -58,26 +71,29 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![模型性能指标配置](/assets/guide/feature-guide/system-settings-operations-model-performance-metrics.png)
 
-模型性能指标从 Relay 请求完成和计费链路收集模型、分组、请求耗时、首 Token 时间、成功率、输出 Token 和生成耗时，用于模型广场等性能展示。
+分区说明为「收集 Relay 延迟和成功率指标，用于模型广场展示。」。指标从 Relay 请求完成和计费链路收集模型、分组、请求耗时、首 Token 时间、成功率、输出 Token 和生成耗时。
+
+**操作流程：**
+1. 按数据量设置是否记录模型性能指标、刷库间隔、聚合时间桶与保留天数。
+2. 点击页头「保存更改」。
+
+<Callout type="info" title="提示">
+- 处理本次查询的节点会直接合并其内存中尚未刷库的数据；多实例部署时，其他节点的样本要等其刷库后才可见，模型广场还会缓存约 1 分钟。不能用保存后的即时空图判断失败。
+- 选择较细的桶或较短的刷库间隔会增加内存、数据库和后台写入负载，应结合模型数量、分组数量和请求量评估。
+</Callout>
+
+**配置项说明：**
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-| 页面字段 | 配置键 | 默认值 | 行为与边界 |
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
-| 启用模型性能指标 | `perf_metrics_setting.enabled` | `true` | 控制是否继续记录 Relay 性能样本。关闭后不会新增样本，刷库循环也会跳过写库和过期清理；已有数据库记录与关闭前的内存聚合桶不会立即清空。 |
-| 刷库间隔（分钟） | `perf_metrics_setting.flush_interval` | `5` | 最小值为 `1`，控制把已完成的内存聚合桶写入数据库以及执行过期数据清理的循环周期，不是前端图表刷新频率。 |
-| 聚合时间桶 | `perf_metrics_setting.bucket_time` | `hour` | 可选 1 分钟、5 分钟和 1 小时；修改后只影响后续样本的分桶。 |
-| 保留天数 | `perf_metrics_setting.retention_days` | `0` | `0` 表示永久保留；正数会在刷库循环中清理更早的性能指标。 |
+| 启用模型性能指标 | 控制是否继续记录 Relay 性能样本。关闭后不会新增样本，刷库循环也会跳过写库和过期清理；已有数据库记录与关闭前的内存聚合桶不会立即清空。 | 开关；关闭时其余三项置灰。 | 开启 |
+| 刷库间隔（分钟） | 控制把已完成的内存聚合桶写入数据库以及执行过期数据清理的循环周期，不是前端图表刷新频率。 | 最小值为 `1`。 | `5` |
+| 聚合时间桶 | 修改后只影响后续样本的分桶。 | 可选「1 分钟」「5 分钟」「1 小时」。 | 1 小时 |
+| 保留天数 | 正数会在刷库循环中清理更早的性能指标。 | `0` 表示永久保留数据。 | `0` |
 
 </div>
-
-操作流程：
-1. 按数据量选择是否记录模型性能指标、刷库间隔、聚合时间桶与保留天数，然后保存。
-2. 检查性能指标时注意：处理本次查询的节点会直接合并其内存中尚未刷库的数据，但多实例部署时，其他节点的样本要等其刷库后才可见，模型广场还会缓存约 1 分钟；不能用保存后的即时空图判断失败。
-
-<Callout type="info" title="提示">
-选择较细的桶或较短的刷库间隔会增加内存、数据库和后台写入负载，应结合模型数量、分组数量和请求量评估。
-</Callout>
 
 ### 邮件与通知
 
@@ -87,30 +103,26 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 系统邮件用于注册验证码、密码重置、用户通知和其他系统邮件，可通过 SMTP 或 Resend API 发送；本分区还包含余额不足提醒。
 
-- 邮件发送方式
+**操作流程：**
+1. 选择「邮件发送方式」。SMTP 需从邮件服务商获取主机、端口、认证账号和授权码或密码，不要把 Web 邮箱登录地址填入主机字段；Resend 需准备已在 Resend 完成验证的发件域名和 API 密钥。
+2. 使用 SMTP 时，按服务商要求选择 SSL/TLS 或 STARTTLS，填写纯邮箱发件地址。除已评估的内部场景外，不启用跳过证书验证。
+3. 填写新的密码、令牌或 API 密钥；不轮换凭证时保留输入框为空。
+4. 根据<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#货币与展示" target="_blank" rel="noopener noreferrer">计费与支付配置</a>中的「显示模式」设置「默认提醒阈值」。
+5. 点击页头「保存更改」。
 
-「邮件发送方式」（`EmailProvider`，默认 `smtp`）可选 SMTP 或 Resend API。只用所选方式发送邮件，另一种方式的配置会保留；所选方式发送失败时不会改用另一种。页面只显示所选方式的字段，保存时最后才写入发送方式，同一次保存中其他配置写入失败时不会切换。
+<Callout type="info" title="提示">
+- 异步发送余额不足通知。用户在<a href="/zh/docs/guide/feature-guide/user/personal-setting#设置通知和行为偏好" target="_blank" rel="noopener noreferrer">个人资料</a>中关闭「余额不足提醒」时不发送；用户设置的非零提醒阈值优先于此全局值。
+- 通知方式由用户设置决定，可以是邮件、Webhook、Bark 或 Gotify；未选择时默认使用邮件。通知失败会写入系统错误日志。
+- 每位用户的同一种通知默认 10 分钟内最多发送 2 条，超出时不发送。条数由环境变量 `NOTIFY_LIMIT_COUNT`（默认 `2`）调整，时间窗口由 `NOTIFICATION_LIMIT_DURATION_MINUTE`（单位分钟，默认 `10`）调整，本页没有对应设置；两者只在启动时读取，修改后需重启 New API。
+</Callout>
 
-- SMTP
+**邮件发送方式：**
 
-选择 SMTP 时，主要配置键如下：
+「邮件发送方式」可选 SMTP 或 Resend API，默认 SMTP；界面说明为「只用所选方式发送邮件，另一种方式的配置会保留。」。所选方式发送失败时不会改用另一种。页面只显示所选方式的字段，保存时最后才写入发送方式，同一次保存中其他配置写入失败时不会切换。
 
-<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+**加密方式说明：**
 
-| 页面字段 | 配置键 | 默认值或格式 | 说明 |
-| --- | --- | --- | --- |
-| SMTP 主机 | `SMTPServer` | 空 | SMTP 提供商的主机名或 IP。 |
-| 端口 | `SMTPPort` | `587` | 常用端口包括 25、465 和 587。 |
-| 跳过 SMTP TLS 证书验证 | `SMTPInsecureSkipVerify` | `false` | 允许自签名或主机名不匹配的 SMTP 证书。 |
-| 用户名 | `SMTPAccount` | 空 | 用于与 SMTP 服务器进行身份验证的账户。 |
-| 密码 / 访问令牌 | `SMTPToken` | 不回显 | 留空以保留现有凭证。 |
-| SMTP 加密方式 | `SMTPSSLEnabled`、`SMTPStartTLSEnabled` | 均关闭 | 选择一种 SMTP 传输加密方式；可选'无加密'、'SSL/TLS'、'STARTTLS'。 |
-| 强制 AUTH LOGIN | `SMTPForceAuthLogin` | `false` | 强制使用 AUTH LOGIN 方法进行 SMTP 认证。 |
-| 发件地址 | `SMTPFrom` | 空；只能是邮箱地址或留空 | 只填纯邮箱地址，例如 `noreply@example.com`；留空时使用「用户名」。收件人看到的发件人名称固定为系统名称，不能在此设置。 |
-
-</div>
-
-- 传输加密模式
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
 | 模式 | 行为与建议 |
 | --- | --- |
@@ -118,52 +130,63 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | SSL/TLS | 建立隐式 TLS 连接。即使没有显式选择，端口为 `465` 且未启用 STARTTLS 时，当前后端也会使用隐式 TLS。 |
 | STARTTLS | 先建立普通 SMTP 连接，再要求服务器支持并升级到 STARTTLS；服务器未声明 STARTTLS 时发信失败。 |
 
-- Resend API
+</div>
 
-选择 Resend API 时显示以下字段：
+**SMTP 配置项说明：**
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-| 页面字段 | 配置键 | 默认值或格式 | 说明 |
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
-| 发件邮箱地址 | `ResendFrom`（地址部分） | 空；必须是有效邮箱 | 域名须已在 Resend 完成验证。 |
-| 发件人名称 | `ResendFrom`（名称部分） | 空 | 收件人看到的发件人名称，留空时使用「系统名称」；不能包含换行。保存时与地址合并为 `"名称" <地址>` 存入 `ResendFrom`。 |
-| Resend API 密钥 | `ResendApiKey` | 不回显 | 留空以保留现有密钥；从未配置过密钥时必须填写，否则提示「请先配置 Resend API 密钥，再启用 Resend」。 |
+| SMTP 主机 | SMTP 提供商的主机名或 IP。 | 不要填入 Web 邮箱登录地址。 | 空 |
+| 端口 | 常用端口包括 25、465 和 587。 | 1–65535 的整数，否则提示「端口必须为正整数」。 | `587` |
+| SMTP 加密方式 | 选择一种 SMTP 传输加密方式。 | 可选「无加密」「SSL/TLS」「STARTTLS」，各方式见上方「加密方式说明」。初始值可由环境变量设定，见表后「SMTP 环境变量」。 | 无加密 |
+| 跳过 SMTP TLS 证书验证 | 允许自签名或主机名不匹配的 SMTP 证书。 | 开关。初始值可由环境变量设定，见表后「SMTP 环境变量」。 | 关闭 |
+| 强制 AUTH LOGIN | 强制使用 AUTH LOGIN 方法进行 SMTP 认证。 | 开关。 | 关闭 |
+| 用户名 | 用于与 SMTP 服务器进行身份验证的账户。 | 按服务商要求填写。 | 空 |
+| 发件地址 | 只填纯邮箱地址，例如 `noreply@example.com`；留空时使用「用户名」。收件人看到的发件人名称固定为系统名称，不能在此设置。 | 只能是邮箱地址或留空，否则提示「请输入有效的邮箱地址或留空」。 | 空 |
+| 密码 / 访问令牌 | SMTP 认证使用的密码或访问令牌。 | 不回显；留空以保留现有凭证。 | 空 |
 
 </div>
 
-Resend 为当前发送方式时，后端会拒绝把密钥或发件地址改成无效值。
+**SMTP 环境变量：**
+- `SMTP_STARTTLS_ENABLE`（布尔，默认 `false`；旧名 `SMTP_STARTTLS_ENABLED` 仍可用）决定「SMTP 加密方式」初始是否为 STARTTLS。
+- `SMTP_INSECURE_SKIP_VERIFY`（布尔，默认 `false`；旧名 `SMTP_TLS_INSECURE_SKIP_VERIFY` 仍可用）决定「跳过 SMTP TLS 证书验证」的初始值。
+- 在页面保存过对应项后，以页面保存的值为准。
 
-<Callout type="info" title="提示">
-SMTP 连接和 Resend 请求（`https://api.resend.com/emails`）都由后端直接发出，不经过 Worker 代理或 URL SSRF 校验；Resend 拒绝发送时，具体原因只写入服务端日志。生产环境应确认 DNS、端口、证书、认证、SPF、DKIM、DMARC 和发件人策略。
-</Callout>
-
-- 配置流程
-
-1. 选择发送方式。SMTP 需从邮件服务商获取主机、端口、认证账号和授权码或密码，不要把 Web 邮箱登录地址填入主机字段；Resend 需准备已在 Resend 完成验证的发件域名和 API 密钥。
-2. 使用 SMTP 时，按服务商要求选择 SSL/TLS 或 STARTTLS，填写纯邮箱发件地址。除已评估的内部场景外，不启用跳过证书验证。
-3. 填写新 Token 并保存；不轮换凭证时保留输入框为空。
-
-- 余额不足提醒
+**Resend API 配置项说明：**
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-| 页面字段 | 配置键 | 默认值 | 说明 |
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
-| 余额不足提醒 | `QuotaRemindEnabled` | `true` | 界面说明为「用户余额低于阈值时，通过其选择的通知方式提醒」，实际只在一次扣费跨过阈值时提醒（见下文）。关闭后全站不发送余额提醒。 |
-| 默认提醒阈值 (USD) | `QuotaRemindThreshold` | `1000`（内部 quota） | 仅在开关开启时显示。括号内随「显示模式」变为 USD、CNY、自定义符号或 Tokens；按显示金额输入，保存时换算为内部 quota 单位。例如默认值 `1000` quota 在 USD 显示下为 `0.002`。 |
+| 发件邮箱地址 | 域名须已在 Resend 完成验证。 | 必须是有效邮箱，否则提示「请输入有效的发件邮箱地址」；Resend 为当前发送方式时，服务端拒绝保存无效地址。 | 空 |
+| 发件人名称 | 收件人看到的发件人名称，留空使用站点名称。 | 不能包含换行符或空字符，否则提示「发件人名称不能包含换行符或空字符」；保存时与发件邮箱地址合并保存。 | 空 |
+| Resend API 密钥 | 后端调用 Resend 发送邮件时使用的 API 密钥。 | 不回显，留空以保留现有密钥；从未配置过密钥时必须填写，否则提示「请先配置 Resend API 密钥，再启用 Resend」；Resend 为当前发送方式时，服务端拒绝保存无效密钥。 | 空 |
 
 </div>
 
-Relay 结算链路会分别检查钱包和订阅额度：钱包按 `UserQuota - (quota + preConsumedQuota)` 比较，订阅按订阅总额减已使用量比较。只有本次扣费使余额从阈值及以上降到阈值以下时才提醒一次；余额已低于阈值时不再重复提醒，充值回到阈值及以上后才可能再次提醒。
-
-操作流程：
-1. 根据<a href="/zh/docs/guide/feature-guide/system-settings/settings-billing#货币与展示" target="_blank" rel="noopener noreferrer">计费与支付配置</a>中的「显示模式」设置默认提醒阈值。
-
 <Callout type="info" title="提示">
-- 异步发送余额不足通知。用户在<a href="/zh/docs/guide/feature-guide/user/personal-setting#设置通知和行为偏好" target="_blank" rel="noopener noreferrer">个人资料</a>中关闭「余额不足提醒」时不发送；用户设置的非零提醒阈值优先于此全局值。
-- 通知方式由用户设置决定，可以是邮件、Webhook、Bark 或 Gotify；未选择时默认使用邮件。通知失败会写入系统错误日志。
+- SMTP 连接和 Resend 请求都由后端直接发出，不经过 Worker 代理或 URL SSRF 校验。
+- Resend 拒绝发送时，具体原因只写入服务端日志。
+- 生产环境应确认 DNS、端口、证书、认证、SPF、DKIM、DMARC 和发件人策略。
 </Callout>
+
+**提醒规则：**
+- Relay 结算时分别检查钱包和订阅额度：钱包按本次扣费前后的余额比较，订阅按订阅总额减已使用量比较。
+- 只有本次扣费使余额从阈值及以上降到阈值以下时才提醒一次。
+- 余额已低于阈值时不再重复提醒，充值回到阈值及以上后才可能再次提醒。
+
+**余额不足提醒配置项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 余额不足提醒 | 界面说明为「用户余额低于阈值时，通过其选择的通知方式提醒」，实际只在一次扣费跨过阈值时提醒（见上方「提醒规则」）。关闭后全站不发送余额提醒。 | 开关。 | 开启 |
+| 默认提醒阈值 (USD) | 余额提醒的全局默认阈值。 | 仅在开关开启时显示；不小于 0，否则提示「必须大于或等于 0」。括号内随「显示模式」变为 USD、CNY、自定义符号或 Tokens；按显示金额输入，保存时换算为配额点数。 | `1000` 配额点数（USD 显示下为 `0.002`） |
+
+</div>
 
 ### Worker 代理
 
@@ -173,31 +196,29 @@ Relay 结算链路会分别检查钱包和订阅额度：钱包按 `UserQuota - 
 
 Worker 代理用于源码中明确接入的服务端外部请求链路，例如远程文件或图片下载、用户 Webhook，以及 Bark 和 Gotify 通知。它不是渠道 Relay、支付、OAuth 或所有出站流量的通用代理。
 
-<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
-
-| 页面字段 | 配置键 | 默认值或校验 | 行为 |
-| --- | --- | --- | --- |
-| Worker URL | `WorkerUrl` | 空；非空时必须以 `http://` 或 `https://` 开头 | 保存时移除末尾 `/`；非空时请求将被转发到此 Worker。 |
-| Worker 访问密钥 | `WorkerValidKey` | 不回显 | 随 Worker 请求发送，用于与 Worker 进行身份验证。留空以保留现有密钥。 |
-| 允许 HTTP 图像请求 | `WorkerAllowHttpImageRequestEnabled` | `false` | 界面说明为「当代理通过 HTTP 获取图像的 worker 时启用」。 |
-
-</div>
-
-- 配置与停用
-
+**操作流程：**
 1. 准备受控的 Worker 服务，确认其接受 New API 的请求格式并校验访问密钥，再填写 URL 与密钥。
-2. 按目标资源的协议决定是否允许 HTTP，点击「保存 Worker 设置」。
+2. 按目标资源的协议决定是否允许 HTTP，点击页头「保存 Worker 设置」。
 3. 停用时清空 Worker URL 并保存，已保存的访问密钥会一并清除；若同时在密钥框输入了新值，则保存为该新值。仅清空密钥输入框但保留 URL，不会清除旧密钥。
 
-<Callout type="info" title="提示">
+<Callout type="warn" title="注意">
 - Worker 负载可能携带目标 URL、请求头、通知内容和认证信息。
-- `WorkerValidKey` 作为请求 JSON 的 `key` 字段发送，是否校验由 Worker 实现决定；New API 不使用它验证 Worker 响应，也不能用它替代目标 URL 的访问控制。
+- 「Worker 访问密钥」随请求 JSON 发送，是否校验由 Worker 实现决定；New API 不使用它验证 Worker 响应，也不能用它替代目标 URL 的访问控制。
 - 普通下载、Webhook 和通知链路仍会在进入 Worker 前使用相应的 SSRF 校验，但 Worker URL 本身是 Root 配置的外部信任边界。
+- 只使用由你控制并能审计日志的 Worker。启用 Worker 后，敏感通知或远程资源请求可能经过该服务；确认其 TLS、密钥验证、日志脱敏、超时、目标过滤和数据保留策略。
 </Callout>
 
-<Callout type="warn" title="注意">
-  只使用由你控制并能审计日志的 Worker。启用 Worker 后，敏感通知或远程资源请求可能经过该服务；确认其 TLS、密钥验证、日志脱敏、超时、目标过滤和数据保留策略。
-</Callout>
+**配置项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| Worker URL | 保存时移除末尾 `/`；非空时请求将被转发到此 Worker。 | 非空时必须以 `http://` 或 `https://` 开头，否则提示「请提供以 http:// 或 https:// 开头的有效 URL」。 | 空 |
+| Worker 访问密钥 | 随 Worker 请求发送，用于与 Worker 进行身份验证。 | 不回显；留空以保留现有密钥。 | 空 |
+| 允许 HTTP 图像请求 | 界面说明为「当代理通过 HTTP 获取图像的 worker 时启用」。 | 开关。 | 关闭 |
+
+</div>
 
 ### 日志维护
 
@@ -205,64 +226,78 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 
 ![日志维护配置](/assets/guide/feature-guide/system-settings-operations-log-maintenance.png)
 
-日志维护分为记录配额使用量、日志查询与导出、清理历史日志和服务器日志管理。两种清理影响不同的数据源。
+日志维护分为「日志记录」「日志查询与导出」「系统任务记录」「清理历史日志」「服务器日志管理」五组。前三组共用页头「保存日志设置」；两种清理立即执行，影响不同的数据源。
 
-- 记录配额使用量
-
-1. 「记录配额使用量」对应 `LogConsumeEnabled`，默认开启。
-2. 它控制是否创建逐请求的消费日志，包括普通 Relay 和异步任务结算产生的消费记录。
-3. 关闭后会减少数据库写入，但使用日志、消费统计、数据看板统计和依赖这些记录的分析将缺少新数据。
-4. 调整开关后点击「保存日志设置」。
+**日志设置操作流程：**
+1. 设置「记录配额使用量」「允许用户导出日志」「日志最长时间范围（天）」和「已结束任务保留天数」。
+2. 点击页头「保存日志设置」。
 
 <Callout type="info" title="提示">
-该开关只控制消费日志：不会停止错误、充值、系统或退款日志，不影响审计日志，也不会关闭服务器文本日志、Midjourney 任务表或异步任务表。
+- 「记录配额使用量」只控制消费日志：不会停止错误、充值、系统或退款日志，不影响审计日志，也不会关闭服务器文本日志、Midjourney 任务表或异步任务表。
+- 错误日志本身只在环境变量 `ERROR_LOG_ENABLED` 为 `true` 时写入（默认 `false`，本页没有对应设置）。
 </Callout>
 
-- 日志查询与导出
+**日志设置配置项说明：**
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-| 页面字段 | 配置键 | 默认值或校验 | 行为与边界 |
-| --- | --- | --- | --- |
-| 允许用户导出日志 | `log_setting.user_export_enabled` | `true` | 用户可以在使用日志页面下载自己的日志。管理员始终可以导出。关闭后普通用户的导出请求会被拒绝。 |
-| 日志最长时间范围（天） | `log_setting.max_range_days` | `365`；整数，最小 `1` | 用户在日志和数据看板中一次最多能查看的时间范围，也是每次导出的最长时间范围。未指定开始时间时按该范围回溯，超出时报错。每次导出都受此限制，管理员查询日志不受限。 |
+| 配置项 | 所属区域 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- | --- |
+| 记录配额使用量 | 日志记录 | 是否创建逐请求的消费日志，包括普通 Relay 和异步任务结算产生的消费记录。界面说明为「跟踪每个请求的消耗，以支持使用情况分析。保持开启会增加数据库写入。」 | 开关；关闭后使用日志、消费统计、数据看板统计和依赖这些记录的分析将缺少新数据。 | 开启 |
+| 允许用户导出日志 | 日志查询与导出 | 用户可以在使用日志页面下载自己的日志。管理员始终可以导出。 | 开关；关闭后普通用户的导出请求会被拒绝。 | 开启 |
+| 日志最长时间范围（天） | 日志查询与导出 | 用户在日志和数据看板中一次最多能查看的时间范围，也是每次导出的最长时间范围。未指定开始时间时按该范围回溯，超出时报错。每次导出都受此限制，管理员查询日志不受限。 | 整数，最小 `1`。 | `365` |
+| 已结束任务保留天数 | 系统任务记录 | 界面说明为「超过这个天数的已结束系统任务每天自动删除。」。每种类型最新的一条保留，由 Master 实例执行，规则见<a href="/zh/docs/guide/feature-guide/admin/system-info#任务执行与保留" target="_blank" rel="noopener noreferrer">系统信息</a>。 | 整数，最小 `1`。 | `30` |
 
 </div>
 
-两项与「记录配额使用量」共用「保存日志设置」按钮。
+**清理历史日志：**
 
-- 清理历史日志
+界面说明为「移除所选时间戳之前创建的所有日志条目。」。清理作用于执行节点连接的日志库：设置环境变量 `LOG_SQL_DSN` 时为独立日志库，否则为主数据库。
 
-清理作用于执行节点连接的 `LOG_DB`，移除所选时间戳之前创建的所有日志条目。
-
-1. 先归档必要数据，在日期与时间控件中选择截止时间，或使用「24 小时前」「7 天前」「30 天前」快捷项。
-2. 点击「清理日志」，在确认框中确认删除；系统会创建 log_cleanup 系统任务。
-3. 观察进度与已处理数量。任务处于待执行或运行中时，页面不会再发起同类任务；关闭页面不等于取消后台清理。
-4. 成功时显示删除数量或“没有匹配日志”的提示；失败时查看任务错误。
-
-| 任务状态 | 含义与处理 |
-| --- | --- |
-| `pending` | 等待运行器领取；长期等待时检查 Master 实例和系统任务运行器。 |
-| `running` | 正在清理并更新进度，不要重复发起。 |
-| `succeeded` | 本次任务完成。 |
-| `failed` | 查看错误并检查日志库与运行器；已完成的删除不会自动恢复。 |
+**清理日志操作流程：**
+1. 先归档必要数据。
+2. 在日期与时间控件中选择截止时间（默认 30 天前），或使用「24 小时前」「7 天前」「30 天前」快捷项。
+3. 点击「清理日志」。
+4. 在确认框「确认日志清理」中点击「删除日志」，提示「日志清理任务已启动。」，系统创建「日志清理」系统任务。
 
 <Callout type="info" title="提示">
+- 未选择时间时提示「清除日志前请选择一个时间戳。」。
+- 任务等待或运行中时，按钮显示「正在清理...」且不可用；关闭页面不等于取消后台清理，重新打开本页会接回进行中的任务。
 - 此操作不会清理 `quota_data` 聚合数据、性能指标、审计日志、绘图与异步任务记录，也不会删除服务器上的日志文件。
 - 多个节点共享日志库时，删除会影响共同的日志历史，不能把它当作只清理某一个节点的日志。
+- 任务状态见<a href="/zh/docs/guide/feature-guide/admin/system-info#系统任务状态" target="_blank" rel="noopener noreferrer">系统信息</a>。
 </Callout>
 
-- 服务器日志管理
+**清理结果说明：**
 
-服务器日志管理只在配置了日志目录时可用，并且只扫描该目录下名称匹配 `oneapi-*.log` 的文件。<br/>
-可查看服务器日志目录、日志文件数、日志总大小和时间范围；服务器日志提供两种清理方式：
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-1. 按数量：按文件名（含时间戳）从新到旧保留最近 N 个文件，删除其余日志文件。
-2. 按天数：保留最近 N 天，删除修改时间早于 N 天前的日志文件。
+| 情形 | 界面显示 | 后续操作 |
+| --- | --- | --- |
+| 进行中 | 「日志清理进度」卡片，显示百分比和「已处理 … / … 条日志。」 | 等待完成，不要重复发起。 |
+| 完成 | 「已删除 … 条日志。」或「没有日志条目匹配所选时间。」 | — |
+| 失败 | 「清理日志失败」或任务的错误原文 | 查看错误并检查日志库与 Master 实例；已完成的删除不会自动恢复。 |
+
+</div>
+
+**服务器日志管理：**
+
+界面说明为「管理服务器运行日志文件。日志文件会随运行时间不断累积，建议定期清理以释放磁盘空间。」，下方显示「日志目录」「日志文件数」「日志总大小」「时间范围」。日志目录由启动参数 `--log-dir` 指定（默认 `./logs`），未配置时显示「服务器日志功能未启用（未配置日志目录）」。只扫描该目录下名称匹配 `oneapi-*.log` 的文件。
+
+**清理日志文件操作流程：**
+1. 在「清理方式」中选择「保留最近 N 个文件」或「保留最近N天」，并填写「保留文件数」或「保留天数」。
+2. 点击「清理日志文件」。
+3. 在确认框「确认清理日志文件？」中点击「确认清理」，成功提示「已清理 … 个日志文件，释放 …」。
 
 <Callout type="warn" title="注意">
-  数据库日志和服务器日志文件的删除不可恢复。清理前确认审计、争议处理、支付、合规和故障排查所需的留存周期，并完成必要的数据库或日志归档。
+- 数据库日志和服务器日志文件的删除不可恢复。
+- 清理前确认审计、争议处理、支付、合规和故障排查所需的留存周期，并完成必要的数据库或日志归档。
 </Callout>
+
+**清理规则：**
+1. 按数量：按文件名（含时间戳）从新到旧保留最近 N 个文件，删除其余日志文件。
+2. 按天数：保留最近 N 天，删除修改时间早于 N 天前的日志文件。
+3. 当前活动日志始终跳过；数值小于 1 时提示「请输入有效的数值」。
 
 ### 性能
 
@@ -270,64 +305,71 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 
 ![性能配置](/assets/guide/feature-guide/system-settings-operations-performance.png)
 
-性能分区同时管理请求体磁盘缓存、请求体内存缓存和系统性能监控。
+分区标题为「性能设置」，分为「磁盘缓存设置」「系统性能监控」两组设置和「性能监控」工具栏；两组设置共用页头「保存更改」。
 
-- 请求体磁盘缓存
-
-启用后，达到阈值且未超过当前缓存容量边界的大请求体或文件数据会临时存到磁盘，以减少内存占用；不满足条件时继续使用内存。
-
-<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap [&_td_code]:wrap-anywhere">
-
-| 页面字段 | 配置键 | 默认值或校验 | 行为与边界 |
-| --- | --- | --- | --- |
-| 启用磁盘缓存 | `performance_setting.disk_cache_enabled` | `false` | 启用磁盘缓存后，大请求体将临时存储到磁盘而非内存，可显著降低内存占用。建议在 SSD 环境下使用。 |
-| 磁盘缓存阈值 (MB) | `performance_setting.disk_cache_threshold_mb` | `10 MB`；最小 `1 MB` | 请求体超过此大小时使用磁盘缓存 |
-| 磁盘缓存最大总量 (MB) | `performance_setting.disk_cache_max_size_mb` | `1024 MB`；最小 `100 MB` | 按当前进程统计判断“现有用量 + 新请求大小”是否超过该值；它不是操作系统磁盘配额。 |
-| 缓存目录 | `performance_setting.disk_cache_path` | 空 | 留空使用系统临时目录下的 `new-api-body-cache`；非容器环境可编辑，容器环境不显示此字段，应通过挂载和容器存储策略管理。 |
-
-</div>
-
-- 系统性能监控
-
-系统性能监控默认开启。后台约每 5 秒采集 CPU、内存和缓存目录所在磁盘的使用率；CPU 和内存优先按容器 cgroup 配额计算，取不到时使用宿主机数值。当某个阈值大于 `0`，且连续 3 次采样（约 15 秒）的整数使用率都严格高于阈值时，新 Relay 请求会被拒绝并返回 HTTP `503`；任一次采样回落即恢复。关闭监控或调高阈值后立即放行，采样超过 30 秒未更新时也不拒绝。
-
-<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
-
-| 页面字段 | 配置键 | 默认值或校验 |
-| --- | --- | --- |
-| 启用性能监控 | `performance_setting.monitor_enabled` | `true` |
-| CPU 阈值 (%) | `performance_setting.monitor_cpu_threshold` | `90`；前端最小值 `0`，没有前端最大值限制 |
-| 内存阈值 (%) | `performance_setting.monitor_memory_threshold` | `90`；`0–100` |
-| 磁盘阈值 (%) | `performance_setting.monitor_disk_threshold` | `95`；`0–100` |
-
-</div>
+**操作流程：**
+1. 根据实例的磁盘空间和请求体大小设置缓存阈值与最大总量；不要把最大缓存值当作已经预留的磁盘空间。
+2. 设置资源保护阈值，点击页头「保存更改」；按每个维度的单位和范围填写，不把 CPU 校验范围套用到内存或磁盘。
+3. 先使用「刷新统计」观察用量，再按需要单独执行「清理不活跃缓存」「重置统计」或「执行 GC」。
+4. 多实例部署要分别检查目标节点。缓存清理不可恢复，重置命中次数也不能代替释放缓存或清理日志。
 
 <Callout type="info" title="提示">
-- 资源保护使用周期性快照，不是排队或自动扩容系统。启用后通常每 5 秒更新一次；
-- 资源保护中间件挂载在 Playground、`/v1`（含视频生成）、Gemini（`/v1beta`）、Midjourney 和任务插件等 Relay 路径，不影响登录、普通管理 API 或全部后台任务。
+- 资源保护使用周期性快照，不是排队或自动扩容系统。启用后通常每 5 秒更新一次。
+- 资源保护作用于 Playground、OpenAI 兼容接口（含视频生成）、Gemini、Midjourney 和任务插件等 Relay 请求，不影响登录、普通管理接口或全部后台任务。
 </Callout>
 
-- 性能统计与操作
+**性能监控操作说明：**
 
 页面显示处理该请求的节点上的磁盘／内存缓存用量和命中次数、活动缓存数量、缓存目录文件、磁盘空间、Go 内存以及 Goroutine 数量，并提供以下操作：
 
-| 操作 | 实际影响 |
-| --- | --- |
-| 刷新统计 | 重新获取处理该请求的节点的统计信息。 |
-| 清理不活跃缓存 | 删除缓存目录中修改时间超过 10 分钟的普通文件。实现只按文件修改时间判断，没有额外核对文件是否仍被请求引用；高峰期或存在长时间请求时应谨慎执行。 |
-| 重置统计 | 只清零磁盘和内存缓存命中次数，不清空活动缓存、当前用量或目录文件。 |
-| 执行 GC | 在处理该请求的节点上立即调用垃圾回收，可能造成短暂延迟抖动。 |
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 操作 | 位置 | 说明 |
+| --- | --- | --- |
+| 刷新统计 | 「性能监控」标题右侧 | 重新获取处理该请求的节点的统计信息。 |
+| 清理不活跃缓存 | 「性能监控」标题右侧 | 先弹出确认框「确认清理不活跃的磁盘缓存？」，说明「这将删除超过 10 分钟未使用的临时缓存文件」，点击「确认」后删除缓存目录中修改时间超过 10 分钟的普通文件，提示「磁盘缓存已清理」。实现只按文件修改时间判断，没有额外核对文件是否仍被请求引用；高峰期或存在长时间请求时应谨慎执行。 |
+| 重置统计 | 「性能监控」标题右侧 | 点击后立即执行，没有确认框，提示「统计已重置」。只清零磁盘和内存缓存命中次数，不清空活动缓存、当前用量或目录文件。 |
+| 执行 GC | 「性能监控」标题右侧 | 点击后立即执行，没有确认框，提示「GC 已执行」。在处理该请求的节点上立即调用垃圾回收，可能造成短暂延迟抖动。 |
+
+</div>
 
 <Callout type="info" title="提示">
 这些统计和操作只作用于处理该请求的节点，不会自动遍历其他节点。
 </Callout>
 
-- 配置与操作顺序
+**磁盘缓存设置：**
 
-1. 根据实例的磁盘空间和请求体大小设置缓存阈值与最大总量；不要把最大缓存值当作已经预留的磁盘空间。
-2. 设置资源保护阈值并保存；按每个维度的单位和范围填写，不把 CPU 校验范围套用到内存或磁盘。
-3. 先使用「刷新统计」观察用量，再按需要单独执行「清理不活跃缓存」「重置统计」或「执行 GC」。
-4. 多实例部署要分别检查目标节点。缓存清理不可恢复，重置命中次数也不能代替释放缓存或清理日志。
+启用后，达到阈值且未超过当前缓存容量边界的大请求体或文件数据会临时存到磁盘，以减少内存占用；不满足条件时继续使用内存。
+
+**磁盘缓存设置配置项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 启用磁盘缓存 | 启用磁盘缓存后，大请求体将临时存储到磁盘而非内存，可显著降低内存占用。建议在 SSD 环境下使用。 | 开关；关闭时其余三项置灰。 | 关闭 |
+| 磁盘缓存阈值 (MB) | 请求体超过此大小时使用磁盘缓存。 | 最小 `1`。 | `10` |
+| 磁盘缓存最大总量 (MB) | 按当前进程统计判断“现有用量 + 新请求大小”是否超过该值；它不是操作系统磁盘配额。 | 最小 `100`；下方显示「可用空间: … / 总空间: …」，可用空间小于该值时显示警告。 | `1024` |
+| 缓存目录 | 留空使用系统临时目录下的 `new-api-body-cache`；容器环境应通过挂载和容器存储策略管理。 | 占位「留空使用系统临时目录」；容器环境不显示此字段。 | 空 |
+
+</div>
+
+**系统性能监控：**
+
+系统性能监控默认开启。后台约每 5 秒采集 CPU、内存和缓存目录所在磁盘的使用率；CPU 和内存优先按容器 cgroup 配额计算，取不到时使用宿主机数值。当某个阈值大于 `0`，且连续 3 次采样（约 15 秒）的整数使用率都严格高于阈值时，新 Relay 请求会被拒绝并返回 HTTP `503`；任一次采样回落即恢复。关闭监控或调高阈值后立即放行，采样超过 30 秒未更新时也不拒绝。
+
+**系统性能监控配置项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 启用性能监控 | 资源使用率超过阈值时拒绝新的 Relay 请求。 | 开关；关闭时三个阈值置灰。 | 开启 |
+| CPU 阈值 (%) | CPU 使用率阈值。 | 最小 `0`，没有前端最大值限制；`0` 表示不检查该维度。 | `90` |
+| 内存阈值 (%) | 内存使用率阈值。 | `0–100`；`0` 表示不检查该维度。 | `90` |
+| 磁盘阈值 (%) | 缓存目录所在磁盘的使用率阈值。 | `0–100`；`0` 表示不检查该维度。 | `95` |
+
+</div>
 
 ### 系统维护
 
@@ -335,25 +377,28 @@ Worker 代理用于源码中明确接入的服务端外部请求链路，例如�
 
 ![系统维护配置](/assets/guide/feature-guide/system-settings-operations-system-maintenance.png)
 
-系统维护分区展示 `/api/status` 返回的当前版本和进程启动时间，并允许浏览器检查 GitHub Release。
+分区显示「当前版本」和「运行时间始于」，可检查 GitHub 上的 Release；本分区没有保存按钮。
 
-点击「检查更新」打开「系统更新」对话框，浏览器直接请求：
-
-```text
-https://api.github.com/repos/QuantumNous/new-api/releases?per_page=100
-```
-
-请求超时为 10 秒。页面忽略草稿和无法解析版本号的标签，按版本号（同一版本号下从低到高依次为 alpha、beta、rc、正式版、patch）选出最新的一个，预发布版也参与比较并标注「预发布版」；只有最新版本高于当前版本、且该版本未被忽略时，才显示「可更新」。对话框可「重新检查」「忽略该版本提醒」（只记录在当前浏览器）或「前往 GitHub」。Admin 及以上角色登录后，页头的版本号也是同一入口，页面可见且在线时浏览器每小时自动检查一次。
+**操作流程：**
+1. 点击「检查更新」，打开「系统更新」对话框。
+2. 按需点击「重新检查」「忽略该版本提醒」或「前往 GitHub」。
 
 <Callout type="warn" title="注意">
-  更新检查不会下载代码、验证升级兼容性、替换二进制、拉取镜像、迁移数据库、重建容器、重启服务或自动回滚。查看 Release 后，应按照实际部署方式制定备份、测试、升级和恢复流程。
+更新检查不会下载代码、验证升级兼容性、替换二进制、拉取镜像、迁移数据库、重建容器、重启服务或自动回滚。查看 Release 后，应按照实际部署方式制定备份、测试、升级和恢复流程。
 </Callout>
+
+**检查规则：**
+- 浏览器直接访问 GitHub 获取 Release 列表，请求超时为 10 秒。
+- 页面忽略草稿和无法解析版本号的标签，按版本号（同一版本号下从低到高依次为 alpha、beta、rc、正式版、patch）选出最新的一个；预发布版也参与比较并标注「预发布版」。
+- 只有最新版本高于当前版本、且该版本未被忽略时，才显示「可更新」。
+- 「忽略该版本提醒」只记录在当前浏览器。
+- Admin 及以上角色登录后，页头的版本号也是同一入口；页面可见且在线时，浏览器每小时自动检查一次。
 
 ## 保存与生效
 
-保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>，浏览器何时显示新值见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#前端显示与缓存" target="_blank" rel="noopener noreferrer">前端显示与缓存</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点随系统设置同步（默认 60 秒）；各配置项读取新值的时机如下：
+保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>，浏览器何时显示新值见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#前端显示与缓存" target="_blank" rel="noopener noreferrer">前端显示与缓存</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点约 3 秒内随系统设置同步（最迟一个同步周期，默认 60 秒）。同步周期由环境变量 `SYNC_FREQUENCY` 调整，单位为秒。本页提到的环境变量都只在启动时读取，修改后需重启 New API。各配置项读取新值的时机如下：
 
-### 系统行为与性能指标
+**系统行为与性能指标：**
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
@@ -369,7 +414,7 @@ https://api.github.com/repos/QuantumNous/new-api/releases?per_page=100
 
 </div>
 
-### 邮件、通知与 Worker
+**邮件、通知与 Worker：**
 
 <div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
 
@@ -377,24 +422,25 @@ https://api.github.com/repos/QuantumNous/new-api/releases?per_page=100
 | --- | --- | --- |
 | 邮件发送方式、SMTP 和 Resend 配置 | 页头「保存更改」 | 下一封邮件发送时读取。 |
 | 余额不足提醒、默认提醒阈值 (USD) | 页头「保存更改」 | 下一次扣费结算时判断，用户个人设置的阈值优先；个人设置页显示的默认值刷新页面后更新。 |
-| Worker URL、Worker 访问密钥、允许 HTTP 图像请求 | 「保存 Worker 设置」 | 下一次远程文件下载、Webhook、Bark 和 Gotify 通知请求起。 |
+| Worker URL、Worker 访问密钥、允许 HTTP 图像请求 | 页头「保存 Worker 设置」 | 下一次远程文件下载、Webhook、Bark 和 Gotify 通知请求起。 |
 
 </div>
 
-### 日志与清理
+**日志与清理：**
 
 <div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
 
 | 配置项 | 保存方式 | 生效时机 |
 | --- | --- | --- |
-| 记录配额使用量 | 「保存日志设置」 | 关闭后，之后的请求不再写入消费日志，已有日志不变。 |
-| 允许用户导出日志、日志最长时间范围（天） | 「保存日志设置」 | 服务端在每次导出和查询时按新设置校验；用户界面的导出按钮和默认范围刷新页面后更新。 |
+| 记录配额使用量 | 页头「保存日志设置」 | 关闭后，之后的请求不再写入消费日志，已有日志不变。 |
+| 允许用户导出日志、日志最长时间范围（天） | 页头「保存日志设置」 | 服务端在每次导出和查询时按新设置校验；用户界面的导出按钮和默认范围刷新页面后更新。 |
+| 已结束任务保留天数 | 页头「保存日志设置」 | 每天一次；下一次自动清理按新值删除已结束的系统任务，由 Master 实例执行。 |
 | 清理日志 | 确认后创建系统任务，不经过保存按钮 | 由 Master 实例执行：处理该请求的节点是 Master 实例时立即开始，否则约 15 秒内开始；清理执行节点连接的日志库。 |
 | 服务器日志清理 | 确认后立即执行 | 只作用于处理该请求的节点的日志目录。 |
 
 </div>
 
-### 性能与资源保护
+**性能与资源保护：**
 
 <div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
 
@@ -402,18 +448,18 @@ https://api.github.com/repos/QuantumNous/new-api/releases?per_page=100
 | --- | --- | --- |
 | 磁盘缓存的开关、阈值、最大总量和目录 | 页头「保存更改」 | 保存后立即应用到运行配置，之后缓存的请求体按新设置处理。 |
 | 性能监控的开关和阈值 | 页头「保存更改」 | 关闭监控或调高阈值后，下一个请求起即放行；开启监控或调低阈值后，需连续 3 次采样（约 15 秒）都超过阈值，才开始拒绝新的 Relay 请求。 |
-| 清理不活跃缓存、重置统计、执行 GC | 确认后立即执行，不经过保存按钮 | 只作用于处理该请求的节点。 |
+| 清理不活跃缓存 | 确认后立即执行，不经过保存按钮 | 只作用于处理该请求的节点。 |
+| 重置统计、执行 GC | 点击后立即执行，不经过保存按钮 | 只作用于处理该请求的节点。 |
 
 </div>
 
-### 补充说明
-
+**补充说明：**
 - **没有改动**：模型性能指标和性能没有改动时提示「没有需要保存的更改」。
 - **系统维护**：没有保存按钮，只显示当前版本、启动时间和更新检查。
 
 ## 注意事项
 
-- **即时运维操作不可撤销**：日志清理、服务器日志清理、缓存清理、重置统计和执行 GC 都没有可撤销的草稿，见[日志维护](#日志维护)和[性能](#性能)。
+- **即时运维操作不可撤销**：日志清理、服务器日志清理、缓存清理、重置统计和执行 GC 都没有可撤销的草稿，其中重置统计和执行 GC 没有确认框，见[日志维护](#日志维护)和[性能](#性能)。
 - **日志清理影响共享的日志库**：清理作用于执行节点连接的日志库，多个节点共享日志库时影响各节点的日志历史，见[日志维护](#日志维护)。
 - **资源保护会拒绝新的 Relay 请求**：阈值被连续采样超过时，新的 Relay 请求返回 HTTP `503`，登录和普通管理接口不受影响；阈值过低会拒绝正常请求，见[性能](#性能)。
 - **保存成功不代表连接成功**：保存邮件配置时不测试连接，见[邮件与通知](#邮件与通知)。
@@ -503,7 +549,7 @@ https://api.github.com/repos/QuantumNous/new-api/releases?per_page=100
 </Accordion>
 
 <Accordion title="检查更新提示的版本不符合预期">
-**说明**：页面按版本号比较，预发布版（如 `rc`）也参与比较，无法解析的标签会被忽略。当前版本为开发构建（`v0.0.0`）时无法比较。
+**说明**：页面按版本号比较，预发布版（如 `rc`）也参与比较，无法解析的标签会被忽略。当前版本为开发构建时无法比较。
 
 **处理方法**：
 1. 打开 Release，人工核对版本、分支和升级路径。
@@ -518,7 +564,7 @@ https://api.github.com/repos/QuantumNous/new-api/releases?per_page=100
 - <a href="/zh/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">身份验证配置</a>：注册、OAuth、Passkey 和邮箱验证。
 - <a href="/zh/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">计费与支付配置</a>：额度、定价、支付合规和签到奖励。
 - <a href="/zh/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">模型配置</a>：全局模型行为、供应商适配和模型部署。
-- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>：请求文本过滤、会话保持与重试、渠道健康检查与自动禁用。
+- <a href="/zh/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">请求策略配置</a>：会话保持与重试、渠道健康检查与自动禁用。
 - <a href="/zh/docs/guide/feature-guide/system-settings/settings-security" target="_blank" rel="noopener noreferrer">安全与限制配置</a>：限流、SSRF 和令牌数量限制。
 - <a href="/zh/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">控制台内容配置</a>：数据看板、公告、FAQ、API 地址和客户端内容。
 - <a href="/zh/docs/guide/feature-guide/admin/system-info" target="_blank" rel="noopener noreferrer">系统信息</a>：系统任务、节点状态和其他 Root 运维信息。

@@ -256,7 +256,6 @@
 | `system-settings-model-claude.png` | 模型-Claude 分区 |
 | `system-settings-model-grok.png` | 模型-Grok 分区 |
 | `system-settings-model-model-deployment.png` | 模型-模型部署分区 |
-| `system-settings-request-policy-request-check.png` | 请求策略-请求检查分区 |
 | `system-settings-request-policy-session-and-retry.png` | 请求策略-会话与重试分区 |
 | `system-settings-request-policy-session-and-retry-add-session-rule.png` | 请求策略-添加会话规则弹窗 |
 | `system-settings-request-policy-channel-health.png` | 请求策略-渠道健康分区 |
