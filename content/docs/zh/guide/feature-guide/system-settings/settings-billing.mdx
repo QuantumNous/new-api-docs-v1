@@ -971,7 +971,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ## 保存与生效
 
-保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>，浏览器何时显示新值见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#前端显示与缓存" target="_blank" rel="noopener noreferrer">前端显示与缓存</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点约 3 秒内随系统设置同步（最迟一个同步周期，默认 60 秒）。各配置项读取新值的时机如下：
+保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>，浏览器何时显示新值见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#前端显示与缓存" target="_blank" rel="noopener noreferrer">前端显示与缓存</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点约 3 秒内随系统设置同步（最迟一个同步周期，默认 60 秒）。同步周期由环境变量 `SYNC_FREQUENCY` 调整，单位为秒，修改后需重启 New API。各配置项读取新值的时机如下：
 
 **额度、货币与展示：**
 

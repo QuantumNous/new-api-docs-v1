@@ -2,14 +2,14 @@
 
 本目录存放功能指南页面使用的截图和视频，页面通过 `/assets/guide/feature-guide/<文件名>` 引用。
 
-**本清单对应的文档版本：new-api v1.0.0-rc.47（提交 e835b1bfc），整理于 2026-11-12。**
+**本清单对应的文档版本：new-api v1.0.0-rc.51（提交 c9c6da278），整理于 2026-11-19。**
 
 判断文件是否仍被使用，以在 `content/docs` 中搜索文件名为准。
 
 ## 目录
 
 - 用户指南（60 张）：`guide/feature-guide/user/`
-- 管理员指南（90 张）：`guide/feature-guide/admin/`
+- 管理员指南（108 张）：`guide/feature-guide/admin/`
 - 系统设置指南（79 张）：`guide/feature-guide/system-settings/`
 - 功能指南概述（2 张）：`guide/feature-guide/index.mdx`
 - 仅英文、日文旧页使用（翻译并删除旧页后可删）
@@ -92,8 +92,8 @@
 | 文件名 | 内容 |
 | --- | --- |
 | `billing-expression-expression-editor.png` | 计费表达式-表达式编辑器 |
-| `system-settings-billing-and-payments-model-pricing-model-prices-edit-model-pricing.png` | 计费表达式-编辑模型定价-默认档位（另被「计费与支付配置」引用） |
-| `system-settings-billing-and-payments-model-pricing-model-prices-add-model-pricing.png` | 计费表达式-添加模型定价-请求规则示例（另被「计费与支付配置」引用） |
+| `system-settings-billing-and-payments-model-pricing-model-prices-edit-model-pricing.png` | 计费表达式-可视化编辑器（单一默认档位）（另被「计费与支付配置」引用） |
+| `system-settings-billing-and-payments-model-pricing-model-prices-add-model-pricing.png` | 计费表达式-阶梯条件、兜底阶梯与请求规则（另被「计费与支付配置」引用） |
 | `channel-management-card-view.png` | 渠道管理-卡片视图 |
 | `channel-management-table-view.png` | 渠道管理-表格视图 |
 | `channel-management-select-provider-or-plugin-built-in.png` | 渠道管理-选择内置渠道 |
@@ -103,27 +103,29 @@
 | `create-channel-connection-and-models.png` | 渠道管理-连接与模型 |
 | `create-channel-routing-and-mapping.png` | 渠道管理-路由与映射 |
 | `create-channel-request-and-response.png` | 渠道管理-请求与响应 |
-| `create-channel-pass-through-request-body-description.png` | 渠道管理-确认开启透传请求体 |
-| `create-channel-pass-through-request-headers-description.png` | 渠道管理-确认开启透传请求头 |
 | `create-channel-other-settings.png` | 渠道管理-其他设置 |
-| `create-channel-newapi-gateway-channel.png` | 渠道管理-New API 网关渠道 |
 | `create-channel-plugin-channel.png` | 渠道管理-插件渠道 |
+| `create-channel-newapi-gateway-channel.png` | 渠道管理-New API 网关渠道 |
 | `create-channel-advanced-custom-channel.png` | 渠道管理-高级自定义渠道 |
 | `create-channel-advanced-custom-channel-advanced-custom-routing.png` | 渠道管理-高级自定义路由 |
-| `channel-management-channel-actions.png` | 渠道管理-渠道操作 |
 | `channel-management-test-channel-connection.png` | 渠道管理-测试渠道连接 |
 | `channel-management-check-balance.png` | 渠道管理-查询余额 |
 | `channel-management-fetch-models.png` | 渠道管理-获取模型 |
 | `channel-management-duplicate-channel.png` | 渠道管理-复制渠道 |
-| `channel-management-fix-channel-consistency.png` | 渠道管理-修复渠道一致性 |
 | `channel-management-batch-mode.png` | 渠道管理-批量操作 |
 | `channel-management-key-management.png` | 渠道管理-多密钥管理 |
+| `channel-management-fix-channel-consistency.png` | 渠道管理-修复渠道一致性 |
+| `create-channel-pass-through-request-body-description.png` | 渠道管理-确认开启透传请求体 |
+| `create-channel-pass-through-request-headers-description.png` | 渠道管理-确认开启透传请求头 |
 | `create-channel-request-and-response-parameter-overrides-visual-editor.png` | 渠道管理-参数覆盖 |
+| `channel-management-channel-actions.png` | 渠道管理-渠道操作 |
 | `model-management-model-list.png` | 模型管理-模型列表 |
+| `model-management-providers.png` | 模型管理-供应商管理 |
+| `model-management-model-deployment.png` | 模型管理-模型部署未启用 |
 | `model-management-add-model-model-information.png` | 模型管理-创建模型 |
 | `model-management-edit-model-model-information.png` | 模型管理-编辑模型-模型资料 |
-| `model-management-edit-model-pricing.png` | 模型管理-编辑模型-定价 |
 | `model-management-edit-model-channels-and-groups.png` | 模型管理-编辑模型-渠道与分组 |
+| `model-management-edit-model-pricing.png` | 模型管理-编辑模型-定价 |
 | `model-management-missing-models.png` | 模型管理-缺失的模型 |
 | `model-management-sync-information-select-model.png` | 模型管理-同步模型资料-选择模型 |
 | `model-management-sync-information-preview-fields.png` | 模型管理-同步模型资料-预览字段 |
@@ -134,26 +136,24 @@
 | `model-management-sync-prices-apply-sync.png` | 模型管理-同步模型定价-预览价格变更 |
 | `model-management-prefilled-groups.png` | 模型管理-预填充分组管理 |
 | `model-management-prefilled-groups-create-group.png` | 模型管理-创建预填充组 |
-| `model-management-providers.png` | 模型管理-供应商管理 |
 | `model-management-providers-add-provider.png` | 模型管理-创建供应商 |
 | `model-management-providers-edit-provider-provider-information.png` | 模型管理-编辑供应商-供应商资料 |
 | `model-management-providers-edit-provider-linked-models.png` | 模型管理-编辑供应商-关联模型 |
-| `model-management-model-deployment.png` | 模型管理-模型部署未启用 |
 | `model-management-model-deployment-create-deployment.png` | 模型管理-创建部署 |
 | `user-management-list.png` | 用户管理-用户列表 |
-| `user-management-operations.png` | 用户管理-操作菜单 |
 | `user-management-add-user.png` | 用户管理-新建用户 |
 | `user-management-edit-user-information.png` | 用户管理-更新用户 |
+| `user-management-operations.png` | 用户管理-操作菜单 |
 | `user-management-user-binding.png` | 用户管理-账户绑定管理 |
 | `user-management-user-subscription.png` | 用户管理-用户订阅管理 |
 | `user-management-reset-passkey.png` | 用户管理-重置 Passkey |
 | `user-management-reset-2fa.png` | 用户管理-重置 2FA |
 | `redemption-code-management.png` | 兑换码管理-兑换码列表 |
-| `redemption-code-management-filter.png` | 兑换码管理-查询筛选 |
 | `redemption-create.png` | 兑换码管理-创建兑换码 |
 | `redemption-save.png` | 兑换码管理-兑换码创建完成 |
 | `redemption-update.png` | 兑换码管理-更新兑换码 |
 | `redemption-delete-invalid.png` | 兑换码管理-删除无效兑换码 |
+| `redemption-code-management-filter.png` | 兑换码管理-查询筛选 |
 | `subscription-management.png` | 订阅管理-套餐列表 |
 | `subscription-management-create-subscription.png` | 订阅管理-创建套餐 |
 | `subscription-management-edit-subscription.png` | 订阅管理-编辑套餐 |
@@ -163,12 +163,24 @@
 | `system-information.png` | 系统信息-实例与系统任务 |
 | `system-information-instance-monitoring.png` | 系统信息-实例监控 |
 | `system-information-delete-instance.png` | 系统信息-清理失联实例 |
-| `plugins-create-plugin-channel.png` | 插件管理-创建任务插件渠道 |
-| `plugins-table-view.png` | 插件管理-表格视图 |
 | `plugins-card-view.png` | 插件管理-卡片视图 |
+| `plugins-table-view.png` | 插件管理-表格视图 |
 | `plugins-upload-plugin.png` | 插件管理-上传插件 |
 | `plugins-upload-new-version.png` | 插件管理-上传新版本 |
 | `plugins-plugin-marketplace-task.png` | 插件管理-官方插件-任务 |
+| `plugins-plugin-marketplace-install-plugin-details.png` | 插件管理-安装插件-插件详情 |
+| `plugins-plugin-marketplace-install-version-diff.png` | 插件管理-安装插件-版本差异 |
+| `plugins-plugin-marketplace-install-full-source-code.png` | 插件管理-安装插件-完整源码 |
+| `plugins-plugin-marketplace-install-changelog.png` | 插件管理-安装插件-更新日志 |
+| `plugins-create-plugin-channel.png` | 插件管理-创建任务插件渠道 |
+| `plugins-plugin-details-overview.png` | 插件管理-插件详情-概览 |
+| `plugins-plugin-details-billing-parameters.png` | 插件管理-插件详情-计费参数 |
+| `plugins-plugin-details-plugin-source.png` | 插件管理-插件详情-插件源码 |
+| `plugins-plugin-details-version-history.png` | 插件管理-插件详情-版本历史 |
+| `plugins-plugin-details-source-diff.png` | 插件管理-插件详情-源码差异 |
+| `plugins-plugin-details-plugin-sandbox.png` | 插件管理-插件详情-插件沙盒 |
+| `plugins-delete-current-custom-version.png` | 插件管理-删除插件版本 |
+| `plugins-plugin-marketplace-manage-sources.png` | 插件管理-市场源 |
 | `plugins-plugin-marketplace-request-processing.png` | 插件管理-官方插件-请求处理 |
 | `plugins-plugin-marketplace-community-plugins-tasks.png` | 插件管理-社区插件-任务 |
 | `plugins-plugin-marketplace-community-plugins-channels.png` | 插件管理-社区插件-渠道 |
@@ -178,18 +190,6 @@
 | `plugins-plugin-marketplace-community-plugins-install-changelog.png` | 插件管理-社区插件-安装插件-更新日志 |
 | `newapi-plugin-marketplace.png` | 插件管理-newapi.ai 插件市场 |
 | `newapi-publish-plugin.png` | 插件管理-newapi.ai 社区账号 |
-| `plugins-plugin-marketplace-install-plugin-details.png` | 插件管理-安装插件-插件详情 |
-| `plugins-plugin-marketplace-install-version-diff.png` | 插件管理-安装插件-版本差异 |
-| `plugins-plugin-marketplace-install-full-source-code.png` | 插件管理-安装插件-完整源码 |
-| `plugins-plugin-marketplace-install-changelog.png` | 插件管理-安装插件-更新日志 |
-| `plugins-plugin-marketplace-manage-sources.png` | 插件管理-市场源 |
-| `plugins-plugin-details-overview.png` | 插件管理-插件详情-概览 |
-| `plugins-plugin-details-billing-parameters.png` | 插件管理-插件详情-计费参数 |
-| `plugins-plugin-details-plugin-source.png` | 插件管理-插件详情-插件源码 |
-| `plugins-plugin-details-version-history.png` | 插件管理-插件详情-版本历史 |
-| `plugins-plugin-details-source-diff.png` | 插件管理-插件详情-源码差异 |
-| `plugins-plugin-details-plugin-sandbox.png` | 插件管理-插件详情-插件沙盒 |
-| `plugins-delete-current-custom-version.png` | 插件管理-删除插件版本 |
 | `request-processing-list.png` | 请求处理-实例列表 |
 | `request-processing-add-instance.png` | 请求处理-添加请求处理 |
 | `request-processing-dry-run.png` | 请求处理-试运行 |
@@ -224,41 +224,41 @@
 | `system-settings-authentication-custom-oauth-edit-provider.png` | 身份验证-编辑自定义 OAuth |
 | `system-settings-billing-and-payments-quota-settings.png` | 计费与支付-额度设置 |
 | `system-settings-billing-and-payments-currency-and-display.png` | 计费与支付-货币与展示 |
-| `system-settings-billing-and-payments-model-pricing-model-prices.png` | 计费与支付-模型价格 |
+| `system-settings-billing-and-payments-model-pricing-model-prices.png` | 计费与支付-模型定价-模型价格 |
 | `system-settings-billing-and-payments-model-pricing-model-prices-confirm-price-changes.png` | 计费与支付-模型定价-模型价格-确认价格变更 |
-| `system-settings-billing-and-payments-model-pricing-models-without-prices.png` | 计费与支付-未设置价格模型 |
-| `system-settings-billing-and-payments-model-pricing-tool-prices.png` | 计费与支付-工具价格 |
-| `system-settings-billing-and-payments-model-pricing-upstream-price-sync.png` | 计费与支付-上游价格同步 |
-| `system-settings-billing-and-payments-model-pricing-upstream-price-sync-select-price-source.png` | 计费与支付-选择价格来源 |
-| `system-settings-billing-and-payments-model-pricing-upstream-price-sync-apply-sync.png` | 计费与支付-预览价格变更 |
-| `system-settings-billing-and-payments-group-pricing-pricing-groups.png` | 计费与支付-定价分组 |
-| `system-settings-billing-and-payments-group-pricing-usage-guide.png` | 计费与支付-使用教程 |
-| `system-settings-billing-and-payments-group-pricing-group-details.png` | 计费与支付-分组详情 |
-| `system-settings-billing-and-payments-group-pricing-special-multiplier-rules.png` | 计费与支付-特殊倍率规则 |
-| `system-settings-billing-and-payments-group-pricing-special-multiplier-rules-add-user-group.png` | 计费与支付-添加用户分组 |
-| `system-settings-billing-and-payments-group-pricing-special-multiplier-rules-user-group-add-multiplier-override.png` | 计费与支付-添加倍率覆盖 |
-| `system-settings-billing-and-payments-group-pricing-group-visibility.png` | 计费与支付-分组可见性 |
-| `system-settings-billing-and-payments-group-pricing-auto-group-order.png` | 计费与支付-自动分组顺序 |
-| `system-settings-billing-and-payments-payment-gateway-compliance-terms-confirmation.png` | 计费与支付-支付合规确认 |
-| `system-settings-billing-and-payments-payment-gateway-general.png` | 计费与支付-支付网关常规设置 |
-| `system-settings-billing-and-payments-payment-gateway-general-payment-methods-add-method.png` | 计费与支付-添加常规支付方式 |
-| `system-settings-billing-and-payments-payment-gateway-general-amount-discounts-add-discount-tier.png` | 计费与支付-添加折扣等级 |
-| `system-settings-billing-and-payments-payment-gateway-epay.png` | 计费与支付-EPay 网关 |
-| `system-settings-billing-and-payments-payment-gateway-stripe.png` | 计费与支付-Stripe 网关 |
-| `system-settings-billing-and-payments-payment-gateway-creem.png` | 计费与支付-Creem 网关 |
-| `system-settings-billing-and-payments-payment-gateway-creem-add-product.png` | 计费与支付-添加 Creem 产品 |
-| `system-settings-billing-and-payments-payment-gateway-waffo-pancake-mor.png` | 计费与支付-Waffo Pancake MoR |
-| `system-settings-billing-and-payments-payment-gateway-waffo.png` | 计费与支付-Waffo 网关 |
-| `system-settings-billing-and-payments-payment-gateway-waffo-add-payment-method.png` | 计费与支付-新增 Waffo 支付方式 |
+| `system-settings-billing-and-payments-model-pricing-models-without-prices.png` | 计费与支付-模型定价-未设置价格模型 |
+| `system-settings-billing-and-payments-model-pricing-tool-prices.png` | 计费与支付-模型定价-工具价格 |
+| `system-settings-billing-and-payments-model-pricing-upstream-price-sync.png` | 计费与支付-模型定价-上游价格同步 |
+| `system-settings-billing-and-payments-model-pricing-upstream-price-sync-select-price-source.png` | 计费与支付-模型定价-上游价格同步-选择价格来源 |
+| `system-settings-billing-and-payments-model-pricing-upstream-price-sync-apply-sync.png` | 计费与支付-模型定价-上游价格同步-预览价格变更 |
+| `system-settings-billing-and-payments-group-pricing-pricing-groups.png` | 计费与支付-分组定价-定价分组 |
+| `system-settings-billing-and-payments-group-pricing-usage-guide.png` | 计费与支付-分组定价-使用教程 |
+| `system-settings-billing-and-payments-group-pricing-group-details.png` | 计费与支付-分组定价-分组详情 |
+| `system-settings-billing-and-payments-group-pricing-special-multiplier-rules.png` | 计费与支付-分组定价-特殊倍率规则 |
+| `system-settings-billing-and-payments-group-pricing-special-multiplier-rules-add-user-group.png` | 计费与支付-分组定价-特殊倍率规则-添加用户分组 |
+| `system-settings-billing-and-payments-group-pricing-special-multiplier-rules-user-group-add-multiplier-override.png` | 计费与支付-分组定价-特殊倍率规则-添加倍率覆盖 |
+| `system-settings-billing-and-payments-group-pricing-group-visibility.png` | 计费与支付-分组定价-分组可见性 |
+| `system-settings-billing-and-payments-group-pricing-auto-group-order.png` | 计费与支付-分组定价-自动分组顺序 |
+| `system-settings-billing-and-payments-payment-gateway-compliance-terms-confirmation.png` | 计费与支付-支付网关-支付合规确认 |
+| `system-settings-billing-and-payments-payment-gateway-general.png` | 计费与支付-支付网关-常规设置 |
+| `system-settings-billing-and-payments-payment-gateway-general-payment-methods-add-method.png` | 计费与支付-支付网关-新增支付方式 |
+| `system-settings-billing-and-payments-payment-gateway-general-amount-discounts-add-discount-tier.png` | 计费与支付-支付网关-添加折扣等级 |
+| `system-settings-billing-and-payments-payment-gateway-epay.png` | 计费与支付-支付网关-EPay |
+| `system-settings-billing-and-payments-payment-gateway-stripe.png` | 计费与支付-支付网关-Stripe |
+| `system-settings-billing-and-payments-payment-gateway-creem.png` | 计费与支付-支付网关-Creem |
+| `system-settings-billing-and-payments-payment-gateway-creem-add-product.png` | 计费与支付-支付网关-Creem-添加 Creem 产品 |
+| `system-settings-billing-and-payments-payment-gateway-waffo-pancake-mor.png` | 计费与支付-支付网关-Waffo Pancake |
+| `system-settings-billing-and-payments-payment-gateway-waffo.png` | 计费与支付-支付网关-Waffo |
+| `system-settings-billing-and-payments-payment-gateway-waffo-add-payment-method.png` | 计费与支付-支付网关-Waffo-新增 Waffo 支付方式 |
 | `system-settings-billing-and-payments-check-in-rewards.png` | 计费与支付-签到奖励 |
-| `system-settings-model-global-model-configuration.png` | 模型-全局模型配置分区 |
-| `system-settings-model-gemini.png` | 模型-Gemini 分区 |
-| `system-settings-model-claude.png` | 模型-Claude 分区 |
-| `system-settings-model-grok.png` | 模型-Grok 分区 |
-| `system-settings-model-model-deployment.png` | 模型-模型部署分区 |
-| `system-settings-request-policy-session-and-retry.png` | 请求策略-会话与重试分区 |
-| `system-settings-request-policy-session-and-retry-add-session-rule.png` | 请求策略-添加会话规则弹窗 |
-| `system-settings-request-policy-channel-health.png` | 请求策略-渠道健康分区 |
+| `system-settings-model-global-model-configuration.png` | 模型-全局模型配置 |
+| `system-settings-model-gemini.png` | 模型-Gemini |
+| `system-settings-model-claude.png` | 模型-Claude |
+| `system-settings-model-grok.png` | 模型-Grok |
+| `system-settings-model-model-deployment.png` | 模型-模型部署 |
+| `system-settings-request-policy-session-and-retry.png` | 请求策略-会话与重试 |
+| `system-settings-request-policy-session-and-retry-add-session-rule.png` | 请求策略-添加会话规则 |
+| `system-settings-request-policy-channel-health.png` | 请求策略-渠道健康 |
 | `system-settings-security-and-limits-rate-limiting.png` | 安全与限制-速率限制 |
 | `system-settings-security-and-limits-rate-limiting-add-group.png` | 安全与限制-添加分组 |
 | `system-settings-security-and-limits-rate-limiting-edit-group.png` | 安全与限制-编辑分组 |
@@ -273,14 +273,14 @@
 | `system-settings-console-content-add-frequently-asked-questions.png` | 控制台内容-添加常见问答 |
 | `system-settings-console-content-uptime-kuma.png` | 控制台内容-Uptime Kuma |
 | `system-settings-console-content-add-uptime-kuma.png` | 控制台内容-添加 Uptime Kuma |
-| `system-settings-console-content-chat-presets-visual.png` | 控制台内容-聊天预设可视化 |
-| `system-settings-console-content-chat-presets-json.png` | 控制台内容-聊天预设 JSON |
+| `system-settings-console-content-chat-presets-visual.png` | 控制台内容-聊天预设（可视化） |
+| `system-settings-console-content-chat-presets-json.png` | 控制台内容-聊天预设（JSON） |
 | `system-settings-console-content-add-chat-presets.png` | 控制台内容-添加聊天预设 |
 | `system-settings-console-content-edit-chat-presets.png` | 控制台内容-编辑聊天预设 |
 | `system-settings-console-content-drawing.png` | 控制台内容-绘图 |
 | `system-settings-operations-system-behavior.png` | 运维-系统行为配置 |
 | `system-settings-operations-model-performance-metrics.png` | 运维-模型性能指标配置 |
-| `system-settings-operations-email-and-notifications.png` | 运维-邮件与通知配置（SMTP 方式） |
+| `system-settings-operations-email-and-notifications.png` | 运维-邮件与通知配置 |
 | `system-settings-operations-worker-proxy.png` | 运维-Worker 代理配置 |
 | `system-settings-operations-log-maintenance.png` | 运维-日志维护配置 |
 | `system-settings-operations-performance.png` | 运维-性能配置 |
@@ -321,5 +321,5 @@
 - 文件名使用英文小写加连字符，按「页面或设置域-分区-说明」命名，例如 `system-settings-security-and-limits-ssrf-protection.png`。
 - 添加或替换截图后，请打开对应页面检查显示是否正常。
 - 仍被英文、日文页面引用的旧文件，请待这些页面更新后再删除。
-- 本清单是 2026-11-12 对应 new-api v1.0.0-rc.47 的整理结果，是该版本的快照；之后新增、替换或删除截图时，请以在 `content/docs` 中搜索文件名为准。
+- 本清单是 2026-11-19 对应 new-api v1.0.0-rc.51 的整理结果，是该版本的快照；之后新增、替换或删除截图时，请以在 `content/docs` 中搜索文件名为准。
 
