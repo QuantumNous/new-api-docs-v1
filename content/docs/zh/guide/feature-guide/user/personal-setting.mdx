@@ -14,7 +14,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - 页面顶部的大字为账户的显示名称，未设置时显示用户名。
 - 额度的单位由站点决定。
 - 「每日签到」仅在管理员开启签到功能后显示。
-- 左侧边栏无「个人资料」页时：<br/>点击页面右上角的头像，选择「个人资料」，在「左侧边栏个人设置」区域中开启「个人中心区域」和「个人设置」并保存。
+- 左侧边栏无「个人资料」页时：<br/>点击页面右上角的头像，选择「个人资料」，在「左侧边栏个人设置」区域中开启「个人中心区域」和「个人设置」并保存。区域中没有这两个开关时，该页面已被管理员隐藏，请联系管理员。
 </Callout>
 
 ## 个人资料概览
@@ -147,7 +147,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 2. 点击「保存更改」。
 
 <Callout type="info" title="提示">
-- 侧边栏由两层设置决定：管理员关闭的页面对所有用户隐藏，在本区域开启也不显示；本区域仅可在此基础上再隐藏，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-site#侧边栏模块" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>。
+- 侧边栏由两层设置决定：本区域只列出管理员开启的区域和页面，管理员关闭的不显示开关；本区域仅可在此基础上再隐藏，见<a href="/zh/docs/guide/feature-guide/system-settings/settings-site#侧边栏模块" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>。
 - 关闭区域开关后，其下的模块开关置灰，保存后该区域的页面全部隐藏。
 - 「重置为默认」仅把开关全部恢复为开启，需再点击「保存更改」才生效。
 - 仅隐藏侧边栏入口，不授予或撤销权限。页面右上角头像菜单中的「个人资料」始终显示。
@@ -156,7 +156,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 **配置项说明：**
 
-下表按区域中的顺序排列。
+下表按区域中的顺序排列；管理员关闭的区域或页面不在本区域显示。
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | 区域开关 | 模块开关 | 控制的入口 | 默认值 |
@@ -270,7 +270,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 **处理方法**：
 1. 在「左侧边栏个人设置」中开启对应的区域和模块，点击「保存更改」；也可点击「重置为默认」后再点击「保存更改」。
 2. 侧边栏中无「个人资料」时，点击页面右上角的头像，选择「个人资料」进入本页。
-3. 开关已开启仍不显示时，请联系管理员。
+3. 本区域中没有对应的开关，或开关已开启仍不显示时，该页面已被管理员隐藏，请联系管理员。
 </Accordion>
 
 <Accordion title="界面语言已切换，接口返回的错误消息仍为英文">
