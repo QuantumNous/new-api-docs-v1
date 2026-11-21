@@ -40,7 +40,7 @@ title: 环境变量配置指南
 | `REDIS_CONN_STRING`     | Redis连接字符串          | -       | `REDIS_CONN_STRING=redis://default:redispw@localhost:6379` |
 | `REDIS_POOL_SIZE`       | Redis连接池大小          | `10`    | `REDIS_POOL_SIZE=20`                                      |
 | `MEMORY_CACHE_ENABLED`  | 是否启用内存缓存（启用Redis后自动启用） | `false` | `MEMORY_CACHE_ENABLED=true`                                |
-| `SYNC_FREQUENCY`        | 缓存同步频率，也是独立 Redis 部署下 Session 缓存的最大陈旧窗口(秒) | `60` | `SYNC_FREQUENCY=60` |
+| `SYNC_FREQUENCY`        | 缓存同步频率，也是独立 Redis 部署下 Session 缓存的最大陈旧窗口(秒)。其他节点另约每 3 秒检查一次同步任务，本项是兜底的全量重载周期 | `60` | `SYNC_FREQUENCY=60` |
 | `BATCH_UPDATE_ENABLED`  | 启用数据库批量更新聚合   | `false` | `BATCH_UPDATE_ENABLED=true`                                |
 | `BATCH_UPDATE_INTERVAL` | 批量更新聚合时间间隔(秒) | `5`     | `BATCH_UPDATE_INTERVAL=10`                                 |
 
@@ -58,6 +58,9 @@ title: 环境变量配置指南
 | `NODE_TYPE`                 | 节点类型                     | `master` | `NODE_TYPE=slave`                           |
 | `TLS_INSECURE_SKIP_VERIFY`  | 全局跳过TLS证书验证         | `false`  | `TLS_INSECURE_SKIP_VERIFY=true`             |
 | `TRUSTED_REDIRECT_DOMAINS`  | 受信任的重定向域名列表(逗号分隔) | -    | `TRUSTED_REDIRECT_DOMAINS=example.com,api.example.com` |
+| `TRUSTED_PROXIES`           | 受信任的反向代理 IP 或 CIDR(逗号分隔)；设为 `none` 表示不信任任何代理。代理地址不在范围内时，所有请求按代理 IP 计数 | 未设置或留空时信任回环、私网（`10.0.0.0/8`、`172.16.0.0/12`、`192.168.0.0/16`）与 IPv6 ULA 地址 | `TRUSTED_PROXIES=203.0.113.10,10.1.0.0/16` |
+| `NODE_NAME`                 | 节点名称，用于区分各实例，多个实例不要重名 | 未设置时使用操作系统主机名 | `NODE_NAME=node-1` |
+| `PASSWORD_LOGIN_ENCRYPTION_ENABLED` | 是否启用密码传输加密，仅启动时读取，修改后需重启；各节点取值应一致 | `false` | `PASSWORD_LOGIN_ENCRYPTION_ENABLED=true` |
 
 <Callout type="warn" title="SESSION_SECRET 注意事项">
   `SESSION_SECRET` 不可设置为 `random_string`，否则程序将拒绝启动。多机部署时所有节点必须使用相同的密钥。
@@ -80,14 +83,20 @@ title: 环境变量配置指南
 | 环境变量                         | 说明                           | 默认值 | 示例                                     |
 | -------------------------------- | ------------------------------ | ------ | ---------------------------------------- |
 | `GLOBAL_API_RATE_LIMIT_ENABLE`   | 全局API速率限制开关            | `true` | `GLOBAL_API_RATE_LIMIT_ENABLE=false`     |
-| `GLOBAL_API_RATE_LIMIT`          | 全局API速率限制(单IP)          | `180`  | `GLOBAL_API_RATE_LIMIT=100`              |
+| `GLOBAL_API_RATE_LIMIT`          | 全局API速率限制(单IP)          | `360`  | `GLOBAL_API_RATE_LIMIT=100`              |
 | `GLOBAL_API_RATE_LIMIT_DURATION` | 全局API速率限制窗口(秒)        | `180`  | `GLOBAL_API_RATE_LIMIT_DURATION=120`     |
 | `GLOBAL_WEB_RATE_LIMIT_ENABLE`   | 全局Web速率限制开关            | `true` | `GLOBAL_WEB_RATE_LIMIT_ENABLE=false`     |
-| `GLOBAL_WEB_RATE_LIMIT`          | 全局Web速率限制(单IP)          | `60`   | `GLOBAL_WEB_RATE_LIMIT=30`               |
+| `GLOBAL_WEB_RATE_LIMIT`          | 全局Web速率限制(单IP)          | `120`  | `GLOBAL_WEB_RATE_LIMIT=30`               |
 | `GLOBAL_WEB_RATE_LIMIT_DURATION` | 全局Web速率限制窗口(秒)        | `180`  | `GLOBAL_WEB_RATE_LIMIT_DURATION=120`     |
 | `CRITICAL_RATE_LIMIT_ENABLE`     | 关键操作速率限制开关           | `true` | `CRITICAL_RATE_LIMIT_ENABLE=false`       |
 | `CRITICAL_RATE_LIMIT`            | 关键操作速率限制次数           | `20`   | `CRITICAL_RATE_LIMIT=10`                 |
 | `CRITICAL_RATE_LIMIT_DURATION`   | 关键操作速率限制窗口(秒)       | `1200` | `CRITICAL_RATE_LIMIT_DURATION=600`       |
+| `GLOBAL_STATIC_RATE_LIMIT_ENABLE`   | 全局静态资源速率限制开关    | `false` | `GLOBAL_STATIC_RATE_LIMIT_ENABLE=true`  |
+| `GLOBAL_STATIC_RATE_LIMIT`          | 全局静态资源速率限制(单IP)  | `1000`  | `GLOBAL_STATIC_RATE_LIMIT=500`          |
+| `GLOBAL_STATIC_RATE_LIMIT_DURATION` | 全局静态资源速率限制窗口(秒) | `180`  | `GLOBAL_STATIC_RATE_LIMIT_DURATION=120` |
+| `SEARCH_RATE_LIMIT_ENABLE`       | 搜索速率限制开关               | `true` | `SEARCH_RATE_LIMIT_ENABLE=false`         |
+| `SEARCH_RATE_LIMIT`              | 搜索速率限制次数               | `10`   | `SEARCH_RATE_LIMIT=20`                   |
+| `SEARCH_RATE_LIMIT_DURATION`     | 搜索速率限制窗口(秒)           | `60`   | `SEARCH_RATE_LIMIT_DURATION=120`         |
 
 ## 中继与代理配置
 
@@ -99,7 +108,7 @@ title: 环境变量配置指南
 | `RELAY_MAX_IDLE_CONNS_PER_HOST`| 中继HTTP客户端池每主机最大空闲连接数        | `100`  | `RELAY_MAX_IDLE_CONNS_PER_HOST=200` |
 | `MAX_FILE_DOWNLOAD_MB`         | 最大文件下载大小(MB)                        | `64`   | `MAX_FILE_DOWNLOAD_MB=128`       |
 | `MAX_REQUEST_BODY_MB`          | 最大请求体大小(MB，解压后计；防止zip bomb/OOM) | `128`  | `MAX_REQUEST_BODY_MB=256`        |
-| `STREAM_SCANNER_MAX_BUFFER_MB` | SSE流扫描缓冲区最大大小(MB)                 | `64`   | `STREAM_SCANNER_MAX_BUFFER_MB=128` |
+| `STREAM_SCANNER_MAX_BUFFER_MB` | SSE流扫描缓冲区最大大小(MB)                 | `128`  | `STREAM_SCANNER_MAX_BUFFER_MB=128` |
 
 <Callout type="warn" title="RELAY_TIMEOUT 设置警告">
   设置 `RELAY_TIMEOUT` 环境变量时请谨慎，如果设置过短可能导致以下问题：
@@ -115,9 +124,10 @@ title: 环境变量配置指南
 
 | 环境变量                        | 说明                       | 默认值                             | 示例                                |
 | ------------------------------- | -------------------------- | ---------------------------------- | ----------------------------------- |
-| `CHANNEL_UPDATE_FREQUENCY`      | 定期更新渠道余额(分钟)     | -（不设置则禁用）                  | `CHANNEL_UPDATE_FREQUENCY=1440`     |
+| `CHANNEL_UPDATE_FREQUENCY`      | 定期更新渠道余额(分钟)，以后台系统任务「余额批量更新」执行     | -（不设置则禁用）                  | `CHANNEL_UPDATE_FREQUENCY=1440`     |
 | `CHANNEL_TEST_FREQUENCY`        | 定期检查渠道(分钟)，覆盖数据库设置 | -（不设置则使用数据库设置）  | `CHANNEL_TEST_FREQUENCY=1440`       |
 | `POLLING_INTERVAL`              | 请求轮询间隔(秒)           | `0`                                | `POLLING_INTERVAL=5`                |
+| `CHANNEL_TEST_ENABLED`          | 强制设定「定期渠道测试」开关，设置后覆盖页面中的值 | -（不设置则使用数据库设置）  | `CHANNEL_TEST_ENABLED=false`        |
 
 ### 渠道上游模型同步
 
@@ -142,8 +152,10 @@ title: 环境变量配置指南
 | ---------------------- | ----------------------------------------------------------- | ------- | ---------------------------------- |
 | `UPDATE_TASK`          | 是否启用异步任务轮询更新(MJ、Suno等)                       | `true`  | `UPDATE_TASK=false`                |
 | `TASK_QUERY_LIMIT`     | 每次轮询查询的最大任务数                                    | `1000`  | `TASK_QUERY_LIMIT=500`             |
-| `TASK_TIMEOUT_MINUTES` | 异步任务超时(分钟)，超时后标记失败并退款，0为禁用           | `1440`  | `TASK_TIMEOUT_MINUTES=720`         |
+| `TASK_TIMEOUT_MINUTES` | 异步任务超时(分钟)，超时后标记失败并退款，0为禁用           | `4320`  | `TASK_TIMEOUT_MINUTES=720`         |
 | `TASK_PRICE_PATCH`     | 任务价格补丁，设置的模型仅按次计费，模型名用英文逗号隔开    | -       | `TASK_PRICE_PATCH=sora-2,sora-2-pro` |
+| `TASK_PLUGIN_ENABLED`  | 是否启用插件，即「启用插件」全局开关的初始值；在页面保存过开关后以页面为准 | `true`  | `TASK_PLUGIN_ENABLED=false`        |
+| `TASK_POLL_MAX_FAILURES` | 连续无法识别或临时性的轮询失败达到该次数后，任务标记失败并退款 | `20`    | `TASK_POLL_MAX_FAILURES=10`        |
 
 ## 特定模型配置
 
@@ -167,6 +179,8 @@ title: 环境变量配置指南
 | 环境变量            | 说明                         | 默认值 | 示例                               |
 | ------------------- | ---------------------------- | ------ | ---------------------------------- |
 | `ERROR_LOG_ENABLED` | 是否记录并在前端显示错误日志 | `false` | `ERROR_LOG_ENABLED=true`           |
+| `SMTP_STARTTLS_ENABLE` | 邮件发送：「SMTP 加密方式」初始是否为 STARTTLS（旧名 `SMTP_STARTTLS_ENABLED` 仍可用） | `false` | `SMTP_STARTTLS_ENABLE=true` |
+| `SMTP_INSECURE_SKIP_VERIFY` | 邮件发送：「跳过 SMTP TLS 证书验证」的初始值（旧名 `SMTP_TLS_INSECURE_SKIP_VERIFY` 仍可用） | `false` | `SMTP_INSECURE_SKIP_VERIFY=true` |
 
 ## 分析统计
 

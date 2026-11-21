@@ -6,25 +6,42 @@ description: Root 配置控制台内容：数据仪表板导出、公告、API �
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-- 控制台内容配置位于 `/system-settings/content`，仅 Root 可访问。
+- 仅 Root 可访问，从侧边栏「管理员」→「系统设置」进入，在左侧导航中选择「控制台内容」下的分区。
+- 配置数据看板的用量统计、公告、API 地址、常见问答、Uptime Kuma 状态组、聊天预设和绘图开关。
+- 数据看板入口由站点与品牌的侧边栏模块控制，各面板是否显示由本页对应分区的「已启用」开关控制。
 
-## 控制台内容配置简介
+<Callout type="info" title="提示">
+- 本页的「公告」是可启停的结构化公告列表，与<a href="/zh/docs/guide/feature-guide/system-settings/settings-site" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>中的「系统公告」是两套配置，不互相替代。
+- Midjourney 上游的地址、端点与密钥在渠道层配置，不在本页。
+</Callout>
 
-该工作区包含「数据仪表板」「公告」「API 地址」「常见问答」「Uptime Kuma」「聊天预设」和「绘图」七个分区，用于配置控制台（数据看板）展示的数据导出、公告、接入地址、问答、运行状态、聊天应用预设与绘图行为。
+## 控制台内容配置概览
 
-| 分区 | 路径 | 职责 |
+控制台内容分为七个分区，在左侧导航「控制台内容」下切换，默认打开「数据仪表板」。
+
+**区域说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 分区 | 作用 | 分区内标签 |
 | --- | --- | --- |
-| [数据仪表板](#数据仪表板) | `/system-settings/content/dashboard`（默认进入） | 数据导出开关、聚合间隔与默认粒度。 |
-| [公告](#公告) | `/system-settings/content/announcements` | 公告列表与分区开关。 |
-| [API 地址](#api-地址) | `/system-settings/content/api-info` | 可复制 / 测速的 API 接入地址列表。 |
-| [常见问答](#常见问答) | `/system-settings/content/faq` | FAQ 问答列表。 |
-| [Uptime Kuma](#uptime-kuma) | `/system-settings/content/uptime-kuma` | Uptime Kuma 状态组。 |
-| [聊天预设](#聊天预设) | `/system-settings/content/chat` | 客户端聊天应用导入模板。 |
-| [绘图](#绘图) | `/system-settings/content/drawing` | 绘图（Midjourney 中转）行为开关。 |
+| [数据仪表板](#数据仪表板) | 用量统计开关、刷新间隔与默认粒度。 | — |
+| [公告](#公告) | 公告列表与分区开关。 | — |
+| [API 地址](#api-地址) | 可复制、测速的 API 接入地址列表。 | — |
+| [常见问答](#常见问答) | 问答列表与分区开关。 | — |
+| [Uptime Kuma](#uptime-kuma) | Uptime Kuma 状态组。 | — |
+| [聊天预设](#聊天预设) | 聊天应用一键导入的链接模板。 | 「可视化」「JSON」 |
+| [绘图](#绘图) | Midjourney 中转的行为开关。 | — |
+
+</div>
+
+<Callout type="info" title="提示">
+- 面板不显示、保存被拒绝、公告显示未读或聊天导入不生效时，查看[常见问题](#常见问题)。
+</Callout>
 
 ## 配置分区
 
-控制台内容域下有七个独立分区：
+本节按左侧导航的顺序介绍七个分区，各分区的保存按钮和生效时机见[保存与生效](#保存与生效)。
 
 ### 数据仪表板
 
@@ -32,19 +49,30 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![控制台内容-数据仪表板页面](/assets/guide/feature-guide/system-settings-console-content-data-dashboard.png)
 
-「数据仪表板」分区只包含数据导出的三项设置，用于后台用量数据聚合：
+本分区只配置后台用量数据的统计，不配置数据看板上各面板的显示。
 
-| 字段 | 校验/默认 | 说明 |
-| --- | --- | --- |
-| 启用数据仪表板 | 默认开启（后端） | 控制后台用量数据的定时聚合与落盘。 |
-| 刷新间隔 (分钟) | 整数，1–1440 | 后台用量数据聚合间隔；保持此值大于 1 分钟以避免数据库负载过重。 |
-| 默认时间粒度 | 小时 / 天 / 本周，默认小时 | 界面说明为「仅 UI 粒度 — 数据仍按小时汇总」。用户进入数据看板时使用的时间粒度，由各自在<a href="/zh/docs/guide/feature-guide/user/dashboard#设置图表的默认显示" target="_blank" rel="noopener noreferrer">数据看板</a>「偏好设置」中的「默认时间粒度」决定。 |
+**操作流程：**
+1. 打开或关闭「启用数据仪表板」。
+2. 填写「刷新间隔 (分钟)」，选择「默认时间粒度」。
+3. 点击页头「保存更改」。
 
 <Callout type="info" title="提示">
-数据仪表板分区**不**配置看板上的各模块开关：设置引导、用量概览、性能健康、公告、FAQ、Uptime、API 地址等面板的可见性：
-1. 公告 / API 地址 / FAQ / Uptime 面板：由它们**所在分区**的启用开关控制；
-2. 设置引导、用量概览、性能健康等面板：没有单独开关（性能健康仅管理员可见）；整个「概览」与「数据看板」入口由<a href="/zh/docs/guide/feature-guide/system-settings/settings-site#侧边栏模块" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>中侧边栏模块的「数据看板」开关控制。
+- 公告、API 地址、常见问答、Uptime Kuma 面板由各自分区的「已启用」开关控制。
+- 设置引导、用量概览、性能健康等面板没有单独开关，性能健康仅管理员可见。
+- 整个数据看板入口由<a href="/zh/docs/guide/feature-guide/system-settings/settings-site#侧边栏模块" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>中侧边栏模块的「数据看板」开关控制。
 </Callout>
+
+**配置项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 启用数据仪表板 | 控制后台用量数据的定时汇总与写入。 | 开关。 | 开启 |
+| 刷新间隔 (分钟) | 后台用量数据的汇总间隔。 | 1～1440 的整数；界面说明为「保持此值大于 1 分钟以避免数据库负载过重」。关闭「启用数据仪表板」时不可编辑。 | `5` |
+| 默认时间粒度 | 界面说明为「仅 UI 粒度 — 数据仍按小时汇总」。用户进入数据看板时使用的粒度，由各自在<a href="/zh/docs/guide/feature-guide/user/dashboard#设置图表的默认显示" target="_blank" rel="noopener noreferrer">数据看板</a>「偏好设置」中的「默认时间粒度」决定。 | 可选「小时」「天」「本周」。关闭「启用数据仪表板」时不可编辑。 | 小时 |
+
+</div>
 
 ### 公告
 
@@ -56,26 +84,44 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![控制台内容-添加公告页面](/assets/guide/feature-guide/system-settings-console-content-add-announcement.png)
 
-「公告」管理控制台与通知中心的**公告列表**，与<a href="/zh/docs/guide/feature-guide/system-settings/settings-site" target="_blank" rel="noopener noreferrer">站点与品牌配置</a>中的单段「系统公告（Notice）」是两套系统，不应互相替代。
-
-- 字段说明
-
-| 字段 | 校验 | 说明 |
-| --- | --- | --- |
-| 内容 | 必填，≤500 字符 | 公告正文，支持 Markdown 和 HTML。 |
-| 发布日期 | 必填（ISO/RFC3339） | 此公告应显示的日期和时间；列表按此倒序展示。 |
-| 类型 | `default` / `ongoing` / `success` / `warning` / `error` | 公告类型，用于展示样式。 |
-| 额外备注（可选） | 可选，≤100 字符 | 额外说明。 |
-
-- 操作流程
-
-1. 打开分区，点击「添加公告」。
-2. 填写内容、发布日期、类型与额外备注。
-3. 点击「保存设置」（整段数组写入），并开启分区「已启用」开关。
+**操作流程：**
+1. 点击「添加公告」。
+2. 填写内容、发布日期、类型与额外备注，点击「添加」。
+3. 点击「保存设置」。
+4. 打开右侧「已启用」开关。
 
 <Callout type="info" title="提示">
-  已读状态由**客户端**记录（按公告 id 或内容哈希）。
+- 最多 100 条，列表按发布日期倒序显示。
+- 通知中心「时间线」标签只显示前 20 条。
+- 已读状态由浏览器按公告记录，编辑已有公告不会重新变为未读。
 </Callout>
+
+**列表说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 列 | 说明 |
+| --- | --- |
+| 内容 | 公告正文。 |
+| 发布日期 | 显示相对时间和具体时间。 |
+| 类型 | 公告类型。 |
+| 额外 | 额外备注。 |
+| 操作 | 编辑图标打开「编辑公告」；⋯ →「删除」从列表移除。 |
+
+</div>
+
+**「添加公告」配置项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 内容 | 公告正文。 | 必填，最多 500 个字符，支持 Markdown 和 HTML。 | — |
+| 发布日期 | 此公告应显示的日期和时间。 | 必填，用日期和时间选择器选择。 | 打开窗口时的时间 |
+| 类型 | 公告类型，用于展示样式。 | 可选 Default、Ongoing、Success、Warning、Error（界面显示英文）。 | Default |
+| 额外备注（可选） | 额外说明。 | 选填，最多 100 个字符。 | 空 |
+
+</div>
 
 ### API 地址
 
@@ -87,25 +133,45 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![控制台内容-添加 API 地址页面](/assets/guide/feature-guide/system-settings-console-content-add-api-address.png)
 
-「API 地址」配置在控制台数据看板中展示的API链接信息。每个API链接信息操作面板有**复制 URL、测试延迟、外部速度测试、在新标签页中打开**的功能。
+数据看板中的每个 API 地址卡片提供「测试延迟」「外部速度测试」「复制 URL」「在新标签页中打开」。
 
-- 字段说明
-
-| 字段 | 校验 | 说明 |
-| --- | --- | --- |
-| API URL | 必填，http(s) URL，≤500 | 接入API地址入口。 |
-| 路由描述 | 必填，≤100 | 描述路由/节点。 |
-| 说明信息 | 必填，≤200 | 链接信息说明；会做危险内容（脚本/iframe 等）检查。 |
-| 徽章颜色 | 必填，默认蓝色 | 条目前的颜色圆点。 |
-
-- 操作流程
-
-1. 添加API链接信息，填写API URL、路由描述、说明信息与徽章颜色。
-2. 点击「保存设置」（整段数组写入），并开启分区「已启用」开关。
+**操作流程：**
+1. 点击「添加 API」。
+2. 填写 API URL、路由描述、说明信息，选择徽章颜色，点击「添加」。
+3. 点击「保存设置」。
+4. 打开右侧「已启用」开关。
 
 <Callout type="info" title="提示">
-- 上限：**50 条**。
+- 最多 50 条。
+- 路由描述和说明信息含脚本、iframe 等危险内容时，保存被拒绝。
 </Callout>
+
+**列表说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 列 | 说明 |
+| --- | --- |
+| URL | API 接入地址。 |
+| 路由 | 路由描述。 |
+| 说明信息 | 地址说明。 |
+| 颜色 | 徽章颜色。 |
+| 操作 | 编辑图标打开「编辑 API 快捷方式」；⋯ →「删除」从列表移除。 |
+
+</div>
+
+**「添加 API 快捷方式」配置项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| API URL | 接入 API 的地址。 | 必填，须为 `http://` 或 `https://` 开头的有效 URL，最多 500 个字符；否则提示「必须是有效的 URL」。 | — |
+| 路由描述 | 描述路由或线路，如「例如，CN2 GIA」。 | 必填，最多 100 个字符。 | — |
+| 说明信息 | 地址的说明。 | 必填，最多 200 个字符。 | — |
+| 徽章颜色 | API 卡的可视指示器颜色。 | 从下拉列表选择（颜色名显示英文）。 | Blue |
+
+</div>
 
 ### 常见问答
 
@@ -117,19 +183,39 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![控制台内容-添加常见问答页面](/assets/guide/feature-guide/system-settings-console-content-add-frequently-asked-questions.png)
 
-「常见问答」配置控制台 FAQ 面板的问答列表。
-
-- 字段说明
-
-| 字段 | 校验 | 说明 |
-| --- | --- | --- |
-| 问题 | 必填，≤200 | 问题文本。 |
-| 答案 | 必填，≤1000 | 答案文本。支持 Markdown 和 HTML。|
+**操作流程：**
+1. 点击「添加问答」。
+2. 填写问题和答案，点击「添加」。
+3. 点击「保存设置」。
+4. 打开右侧「已启用」开关。
 
 <Callout type="info" title="提示">
-- 上限：**100 条**。
-- 展示顺序 = 数组中的顺序。
+- 最多 100 条。
+- 按列表顺序显示，界面没有排序控件。
 </Callout>
+
+**列表说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 列 | 说明 |
+| --- | --- |
+| 问题 | 问题文本。 |
+| 答案 | 答案文本。 |
+| 操作 | 编辑图标打开「编辑常见问题」；⋯ →「删除」从列表移除。 |
+
+</div>
+
+**「添加问答」配置项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 问题 | 问题文本。 | 必填，最多 200 个字符。 | — |
+| 答案 | 答案文本。 | 必填，最多 1000 个字符，支持 Markdown 和 HTML。 | — |
+
+</div>
 
 ### Uptime Kuma
 
@@ -141,19 +227,41 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![控制台内容-添加 Uptime Kuma 页面](/assets/guide/feature-guide/system-settings-console-content-add-uptime-kuma.png)
 
-「Uptime Kuma」配置用于展示在控制台的Uptime Kuma监控状态页面分组。
-
-- 字段说明
-
-| 字段 | 校验 | 说明 |
-| --- | --- | --- |
-| 分类名称 | 必填，唯一，≤50 | 此监控分组的显示名称。 |
-| Uptime Kuma URL | 必填，http(s)，≤500 | 您的 Uptime Kuma 实例的基础 URL。 |
-| 状态页面 Slug | 必填，`^[a-zA-Z0-9_-]+$`，≤100 | 分组标识，别名将附加到 URL: \{url\}/status/\{slug\}。 |
+**操作流程：**
+1. 点击「添加分组」。
+2. 填写分类名称、Uptime Kuma URL 和状态页面 Slug，点击「添加」。
+3. 点击「保存设置」。
+4. 打开右侧「已启用」开关。
 
 <Callout type="info" title="提示">
-- 上限：**20 组**。
+- 最多 20 组，分类名称不可重复。
+- 运行状态不经过保存，在数据看板打开面板或点击刷新时由服务端实时获取。
 </Callout>
+
+**列表说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 列 | 说明 |
+| --- | --- |
+| 分类名称 | 监控分组的显示名称。 |
+| Uptime Kuma URL | Uptime Kuma 实例的基础 URL。 |
+| 状态页面 Slug | 状态页面的别名。 |
+| 操作 | 编辑图标打开「编辑 Uptime Kuma 分组」；⋯ →「删除」从列表移除。 |
+
+</div>
+
+**「添加 Uptime Kuma 分组」配置项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 分类名称 | 此监控分组的显示名称。 | 必填，最多 50 个字符，不可与其他分组重复。 | — |
+| Uptime Kuma URL | 您的 Uptime Kuma 实例的基础 URL。 | 必填，须为有效 URL，最多 500 个字符。 | — |
+| 状态页面 Slug | 状态页面的别名，附加在 URL 后：…/status/…。 | 必填，最多 100 个字符，只能包含字母、数字、连字符和下划线。 | — |
+
+</div>
 
 ### 聊天预设
 
@@ -165,6 +273,43 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![控制台内容-聊天预设 JSON 页面](/assets/guide/feature-guide/system-settings-console-content-chat-presets-json.png)
 
+本分区配置聊天应用一键导入的链接模板，分「可视化」「JSON」两个标签，两者编辑同一份预设，页头「保存聊天设置」一起保存。
+
+**操作流程：**
+1. 在「可视化」标签点击「添加聊天预设」，或切换到「JSON」标签直接编辑。
+2. 填写聊天客户端名称和 URL。
+3. 点击页头「保存聊天设置」。
+
+<Callout type="warn" title="注意">
+- `{key}` 会出现在打开的 URL 中，只配置可信客户端的导入地址；第三方或未知域名的预设可接收用户的 API 密钥。
+- URL 不做格式校验；占位符填错或不受支持时不会报错，只在用户导入时暴露。
+</Callout>
+
+**可视化：**
+
+列表列为「聊天客户端名称」「URL」「操作」，可用「搜索聊天预设...」筛选；编辑图标打开「编辑聊天预设」，⋯ →「删除」直接从列表移除，不弹确认。编辑后的预设移到列表末尾。
+
+**JSON：**
+
+「聊天配置 JSON」编辑器按数组编辑，界面说明为「聊天客户端预设数组。每个项目都是一个对象，包含一个键值对：客户端名称及其 URL。」格式不正确时，编辑器下方显示「应为 JSON 数组。」「每个条目必须是包含单个键值对的对象。」「每个条目必须恰好包含一个键值对。」或「无效的 JSON 字符串。」。
+
+**占位符说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 占位符 | 替换为 |
+| --- | --- |
+| `{key}` | 用户的 API 密钥。 |
+| `{address}` | 「站点与品牌 › 系统信息」中的服务器地址。 |
+| `{cherryConfig}`、`{aionuiConfig}`、`{deepchatConfig}`、`{aqbotConfig}` | 对应客户端的导入配置，含 API 密钥和服务器地址。 |
+
+</div>
+
+<Callout type="info" title="提示">
+- 默认内置 10 个客户端：Cherry Studio、AionUI、流畅阅读、CC Switch、DeepChat、AQBot、Lobe Chat 官方示例、AI as Workspace、AMA 问天、OpenCat。
+- 「流畅阅读」预设不在侧边栏「聊天」中显示，只在 API 密钥行的「聊天」菜单中把密钥发送给浏览器扩展。
+</Callout>
+
 - 控制台内容-添加聊天预设
 
 ![控制台内容-添加聊天预设页面](/assets/guide/feature-guide/system-settings-console-content-add-chat-presets.png)
@@ -173,19 +318,16 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![控制台内容-编辑聊天预设页面](/assets/guide/feature-guide/system-settings-console-content-edit-chat-presets.png)
 
-「聊天预设」配置聊天应用一键导入所需的客户端深链模板（`Chats` 选项）。每条为一个**单键值对** `{"应用名": "URL 模板"}`；URL 模板可嵌入 `{key}`、`{address}`、`{cherryConfig}`、`{aqbotConfig}` 等占位符，用户打开预设时由控制台替换为当前 API 密钥和服务地址。
+**「添加聊天预设」配置项说明：**
 
-默认内置 10 个常用客户端（Cherry Studio、AionUI、流畅阅读、CC Switch、DeepChat、AQBot、Lobe Chat 官方示例、AI as Workspace、AMA 问天、OpenCat），可通过可视化表格或 JSON 模式增删改。
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
-- 操作流程
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 聊天客户端名称 | 此聊天客户端的显示名称。 | 必填，为空时提示「聊天客户端名称为必填项」。 | — |
+| URL | 此聊天客户端的 URL，可含占位符。 | 必填，为空时提示「URL 为必填项」；不校验格式。 | — |
 
-1. 打开分区，在「可视化」标签添加/编辑聊天预设（应用名 + URL），或切换到「JSON」直接编辑。
-2. 点击「保存聊天设置」：以归一化的 JSON 数组写入 `Chats`。
-
-<Callout type="warn" title="注意">
-  - 聊天预设的 URL 不做格式校验。占位符在用户打开预设时由控制台替换；填错或不受支持的占位符不会报错，只有打开链接、在目标应用中导入时才会暴露。占位符使用 `{key}`（API 密钥）、`{address}`（服务地址）等，与具体客户端的模板约定一致时才能正确导入。
-  - `{key}` 会出现在打开的 URL 中。只配置可信客户端的导入地址；不要添加第三方或未知域名的预设，否则该域名可接收用户的 API 密钥。
-</Callout>
+</div>
 
 ### 绘图
 
@@ -193,24 +335,34 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 ![控制台内容-绘图页面](/assets/guide/feature-guide/system-settings-console-content-drawing.png)
 
-「绘图」配置的是绘图（Midjourney 中转）相关的**行为开关**，共 6 个布尔项。**Midjourney 上游的 API 地址、端点与密钥在渠道层配置，不在本页**。
+本分区只有 6 个开关，控制绘图（Midjourney 中转）的行为。
 
-| 开关 | 说明 |
-| --- | --- |
-| 启用绘制功能 | 向终端用户开放 MjProxy 风格的图像生成。 |
-| 允许上游回调 | 启用时，接受 MjProxy 回调 (会泄露服务器 IP)。 |
-| 允许 accountFilter 参数 | 如果需要为不同上游账户代理请求，请保持启用。 |
-| 将回调 URL 重写到本地服务器 | 自动将上游回调 URL 替换为服务器地址。 |
-| 在提示中清除模式标志 | 从用户提示中移除 MjProxy 参数，如 --fast、--relax 和 --turbo。 |
-| 在后续操作前要求任务成功 | 用户必须等待成功的绘图完成，才能进行放大或变体。 |
+**操作流程：**
+1. 打开或关闭所需的开关。
+2. 点击页头「保存绘图设置」。
 
 <Callout type="info" title="提示">
-  绘图分区只有开关。上游 Base URL、端点、密钥、账号过滤值等请到<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>的 Midjourney 渠道配置。
+绘图分区只有开关。上游 Base URL、端点、密钥、账号过滤值等请到<a href="/zh/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">渠道管理</a>的 Midjourney 渠道配置。
 </Callout>
+
+**配置项说明：**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| 配置项 | 定义 | 填写要求和限制 | 默认值 |
+| --- | --- | --- | --- |
+| 启用绘制功能 | 需要向终端用户开放 MjProxy 风格的图像生成。 | 开关。 | 开启 |
+| 允许上游回调 | 启用时，接受 MjProxy 回调 (会泄露服务器 IP)。 | 开关。 | 关闭 |
+| 允许 accountFilter 参数 | 如果需要为不同上游账户代理请求，请保持启用。 | 开关。 | 关闭 |
+| 将回调 URL 重写到本地服务器 | 自动将上游回调 URL 替换为服务器地址。 | 开关。 | 开启 |
+| 在提示中清除模式标志 | 从用户提示中移除 MjProxy 参数，如 --fast、--relax 和 --turbo。 | 开关。 | 关闭 |
+| 在后续操作前要求任务成功 | 用户必须等待成功的绘图完成，才能进行放大或变体。 | 开关。 | 开启 |
+
+</div>
 
 ## 保存与生效
 
-保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>，浏览器何时显示新值见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#前端显示与缓存" target="_blank" rel="noopener noreferrer">前端显示与缓存</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点随系统设置同步（默认 60 秒）；各配置项读取新值的时机如下：
+保存方式见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#保存方式" target="_blank" rel="noopener noreferrer">系统设置概览</a>，生效与多实例同步规则见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#生效范围与多实例同步" target="_blank" rel="noopener noreferrer">生效范围与多实例同步</a>，浏览器何时显示新值见<a href="/zh/docs/guide/feature-guide/system-settings/system-setting#前端显示与缓存" target="_blank" rel="noopener noreferrer">前端显示与缓存</a>。未特别说明时，保存后处理该请求的节点立即使用新值，其他节点约 3 秒内随系统设置同步（最迟一个同步周期，默认 60 秒）。同步周期由环境变量 `SYNC_FREQUENCY` 调整，单位为秒，默认 60 秒，修改后需重启 New API。各配置项读取新值的时机如下：
 
 <div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 
@@ -220,34 +372,27 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 | 数据仪表板 › 刷新间隔 (分钟) | 页头「保存更改」 | 当前这一轮等待结束后，才按新间隔执行。 |
 | 数据仪表板 › 默认时间粒度 | 页头「保存更改」 | — |
 | 四个列表分区 › 「已启用」开关 | 切换后立即保存，先后提示「设置更新成功」「设置已保存」 | 公告、API 地址、常见问答、Uptime Kuma 在控制台中对应的面板（公告还包括通知中心）刷新页面后显示或隐藏。 |
-| 四个列表分区 › 列表 | 新增、编辑、删除只修改页面数据，点击卡片内的「保存设置」后整段写入 | 控制台中对应的面板（公告还包括通知中心）刷新页面后显示新内容。 |
+| 四个列表分区 › 列表 | 新增、编辑、删除只修改页面数据，点击卡片内的「保存设置」后整体写入 | 控制台中对应的面板（公告还包括通知中心）刷新页面后显示新内容。 |
 | 聊天预设 | 「保存聊天设置」 | 侧边栏「聊天」和 API 密钥列表中的「聊天」菜单刷新页面后更新。 |
 | 绘图 › 启用绘制功能 | 「保存绘图设置」 | — |
 | 绘图 › 其余 5 个开关 | 「保存绘图设置」 | 下一次相关的绘图请求起生效。 |
 
 </div>
 
-### 补充说明
-
+**补充说明：**
+- **列表的保存**：四个列表分区的新增、编辑、删除只修改页面数据，提示「…已添加。点击 "保存设置" 以应用。」等；点击「保存设置」后整体写入，成功提示如「公告保存成功」。
+- **删除确认**：删除列表条目前弹出「您确定吗？」，确认后仍需点击「保存设置」。
+- **无改动不提示**：「保存更改」「保存聊天设置」「保存绘图设置」只提交有改动的项，没有改动时不提交，也不提示。
 - **用量计入**：各节点各自汇总用量，并按刷新间隔写入数据库。
-- **通知中心的公告**：通知中心「时间线」标签只显示按发布日期倒序的前 20 条公告。
-- **公告已读**：已读由浏览器按公告 id 记录，编辑后 id 不变，不会重新变为未读。
 - **运行状态**：Uptime Kuma 各状态组的运行状态不经过保存，每次打开面板或点击刷新时由服务端实时获取。
 
 ## 注意事项
 
-### 条目上限与校验
-
-- **公告**：公告上限 100；与站点与品牌的「系统公告」是两套。
-- **API 地址**：上限 50；颜色需在服务端白名单；任意项不合规会整段被拒。
-- **常见问答**：上限 100；无排序字段（数组顺序即展示顺序）。
-- **Uptime Kuma**：上限 20；`description` 后端存在但界面不可编辑。
-
-### 面板与配置边界
-
-- **数据仪表板**：只含数据导出三元组；面板可见性由各自分区启用开关控制，整个数据看板入口还受侧边栏模块「数据看板」控制，不要在此处寻找面板开关。
-- **聊天预设**：单键值对数组；无 URL 校验；占位符在用户打开预设时由控制台替换。
-- **绘图**：只是 6 个开关；上游配置在渠道层。
+- **任一条不合规时整个列表被拒**：点击「保存设置」时服务端逐条检查，任一条不合规时整个列表都不保存。
+- **两套公告**：本页「公告」与站点与品牌的「系统公告」是两套配置，不互相替代。
+- **面板开关不在数据仪表板**：面板显示由各列表分区的「已启用」与侧边栏模块「数据看板」控制，见[数据仪表板](#数据仪表板)。
+- **聊天预设不校验 URL**：占位符填错时只在用户导入时暴露，见[聊天预设](#聊天预设)。
+- **绘图只有开关**：Midjourney 上游配置在渠道层，见[绘图](#绘图)。
 
 ## 常见问题
 
@@ -259,11 +404,13 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 - 侧边栏模块「数据看板」未开启。整个数据看板入口受该模块控制。
 
 **处理方法**：
-1. 保存后刷新或重新进入看板。
+1. 在对应分区打开「已启用」开关。
+2. 在站点与品牌的侧边栏模块中打开「数据看板」。
+3. 刷新页面或重新进入数据看板。
 </Accordion>
 
 <Accordion title="保存被拒绝">
-**可能原因**：数组任一项不合规（URL 非法、颜色不在白名单、超限、必填缺失），会导致整段保存失败。
+**可能原因**：列表中任一条不合规（URL 无效、颜色不在可选范围、条目超出上限或必填项缺失），整个列表都不保存。
 
 **处理方法**：
 1. 查看提示，修正后重试。
@@ -274,17 +421,13 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 </Accordion>
 
 <Accordion title="FAQ 顺序不对">
-**说明**：当前无排序字段，按数组顺序展示。
-
-**处理方法**：
-1. 调整数组顺序后保存。
+**说明**：界面没有排序控件，按列表顺序展示。
 </Accordion>
 
 <Accordion title="Uptime Kuma 不显示">
 **可能原因**：
 - 分区未启用。
 - New API 服务器无法访问该 Uptime Kuma 地址。
-- 接口 `/api/uptime/status` 无法返回。
 - 分组数超过 20。
 </Accordion>
 

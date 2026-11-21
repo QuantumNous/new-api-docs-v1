@@ -260,7 +260,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 | 配置项 | 定义 | 填写要求和限制 | 默认值 |
 | --- | --- | --- | --- |
-| 插件 | 渠道绑定的插件。 | 在选择窗口的「插件」分类中选择，必填；必须是已注册的插件，Key 不超过 30 个字符。选择后渠道类型自动设为「任务插件」（61）。 | — |
+| 插件 | 渠道绑定的插件。 | 在选择窗口的「插件」分类中选择，必填；必须是已注册的插件，Key 不超过 30 个字符。选择后渠道类型自动设为「任务插件」（#61）。 | — |
 | 名称 | 渠道的名称。 | 必填。 | 为空时填入插件名。 |
 | API 地址 | 插件请求的上游地址。 | 必填。插件未声明默认地址时，下方提示「必填。此插件发送请求的上游地址。」 | 插件声明了默认地址时自动填入，下方显示「插件默认值」。 |
 | API 密钥 | 上游服务的凭证。 | 必填，创建时不可为空。作为插件运行时的 `apiKey` 传入。 | 空 |
@@ -949,7 +949,7 @@ New API 官网（`www.newapi.ai`）的「插件」页同时列出官方插件和
 <Accordion title="创建渠道时看不到「插件」分类">
 **提示原文**：复制或提交任务插件渠道时可能提示 `task plugin channels require the task_plugin.bind permission`（仅英文）。
 
-**可能原因**：当前账户没有 `task_plugin.bind` 权限。没有该权限时，选择对话框不显示「插件」分类。
+**可能原因**：当前账户没有「绑定任务插件」权限。没有该权限时，选择对话框不显示「插件」分类。
 
 **处理方法**：
 1. 请 Root 在<a href="/zh/docs/guide/feature-guide/admin/user#管理员权限" target="_blank" rel="noopener noreferrer">用户管理</a>的「管理员权限」中授予「绑定任务插件」。
@@ -960,7 +960,7 @@ New API 官网（`www.newapi.ai`）的「插件」页同时列出官方插件和
 
 **可能原因**：
 - 绑定的插件未注册。
-- `task_plugin_key` 超过 30 个字符。
+- 渠道绑定的插件 Key 超过 30 个字符。
 - 未填写「API 地址」或「API 密钥」。
 
 **处理方法**：
@@ -972,7 +972,7 @@ New API 官网（`www.newapi.ai`）的「插件」页同时列出官方插件和
 **提示原文**：`selected channel does not match the pinned task plugin`；插件系统或该插件已关闭时，客户端收到 HTTP 400 和 `the task plugin system is disabled on this gateway` 或 `task plugin "…" is disabled on this gateway`（仅英文）。
 
 **可能原因**：
-- 渠道 `setting.task_plugin_key` 与请求固定的 Key 不一致。
+- 渠道绑定的插件 Key 与请求固定的 Key 不一致。
 - 其他渠道类型的编号不在插件的 `channelTypes` 内。
 - 渠道类型不是任务插件、渠道绑定的 Key 有误、分组不匹配，或模型不在插件的 `models` 中。
 - 全局「启用插件」或该插件已关闭。
@@ -1037,11 +1037,10 @@ New API 官网（`www.newapi.ai`）的「插件」页同时列出官方插件和
 </Accordion>
 
 <Accordion title="市场安装失败">
-**提示原文**：如「完整性校验失败」（英文 Integrity check failed）、`unsupported indexVersion …`（仅英文），或「请先在“已安装”页解决冲突，再重新安装。」（英文 Resolve the conflict on the Installed tab, then install again.）
+**提示原文**：如「完整性校验失败」（英文 Integrity check failed），或「请先在“已安装”页解决冲突，再重新安装。」（英文 Resolve the conflict on the Installed tab, then install again.）
 
 **可能原因**：
 - 索引无法访问。
-- `indexVersion` 大于 1，或 `kind` 不是 `task`。
 - 源码哈希与索引不一致。
 - 存在路由冲突。
 - 从社区或第三方来源安装的插件标识与内置插件相同，或不以作者 GitHub 用户名加下划线开头。
@@ -1056,7 +1055,7 @@ New API 官网（`www.newapi.ai`）的「插件」页同时列出官方插件和
 **提示原文**：「无法加载该源」（英文 Could not load this source），或「无法下载插件代码，请稍后重试。」（英文 Could not download the plugin code. Try again later.）
 
 **可能原因**：
-- 「源地址」不是绝对 http(s) 地址。
+- 索引的 `indexVersion` 大于 1（该来源的插件不会列出）。
 - 浏览器无法访问该主机，或主机禁止跨域请求。
 
 **处理方法**：
