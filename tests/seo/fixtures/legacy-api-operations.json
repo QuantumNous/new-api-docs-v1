@@ -1,0 +1,5822 @@
+{
+  "/en/docs/api/ai-model/audio/create-speech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/audio/create-transcription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/audio/create-translation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/audio/createSpeech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/audio/createTranscription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/audio/createTranslation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/audio/gemini-relay-v1-beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/audio/openai/create-speech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/audio/openai/create-transcription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/audio/openai/create-translation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/chat/claude/create-message": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/chat/create-message": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/chat/gemini/gemini-generate-content": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/chat/openai/create-chat-completion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/claude-messages/create-message": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/claude-messages/createMessage": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/claude格式(messages)/createMessage": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/completions/create-completion": [
+    {
+      "path": "/v1/completions",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/embeddings/create-embedding": [
+    {
+      "path": "/v1/embeddings",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/embeddings/create-embedding-legacy": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/gemini/create-engine-embedding": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/gemini/createEngineEmbedding": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/gemini/gemini-relay-v1-beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/gemini/geminiRelayV1Beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/gemini格式/createEngineEmbedding": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/gemini格式/geminiRelayV1Beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/image-generation/edit-images/qwen/create-image": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/image-generation/edit-images/qwen/createImage": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/images/Nano Banana/gemini-relay-v1-beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/images/openai/create-image": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/images/openai/create-image-edit": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/images/openai/v1-images-edits--post": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/images/openai/v1-images-generations--post": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/images/qwen/create-image": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/list-models/list-models": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/list-models/list-models-gemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/list-models/listModels": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/list-models/listModelsGemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/models/list-models": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/models/list-models-gemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/models/list/list-models-gemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/moderations/create-moderation": [
+    {
+      "path": "/v1/moderations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/files/create-file": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/files/createFile": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/files/delete-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/files/deleteFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/files/download-file": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/files/downloadFile": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/files/list-files": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/files/listFiles": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/files/retrieve-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/files/retrieveFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/fine-tunes/cancel-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/fine-tunes/cancelFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/fine-tunes/create-fine-tune": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/fine-tunes/createFineTune": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/fine-tunes/list-fine-tune-events": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/fine-tunes/list-fine-tunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/fine-tunes/listFineTuneEvents": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/fine-tunes/listFineTunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/fine-tunes/retrieve-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/not-implemented/fine-tunes/retrieveFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/openai-chat/create-chat-completion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/openai-chat/createChatCompletion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/openai-responses/create-response": [
+    {
+      "path": "/v1/responses",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/openai-responses/createResponse": [
+    {
+      "path": "/v1/responses",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/openai格式(chat)/createChatCompletion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/openai格式(embeddings)/createEmbedding": [
+    {
+      "path": "/v1/embeddings",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/openai格式(responses)/createResponse": [
+    {
+      "path": "/v1/responses",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/openai音频(audio)/createSpeech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/openai音频(audio)/createTranscription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/openai音频(audio)/createTranslation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/realtime/create-realtime-session": [
+    {
+      "path": "/v1/realtime",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/rerank/create-rerank": [
+    {
+      "path": "/v1/rerank",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/unimplemented/files/create-file": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/unimplemented/files/delete-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/ai-model/unimplemented/files/download-file": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/unimplemented/files/list-files": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/unimplemented/files/retrieve-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/unimplemented/fine-tuning/cancel-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/unimplemented/fine-tuning/list-fine-tune-events": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/unimplemented/fine-tuning/list-fine-tunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/unimplemented/fine-tuning/retrieve-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/create-video-generation": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/createVideoGeneration": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/get-video-generation": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/getVideoGeneration": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/jimeng/create-jimeng-video": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/jimeng/createJimengVideo": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/kling/create-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/kling/create-kling-text2-video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/kling/createKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/kling/createKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/kling/get-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/kling/get-kling-text2-video": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/kling/getKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/kling/getKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/sora-compatible/create-video": [
+    {
+      "path": "/v1/videos",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/sora-compatible/createVideo": [
+    {
+      "path": "/v1/videos",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/sora-compatible/get-video": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/sora-compatible/get-video-content": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/sora-compatible/getVideo": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/video-generation/sora-compatible/getVideoContent": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/create-video-generation": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/get-video-generation": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/jimeng/create-jimeng-video": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/kling/create-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/kling/create-kling-text2-video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/kling/get-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/kling/get-kling-image2-video-task": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/kling/get-kling-text2-video-task": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/sora/create-video-generation": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/sora/get-video": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/sora/get-video-content": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/sora/get-video-generation": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/videos/sora/get-video-task": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/图片生成/编辑(images)/qwen千问/createImage": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/文本补全(completions)/createCompletion": [
+    {
+      "path": "/v1/completions",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/未实现/files/createFile": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/未实现/files/deleteFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/ai-model/未实现/files/downloadFile": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/未实现/files/listFiles": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/未实现/files/retrieveFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/未实现/fine-tunes/cancelFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/未实现/fine-tunes/createFineTune": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/未实现/fine-tunes/listFineTuneEvents": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/未实现/fine-tunes/listFineTunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/未实现/fine-tunes/retrieveFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/获取模型列表/listModels": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/获取模型列表/listModelsGemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/视频生成/createVideoGeneration": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/视频生成/getVideoGeneration": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/视频生成/kling格式/createKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/视频生成/kling格式/createKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/视频生成/kling格式/getKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/视频生成/kling格式/getKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/视频生成/sora兼容格式/createVideo": [
+    {
+      "path": "/v1/videos",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/视频生成/sora兼容格式/getVideo": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/视频生成/sora兼容格式/getVideoContent": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/ai-model/视频生成/即梦格式/createJimengVideo": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/ai-model/重排序(rerank)/createRerank": [
+    {
+      "path": "/v1/rerank",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/anthropic-chat": [
+    {
+      "method": "post",
+      "path": "/v1/messages"
+    }
+  ],
+  "/en/docs/api/api-modules/fei-group": [
+    {
+      "method": "get",
+      "path": "/api/group/"
+    }
+  ],
+  "/en/docs/api/chat/anthropic-chat": [
+    {
+      "method": "post",
+      "path": "/v1/messages"
+    }
+  ],
+  "/en/docs/api/chat/google-gemini-chat": [
+    {
+      "method": "post",
+      "path": "/v1beta/models/{model}:generateContent"
+    }
+  ],
+  "/en/docs/api/chat/openai-chat": [
+    {
+      "method": "post",
+      "path": "/v1/chat/completions"
+    }
+  ],
+  "/en/docs/api/chat/openai-responses": [
+    {
+      "method": "post",
+      "path": "/v1/responses"
+    }
+  ],
+  "/en/docs/api/cohere-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/en/docs/api/embeddings/openai-embedding": [
+    {
+      "method": "post",
+      "path": "/v1/embeddings"
+    }
+  ],
+  "/en/docs/api/frontend/fei-group": [
+    {
+      "method": "get",
+      "path": "/api/group/"
+    }
+  ],
+  "/en/docs/api/frontend/get-available-models-list": [
+    {
+      "method": "get",
+      "path": "/api/models"
+    }
+  ],
+  "/en/docs/api/get-available-models-list": [
+    {
+      "method": "get",
+      "path": "/api/models"
+    }
+  ],
+  "/en/docs/api/google-gemini-chat": [
+    {
+      "method": "post",
+      "path": "/v1beta/models/{model}:generateContent"
+    }
+  ],
+  "/en/docs/api/jinaai-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/en/docs/api/management/两步验证/user-2fa-backup_codes-post": [
+    {
+      "path": "/api/user/2fa/backup_codes",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/两步验证/user-2fa-disable-post": [
+    {
+      "path": "/api/user/2fa/disable",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/两步验证/user-2fa-enable-post": [
+    {
+      "path": "/api/user/2fa/enable",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/两步验证/user-2fa-setup-post": [
+    {
+      "path": "/api/user/2fa/setup",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/两步验证/user-2fa-stats-get": [
+    {
+      "path": "/api/user/2fa/stats",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/两步验证/user-2fa-status-get": [
+    {
+      "path": "/api/user/2fa/status",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/令牌管理/token-batch-post": [
+    {
+      "path": "/api/token/batch",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/令牌管理/token-get": [
+    {
+      "path": "/api/token/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/令牌管理/token-id-delete": [
+    {
+      "path": "/api/token/{id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/令牌管理/token-id-get": [
+    {
+      "path": "/api/token/{id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/令牌管理/token-post": [
+    {
+      "path": "/api/token/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/令牌管理/token-put": [
+    {
+      "path": "/api/token/",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/令牌管理/token-search-get": [
+    {
+      "path": "/api/token/search",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/令牌管理/usage-token-get": [
+    {
+      "path": "/api/usage/token/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/任务/mj-get": [
+    {
+      "path": "/api/mj/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/任务/mj-self-get": [
+    {
+      "path": "/api/mj/self",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/任务/task-get": [
+    {
+      "path": "/api/task/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/任务/task-self-get": [
+    {
+      "path": "/api/task/self",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/供应商/vendors-get": [
+    {
+      "path": "/api/vendors/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/供应商/vendors-id-delete": [
+    {
+      "path": "/api/vendors/{id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/供应商/vendors-id-get": [
+    {
+      "path": "/api/vendors/{id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/供应商/vendors-post": [
+    {
+      "path": "/api/vendors/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/供应商/vendors-put": [
+    {
+      "path": "/api/vendors/",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/供应商/vendors-search-get": [
+    {
+      "path": "/api/vendors/search",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/充值/creem-webhook-post": [
+    {
+      "path": "/api/creem/webhook",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/充值/stripe-webhook-post": [
+    {
+      "path": "/api/stripe/webhook",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/充值/user-amount-post": [
+    {
+      "path": "/api/user/amount",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/充值/user-creem-pay-post": [
+    {
+      "path": "/api/user/creem/pay",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/充值/user-epay-notify-get": [
+    {
+      "path": "/api/user/epay/notify",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/充值/user-pay-post": [
+    {
+      "path": "/api/user/pay",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/充值/user-stripe-amount-post": [
+    {
+      "path": "/api/user/stripe/amount",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/充值/user-stripe-pay-post": [
+    {
+      "path": "/api/user/stripe/pay",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/充值/user-topup-info-get": [
+    {
+      "path": "/api/user/topup/info",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/充值/user-topup-self-get": [
+    {
+      "path": "/api/user/topup/self",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/兑换码/redemption-get": [
+    {
+      "path": "/api/redemption/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/兑换码/redemption-id-delete": [
+    {
+      "path": "/api/redemption/{id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/兑换码/redemption-id-get": [
+    {
+      "path": "/api/redemption/{id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/兑换码/redemption-invalid-delete": [
+    {
+      "path": "/api/redemption/invalid",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/兑换码/redemption-post": [
+    {
+      "path": "/api/redemption/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/兑换码/redemption-put": [
+    {
+      "path": "/api/redemption/",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/兑换码/redemption-search-get": [
+    {
+      "path": "/api/redemption/search",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/分组/group-get": [
+    {
+      "path": "/api/group/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/分组/prefill_group-get": [
+    {
+      "path": "/api/prefill_group/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/分组/prefill_group-id-delete": [
+    {
+      "path": "/api/prefill_group/{id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/分组/prefill_group-post": [
+    {
+      "path": "/api/prefill_group/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/分组/prefill_group-put": [
+    {
+      "path": "/api/prefill_group/",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/安全验证/verify-post": [
+    {
+      "path": "/api/verify",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/安全验证/verify-status-get": [
+    {
+      "path": "/api/verify/status",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/数据统计/data-get": [
+    {
+      "path": "/api/data/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/数据统计/data-self-get": [
+    {
+      "path": "/api/data/self",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/日志/log-delete": [
+    {
+      "path": "/api/log/",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/日志/log-get": [
+    {
+      "path": "/api/log/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/日志/log-search-get": [
+    {
+      "path": "/api/log/search",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/日志/log-self-get": [
+    {
+      "path": "/api/log/self",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/日志/log-self-search-get": [
+    {
+      "path": "/api/log/self/search",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/日志/log-self-stat-get": [
+    {
+      "path": "/api/log/self/stat",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/日志/log-stat-get": [
+    {
+      "path": "/api/log/stat",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/日志/log-token-get": [
+    {
+      "path": "/api/log/token",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/模型管理/models-get": [
+    {
+      "path": "/api/models/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/模型管理/models-id-delete": [
+    {
+      "path": "/api/models/{id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/模型管理/models-id-get": [
+    {
+      "path": "/api/models/{id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/模型管理/models-missing-get": [
+    {
+      "path": "/api/models/missing",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/模型管理/models-post": [
+    {
+      "path": "/api/models/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/模型管理/models-put": [
+    {
+      "path": "/api/models/",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/模型管理/models-search-get": [
+    {
+      "path": "/api/models/search",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/模型管理/models-sync_upstream-post": [
+    {
+      "path": "/api/models/sync_upstream",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/模型管理/models-sync_upstream-preview-get": [
+    {
+      "path": "/api/models/sync_upstream/preview",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-batch-post": [
+    {
+      "path": "/api/channel/batch",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-batch-tag-post": [
+    {
+      "path": "/api/channel/batch/tag",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-copy-id-post": [
+    {
+      "path": "/api/channel/copy/{id}",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-disabled-delete": [
+    {
+      "path": "/api/channel/disabled",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-fetch_models-id-get": [
+    {
+      "path": "/api/channel/fetch_models/{id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-fetch_models-post": [
+    {
+      "path": "/api/channel/fetch_models",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-fix-post": [
+    {
+      "path": "/api/channel/fix",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-get": [
+    {
+      "path": "/api/channel/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-id-delete": [
+    {
+      "path": "/api/channel/{id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-id-get": [
+    {
+      "path": "/api/channel/{id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-id-key-post": [
+    {
+      "path": "/api/channel/{id}/key",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-models-get": [
+    {
+      "path": "/api/channel/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-models_enabled-get": [
+    {
+      "path": "/api/channel/models_enabled",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-multi_key-manage-post": [
+    {
+      "path": "/api/channel/multi_key/manage",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-post": [
+    {
+      "path": "/api/channel/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-put": [
+    {
+      "path": "/api/channel/",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-search-get": [
+    {
+      "path": "/api/channel/search",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-tag-disabled-post": [
+    {
+      "path": "/api/channel/tag/disabled",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-tag-enabled-post": [
+    {
+      "path": "/api/channel/tag/enabled",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-tag-models-get": [
+    {
+      "path": "/api/channel/tag/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-tag-put": [
+    {
+      "path": "/api/channel/tag",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-test-get": [
+    {
+      "path": "/api/channel/test",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-test-id-get": [
+    {
+      "path": "/api/channel/test/{id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-update_balance-get": [
+    {
+      "path": "/api/channel/update_balance",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/渠道管理/channel-update_balance-id-get": [
+    {
+      "path": "/api/channel/update_balance/{id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户登陆注册/reset_password-get": [
+    {
+      "path": "/api/reset_password",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户登陆注册/user-groups-get": [
+    {
+      "path": "/api/user/groups",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户登陆注册/user-login-2fa-post": [
+    {
+      "path": "/api/user/login/2fa",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户登陆注册/user-login-post": [
+    {
+      "path": "/api/user/login",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户登陆注册/user-logout-get": [
+    {
+      "path": "/api/user/logout",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户登陆注册/user-passkey-login-begin-post": [
+    {
+      "path": "/api/user/passkey/login/begin",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户登陆注册/user-passkey-login-finish-post": [
+    {
+      "path": "/api/user/passkey/login/finish",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户登陆注册/user-register-post": [
+    {
+      "path": "/api/user/register",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户登陆注册/user-reset-post": [
+    {
+      "path": "/api/user/reset",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户登陆注册/verification-get": [
+    {
+      "path": "/api/verification",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-aff-get": [
+    {
+      "path": "/api/user/aff",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-aff_transfer-post": [
+    {
+      "path": "/api/user/aff_transfer",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-get": [
+    {
+      "path": "/api/user/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-id-2fa-delete": [
+    {
+      "path": "/api/user/{id}/2fa",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-id-delete": [
+    {
+      "path": "/api/user/{id}",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-id-get": [
+    {
+      "path": "/api/user/{id}",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-id-reset_passkey-delete": [
+    {
+      "path": "/api/user/{id}/reset_passkey",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-manage-post": [
+    {
+      "path": "/api/user/manage",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-models-get": [
+    {
+      "path": "/api/user/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-passkey-delete": [
+    {
+      "path": "/api/user/passkey",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-passkey-get": [
+    {
+      "path": "/api/user/passkey",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-passkey-register-begin-post": [
+    {
+      "path": "/api/user/passkey/register/begin",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-passkey-register-finish-post": [
+    {
+      "path": "/api/user/passkey/register/finish",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-passkey-verify-begin-post": [
+    {
+      "path": "/api/user/passkey/verify/begin",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-passkey-verify-finish-post": [
+    {
+      "path": "/api/user/passkey/verify/finish",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-post": [
+    {
+      "path": "/api/user/",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-put": [
+    {
+      "path": "/api/user/",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-search-get": [
+    {
+      "path": "/api/user/search",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-self-delete": [
+    {
+      "path": "/api/user/self",
+      "method": "delete"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-self-get": [
+    {
+      "path": "/api/user/self",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-self-groups-get": [
+    {
+      "path": "/api/user/self/groups",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-self-put": [
+    {
+      "path": "/api/user/self",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-setting-put": [
+    {
+      "path": "/api/user/setting",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-token-get": [
+    {
+      "path": "/api/user/token",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-topup-complete-post": [
+    {
+      "path": "/api/user/topup/complete",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/用户管理/user-topup-get": [
+    {
+      "path": "/api/user/topup",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/about-get": [
+    {
+      "path": "/api/about",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/home_page_content-get": [
+    {
+      "path": "/api/home_page_content",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/models-get": [
+    {
+      "path": "/api/models",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/notice-get": [
+    {
+      "path": "/api/notice",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/pricing-get": [
+    {
+      "path": "/api/pricing",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/privacy-policy-get": [
+    {
+      "path": "/api/privacy-policy",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/ratio_config-get": [
+    {
+      "path": "/api/ratio_config",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/setup-get": [
+    {
+      "path": "/api/setup",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/setup-post": [
+    {
+      "path": "/api/setup",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/系统/status-get": [
+    {
+      "path": "/api/status",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/status-test-get": [
+    {
+      "path": "/api/status/test",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/uptime-status-get": [
+    {
+      "path": "/api/uptime/status",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统/user-agreement-get": [
+    {
+      "path": "/api/user-agreement",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统设置/option-get": [
+    {
+      "path": "/api/option/",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统设置/option-migrate_console_setting-post": [
+    {
+      "path": "/api/option/migrate_console_setting",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/系统设置/option-put": [
+    {
+      "path": "/api/option/",
+      "method": "put"
+    }
+  ],
+  "/en/docs/api/management/系统设置/option-rest_model_ratio-post": [
+    {
+      "path": "/api/option/rest_model_ratio",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/management/系统设置/ratio_sync-channels-get": [
+    {
+      "path": "/api/ratio_sync/channels",
+      "method": "get"
+    }
+  ],
+  "/en/docs/api/management/系统设置/ratio_sync-fetch-post": [
+    {
+      "path": "/api/ratio_sync/fetch",
+      "method": "post"
+    }
+  ],
+  "/en/docs/api/openai-embedding": [
+    {
+      "method": "post",
+      "path": "/v1/embeddings"
+    }
+  ],
+  "/en/docs/api/openai-responses": [
+    {
+      "method": "post",
+      "path": "/v1/responses"
+    }
+  ],
+  "/en/docs/api/realtime/openai-realtime": [
+    {
+      "method": "get",
+      "path": "/v1/realtime"
+    }
+  ],
+  "/en/docs/api/rerank/cohere-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/en/docs/api/rerank/jinaai-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/en/docs/api/rerank/xinference-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/en/docs/api/xinference-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/en/docs/apis/frontend-apis/get-available-models-list": [
+    {
+      "method": "get",
+      "path": "/api/models"
+    }
+  ],
+  "/en/docs/apis/frontend-apis/module-guide/fei-group": [
+    {
+      "method": "get",
+      "path": "/api/group/"
+    }
+  ],
+  "/en/docs/apis/relay-apis/chat/anthropic-chat": [
+    {
+      "method": "post",
+      "path": "/v1/messages"
+    }
+  ],
+  "/en/docs/apis/relay-apis/chat/google-gemini-chat": [
+    {
+      "method": "post",
+      "path": "/v1beta/models/{model}:generateContent"
+    }
+  ],
+  "/en/docs/apis/relay-apis/chat/openai-chat": [
+    {
+      "method": "post",
+      "path": "/v1/chat/completions"
+    }
+  ],
+  "/en/docs/apis/relay-apis/chat/openai-responses": [
+    {
+      "method": "post",
+      "path": "/v1/responses"
+    }
+  ],
+  "/en/docs/apis/relay-apis/embeddings/openai-embedding": [
+    {
+      "method": "post",
+      "path": "/v1/embeddings"
+    }
+  ],
+  "/en/docs/apis/relay-apis/realtime/openai-realtime": [
+    {
+      "method": "get",
+      "path": "/v1/realtime"
+    }
+  ],
+  "/en/docs/apis/relay-apis/rerank/cohere-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/en/docs/apis/relay-apis/rerank/jinaai-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/en/docs/apis/relay-apis/rerank/xinference-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/ja/docs/api/ai-model/audio/create-speech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/audio/create-transcription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/audio/create-translation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/audio/createSpeech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/audio/createTranscription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/audio/createTranslation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/audio/gemini-relay-v1-beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/audio/openai/create-speech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/audio/openai/create-transcription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/audio/openai/create-translation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/chat/claude/create-message": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/chat/create-message": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/chat/gemini/gemini-generate-content": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/chat/openai/create-chat-completion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/claude-messages/create-message": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/claude-messages/createMessage": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/claude格式(messages)/createMessage": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/completions/create-completion": [
+    {
+      "path": "/v1/completions",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/embeddings/create-embedding": [
+    {
+      "path": "/v1/embeddings",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/embeddings/create-embedding-legacy": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/gemini/create-engine-embedding": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/gemini/createEngineEmbedding": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/gemini/gemini-relay-v1-beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/gemini/geminiRelayV1Beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/gemini格式/createEngineEmbedding": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/gemini格式/geminiRelayV1Beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/image-generation/edit-images/qwen/create-image": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/image-generation/edit-images/qwen/createImage": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/images/Nano Banana/gemini-relay-v1-beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/images/openai/create-image": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/images/openai/create-image-edit": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/images/openai/v1-images-edits--post": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/images/openai/v1-images-generations--post": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/images/qwen/create-image": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/list-models/list-models": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/list-models/list-models-gemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/list-models/listModels": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/list-models/listModelsGemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/models/list-models": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/models/list-models-gemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/models/list/list-models-gemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/moderations/create-moderation": [
+    {
+      "path": "/v1/moderations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/files/create-file": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/files/createFile": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/files/delete-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/files/deleteFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/files/download-file": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/files/downloadFile": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/files/list-files": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/files/listFiles": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/files/retrieve-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/files/retrieveFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/fine-tunes/cancel-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/fine-tunes/cancelFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/fine-tunes/create-fine-tune": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/fine-tunes/createFineTune": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/fine-tunes/list-fine-tune-events": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/fine-tunes/list-fine-tunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/fine-tunes/listFineTuneEvents": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/fine-tunes/listFineTunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/fine-tunes/retrieve-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/not-implemented/fine-tunes/retrieveFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/openai-chat/create-chat-completion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/openai-chat/createChatCompletion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/openai-responses/create-response": [
+    {
+      "path": "/v1/responses",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/openai-responses/createResponse": [
+    {
+      "path": "/v1/responses",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/openai格式(chat)/createChatCompletion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/openai格式(embeddings)/createEmbedding": [
+    {
+      "path": "/v1/embeddings",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/openai格式(responses)/createResponse": [
+    {
+      "path": "/v1/responses",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/openai音频(audio)/createSpeech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/openai音频(audio)/createTranscription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/openai音频(audio)/createTranslation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/realtime/create-realtime-session": [
+    {
+      "path": "/v1/realtime",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/rerank/create-rerank": [
+    {
+      "path": "/v1/rerank",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/unimplemented/files/create-file": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/unimplemented/files/delete-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/ai-model/unimplemented/files/download-file": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/unimplemented/files/list-files": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/unimplemented/files/retrieve-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/unimplemented/fine-tuning/cancel-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/unimplemented/fine-tuning/list-fine-tune-events": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/unimplemented/fine-tuning/list-fine-tunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/unimplemented/fine-tuning/retrieve-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/create-video-generation": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/createVideoGeneration": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/get-video-generation": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/getVideoGeneration": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/jimeng/create-jimeng-video": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/jimeng/createJimengVideo": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/kling/create-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/kling/create-kling-text2-video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/kling/createKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/kling/createKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/kling/get-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/kling/get-kling-text2-video": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/kling/getKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/kling/getKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/sora-compatible/create-video": [
+    {
+      "path": "/v1/videos",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/sora-compatible/createVideo": [
+    {
+      "path": "/v1/videos",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/sora-compatible/get-video": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/sora-compatible/get-video-content": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/sora-compatible/getVideo": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/video-generation/sora-compatible/getVideoContent": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/create-video-generation": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/get-video-generation": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/jimeng/create-jimeng-video": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/kling/create-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/kling/create-kling-text2-video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/kling/get-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/kling/get-kling-image2-video-task": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/kling/get-kling-text2-video-task": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/sora/create-video-generation": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/sora/get-video": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/sora/get-video-content": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/sora/get-video-generation": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/videos/sora/get-video-task": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/图片生成/编辑(images)/qwen千问/createImage": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/文本补全(completions)/createCompletion": [
+    {
+      "path": "/v1/completions",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/未实现/files/createFile": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/未实现/files/deleteFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/ai-model/未实现/files/downloadFile": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/未实现/files/listFiles": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/未实现/files/retrieveFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/未实现/fine-tunes/cancelFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/未实现/fine-tunes/createFineTune": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/未实现/fine-tunes/listFineTuneEvents": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/未实现/fine-tunes/listFineTunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/未实现/fine-tunes/retrieveFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/获取模型列表/listModels": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/获取模型列表/listModelsGemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/视频生成/createVideoGeneration": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/视频生成/getVideoGeneration": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/视频生成/kling格式/createKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/视频生成/kling格式/createKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/视频生成/kling格式/getKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/视频生成/kling格式/getKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/视频生成/sora兼容格式/createVideo": [
+    {
+      "path": "/v1/videos",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/视频生成/sora兼容格式/getVideo": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/视频生成/sora兼容格式/getVideoContent": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/ai-model/视频生成/即梦格式/createJimengVideo": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/ai-model/重排序(rerank)/createRerank": [
+    {
+      "path": "/v1/rerank",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/anthropic-chat": [
+    {
+      "method": "post",
+      "path": "/v1/messages"
+    }
+  ],
+  "/ja/docs/api/api-modules/fei-group": [
+    {
+      "method": "get",
+      "path": "/api/group/"
+    }
+  ],
+  "/ja/docs/api/chat/anthropic-chat": [
+    {
+      "method": "post",
+      "path": "/v1/messages"
+    }
+  ],
+  "/ja/docs/api/chat/google-gemini-chat": [
+    {
+      "method": "post",
+      "path": "/v1beta/models/{model}:generateContent"
+    }
+  ],
+  "/ja/docs/api/chat/openai-chat": [
+    {
+      "method": "post",
+      "path": "/v1/chat/completions"
+    }
+  ],
+  "/ja/docs/api/chat/openai-responses": [
+    {
+      "method": "post",
+      "path": "/v1/responses"
+    }
+  ],
+  "/ja/docs/api/cohere-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/ja/docs/api/embeddings/openai-embedding": [
+    {
+      "method": "post",
+      "path": "/v1/embeddings"
+    }
+  ],
+  "/ja/docs/api/frontend/fei-group": [
+    {
+      "method": "get",
+      "path": "/api/group/"
+    }
+  ],
+  "/ja/docs/api/frontend/get-available-models-list": [
+    {
+      "method": "get",
+      "path": "/api/models"
+    }
+  ],
+  "/ja/docs/api/get-available-models-list": [
+    {
+      "method": "get",
+      "path": "/api/models"
+    }
+  ],
+  "/ja/docs/api/google-gemini-chat": [
+    {
+      "method": "post",
+      "path": "/v1beta/models/{model}:generateContent"
+    }
+  ],
+  "/ja/docs/api/jinaai-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/ja/docs/api/management/两步验证/user-2fa-backup_codes-post": [
+    {
+      "path": "/api/user/2fa/backup_codes",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/两步验证/user-2fa-disable-post": [
+    {
+      "path": "/api/user/2fa/disable",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/两步验证/user-2fa-enable-post": [
+    {
+      "path": "/api/user/2fa/enable",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/两步验证/user-2fa-setup-post": [
+    {
+      "path": "/api/user/2fa/setup",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/两步验证/user-2fa-stats-get": [
+    {
+      "path": "/api/user/2fa/stats",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/两步验证/user-2fa-status-get": [
+    {
+      "path": "/api/user/2fa/status",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/令牌管理/token-batch-post": [
+    {
+      "path": "/api/token/batch",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/令牌管理/token-get": [
+    {
+      "path": "/api/token/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/令牌管理/token-id-delete": [
+    {
+      "path": "/api/token/{id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/令牌管理/token-id-get": [
+    {
+      "path": "/api/token/{id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/令牌管理/token-post": [
+    {
+      "path": "/api/token/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/令牌管理/token-put": [
+    {
+      "path": "/api/token/",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/令牌管理/token-search-get": [
+    {
+      "path": "/api/token/search",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/令牌管理/usage-token-get": [
+    {
+      "path": "/api/usage/token/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/任务/mj-get": [
+    {
+      "path": "/api/mj/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/任务/mj-self-get": [
+    {
+      "path": "/api/mj/self",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/任务/task-get": [
+    {
+      "path": "/api/task/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/任务/task-self-get": [
+    {
+      "path": "/api/task/self",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/供应商/vendors-get": [
+    {
+      "path": "/api/vendors/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/供应商/vendors-id-delete": [
+    {
+      "path": "/api/vendors/{id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/供应商/vendors-id-get": [
+    {
+      "path": "/api/vendors/{id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/供应商/vendors-post": [
+    {
+      "path": "/api/vendors/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/供应商/vendors-put": [
+    {
+      "path": "/api/vendors/",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/供应商/vendors-search-get": [
+    {
+      "path": "/api/vendors/search",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/充值/creem-webhook-post": [
+    {
+      "path": "/api/creem/webhook",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/充值/stripe-webhook-post": [
+    {
+      "path": "/api/stripe/webhook",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/充值/user-amount-post": [
+    {
+      "path": "/api/user/amount",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/充值/user-creem-pay-post": [
+    {
+      "path": "/api/user/creem/pay",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/充值/user-epay-notify-get": [
+    {
+      "path": "/api/user/epay/notify",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/充值/user-pay-post": [
+    {
+      "path": "/api/user/pay",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/充值/user-stripe-amount-post": [
+    {
+      "path": "/api/user/stripe/amount",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/充值/user-stripe-pay-post": [
+    {
+      "path": "/api/user/stripe/pay",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/充值/user-topup-info-get": [
+    {
+      "path": "/api/user/topup/info",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/充值/user-topup-self-get": [
+    {
+      "path": "/api/user/topup/self",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/兑换码/redemption-get": [
+    {
+      "path": "/api/redemption/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/兑换码/redemption-id-delete": [
+    {
+      "path": "/api/redemption/{id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/兑换码/redemption-id-get": [
+    {
+      "path": "/api/redemption/{id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/兑换码/redemption-invalid-delete": [
+    {
+      "path": "/api/redemption/invalid",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/兑换码/redemption-post": [
+    {
+      "path": "/api/redemption/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/兑换码/redemption-put": [
+    {
+      "path": "/api/redemption/",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/兑换码/redemption-search-get": [
+    {
+      "path": "/api/redemption/search",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/分组/group-get": [
+    {
+      "path": "/api/group/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/分组/prefill_group-get": [
+    {
+      "path": "/api/prefill_group/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/分组/prefill_group-id-delete": [
+    {
+      "path": "/api/prefill_group/{id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/分组/prefill_group-post": [
+    {
+      "path": "/api/prefill_group/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/分组/prefill_group-put": [
+    {
+      "path": "/api/prefill_group/",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/安全验证/verify-post": [
+    {
+      "path": "/api/verify",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/安全验证/verify-status-get": [
+    {
+      "path": "/api/verify/status",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/数据统计/data-get": [
+    {
+      "path": "/api/data/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/数据统计/data-self-get": [
+    {
+      "path": "/api/data/self",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/日志/log-delete": [
+    {
+      "path": "/api/log/",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/日志/log-get": [
+    {
+      "path": "/api/log/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/日志/log-search-get": [
+    {
+      "path": "/api/log/search",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/日志/log-self-get": [
+    {
+      "path": "/api/log/self",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/日志/log-self-search-get": [
+    {
+      "path": "/api/log/self/search",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/日志/log-self-stat-get": [
+    {
+      "path": "/api/log/self/stat",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/日志/log-stat-get": [
+    {
+      "path": "/api/log/stat",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/日志/log-token-get": [
+    {
+      "path": "/api/log/token",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/模型管理/models-get": [
+    {
+      "path": "/api/models/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/模型管理/models-id-delete": [
+    {
+      "path": "/api/models/{id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/模型管理/models-id-get": [
+    {
+      "path": "/api/models/{id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/模型管理/models-missing-get": [
+    {
+      "path": "/api/models/missing",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/模型管理/models-post": [
+    {
+      "path": "/api/models/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/模型管理/models-put": [
+    {
+      "path": "/api/models/",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/模型管理/models-search-get": [
+    {
+      "path": "/api/models/search",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/模型管理/models-sync_upstream-post": [
+    {
+      "path": "/api/models/sync_upstream",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/模型管理/models-sync_upstream-preview-get": [
+    {
+      "path": "/api/models/sync_upstream/preview",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-batch-post": [
+    {
+      "path": "/api/channel/batch",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-batch-tag-post": [
+    {
+      "path": "/api/channel/batch/tag",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-copy-id-post": [
+    {
+      "path": "/api/channel/copy/{id}",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-disabled-delete": [
+    {
+      "path": "/api/channel/disabled",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-fetch_models-id-get": [
+    {
+      "path": "/api/channel/fetch_models/{id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-fetch_models-post": [
+    {
+      "path": "/api/channel/fetch_models",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-fix-post": [
+    {
+      "path": "/api/channel/fix",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-get": [
+    {
+      "path": "/api/channel/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-id-delete": [
+    {
+      "path": "/api/channel/{id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-id-get": [
+    {
+      "path": "/api/channel/{id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-id-key-post": [
+    {
+      "path": "/api/channel/{id}/key",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-models-get": [
+    {
+      "path": "/api/channel/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-models_enabled-get": [
+    {
+      "path": "/api/channel/models_enabled",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-multi_key-manage-post": [
+    {
+      "path": "/api/channel/multi_key/manage",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-post": [
+    {
+      "path": "/api/channel/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-put": [
+    {
+      "path": "/api/channel/",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-search-get": [
+    {
+      "path": "/api/channel/search",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-tag-disabled-post": [
+    {
+      "path": "/api/channel/tag/disabled",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-tag-enabled-post": [
+    {
+      "path": "/api/channel/tag/enabled",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-tag-models-get": [
+    {
+      "path": "/api/channel/tag/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-tag-put": [
+    {
+      "path": "/api/channel/tag",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-test-get": [
+    {
+      "path": "/api/channel/test",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-test-id-get": [
+    {
+      "path": "/api/channel/test/{id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-update_balance-get": [
+    {
+      "path": "/api/channel/update_balance",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/渠道管理/channel-update_balance-id-get": [
+    {
+      "path": "/api/channel/update_balance/{id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户登陆注册/reset_password-get": [
+    {
+      "path": "/api/reset_password",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户登陆注册/user-groups-get": [
+    {
+      "path": "/api/user/groups",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户登陆注册/user-login-2fa-post": [
+    {
+      "path": "/api/user/login/2fa",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户登陆注册/user-login-post": [
+    {
+      "path": "/api/user/login",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户登陆注册/user-logout-get": [
+    {
+      "path": "/api/user/logout",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户登陆注册/user-passkey-login-begin-post": [
+    {
+      "path": "/api/user/passkey/login/begin",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户登陆注册/user-passkey-login-finish-post": [
+    {
+      "path": "/api/user/passkey/login/finish",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户登陆注册/user-register-post": [
+    {
+      "path": "/api/user/register",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户登陆注册/user-reset-post": [
+    {
+      "path": "/api/user/reset",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户登陆注册/verification-get": [
+    {
+      "path": "/api/verification",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-aff-get": [
+    {
+      "path": "/api/user/aff",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-aff_transfer-post": [
+    {
+      "path": "/api/user/aff_transfer",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-get": [
+    {
+      "path": "/api/user/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-id-2fa-delete": [
+    {
+      "path": "/api/user/{id}/2fa",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-id-delete": [
+    {
+      "path": "/api/user/{id}",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-id-get": [
+    {
+      "path": "/api/user/{id}",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-id-reset_passkey-delete": [
+    {
+      "path": "/api/user/{id}/reset_passkey",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-manage-post": [
+    {
+      "path": "/api/user/manage",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-models-get": [
+    {
+      "path": "/api/user/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-passkey-delete": [
+    {
+      "path": "/api/user/passkey",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-passkey-get": [
+    {
+      "path": "/api/user/passkey",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-passkey-register-begin-post": [
+    {
+      "path": "/api/user/passkey/register/begin",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-passkey-register-finish-post": [
+    {
+      "path": "/api/user/passkey/register/finish",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-passkey-verify-begin-post": [
+    {
+      "path": "/api/user/passkey/verify/begin",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-passkey-verify-finish-post": [
+    {
+      "path": "/api/user/passkey/verify/finish",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-post": [
+    {
+      "path": "/api/user/",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-put": [
+    {
+      "path": "/api/user/",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-search-get": [
+    {
+      "path": "/api/user/search",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-self-delete": [
+    {
+      "path": "/api/user/self",
+      "method": "delete"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-self-get": [
+    {
+      "path": "/api/user/self",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-self-groups-get": [
+    {
+      "path": "/api/user/self/groups",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-self-put": [
+    {
+      "path": "/api/user/self",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-setting-put": [
+    {
+      "path": "/api/user/setting",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-token-get": [
+    {
+      "path": "/api/user/token",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-topup-complete-post": [
+    {
+      "path": "/api/user/topup/complete",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/用户管理/user-topup-get": [
+    {
+      "path": "/api/user/topup",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/about-get": [
+    {
+      "path": "/api/about",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/home_page_content-get": [
+    {
+      "path": "/api/home_page_content",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/models-get": [
+    {
+      "path": "/api/models",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/notice-get": [
+    {
+      "path": "/api/notice",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/pricing-get": [
+    {
+      "path": "/api/pricing",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/privacy-policy-get": [
+    {
+      "path": "/api/privacy-policy",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/ratio_config-get": [
+    {
+      "path": "/api/ratio_config",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/setup-get": [
+    {
+      "path": "/api/setup",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/setup-post": [
+    {
+      "path": "/api/setup",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/系统/status-get": [
+    {
+      "path": "/api/status",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/status-test-get": [
+    {
+      "path": "/api/status/test",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/uptime-status-get": [
+    {
+      "path": "/api/uptime/status",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统/user-agreement-get": [
+    {
+      "path": "/api/user-agreement",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统设置/option-get": [
+    {
+      "path": "/api/option/",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统设置/option-migrate_console_setting-post": [
+    {
+      "path": "/api/option/migrate_console_setting",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/系统设置/option-put": [
+    {
+      "path": "/api/option/",
+      "method": "put"
+    }
+  ],
+  "/ja/docs/api/management/系统设置/option-rest_model_ratio-post": [
+    {
+      "path": "/api/option/rest_model_ratio",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/management/系统设置/ratio_sync-channels-get": [
+    {
+      "path": "/api/ratio_sync/channels",
+      "method": "get"
+    }
+  ],
+  "/ja/docs/api/management/系统设置/ratio_sync-fetch-post": [
+    {
+      "path": "/api/ratio_sync/fetch",
+      "method": "post"
+    }
+  ],
+  "/ja/docs/api/openai-embedding": [
+    {
+      "method": "post",
+      "path": "/v1/embeddings"
+    }
+  ],
+  "/ja/docs/api/openai-responses": [
+    {
+      "method": "post",
+      "path": "/v1/responses"
+    }
+  ],
+  "/ja/docs/api/realtime/openai-realtime": [
+    {
+      "method": "get",
+      "path": "/v1/realtime"
+    }
+  ],
+  "/ja/docs/api/rerank/cohere-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/ja/docs/api/rerank/jinaai-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/ja/docs/api/rerank/xinference-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/ja/docs/api/xinference-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/ja/docs/apis/frontend-apis/get-available-models-list": [
+    {
+      "method": "get",
+      "path": "/api/models"
+    }
+  ],
+  "/ja/docs/apis/frontend-apis/module-guide/fei-group": [
+    {
+      "method": "get",
+      "path": "/api/group/"
+    }
+  ],
+  "/ja/docs/apis/relay-apis/chat/anthropic-chat": [
+    {
+      "method": "post",
+      "path": "/v1/messages"
+    }
+  ],
+  "/ja/docs/apis/relay-apis/chat/google-gemini-chat": [
+    {
+      "method": "post",
+      "path": "/v1beta/models/{model}:generateContent"
+    }
+  ],
+  "/ja/docs/apis/relay-apis/chat/openai-chat": [
+    {
+      "method": "post",
+      "path": "/v1/chat/completions"
+    }
+  ],
+  "/ja/docs/apis/relay-apis/chat/openai-responses": [
+    {
+      "method": "post",
+      "path": "/v1/responses"
+    }
+  ],
+  "/ja/docs/apis/relay-apis/embeddings/openai-embedding": [
+    {
+      "method": "post",
+      "path": "/v1/embeddings"
+    }
+  ],
+  "/ja/docs/apis/relay-apis/realtime/openai-realtime": [
+    {
+      "method": "get",
+      "path": "/v1/realtime"
+    }
+  ],
+  "/ja/docs/apis/relay-apis/rerank/cohere-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/ja/docs/apis/relay-apis/rerank/jinaai-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/ja/docs/apis/relay-apis/rerank/xinference-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/api/ai-model/audio/create-speech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/audio/create-transcription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/audio/create-translation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/audio/createSpeech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/audio/createTranscription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/audio/createTranslation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/audio/gemini-relay-v1-beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/audio/openai/create-speech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/audio/openai/create-transcription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/audio/openai/create-translation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/chat/claude/create-message": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/chat/create-message": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/chat/gemini/gemini-generate-content": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/chat/openai/create-chat-completion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/claude-messages/create-message": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/claude-messages/createMessage": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/claude格式(messages)/createMessage": [
+    {
+      "path": "/v1/messages",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/completions/create-completion": [
+    {
+      "path": "/v1/completions",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/embeddings/create-embedding": [
+    {
+      "path": "/v1/embeddings",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/embeddings/create-embedding-legacy": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/gemini/create-engine-embedding": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/gemini/createEngineEmbedding": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/gemini/gemini-relay-v1-beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/gemini/geminiRelayV1Beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/gemini格式/createEngineEmbedding": [
+    {
+      "path": "/v1/engines/{model}/embeddings",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/gemini格式/geminiRelayV1Beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/image-generation/edit-images/qwen/create-image": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/image-generation/edit-images/qwen/createImage": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/images/Nano Banana/gemini-relay-v1-beta": [
+    {
+      "path": "/v1beta/models/{model}:generateContent/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/images/openai/create-image": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/images/openai/create-image-edit": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/images/openai/v1-images-edits--post": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/images/openai/v1-images-generations--post": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/images/qwen/create-image": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/images/通义千问格式/create-image": [
+    {
+      "path": "/v1/images/generations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/images/通义千问格式/edit-image": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/list-models/list-models": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/list-models/list-models-gemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/list-models/listModels": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/list-models/listModelsGemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/models/list-models": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/models/list-models-gemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/models/list/list-models-gemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/moderations/create-moderation": [
+    {
+      "path": "/v1/moderations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/files/create-file": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/files/createFile": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/files/delete-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/files/deleteFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/files/download-file": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/files/downloadFile": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/files/list-files": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/files/listFiles": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/files/retrieve-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/files/retrieveFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/fine-tunes/cancel-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/fine-tunes/cancelFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/fine-tunes/create-fine-tune": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/fine-tunes/createFineTune": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/fine-tunes/list-fine-tune-events": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/fine-tunes/list-fine-tunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/fine-tunes/listFineTuneEvents": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/fine-tunes/listFineTunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/fine-tunes/retrieve-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/not-implemented/fine-tunes/retrieveFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/openai-chat/create-chat-completion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/openai-chat/createChatCompletion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/openai-responses/create-response": [
+    {
+      "path": "/v1/responses",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/openai-responses/createResponse": [
+    {
+      "path": "/v1/responses",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/openai格式(chat)/createChatCompletion": [
+    {
+      "path": "/v1/chat/completions",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/openai格式(embeddings)/createEmbedding": [
+    {
+      "path": "/v1/embeddings",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/openai格式(responses)/createResponse": [
+    {
+      "path": "/v1/responses",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/openai音频(audio)/createSpeech": [
+    {
+      "path": "/v1/audio/speech",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/openai音频(audio)/createTranscription": [
+    {
+      "path": "/v1/audio/transcriptions",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/openai音频(audio)/createTranslation": [
+    {
+      "path": "/v1/audio/translations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/realtime/create-realtime-session": [
+    {
+      "path": "/v1/realtime",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/rerank/create-rerank": [
+    {
+      "path": "/v1/rerank",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/unimplemented/files/create-file": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/unimplemented/files/delete-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/ai-model/unimplemented/files/download-file": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/unimplemented/files/list-files": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/unimplemented/files/retrieve-file": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/unimplemented/fine-tuning/cancel-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/unimplemented/fine-tuning/list-fine-tune-events": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/unimplemented/fine-tuning/list-fine-tunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/unimplemented/fine-tuning/retrieve-fine-tune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/create-video-generation": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/createVideoGeneration": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/get-video-generation": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/getVideoGeneration": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/jimeng/create-jimeng-video": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/jimeng/createJimengVideo": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/kling/create-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/kling/create-kling-text2-video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/kling/createKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/kling/createKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/kling/get-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/kling/get-kling-text2-video": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/kling/getKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/kling/getKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/sora-compatible/create-video": [
+    {
+      "path": "/v1/videos",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/sora-compatible/createVideo": [
+    {
+      "path": "/v1/videos",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/sora-compatible/get-video": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/sora-compatible/get-video-content": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/sora-compatible/getVideo": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/video-generation/sora-compatible/getVideoContent": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/create-video-generation": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/get-video-generation": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/jimeng/create-jimeng-video": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/kling/create-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/kling/create-kling-text2-video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/kling/get-kling-image2-video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/kling/get-kling-image2-video-task": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/kling/get-kling-text2-video-task": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/sora/create-video-generation": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/sora/get-video": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/sora/get-video-content": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/sora/get-video-generation": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/videos/sora/get-video-task": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/图片生成/编辑(images)/qwen千问/createImage": [
+    {
+      "path": "/v1/images/edits",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/文本补全(completions)/createCompletion": [
+    {
+      "path": "/v1/completions",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/未实现/files/createFile": [
+    {
+      "path": "/v1/files",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/未实现/files/deleteFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/ai-model/未实现/files/downloadFile": [
+    {
+      "path": "/v1/files/{file_id}/content",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/未实现/files/listFiles": [
+    {
+      "path": "/v1/files",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/未实现/files/retrieveFile": [
+    {
+      "path": "/v1/files/{file_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/未实现/fine-tunes/cancelFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/cancel",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/未实现/fine-tunes/createFineTune": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/未实现/fine-tunes/listFineTuneEvents": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}/events",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/未实现/fine-tunes/listFineTunes": [
+    {
+      "path": "/v1/fine-tunes",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/未实现/fine-tunes/retrieveFineTune": [
+    {
+      "path": "/v1/fine-tunes/{fine_tune_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/获取模型列表/listModels": [
+    {
+      "path": "/v1/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/获取模型列表/listModelsGemini": [
+    {
+      "path": "/v1beta/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/视频生成/createVideoGeneration": [
+    {
+      "path": "/v1/video/generations",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/视频生成/getVideoGeneration": [
+    {
+      "path": "/v1/video/generations/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/视频生成/kling格式/createKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/视频生成/kling格式/createKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/视频生成/kling格式/getKlingImage2Video": [
+    {
+      "path": "/kling/v1/videos/image2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/视频生成/kling格式/getKlingText2Video": [
+    {
+      "path": "/kling/v1/videos/text2video/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/视频生成/sora兼容格式/createVideo": [
+    {
+      "path": "/v1/videos",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/视频生成/sora兼容格式/getVideo": [
+    {
+      "path": "/v1/videos/{task_id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/视频生成/sora兼容格式/getVideoContent": [
+    {
+      "path": "/v1/videos/{task_id}/content",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/ai-model/视频生成/即梦格式/createJimengVideo": [
+    {
+      "path": "/jimeng/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/ai-model/重排序(rerank)/createRerank": [
+    {
+      "path": "/v1/rerank",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/anthropic-chat": [
+    {
+      "method": "post",
+      "path": "/v1/messages"
+    }
+  ],
+  "/zh/docs/api/api-modules/fei-group": [
+    {
+      "method": "get",
+      "path": "/api/group/"
+    }
+  ],
+  "/zh/docs/api/chat/anthropic-chat": [
+    {
+      "method": "post",
+      "path": "/v1/messages"
+    }
+  ],
+  "/zh/docs/api/chat/google-gemini-chat": [
+    {
+      "method": "post",
+      "path": "/v1beta/models/{model}:generateContent"
+    }
+  ],
+  "/zh/docs/api/chat/openai-chat": [
+    {
+      "method": "post",
+      "path": "/v1/chat/completions"
+    }
+  ],
+  "/zh/docs/api/chat/openai-responses": [
+    {
+      "method": "post",
+      "path": "/v1/responses"
+    }
+  ],
+  "/zh/docs/api/cohere-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/api/embeddings/openai-embedding": [
+    {
+      "method": "post",
+      "path": "/v1/embeddings"
+    }
+  ],
+  "/zh/docs/api/frontend-apis/get-available-models-list": [
+    {
+      "method": "get",
+      "path": "/api/models"
+    }
+  ],
+  "/zh/docs/api/frontend-apis/module-guide/fei-group": [
+    {
+      "method": "get",
+      "path": "/api/group/"
+    }
+  ],
+  "/zh/docs/api/frontend/fei-group": [
+    {
+      "method": "get",
+      "path": "/api/group/"
+    }
+  ],
+  "/zh/docs/api/frontend/get-available-models-list": [
+    {
+      "method": "get",
+      "path": "/api/models"
+    }
+  ],
+  "/zh/docs/api/get-available-models-list": [
+    {
+      "method": "get",
+      "path": "/api/models"
+    }
+  ],
+  "/zh/docs/api/google-gemini-chat": [
+    {
+      "method": "post",
+      "path": "/v1beta/models/{model}:generateContent"
+    }
+  ],
+  "/zh/docs/api/jinaai-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/api/management/两步验证/user-2fa-backup_codes-post": [
+    {
+      "path": "/api/user/2fa/backup_codes",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/两步验证/user-2fa-disable-post": [
+    {
+      "path": "/api/user/2fa/disable",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/两步验证/user-2fa-enable-post": [
+    {
+      "path": "/api/user/2fa/enable",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/两步验证/user-2fa-setup-post": [
+    {
+      "path": "/api/user/2fa/setup",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/两步验证/user-2fa-stats-get": [
+    {
+      "path": "/api/user/2fa/stats",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/两步验证/user-2fa-status-get": [
+    {
+      "path": "/api/user/2fa/status",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/令牌管理/token-batch-post": [
+    {
+      "path": "/api/token/batch",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/令牌管理/token-get": [
+    {
+      "path": "/api/token/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/令牌管理/token-id-delete": [
+    {
+      "path": "/api/token/{id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/令牌管理/token-id-get": [
+    {
+      "path": "/api/token/{id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/令牌管理/token-post": [
+    {
+      "path": "/api/token/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/令牌管理/token-put": [
+    {
+      "path": "/api/token/",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/令牌管理/token-search-get": [
+    {
+      "path": "/api/token/search",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/令牌管理/usage-token-get": [
+    {
+      "path": "/api/usage/token/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/任务/mj-get": [
+    {
+      "path": "/api/mj/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/任务/mj-self-get": [
+    {
+      "path": "/api/mj/self",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/任务/task-get": [
+    {
+      "path": "/api/task/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/任务/task-self-get": [
+    {
+      "path": "/api/task/self",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/供应商/vendors-get": [
+    {
+      "path": "/api/vendors/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/供应商/vendors-id-delete": [
+    {
+      "path": "/api/vendors/{id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/供应商/vendors-id-get": [
+    {
+      "path": "/api/vendors/{id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/供应商/vendors-post": [
+    {
+      "path": "/api/vendors/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/供应商/vendors-put": [
+    {
+      "path": "/api/vendors/",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/供应商/vendors-search-get": [
+    {
+      "path": "/api/vendors/search",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/充值/creem-webhook-post": [
+    {
+      "path": "/api/creem/webhook",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/充值/stripe-webhook-post": [
+    {
+      "path": "/api/stripe/webhook",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/充值/user-amount-post": [
+    {
+      "path": "/api/user/amount",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/充值/user-creem-pay-post": [
+    {
+      "path": "/api/user/creem/pay",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/充值/user-epay-notify-get": [
+    {
+      "path": "/api/user/epay/notify",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/充值/user-pay-post": [
+    {
+      "path": "/api/user/pay",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/充值/user-stripe-amount-post": [
+    {
+      "path": "/api/user/stripe/amount",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/充值/user-stripe-pay-post": [
+    {
+      "path": "/api/user/stripe/pay",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/充值/user-topup-info-get": [
+    {
+      "path": "/api/user/topup/info",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/充值/user-topup-self-get": [
+    {
+      "path": "/api/user/topup/self",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/兑换码/redemption-get": [
+    {
+      "path": "/api/redemption/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/兑换码/redemption-id-delete": [
+    {
+      "path": "/api/redemption/{id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/兑换码/redemption-id-get": [
+    {
+      "path": "/api/redemption/{id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/兑换码/redemption-invalid-delete": [
+    {
+      "path": "/api/redemption/invalid",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/兑换码/redemption-post": [
+    {
+      "path": "/api/redemption/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/兑换码/redemption-put": [
+    {
+      "path": "/api/redemption/",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/兑换码/redemption-search-get": [
+    {
+      "path": "/api/redemption/search",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/分组/group-get": [
+    {
+      "path": "/api/group/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/分组/prefill_group-get": [
+    {
+      "path": "/api/prefill_group/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/分组/prefill_group-id-delete": [
+    {
+      "path": "/api/prefill_group/{id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/分组/prefill_group-post": [
+    {
+      "path": "/api/prefill_group/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/分组/prefill_group-put": [
+    {
+      "path": "/api/prefill_group/",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/安全验证/verify-post": [
+    {
+      "path": "/api/verify",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/安全验证/verify-status-get": [
+    {
+      "path": "/api/verify/status",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/数据统计/data-get": [
+    {
+      "path": "/api/data/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/数据统计/data-self-get": [
+    {
+      "path": "/api/data/self",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/日志/log-delete": [
+    {
+      "path": "/api/log/",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/日志/log-get": [
+    {
+      "path": "/api/log/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/日志/log-search-get": [
+    {
+      "path": "/api/log/search",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/日志/log-self-get": [
+    {
+      "path": "/api/log/self",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/日志/log-self-search-get": [
+    {
+      "path": "/api/log/self/search",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/日志/log-self-stat-get": [
+    {
+      "path": "/api/log/self/stat",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/日志/log-stat-get": [
+    {
+      "path": "/api/log/stat",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/日志/log-token-get": [
+    {
+      "path": "/api/log/token",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/模型管理/models-get": [
+    {
+      "path": "/api/models/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/模型管理/models-id-delete": [
+    {
+      "path": "/api/models/{id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/模型管理/models-id-get": [
+    {
+      "path": "/api/models/{id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/模型管理/models-missing-get": [
+    {
+      "path": "/api/models/missing",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/模型管理/models-post": [
+    {
+      "path": "/api/models/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/模型管理/models-put": [
+    {
+      "path": "/api/models/",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/模型管理/models-search-get": [
+    {
+      "path": "/api/models/search",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/模型管理/models-sync_upstream-post": [
+    {
+      "path": "/api/models/sync_upstream",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/模型管理/models-sync_upstream-preview-get": [
+    {
+      "path": "/api/models/sync_upstream/preview",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-batch-post": [
+    {
+      "path": "/api/channel/batch",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-batch-tag-post": [
+    {
+      "path": "/api/channel/batch/tag",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-copy-id-post": [
+    {
+      "path": "/api/channel/copy/{id}",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-disabled-delete": [
+    {
+      "path": "/api/channel/disabled",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-fetch_models-id-get": [
+    {
+      "path": "/api/channel/fetch_models/{id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-fetch_models-post": [
+    {
+      "path": "/api/channel/fetch_models",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-fix-post": [
+    {
+      "path": "/api/channel/fix",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-get": [
+    {
+      "path": "/api/channel/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-id-delete": [
+    {
+      "path": "/api/channel/{id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-id-get": [
+    {
+      "path": "/api/channel/{id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-id-key-post": [
+    {
+      "path": "/api/channel/{id}/key",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-models-get": [
+    {
+      "path": "/api/channel/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-models_enabled-get": [
+    {
+      "path": "/api/channel/models_enabled",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-multi_key-manage-post": [
+    {
+      "path": "/api/channel/multi_key/manage",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-post": [
+    {
+      "path": "/api/channel/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-put": [
+    {
+      "path": "/api/channel/",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-search-get": [
+    {
+      "path": "/api/channel/search",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-tag-disabled-post": [
+    {
+      "path": "/api/channel/tag/disabled",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-tag-enabled-post": [
+    {
+      "path": "/api/channel/tag/enabled",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-tag-models-get": [
+    {
+      "path": "/api/channel/tag/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-tag-put": [
+    {
+      "path": "/api/channel/tag",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-test-get": [
+    {
+      "path": "/api/channel/test",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-test-id-get": [
+    {
+      "path": "/api/channel/test/{id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-update_balance-get": [
+    {
+      "path": "/api/channel/update_balance",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/渠道管理/channel-update_balance-id-get": [
+    {
+      "path": "/api/channel/update_balance/{id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户登陆注册/reset_password-get": [
+    {
+      "path": "/api/reset_password",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户登陆注册/user-groups-get": [
+    {
+      "path": "/api/user/groups",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户登陆注册/user-login-2fa-post": [
+    {
+      "path": "/api/user/login/2fa",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户登陆注册/user-login-post": [
+    {
+      "path": "/api/user/login",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户登陆注册/user-logout-get": [
+    {
+      "path": "/api/user/logout",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户登陆注册/user-passkey-login-begin-post": [
+    {
+      "path": "/api/user/passkey/login/begin",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户登陆注册/user-passkey-login-finish-post": [
+    {
+      "path": "/api/user/passkey/login/finish",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户登陆注册/user-register-post": [
+    {
+      "path": "/api/user/register",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户登陆注册/user-reset-post": [
+    {
+      "path": "/api/user/reset",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户登陆注册/verification-get": [
+    {
+      "path": "/api/verification",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-aff-get": [
+    {
+      "path": "/api/user/aff",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-aff_transfer-post": [
+    {
+      "path": "/api/user/aff_transfer",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-get": [
+    {
+      "path": "/api/user/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-id-2fa-delete": [
+    {
+      "path": "/api/user/{id}/2fa",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-id-delete": [
+    {
+      "path": "/api/user/{id}",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-id-get": [
+    {
+      "path": "/api/user/{id}",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-id-reset_passkey-delete": [
+    {
+      "path": "/api/user/{id}/reset_passkey",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-manage-post": [
+    {
+      "path": "/api/user/manage",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-models-get": [
+    {
+      "path": "/api/user/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-passkey-delete": [
+    {
+      "path": "/api/user/passkey",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-passkey-get": [
+    {
+      "path": "/api/user/passkey",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-passkey-register-begin-post": [
+    {
+      "path": "/api/user/passkey/register/begin",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-passkey-register-finish-post": [
+    {
+      "path": "/api/user/passkey/register/finish",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-passkey-verify-begin-post": [
+    {
+      "path": "/api/user/passkey/verify/begin",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-passkey-verify-finish-post": [
+    {
+      "path": "/api/user/passkey/verify/finish",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-post": [
+    {
+      "path": "/api/user/",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-put": [
+    {
+      "path": "/api/user/",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-search-get": [
+    {
+      "path": "/api/user/search",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-self-delete": [
+    {
+      "path": "/api/user/self",
+      "method": "delete"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-self-get": [
+    {
+      "path": "/api/user/self",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-self-groups-get": [
+    {
+      "path": "/api/user/self/groups",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-self-put": [
+    {
+      "path": "/api/user/self",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-setting-put": [
+    {
+      "path": "/api/user/setting",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-token-get": [
+    {
+      "path": "/api/user/token",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-topup-complete-post": [
+    {
+      "path": "/api/user/topup/complete",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/用户管理/user-topup-get": [
+    {
+      "path": "/api/user/topup",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/about-get": [
+    {
+      "path": "/api/about",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/home_page_content-get": [
+    {
+      "path": "/api/home_page_content",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/models-get": [
+    {
+      "path": "/api/models",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/notice-get": [
+    {
+      "path": "/api/notice",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/pricing-get": [
+    {
+      "path": "/api/pricing",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/privacy-policy-get": [
+    {
+      "path": "/api/privacy-policy",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/ratio_config-get": [
+    {
+      "path": "/api/ratio_config",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/setup-get": [
+    {
+      "path": "/api/setup",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/setup-post": [
+    {
+      "path": "/api/setup",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/系统/status-get": [
+    {
+      "path": "/api/status",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/status-test-get": [
+    {
+      "path": "/api/status/test",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/uptime-status-get": [
+    {
+      "path": "/api/uptime/status",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统/user-agreement-get": [
+    {
+      "path": "/api/user-agreement",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统设置/option-get": [
+    {
+      "path": "/api/option/",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统设置/option-migrate_console_setting-post": [
+    {
+      "path": "/api/option/migrate_console_setting",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/系统设置/option-put": [
+    {
+      "path": "/api/option/",
+      "method": "put"
+    }
+  ],
+  "/zh/docs/api/management/系统设置/option-rest_model_ratio-post": [
+    {
+      "path": "/api/option/rest_model_ratio",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/management/系统设置/ratio_sync-channels-get": [
+    {
+      "path": "/api/ratio_sync/channels",
+      "method": "get"
+    }
+  ],
+  "/zh/docs/api/management/系统设置/ratio_sync-fetch-post": [
+    {
+      "path": "/api/ratio_sync/fetch",
+      "method": "post"
+    }
+  ],
+  "/zh/docs/api/openai-embedding": [
+    {
+      "method": "post",
+      "path": "/v1/embeddings"
+    }
+  ],
+  "/zh/docs/api/openai-responses": [
+    {
+      "method": "post",
+      "path": "/v1/responses"
+    }
+  ],
+  "/zh/docs/api/realtime/openai-realtime": [
+    {
+      "method": "get",
+      "path": "/v1/realtime"
+    }
+  ],
+  "/zh/docs/api/relay-apis/chat/anthropic-chat": [
+    {
+      "method": "post",
+      "path": "/v1/messages"
+    }
+  ],
+  "/zh/docs/api/relay-apis/chat/google-gemini-chat": [
+    {
+      "method": "post",
+      "path": "/v1beta/models/{model}:generateContent"
+    }
+  ],
+  "/zh/docs/api/relay-apis/chat/openai-chat": [
+    {
+      "method": "post",
+      "path": "/v1/chat/completions"
+    }
+  ],
+  "/zh/docs/api/relay-apis/chat/openai-responses": [
+    {
+      "method": "post",
+      "path": "/v1/responses"
+    }
+  ],
+  "/zh/docs/api/relay-apis/embeddings/openai-embedding": [
+    {
+      "method": "post",
+      "path": "/v1/embeddings"
+    }
+  ],
+  "/zh/docs/api/relay-apis/realtime/openai-realtime": [
+    {
+      "method": "get",
+      "path": "/v1/realtime"
+    }
+  ],
+  "/zh/docs/api/relay-apis/rerank/cohere-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/api/relay-apis/rerank/jinaai-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/api/relay-apis/rerank/xinference-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/api/rerank/cohere-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/api/rerank/jinaai-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/api/rerank/xinference-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/api/xinference-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/apis/frontend-apis/get-available-models-list": [
+    {
+      "method": "get",
+      "path": "/api/models"
+    }
+  ],
+  "/zh/docs/apis/frontend-apis/module-guide/fei-group": [
+    {
+      "method": "get",
+      "path": "/api/group/"
+    }
+  ],
+  "/zh/docs/apis/relay-apis/chat/anthropic-chat": [
+    {
+      "method": "post",
+      "path": "/v1/messages"
+    }
+  ],
+  "/zh/docs/apis/relay-apis/chat/google-gemini-chat": [
+    {
+      "method": "post",
+      "path": "/v1beta/models/{model}:generateContent"
+    }
+  ],
+  "/zh/docs/apis/relay-apis/chat/openai-chat": [
+    {
+      "method": "post",
+      "path": "/v1/chat/completions"
+    }
+  ],
+  "/zh/docs/apis/relay-apis/chat/openai-responses": [
+    {
+      "method": "post",
+      "path": "/v1/responses"
+    }
+  ],
+  "/zh/docs/apis/relay-apis/embeddings/openai-embedding": [
+    {
+      "method": "post",
+      "path": "/v1/embeddings"
+    }
+  ],
+  "/zh/docs/apis/relay-apis/realtime/openai-realtime": [
+    {
+      "method": "get",
+      "path": "/v1/realtime"
+    }
+  ],
+  "/zh/docs/apis/relay-apis/rerank/cohere-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/apis/relay-apis/rerank/jinaai-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ],
+  "/zh/docs/apis/relay-apis/rerank/xinference-rerank": [
+    {
+      "method": "post",
+      "path": "/v1/rerank"
+    }
+  ]
+}

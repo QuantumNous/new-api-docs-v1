@@ -41,10 +41,17 @@ domains, both use the same canonical origin to consolidate duplicate pages.
 Official website links to `www.newapi.ai` and `www.newapi.pro` remain visible on
 the homepage, quick start pages, and shared footer.
 
-Moved document paths are recorded in `src/lib/docs-redirects.json`. Next.js
-returns 308 redirects for HTML, `/llms.mdx/`, and `.mdx` URLs, preserving query
-parameters and the requested format. Add an exact mapping when a page has an
-equivalent replacement. Retired pages without a replacement return 404.
+Moved document paths are recorded in `src/lib/docs-redirects.json`. Middleware
+looks up exact paths and returns 308 redirects for HTML, `/llms.mdx/`, and `.mdx`
+URLs, preserving query parameters and the requested format. The lookup table
+supports the historical API paths without expanding thousands of platform
+redirect rules. Percent-encoded directory names are supported. Add a mapping
+when a page has an equivalent replacement in the same language. Retired pages
+without a replacement return 404.
+
+Renamed screenshots are recorded in `src/lib/docs-asset-redirects.json` and
+redirected by the same middleware before static file handling. Each target must be
+an existing file in `public/assets`.
 
 Language fallback is disabled. Navigation, search, sitemaps, and language
 alternates contain pages with source files in the requested language. When
@@ -55,6 +62,8 @@ website's document allowlist and migration mappings.
 
 Run the redirect checks with `bun run test:seo`. The SEO browser suite also
 checks redirects over HTTP, query preservation, and sitemap exclusions.
+`tests/seo/fixtures/legacy-api-operations.json` records HTTP methods and paths
+from retired API pages so each migration can be checked against its destination.
 
 SEO browser checks run against a production build:
 

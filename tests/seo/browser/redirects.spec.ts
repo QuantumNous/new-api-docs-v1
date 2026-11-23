@@ -1,10 +1,14 @@
 import { expect, test } from '@playwright/test';
 import movedPages from '../../../src/lib/docs-redirects.json';
-import { docsRedirects } from '../../../src/lib/docs-redirects.mjs';
+import {
+  assetRedirects,
+  docsRedirects,
+} from '../../../src/lib/docs-redirects.mjs';
 
 test('document redirects preserve repeated and encoded query parameters over HTTP', async ({
   request,
 }) => {
+  test.setTimeout(120_000);
   const search = '?utm_source=google&q=a%2Bb&tag=first&tag=second';
   for (const { source, destination } of docsRedirects()) {
     const response = await request.get(`${source}${search}`, {
@@ -15,6 +19,49 @@ test('document redirects preserve repeated and encoded query parameters over HTT
     expect(location.pathname, source).toBe(destination);
     expect(location.search, source).toBe(search);
   }
+});
+
+test('renamed screenshots preserve image responses and query parameters', async ({
+  request,
+}) => {
+  const search = '?version=old&q=a%2Bb&tag=one&tag=two';
+  for (const { source, destination } of assetRedirects()) {
+    const response = await request.get(`${source}${search}`, {
+      maxRedirects: 0,
+    });
+    expect(response.status(), source).toBe(308);
+    const location = new URL(response.headers().location, response.url());
+    expect(location.pathname, source).toBe(destination);
+    expect(location.search, source).toBe(search);
+    const image = await request.get(destination);
+    expect(image.status(), destination).toBe(200);
+    expect(image.headers()['content-type'], destination).toContain('image/png');
+  }
+  const unknown = await request.get('/assets/guide/feature-guide/unknown.png');
+  expect(unknown.status()).toBe(404);
+});
+
+test('encoded API folders and trailing-slash links reach their final document', async ({
+  request,
+}) => {
+  const source = encodeURI('/zh/docs/api/management/令牌管理/token-get/');
+  const search = '?q=a%2Bb&tag=one&tag=two';
+  const response = await request.get(`${source}${search}`);
+  const final = new URL(response.url());
+  expect(response.status()).toBe(200);
+  expect(final.pathname).toBe(
+    '/zh/docs/api/management/token-management/token-get'
+  );
+  expect(final.searchParams.getAll('tag')).toEqual(['one', 'two']);
+  expect(final.searchParams.get('q')).toBe('a+b');
+
+  const english = await request.get('/docs/installation/docker-installation', {
+    maxRedirects: 0,
+  });
+  expect(english.status()).toBe(308);
+  expect(new URL(english.headers().location, english.url()).pathname).toBe(
+    '/en/docs/installation/deployment-methods/docker-installation'
+  );
 });
 
 test('sitemap and language alternates exclude moved documents', async ({

@@ -28,7 +28,7 @@
   "dependencies": {
     "@ai-sdk/openai-compatible": "^1.0.27",
     "@ai-sdk/react": "^2.0.93",
-    "@next/third-parties": "16.4.1",
+    "@next/third-parties": "16.4.6",
     "@orama/orama": "^3.1.16",
     "@orama/tokenizers": "^3.1.16",
     "@paper-design/shaders-react": "^0.0.63",
@@ -43,7 +43,7 @@
     "hast-util-to-jsx-runtime": "^2.3.6",
     "katex": "^0.16.25",
     "lucide-react": "^0.552.0",
-    "next": "16.4.1",
+    "next": "16.4.6",
     "next-themes": "^0.4.6",
     "octokit": "^5.0.5",
     "react": "19.2.9",

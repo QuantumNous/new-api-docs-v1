@@ -1,0 +1,21 @@
+{
+  "/assets/guide/feature-guide/system-settings-request-policy-request-check.png": "/assets/guide/feature-guide/request-processing-add-request-filtering.png",
+  "/assets/guide/feature-guide/task-plugins-card-view.png": "/assets/guide/feature-guide/plugins-card-view.png",
+  "/assets/guide/feature-guide/task-plugins-create-plugin-channel.png": "/assets/guide/feature-guide/plugins-create-plugin-channel.png",
+  "/assets/guide/feature-guide/task-plugins-delete-current-custom-version.png": "/assets/guide/feature-guide/plugins-delete-current-custom-version.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-details-billing-parameters.png": "/assets/guide/feature-guide/plugins-plugin-details-billing-parameters.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-details-overview.png": "/assets/guide/feature-guide/plugins-plugin-details-overview.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-details-plugin-sandbox.png": "/assets/guide/feature-guide/plugins-plugin-details-plugin-sandbox.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-details-plugin-source.png": "/assets/guide/feature-guide/plugins-plugin-details-plugin-source.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-details-source-diff.png": "/assets/guide/feature-guide/plugins-plugin-details-source-diff.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-details-version-history.png": "/assets/guide/feature-guide/plugins-plugin-details-version-history.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-marketplace-install-changelog.png": "/assets/guide/feature-guide/plugins-plugin-marketplace-install-changelog.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-marketplace-install-full-source-code.png": "/assets/guide/feature-guide/plugins-plugin-marketplace-install-full-source-code.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-marketplace-install-plugin-details.png": "/assets/guide/feature-guide/plugins-plugin-marketplace-install-plugin-details.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-marketplace-install-version-diff.png": "/assets/guide/feature-guide/plugins-plugin-marketplace-install-version-diff.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-marketplace-manage-sources.png": "/assets/guide/feature-guide/plugins-plugin-marketplace-manage-sources.png",
+  "/assets/guide/feature-guide/task-plugins-plugin-marketplace.png": "/assets/guide/feature-guide/plugins-plugin-marketplace-task.png",
+  "/assets/guide/feature-guide/task-plugins-table-view.png": "/assets/guide/feature-guide/plugins-table-view.png",
+  "/assets/guide/feature-guide/task-plugins-upload-new-version.png": "/assets/guide/feature-guide/plugins-upload-new-version.png",
+  "/assets/guide/feature-guide/task-plugins-upload-plugin.png": "/assets/guide/feature-guide/plugins-upload-plugin.png"
+}
