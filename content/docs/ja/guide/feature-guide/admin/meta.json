@@ -2,16 +2,14 @@
   "title": "管理者ガイド",
   "defaultOpen": false,
   "pages": [
+    "billing-expression",
     "channel",
+    "model",
     "user",
     "redemption",
-    "log",
     "subscription",
-    "model",
-    "group",
-    "system-setting",
-    "custom-oauth",
-    "performance",
-    "docs-config"
+    "system-info",
+    "task-plugins",
+    "request-processing"
   ]
 }

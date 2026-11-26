@@ -1,204 +1,452 @@
 ---
-title: Logs and Asynchronous Tasks
-description: View API request, drawing, and asynchronous task records, filter details by conditions, and track status, results, and refunds.
+title: Usage Logs
+description: View usage and charges for each model call, along with Quota changes from top-ups, refunds, and other transactions. Filter and export records, and verify charges in the billing details.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-- New API saves request details, drawing records, and asynchronous tasks like video and music separately.
-- After logging in, you can access "Usage Logs" or "Task Logs" from the left navigation.
-- This page uniformly explains the three data partitions, task statuses, and API query methods.
+- In the sidebar, go to “General” → “Usage Logs”.
+- View usage and charges for each model call, along with Quota changes from top-ups, refunds, and other transactions.
+- Model calls deduct Quota from your account at the applicable price, using either your wallet balance or your subscription Quota. You can review the charges here.
 
-The three partitions correspond to the following paths:
+<Callout type="info" title="Tip">
 
-- `/usage-logs/common`: General API usage logs and billing details;
-- `/usage-logs/drawing`: Midjourney drawing tasks;
-- `/usage-logs/task`: General asynchronous tasks like Suno and video.
-
-<Callout type="info">
-  Regular users can only view their own records. Admin and Root can switch between "All" and "Only Mine" in the top right corner of the page; when switched to "Only Mine", the page returns data according to regular user fields and permissions.
+- The page title is “General Logs”.
+- Regular users can only view records for their own account. Administrators can switch between “All” and “Only Me” in the upper-right corner of the page. Only administrators can see this control. In “Only Me”, administrators see the same page content as regular users.
+- The site determines the units used to display costs and usage.
+- For records of sign-ins and account security actions, see <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Logs</a>. For the status of asynchronous tasks such as video, music, and image generation, see <a href="/en/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">Task Logs</a>.
+- If “Usage Logs” is missing from the left sidebar, open “Profile”, go to “Personal Left Sidebar Settings”, enable “Console Area” and “Usage Logs”, and save.
 </Callout>
 
-## Usage Logs
+## Usage Logs Overview
 
-- Click "Usage Logs" in the left sidebar or visit `/usage-logs/common` to view API requests and billing details.
+- Usage Logs list
 
-### Filtering Records
+![Usage Logs list page](/assets/guide/feature-guide/general-usage-logs.png)
 
-Available filter options for usage log record queries are as follows:
+Use the list to filter logs by time range, model, Group, type, and other criteria, view usage statistics, and check the charges for each record.
 
-| Filter Option | Description |
-| --- | --- |
-| Time Range | Filter by record creation time, where both start and end times are included in the query range. |
-| Model Name | Filter by model name. |
-| Group | Filter by the group used in the request. |
-| Log Type | All Types, Recharge, Consumption, Management, System, Error, Refund, Login. |
-| API Key Name | Filter by API key name. |
-| Request ID | Locate a request by New API Request ID. |
-| Upstream Request ID | Locate a request by the Request ID returned or recorded by the upstream service. |
-| Username (Admin/Root Only) | Filter by username in the administrator view. |
-| Channel ID (Admin/Root Only) | Filter by Channel ID in the administrator view. |
+- [Filter Logs and View Statistics](#filter-logs-and-view-statistics)
+- [View Log Details](#view-log-details)
+- [Export Logs](#export-logs)
 
-### Page Statistics
-
-Statistical values in the filter bar are related to current permissions and filter conditions:
-
-- **Usage**: Aggregates the quota of consumption records, which can be filtered by time, model, group, key, channel, and user conditions.
-- **RPM**: Number of consumption requests within the last 60 seconds.
-- **TPM**: Total number of input Tokens and output Tokens within the last 60 seconds.
-
-### List and Details
-
-- Regular users can see Time and Type, Token, Model, Stream, Tokens, Cost, Duration, and Details columns.
-- Admin/Root view can also display Channel and User columns.
-
-![Usage Logs Page](/assets/guide/feature-guide/usage-logs.png)
-
-<Callout type="info">
-  1. **Tokens**: Displays input Tokens / output Tokens; when caching is used, cache read and write quantities may also be displayed.
-  2. **Cost**: Displays the quota consumption or refund result for this record; the specific format depends on the instance's quota display method.
-  3. **Duration**: Displays response duration for consumption or error records with timing data; streaming requests may additionally show First Response Time (FRT) and throughput information.
-  4. **Details**: Clicking a record opens a details dialog. Depending on the log type and fields actually saved in the record, it may include Request ID, model mapping, error or refund reason, Token details, billing details, cache/audio/image usage, stream status, etc. Not all blocks will be displayed for every record.
-  5. Administrators may also see channel retry chains, request transformations, billing paths, recharge audits, or management operation audits in the details.
+<Callout type="info" title="Tip">
+If you cannot find a record for a call or the charge differs from what you expected, see the [FAQ](#frequently-asked-questions).
 </Callout>
 
-<Callout type="warn">
-  - **Why can't I see a specific record?** <br/>
-  Whether consumption logs are written is controlled by the platform's "System Settings" → "Operations" → "Log Maintenance" → "Record Quota Usage" switch. If Root disables this setting, new consumption records may not be generated. Error logs are also subject to the error log switch and recordable error types; not every failed response will generate an Error record. The "Record IP Address" preference in user profiles only controls whether request IPs are saved for consumption logs and error request logs; other logs such as login, management audit, and recharge may record IPs according to their respective audit processes.
-</Callout>
+**Fields**
 
-## Task Logs
-
-- "Task Logs" include "Drawing Logs" and "Asynchronous Task Logs".
-1. "Drawing Logs": Records Midjourney drawing task logs.
-2. "Asynchronous Task Logs": Records asynchronous tasks such as text-to-video, image-to-video, and audio generation.
-
-## Drawing Logs
-
-- Click "Task Logs" → "Drawing Logs" in the left sidebar or visit `/usage-logs/drawing` to view Midjourney drawing task records.
-- Regular users can only view their own tasks; Admin/Root can view tasks within their management scope in the "All" view and can additionally see channels and submission results.
-
-Drawing logs support filtering by the following conditions:
-1. Date range;
-2. Midjourney Task ID;
-3. Channel ID (Admin/Root Only).
-
-![Drawing Logs Page](/assets/guide/feature-guide/drawing-logs.png)
-
-<Callout type="info">
-  1. The list includes submission time and status, Channel ID (Admin/Root Only), operation type, Task ID, duration, submission result, progress, image, prompt, and failure reason. Clicking the image opens a preview; clicking the prompt shows the full content; clicking the failure reason shows the full error message.
-  2. Drawing statuses include: Not Started, Queued, In Progress, Success, Failed, Window Waiting.
-  3. Drawing statuses are updated by background polling of upstream tasks. There is a polling interval, so task status may be delayed; when the backend retrieves the corresponding upstream task data, the system will mark Midjourney tasks submitted more than approximately 1 hour ago and still incomplete as failed.
-</Callout>
-
-## Task Logs (Asynchronous Task Logs)
-
-- Click "Task Logs" → "Asynchronous Task Logs" in the left sidebar or visit `/usage-logs/task` to view asynchronous task logs. Regular users can only view their own tasks; the Admin/Root view will also display Channel ID and User.
-- Asynchronous APIs for video, music, etc., do not return final results immediately upon request submission. After successful submission, New API returns a publicly accessible Task ID and saves the task record, then the backend polls the upstream service to update the status, progress, and results.
-
-### Filtering Tasks
-
-Task logs support filtering by the following conditions:
-1. Date range;
-2. Task ID;
-3. Channel ID (Admin/Root Only).
-
-### List and Results
-
-The task list displays submission time and completion time, channel, user, Task ID, platform and operation, duration, status, progress, and details:
-
-- When a Suno task is successful and returns an audio address, the details column provides an audio preview;
-- Some video tasks will display a preview entry upon success; you can also use the same account's login session or API key to request `/v1/videos/{task_id}/content` to obtain the video content of completed tasks. This API verifies task ownership; it will not return content if the task is incomplete or does not belong to the current user;
-- Other failed records will display the failure reason in the details column, which can be clicked to view full information.
-
-## Task Status and Backend Processing
-
-Asynchronous task logs use the following status values. Different platform adapters may sometimes retain the case or platform differences of upstream statuses, so API return values should be based on actual task records:
-
-| Status | Meaning |
-| --- | --- |
-| `Not Started` | The task record has been created but has not yet started processing. |
-| `Queued` | Submitted to upstream, awaiting further processing. |
-| `In Queue` | Has entered the processing queue. |
-| `In Progress` | Currently processing. |
-| `Success` | Completed, results can be viewed or retrieved. |
-| `Failed` | Processing failed; the failure reason will be written to the task record (if provided by upstream). |
-| `Unknown` | Internally defined fallback value for unknown status. |
-
-![Task Logs Page](/assets/guide/feature-guide/task-logs.png)
-
-<Callout type="info">
-  Task statuses are updated by background polling, so the status of newly submitted tasks may be delayed. By default, asynchronous tasks are polled approximately every 15 seconds; polling only runs when `UPDATE_TASK` is enabled and there are incomplete tasks. The asynchronous task timeout threshold is controlled by `TASK_TIMEOUT_MINUTES`, which defaults to 1440 minutes; setting it to `0` disables timeout handling.
-</Callout>
-
-### Failure, Timeout, and Refund
-
-After a task enters a failed terminal state, if the task had a pre-deducted quota during the submission phase, the system will usually attempt a refund and write a `Refund` log upon successful refund. After a successful refund, the pending refund quota in the task record will be cleared, and the accumulated usage for the user and channel will be reduced; the number of requests will not be rolled back as a result.
-
-<Callout type="warn">
-  The following situations may lead to temporary inconsistencies between page status and balance:
-  1. The task had no pre-deducted quota (`quota = 0`);
-  2. Refund from the funding source failed, the system will retain the task quota for retry or manual reconciliation;
-  - When troubleshooting refunds, please check both your wallet balance or remaining subscription quota (and the quota of active API keys) and the "Refund" records in the general usage logs. Do not solely rely on the "Failed" status to determine if a refund has been completed.
-</Callout>
-
-## API Reference
-
-### Log Query APIs
-
-If using the API instead of the console, you can call the following read-only APIs. These APIs are still subject to authentication and permission restrictions, and results for regular users will be strictly limited to the current account:
-
-| Data | Admin API | User API | Time Parameter Unit |
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and Limits | Notes |
 | --- | --- | --- | --- |
-| General Logs | `GET /api/log/` | `GET /api/log/self` | Seconds (`created_at`) |
-| Log Statistics | `GET /api/log/stat` | `GET /api/log/self/stat` | Seconds |
-| Midjourney Drawing | `GET /api/mj/` | `GET /api/mj/self` | Milliseconds (`submit_time`) |
-| Asynchronous Tasks | `GET /api/task/` | `GET /api/task/self` | Seconds (`submit_time`) |
+| Time | The time the record was created and its log type. | The system records this information automatically. The values are read-only, and the column is always visible. | The timestamp appears above the log type and is precise to the second. The log type appears below in colored text. See [Log Types](#log-types) for what each type means. The entire row is light red for “Error” records and light blue for “Refund” records. |
+| Channel (administrators only) | The Channel that handled the request. | Visible only in the “All” view. Populated only for “Consumption”, “Error”, and “Refund” records. | Shows “#Channel ID” and the Channel name. Click the ID to copy it. If the request was retried, click the branch icon to view the “Retry Chain”. If a session rule matched, an amber ✦ appears in the upper-right corner of the ID. Hover over it to see the rule name and Group, or click it to open the “Channel Affinity” dialog. |
+| User (administrators only) | The user who initiated the request. | Visible only in the “All” view. | Click the username to open the “User Information” dialog and view the user's balance, used Quota, request count, Group, and other information. |
+| Token | The name of the API key used for the call. | Populated only for “Consumption”, “Error”, and “Refund” records. | The Group used for the call appears below the name. If the Group Ratio differs from 1 or a custom Ratio applies, the Ratio also appears, for example “1.5x”. Click the name to copy it. The screenshot shows the name and Group masked with dots. See “Hide / Show” under [Page Controls and Filters](#page-controls-and-filters). |
+| Model | The model called. | Populated only for “Consumption”, “Error”, and “Refund” records. | Click the model name to copy it. If the site maps the model to another model, click the routing icon next to the name to see the “Requested Model” and “Actual Model”. If the upstream provider returns a different model name from the requested one, an amber “Response Model: …” label appears. Click it to see the model names. If the site's request processing modifies the request, detects content, or blocks the request, “Processed” appears below the model name. Hover over it to see the name of the plugin that processed the request. |
+| Stream | Whether the request uses streaming output and how fast it produces output. | Populated only for “Consumption” and “Error” records. | Shows “Streaming” or “Non-streaming”. Submission records for asynchronous tasks show “Sync” or “Async”. The output rate appears below in Tokens per second, for example “44 t/s”. If the stream ends abnormally, hover over the red exclamation mark to see the reason. |
+| Token | The input and output Token counts for the call. | Populated only for “Consumption”, “Error”, and “Refund” records. | Shows “Input / Output”, or “-” if both counts are zero. If caching was used, “Cache ↓” shows the read count and “↑” shows the write count below the input and output counts. |
+| Cost | The Quota deducted or refunded for this record. | Populated only for “Consumption”, “Error”, and “Refund” records. “Error” records incur no charge. | A crown icon precedes the amount when the charge is paid from subscription Quota. Hover over it to see “Subscription”. When the account has an available subscription, charges paid from the wallet balance show a wallet icon with the tooltip “Wallet”. For administrators in the “All” view, the wallet icon appears when the site has an enabled subscription plan. If the charge includes a tool call surcharge, a wrench icon appears on the right with the tooltip “Includes tool call surcharge”. |
+| Latency | The time taken to respond to the request. | Populated only for “Consumption” and “Error” records. | Streaming requests show “First Token” (the time until the first output arrives) and “Latency”. Non-streaming requests show only “Latency”. Green, yellow, and red indicate response times from fastest to slowest. |
+| Details | A summary of the record. | The system generates the summary automatically. | The summary may show the billing method and unit price, a top-up description, or an error message. “+N” appears at the end when more information is available. Click the summary to open the “Log Details” dialog. See [View Log Details](#view-log-details). |
+</div>
 
-Log and task list APIs use pagination parameters `p` and `page_size`; page numbers start from `1`. When using normal positive integers, a `page_size` exceeding `100` will be truncated to `100`. The total count of user logs is also affected by the instance's internal query limit. Task return data will not include private fields that may contain keys, upstream task identifiers, or billing context.
+## Filter Logs and View Statistics
 
-Additionally, `GET /api/log/token` can be used with an API key to read the most recent logs for that key. This API uses read-only token authentication: it verifies that the key exists, is not explicitly disabled, and its owner user is available, but it will not refuse queries due to key expiration or quota exhaustion; it returns a maximum of `1000` recent records.
+**Steps**
 
-Common query parameters for task list APIs are as follows:
+1. Click “Time Range” and select a preset such as “Today” or “7 Days”. To set a custom range, enter a “Start Time” and “End Time”, then click “Confirm”.
+2. Enter a “Model Name” and “Group” as needed, and select a log type from the type dropdown.
+3. To search by Token name, request ID, or other criteria, click “Expand” and fill in the filters in the second row.
+4. Click “Search” or press Enter in any input field.
+5. View “Usage”, “RPM”, and “TPM” in the lower-left corner of the filter area.
+6. To clear the filters, click “Reset”.
 
-| Scope | Method and Path | Common Query Parameters |
-| --- | --- | --- |
-| Current User | `GET /api/task/self` | `p`, `page_size`, `task_id`, `start_timestamp`, `end_timestamp`; also accepts `platform`, `action`, `status`. |
-| Admin/Root | `GET /api/task/` | Adds `channel_id` to user API parameters, and can filter by `platform`, `action`, `status`. |
+<Callout type="info" title="Tip">
 
-<Callout type="info">
-  The `start_timestamp` and `end_timestamp` for task APIs use Unix second timestamps; Midjourney drawing API time parameters use milliseconds.
+- By default, the list shows records from 00:00:00 today through one hour after the current time. Adjust the time range to view earlier records.
+- Click “Search” to apply changes to the filters. To see new records, click “Search” again.
+- On mobile, all filters except the time range are under “Filters”. The list refreshes as soon as you select a time range.
 </Callout>
 
-### Asynchronous Generation and Task APIs
+**Filters**
 
-The following asynchronous generation and upstream task query APIs are provided by the instance according to configured channels and adapters. Submission and query APIs typically use API key authentication. Video content proxy supports both API keys and login sessions, and adheres to task ownership verification; the Midjourney image proxy is an exception that does not require an API key; the `/api/task` list API below uses logged-in user or administrator permissions. The specific authentication method is subject to API requirements.
+The filter area has two rows. The second row is collapsed by default. Click “Expand” to show it. The table lists the filters in the order they appear.
 
-| API | Path | Description |
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Filter | Location | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- | --- |
+| Time Range | First row | Filters by the time the record was created, including both endpoints. | Presets fill in the range immediately. Available presets are “Today”, “7 Days” (including today), “This Week” (Sunday through Saturday), “30 Days” (including today), and “This Month”. For a custom range, enter times to the second and click “Confirm”. Regular users have a maximum range per query (365 days by default). A longer range triggers “The time range cannot exceed … days”. | From 00:00:00 today through one hour after the current time |
+| Model Name | First row | Filters by the model called. | Optional. Matches the full name by default. For a partial match, put `%` before and after the search term, as in `%gpt%`. Use at most two `%` characters, keep them separated, and enter at least two other characters. | Blank |
+| Group | First row | Filters by the Group used for the call. | Optional. Select a Group from the dropdown or enter its full name. | Blank |
+| Type | First row | Filters by log type. | Select one of “All Types”, “Top-up”, “Consumption”, “Management”, “System”, “Error”, “Refund”, or “Login”. “Management” and “Login” are marked “Deprecated” and are available only for searching historical records. See [Log Types](#log-types) for what each type means. | “All Types” |
+| Token Name | Second row | Filters by the name of the API key used for the call. | Optional. Enter the exact name. | Blank |
+| Username (administrators only) | Second row | Filters by the user who initiated the request. | Visible only in the “All” view. Matches the full username by default. The same partial-match rules apply as for “Model Name”. | Blank |
+| Channel ID (administrators only) | Second row | Filters by the Channel that handled the request. | Visible only in the “All” view. Enter the numeric Channel ID. | Blank |
+| Request ID | Second row | Searches by the ID that New API generates for each request. | Optional. Enter the full ID. You can copy it from “Log Details”. | Blank |
+| Upstream Request ID | Second row | Searches by the request ID returned by the upstream service. | Optional. Enter the full ID. | Blank |
+</div>
+
+**Statistics**
+
+The statistics appear in the lower-left corner of the filter area and refresh when you click “Search”.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Statistic | Definition | Scope |
 | --- | --- | --- |
-| OpenAI Video Generation | `POST /v1/videos` | Creates an OpenAI-compatible asynchronous video generation task, returning a task identifier upon success. |
-| OpenAI Video Task Query | `GET /v1/videos/{task_id}` | Queries the status, progress, and result information of a video generation task. |
-| Video Content Retrieval | `GET /v1/videos/{task_id}/content` | Streams back completed video content; the system retrieves content from upstream based on task results or decodes saved data URLs. |
-| Video Remix | `POST /v1/videos/{video_id}/remix` | Submits a new Remix asynchronous task based on an existing video. |
-| Legacy Video Generation | `POST /v1/video/generations` | Compatible with legacy video generation paths, creates asynchronous video tasks. |
-| Legacy Video Task Query | `GET /v1/video/generations/{task_id}` | Queries the status and results of legacy video generation tasks. |
-| Kling Text-to-Video | `POST /kling/v1/videos/text2video` | Submits a text-to-video task using Kling format; the system will first perform request format conversion. |
-| Kling Image-to-Video | `POST /kling/v1/videos/image2video` | Submits an image-to-video task using Kling format. |
-| Kling Task Query | `GET /kling/v1/videos/text2video/{task_id}`<br />`GET /kling/v1/videos/image2video/{task_id}` | Queries the results of Kling text-to-video or image-to-video tasks. |
-| Jimeng Official API | `POST /jimeng/` | Compatible with Jimeng official API format, distinguishing between task submission and query operations via parameters like `Action` and `Version`. |
-| Suno Task Submission | `POST /suno/submit/{action}` | Submits a Suno music generation task; the specific task type is determined by the `action` parameter. |
-| Suno Task Query | `POST /suno/fetch`<br />`GET /suno/fetch/{id}` | Queries the Suno task list or the status and results of a specified task. |
-| Midjourney Task Submission | `POST /mj/submit/{action}`<br />`POST /{mode}/mj/submit/{action}` | Supports task operations such as `imagine`, `describe`, `blend`, `change`, `simple-change`, `edits`, `video`, `action`, `modal`, and `shorten`. |
-| Midjourney Task Query | `GET /mj/task/{id}/fetch`<br />`GET /mj/task/{id}/image-seed`<br />`POST /mj/task/list-by-condition` | Queries task status, image seeds, or task lists by condition; also supports paths with the `{mode}` prefix. |
-| Midjourney Image Proxy | `GET /mj/image/{id}`<br />`GET /{mode}/mj/image/{id}` | Retrieves or proxies generated images based on the Midjourney Task ID. |
-| Midjourney Extended Operations | `POST /mj/insight-face/swap`<br />`POST /mj/submit/upload-discord-images` | Provides extended functionalities such as face swapping and uploading Discord images. |
+| Usage | The total cost of “Consumption” records. | Includes “Consumption” records within the selected time range that match “Model Name”, “Group”, and “Token Name”, plus “Username” and “Channel ID” for administrators. The calculation ignores “Type”, “Request ID”, and “Upstream Request ID” and excludes “Refund” records. |
+| RPM | Requests per minute, measured as the number of “Consumption” records in the last 60 seconds. | Always covers the last 60 seconds, regardless of the selected time range. Filters such as “Model Name”, “Group”, and “Token Name” still apply. |
+| TPM | Tokens per minute, measured as the total input and output Tokens in “Consumption” records from the last 60 seconds. | Same as RPM. |
+</div>
 
-## Relationship with Data Dashboard
+## View Log Details
 
-- Logs are detailed records, while the data dashboard provides statistics aggregated by time, model, user, or channel.
-- Their filtering scope, refresh timing, and statistical methods may differ;
-- New requests first appear in logs, and chart data may require aggregation or refresh before updating.
+**Steps**
 
-<Callout type="info">
-  When troubleshooting a call, it is recommended to first locate the request in the general logs by time, model, Request ID, or Upstream Request ID; for asynchronous requests, record the `task_id` returned by the submission API, then query the final task status and failure details. If a task remains unchanged for a long time, check channel availability, task polling switch, timeout settings, and corresponding "Refund" logs.
+1. Click the summary in the “Details” column for the record to open the “Log Details” dialog.
+2. Review the request information, Token usage, and billing details in the corresponding sections.
+3. To copy the log content, click the copy button in the upper-right corner of “Content”.
+
+<Callout type="info" title="Tip">
+
+- The dialog shows only the information saved for the record. The sections vary by log type and request.
+- To verify a charge, check “Token Breakdown” and “Billing Details”.
 </Callout>
+
+**Sections in the Log Details dialog**
+
+The table lists the sections in the order they appear in the dialog.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section | Content | When Shown |
+| --- | --- | --- |
+| Request ID, Upstream Request ID | The request ID generated by New API and the request ID returned by the upstream service. | When the record contains the corresponding ID. |
+| Channel, Retry Chain (administrators only) | The Channel that handled the request and, if the request was retried, the Channels attempted in order. | In the “All” view. |
+| Token, Group | The API key name and Group used for the call. | When the record contains this information. |
+| IP Address | The IP address that initiated the request. | For “Consumption” and “Error” records created after the account enables “Log IP Address”. Also shown for online top-up records in the “All” view (administrators only). |
+| Response Time | The request latency. For streaming requests, the time to first output (“FRT”) appears in parentheses. | For “Consumption” and “Error” records. |
+| Request Conversion (administrators only) | The request path and the steps used to convert the request format. Shows “Native Format” if no conversion took place. | In the “All” view. |
+| Request Policy Decisions (administrators only) | The steps used to select a Channel, retry, or stop. See [Request Policy Decisions](#request-policy-decisions). | In the “All” view when the record contains a decision log. |
+| Quota Clamped (administrators only) | The clamping type, original value, and clamped value when the calculated Quota falls outside the range the system can record. | In the “All” view when Quota was clamped. The entire row is light amber in the list. |
+| Rejection Reason (administrators only) | The reason the request was rejected. | In the “All” view when the record contains a rejection reason. |
+| Violation Charge | The violation code, violation flag, and amount charged. | For records with a violation charge. |
+| Refund Details | The task ID associated with the refund and the reason for the refund. | For “Refund” records. |
+| Task Plugin (administrators only) | The name, key, version, and author of the plugin that handled the task. | In the “All” view when a task plugin generated the record. |
+| Request Processing Steps (administrators only) | The instance, plugin, version, stage, duration, errors, and rules for each request processing step. | In the “All” view when request processing ran for the request. |
+| Root Diagnostics (Root only) | The API version, plugin runtime generation, upstream task ID, and node name. | For Root users in the “All” view when the record contains this information. |
+| Top-up Audit Information (administrators only) | The payment method, callback sender IP address, server IP address, node name, and system version for the order and payment callback. | For “Top-up” records in the “All” view. |
+| Quota Adjustment Details | How the administrator adjusted the Quota, the adjustment amount, and the Quota before and after the adjustment. | For “Top-up” records created by an administrator's Quota adjustment. |
+| Acting Administrator, Action Audit Information (administrators only) | The administrator who performed the action and the details of the action. | For historical “Management” records in the “All” view. |
+| Login Information | The login method, IP address, and client. | For historical “Login” records. |
+| Audio Tokens | The input and output Token counts for audio and text. | For real-time voice or audio requests. |
+| Reasoning Effort | The reasoning effort specified in the request. | When the request specifies a reasoning effort. |
+| System Prompt | Shows “Overridden” to indicate that the site replaced the system prompt in the request. | When the site overrides the system prompt. |
+| Response Model or Model Mapping | Either “Requested Model”, “Upstream Requested Model”, and “Response Model”, or “Requested Model” and “Actual Model”. Each value can be copied. | When the upstream service returns a model name or the site maps the model. |
+| Token Breakdown | Token counts for input, output, cache reads, cache writes, images, and other categories. Tiered billing also shows a “Billable Token Breakdown”. | For “Consumption”, “Error”, and “Refund” records that contain Token counts. |
+| Billing Details | The billing mode, model price or input and output unit prices (per million Tokens), Group Ratio or custom Ratio, additional prices for caching, audio, images, and other usage, tool call counts and prices for tools such as web search, the matched pricing tier, and the total cost. “Billing Path” is visible only to administrators. | For “Consumption” records other than violation charges. |
+| Dynamic Billing | The number of billable images, the tiered pricing table (with the applicable tier marked “Matched”), applicable conditions, and conditional multipliers. | For “Consumption” records billed using a dynamic expression. |
+| Billing Path (administrators only) | “Local Billing” or “Returned by Upstream”. | In the “All” view for record types other than “Consumption” and “Refund”. |
+| Stream Status | The streaming output status, termination reason, number of soft errors, and error details. | When streaming output ends abnormally. |
+| Subscription Billing | The plan, subscription instance, pre-charge, settlement difference, final consumption, and remaining subscription Quota. | For records paid from subscription Quota. |
+| Request Processing | The changes request processing made, the headers it set or removed, the content it detected, the reason it blocked the request, and other processing details. Changes replaced by Channel settings are marked “Overridden by Channel Settings”. | When request processing ran and the system recorded its actions. |
+| Parameter Overrides (…) | The changes the site made to request parameters, with the action and content of each change. | When the site overrides parameters for the request. |
+| Content | The log body. For “Error” records, this is the error message. Use the copy button in the upper-right corner to copy it. | When the record contains log content. |
+</div>
+
+### Request Policy Decisions
+
+The “Request Policy Decisions” section in “Log Details” is visible only to administrators. It lists the steps used to select a Channel, retry, or stop for the request. It appears only when “All” is selected in the upper-right corner of the page.
+
+- **Successful requests**. The system saves the decision log with the “Consumption” record. It includes at least the “Select Channel” and “Request Completed” steps. Disabling “Record Quota Usage” stops the system from saving these decision logs.
+- **Failed attempts**. Each failed attempt generates an “Error” record containing the decisions through that attempt. Decision logs for failed attempts are available only when the site enables error logging.
+
+**How each step is displayed**
+
+1. The first line shows the decision, followed by “#Channel ID” when a Channel is involved and the HTTP status code if the step failed. Steps that stop retries appear in amber.
+2. The second line shows “Attempt N”, elapsed time in milliseconds since the request started, the Group, the matched rule name, and the HTTP status code. Only available values appear.
+3. The third line shows “Source:” and the basis for the decision. If the failure triggered a Channel health action, the action appears after the source.
+
+**Decision labels**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Decision | Meaning |
+| --- | --- |
+| Select Channel | The Channel selected for this attempt. |
+| Session Rule Matched | The request matched a session persistence rule. The rule name appears on the second line. |
+| Upstream Request Failed | The attempt failed upstream or during network connection. |
+| Request Rejected Locally | A local check rejected the request before it was sent upstream. |
+| Channel Error | The system attributed the error to the Channel. |
+| Status Code Matched a Retry Rule | The failure status code matched a retry rule, so the system retries the request. |
+| Status Code Did Not Match a Retry Rule | The failure status code did not match a retry rule, so retries stop. |
+| Unrecognized Status Code | The system could not recognize the status code returned upstream. |
+| Attempt Limit Reached | The request reached the maximum number of attempts, so retries stop. |
+| Retry Prohibited by System | A system rule prohibits retrying in this situation. |
+| Fixed Channel Constraint | The request is pinned to a specific Channel and stays on that Channel. |
+| Session Persistence Prevents Channel Switching | Session persistence requires the original Channel to be used. |
+| Task Accepted, Duplicate Submission Prohibited | The upstream service has already accepted the asynchronous task, so retries stop. |
+| Task Failed | The asynchronous task failed during submission. |
+| Streaming Output Did Not Complete Successfully | Streaming output ended abnormally. |
+| Request Completed | The request completed successfully. |
+</div>
+
+**Sources and Channel health actions**
+
+- **Source**. “Global Defaults”, “Global and Channel Settings”, “Channel”, and “Session Rule” indicate that the decision was based on site or Channel retry or session settings. “System Constraint” and “Fixed Channel Constraint” indicate that the decision was based on system rules. “Channel Selection”, “Upstream Response”, “Upstream Connection”, and “Local Check” indicate that the decision was based on what happened during the attempt.
+- **Health action**. “Unchanged” means the Channel status stayed the same. “Channel Deactivation Requested” and “Current Key Deactivation Requested” mean the failure triggered a deactivation request.
+
+## Export Logs
+
+**Steps**
+
+1. Set the filters on the page as needed and click “Search”.
+2. Click “Export” in the lower-right corner of the filter area to open the “Export Logs” dialog.
+3. Set the time range to export.
+4. Click “Export” in the dialog and wait for your browser to download the file.
+
+<Callout type="info" title="Tip">
+
+- “Export” is available to regular users when administrators enable user exports. Administrators can always export logs.
+- Each account can run only one export at a time. Closing the dialog while an export is in progress cancels it.
+- Exported files contain the original names even when “Hide” is enabled.
+</Callout>
+
+**Export settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Time Range | The time range of the records to export. | Both a start time and an end time are required. If the end time is earlier than the start time, the dialog shows “End time must be after start time”. If the range exceeds the limit (365 days by default), the dialog shows “The time range cannot exceed … days” and disables “Export”. Other filters applied on the page, such as model name, Group, type, Token name, and request ID, also apply to the export. | The time range currently applied on the page |
+</div>
+
+**Export file**
+
+- The export is a CSV file named `usage-logs-<start-date>-<end-date>.csv`, for example `usage-logs-20261101-20261108.csv`. You can open it directly in a spreadsheet application.
+- The file includes the “Time”, “Type”, “Token”, “Group”, “Model”, “Stream”, “Input Tokens”, “Output Tokens”, “Cache Reads”, “Cache Writes”, “Cost”, “Latency”, “IP”, “Request ID”, and “Details” columns. Exports from the “All” view include records for all users and add the “User” and “Channel” columns (administrators only).
+- The records are sorted from newest to oldest, with no limit on the number of records.
+
+## Controls and Actions
+
+### Page Controls and Filters
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Control | Location | Description |
+| --- | --- | --- |
+| All / Only Me (administrators only) | Upper-right corner of the page | Defaults to “All”, which shows records for all users, the “Channel” and “User” columns, the “Username” and “Channel ID” filters, and administrator-only sections in the details dialog. “Only Me” shows only the current account's records and the same page content as for regular users. |
+| Time Range, Model Name, Group, Type | First row of the filter area | See [Filter Logs and View Statistics](#filter-logs-and-view-statistics). |
+| Expand / Collapse | Right side of the first filter row | Shows or hides the second row of filters. The row is collapsed by default and expanded in the screenshot. The button shows how many filters in the second row have values. |
+| Token Name, Request ID, Upstream Request ID | Second row of the filter area | See [Filter Logs and View Statistics](#filter-logs-and-view-statistics). |
+| Username, Channel ID (administrators only) | Second row of the filter area | See [Filter Logs and View Statistics](#filter-logs-and-view-statistics). |
+| Usage, RPM, TPM | Lower-left corner of the filter area | Shows the statistics described in [Filter Logs and View Statistics](#filter-logs-and-view-statistics). |
+| Hide / Show | Eye icon in the lower-right corner of the filter area | “Hide” masks Token names, Groups, usernames, Channel names, the “Usage” amount, and the values in the corresponding filter fields with dots for screenshots or screen sharing. Costs, models, the details dialog, and exported files remain visible or unmasked. Refreshing the page restores visibility. |
+| Reset | Lower-right corner of the filter area | Available when any filter other than the time range is set. Clears all filters and restores the default time range. |
+| Search | Lower-right corner of the filter area | Refreshes the list and statistics using the current filters and returns to page 1. |
+| Export | Lower-right corner of the filter area | Opens the “Export Logs” dialog. See [Export Logs](#export-logs). |
+| View | Lower-right corner of the filter area | Use “Toggle Columns” to select which columns to display. The “Time” column is always visible. The current browser saves the settings. |
+| Rows per Page, Pagination | Bottom of the list | “Rows per Page” defaults to 100 (20 on mobile). Available values are 10, 20, 30, 40, 50, and 100. “Total” shows the number of matching records. |
+</div>
+
+### Row Actions
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| View Log Details | Summary text in the “Details” column | Opens the “Log Details” dialog. See [View Log Details](#view-log-details). |
+| Copy Log Content | Copy button in the upper-right corner of “Content” in the “Log Details” dialog | Copies the log body. See [View Log Details](#view-log-details). |
+| Copy Model Name | Model name in the “Model” column | Click the name to copy it. If there is a routing icon or a “Response Model” label next to the name, click it to open a popover where you can copy each model name separately. |
+| Copy Token Name | Name in the “Token” column | Click the name to copy it. |
+| Copy Channel ID (administrators only) | “#Channel ID” in the “Channel” column | Click the ID to copy it. |
+| View Retry Chain (administrators only) | Branch icon in the “Channel” column | Shows the Channels attempted for the request, in order. |
+| View Channel Affinity (administrators only) | ✦ in the upper-right corner of the “Channel” cell | Opens the “Channel Affinity” dialog, which shows cache statistics for the session rule. |
+| View User Information (administrators only) | Username in the “User” column | Opens the “User Information” dialog. |
+</div>
+
+## Status Reference
+
+### Log Types
+
+Log types appear below the timestamp in the “Time” column and in the type filter.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Type | Meaning | Notes |
+| --- | --- | --- |
+| Top-up | Account Quota added or adjusted through redemption codes, successful online top-ups, subscription purchases (including purchases made with the wallet balance), or an administrator increasing, decreasing, or replacing the account Quota. | Cyan. Records created by administrator adjustments show “Quota Adjustment Details” in the details dialog. |
+| Consumption | A successful model call that incurred a charge. Charges for submitting asynchronous tasks such as video or music generation are also logged as “Consumption”. | Green. “Usage” totals include only this type. |
+| Management | Historical records of administrator actions. | Orange. Marked “Deprecated” in the filter and available only for searching historical logs. See <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Logs</a> for new administrator actions. |
+| System | Quota granted by the system, including rewards for new user registration, referrals, and daily check-ins. | Purple. |
+| Error | A failed model call. | Red, with the entire row shaded light red. Errors incur no charge. These records appear only after the site enables error logging. |
+| Refund | Quota returned after an asynchronous task fails or times out, or the difference refunded when the task is settled based on actual usage. | Blue, with the entire row shaded light blue. The “Details” column shows “Asynchronous Task Refund”. “Refund Details” in the details dialog shows the task ID and reason. See <a href="/en/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">Task Logs</a>. |
+| Login | Historical records of sign-ins. | Teal. Marked “Deprecated” in the filter and available only for searching historical logs. See <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Logs</a> for new sign-in records. |
+</div>
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="I can't find the log entry for a specific request">
+**Possible causes**
+
+- The time range is still set to today by default, or the filters are too restrictive. Token name, Group, request ID, and upstream request ID all require exact matches.
+- The request failed. The site logs failed requests only when error logging is enabled. The site never logs requests it rejects before the call, such as when key validation fails, no Channel is available, the request limit is reached, or the available Quota is insufficient.
+- The administrator turned off “Log Quota Usage.” Successful requests no longer generate “Consumption” entries.
+- The administrator selected “Only Me,” and the entry belongs to another user.
+- The page does not refresh automatically.
+
+**What to do**
+
+1. Clear any unnecessary filters and set the time range to include when the request was made.
+2. If you know the request ID, click “Expand” and enter the full ID in “Request ID.”
+3. Click “Search” to refresh the list.
+4. If you still can't find the entry, contact the administrator to confirm the site's logging settings.
+</Accordion>
+
+<Accordion title="Am I charged for failed requests?">
+**Explanation**
+
+Requests that return an error incur no charge. The site logs failed requests only when error logging is enabled. When enabled, failed requests appear as “Error” entries with a “Cost” of 0. The error message appears under “Content” in “Log Details.” If an asynchronous task fails or times out, the system returns any deducted Quota and creates a “Refund” entry.
+
+**What to do**
+
+1. Verify charges against the “Consumption” and “Refund” entries and any changes to your account balance.
+2. If you need to investigate a failure and the list has no “Error” entry, contact the administrator.
+</Accordion>
+
+<Accordion title="The cost differs from what I expected">
+**Explanation**
+
+The input and output unit prices in “Billing Details” are prices per million Tokens. The site determines the display unit.
+
+**Possible causes**
+
+- The Group you used has a Ratio, or your account has a custom Ratio. The Ratio appears next to the Group in the “Token” column.
+- Cache reads and writes, audio, images, and tools such as web search have their own pricing. A wrench icon appears next to “Cost” on entries that include a tool call surcharge.
+- The model uses tiered pricing, and the applicable tier has a different price.
+- If the request was paid for with subscription Quota, “Cost” shows the amount actually deducted from the subscription.
+
+**What to do**
+
+1. Open “Log Details” for the entry and check the billing mode, unit prices, Ratios, and total cost in “Billing Details.”
+2. Check the count for each Token type in “Token Details.”
+3. If you still have questions, send the “Request ID” to the administrator.
+</Accordion>
+
+<Accordion title="“Usage” differs from the total cost in the list or the dashboard figures">
+**Explanation**
+
+- “Usage” totals only the “Consumption” entries within the selected time range. It excludes “Refund” entries from the calculation and ignores the “Type,” “Request ID,” and “Upstream Request ID” filters.
+- “RPM” and “TPM” always cover the most recent 60 seconds.
+- The dashboard aggregates data at regular intervals, every 5 minutes by default. New requests appear in the usage logs first.
+
+**What to do**
+
+1. Select “Consumption” from the “Type” dropdown, click “Search,” and compare the results with “Usage.”
+2. Set “Type” to “Refund” to view returned Quota separately.
+3. Wait a few minutes, then refresh the dashboard.
+</Accordion>
+
+<Accordion title="A search returns “The time range cannot exceed … days”">
+**Message**
+
+“The time range cannot exceed … days”
+
+**Possible cause**
+
+The administrator sets the maximum time range a regular user can query at once. The default is 365 days. The same limit applies to administrators when exporting logs.
+
+**What to do**
+
+1. Shorten the time range and run the search again.
+2. If you need logs for a longer period, split it into multiple searches or exports.
+</Accordion>
+
+<Accordion title="The “Export” button is missing or an export returns an error">
+Use the message to identify the cause.
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| “Export” does not appear on the page, or the page displays “Log export is disabled” | The administrator disabled log exports for users. | Contact the administrator. |
+| “Another log export is running. Try again after it finishes.” | This account already has an export in progress. | Wait for the current export to finish, then try again. |
+| “End time must be after start time” | The end time is earlier than the start time. | Set the time range again. |
+| “The time range cannot exceed … days” | The export time range exceeds the limit, which defaults to 365 days. | Shorten the time range and split the export into multiple exports. |
+| “Failed to export logs” | The network connection was interrupted or a server error occurred. | Try again. If the export still fails, contact the administrator. |
+</Accordion>
+
+<Accordion title="“IP Address” is missing from the log details">
+**Possible cause**
+
+“Log IP Address” is disabled for the account. The setting is off by default and applies only to “Consumption” and “Error” entries created after you enable it.
+
+**What to do**
+
+1. Open the <a href="/en/docs/guide/feature-guide/user/security#configure-ip-address-logging" target="_blank" rel="noopener noreferrer">Security & Access</a> page. In the “Privacy” section, turn on “Log IP Address” and click “Save Settings.”
+2. New entries will show the IP address. The setting cannot add IP addresses to existing entries.
+</Accordion>
+
+<Accordion title="“Response Model: …” appears next to the model name">
+**Message**
+
+“The upstream returned a model name different from both the requested and upstream models. Aliases or dated versions may also cause this; this warning alone does not prove model substitution.”
+
+**Possible cause**
+
+The upstream provider returned a model name different from the requested model name, such as a model alias or a dated version name.
+
+**What to do**
+
+1. Click the notice to view “Requested Model,” “Upstream Requested Model,” and “Response Model.”
+2. If you suspect model substitution, send the “Request ID” to the administrator for verification.
+</Accordion>
+
+<Accordion title="A fuzzy search with % returns a format error">
+“Model Name” and “Username” support fuzzy searches with `%`. If the search pattern is invalid, one of the following messages appears.
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| “The search pattern cannot contain consecutive % wildcards” | You entered consecutive `%` wildcards. | Remove the extra `%` wildcards. |
+| “The search pattern can contain at most 2 % wildcards” | You used more than two `%` wildcards. | Use at most two `%` wildcards. |
+| “Fuzzy search keywords must be at least 2 characters long” | The pattern has fewer than two characters other than `%`. | Add characters to the search term. |
+</Accordion>
+
+<Accordion title="Selecting “Management” or “Login” returns no new entries">
+**Explanation**
+
+New login and administrative events appear in the audit log. The “Management” and “Login” types are marked “Deprecated” in the filter and apply only to historical logs.
+
+**What to do**
+
+1. Open the <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Log</a> to view login and account activity.
+</Accordion>
+
+<Accordion title="I can't see the “Channel” or “User” columns or “Request Policy Decision”">
+**Explanation**
+
+Administrator-only controls and details appear only when an administrator selects “All.” These include the “Channel” and “User” columns, the “Username” and “Channel ID” filters, and “Request Policy Decision” in the details window. Decision records for failed attempts also require error logging to be enabled on the site.
+
+**What to do**
+
+1. If you're an administrator, select “All” in the upper-right corner of the page.
+2. If you're a regular user and need to investigate a request, send the “Request ID” to the administrator. These details are available only to administrators.
+</Accordion>
+
+<Accordion title="How long are usage logs retained?">
+**Explanation**
+
+By default, usage logs are retained indefinitely. Administrators can delete usage logs older than a specified time. Deleted logs cannot be recovered.
+
+**What to do**
+
+1. If you need to keep records long term, [export logs](#export-logs) regularly.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a> — Create and manage API keys for making model requests.
+- <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a> — Add funds, redeem Quota, and view your balance and subscriptions.
+- <a href="/en/docs/guide/feature-guide/user/dashboard" target="_blank" rel="noopener noreferrer">Dashboard</a> — View usage statistics aggregated by time period and model.
+- <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Log</a> — View records of logins, changes to account security settings, and access Token activity.
+- <a href="/en/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">Task Log</a> — View the status, results, and refunds for asynchronous tasks such as video, music, and image generation.
+- <a href="/en/docs/api/management/logs/log-self-get" target="_blank" rel="noopener noreferrer">Get Personal Logs</a> — Query the current account's usage logs through the API.
+- <a href="/en/docs/api/management/logs/log-self-stat-get" target="_blank" rel="noopener noreferrer">Get Personal Log Statistics</a> — Query the current account's usage statistics through the API.
+- <a href="/en/docs/api/management/logs/log-token-get" target="_blank" rel="noopener noreferrer">Get Logs by Token</a> — Use an API key to query recent usage logs for that key.

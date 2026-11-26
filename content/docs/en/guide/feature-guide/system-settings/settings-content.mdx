@@ -1,0 +1,490 @@
+---
+title: Console Content Configuration
+description: Root users can configure console content, including Data Dashboard export, announcements, API addresses, FAQs, Uptime Kuma, chat presets, and drawing toggles.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- Only Root users can access these settings. In the sidebar, go to **Admin** → **System Settings**, then select a section under **Console Content** in the left navigation.
+- Configure dashboard usage statistics, announcements, API addresses, frequently asked questions, Uptime Kuma status groups, chat presets, and drawing toggles.
+- The sidebar modules in Site & Branding control access to the dashboard. The **Enabled** toggle in each corresponding section on this page controls whether its panel appears.
+
+<Callout type="info" title="Tip">
+- **Announcements** on this page is a structured list that you can enable or disable. **System Announcement** in <a href="/en/docs/guide/feature-guide/system-settings/settings-site" target="_blank" rel="noopener noreferrer">Site & Branding Configuration</a> is a separate setting. Each serves a distinct purpose.
+- Configure upstream Midjourney addresses, endpoints, and keys at the Channel level.
+</Callout>
+
+## Console Content Configuration Overview
+
+Console Content has seven sections. Switch between them under **Console Content** in the left navigation. **Data Dashboard** opens by default.
+
+**Sections**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Section | Purpose | Tabs |
+| --- | --- | --- |
+| [Data Dashboard](#data-dashboard) | Usage statistics toggle, refresh interval, and default granularity. | — |
+| [Announcements](#announcements) | Announcement list and section toggle. | — |
+| [API Addresses](#api-addresses) | List of API access URLs that users can copy and test for speed. | — |
+| [Frequently Asked Questions](#frequently-asked-questions) | FAQ list and section toggle. | — |
+| [Uptime Kuma](#uptime-kuma) | Uptime Kuma status groups. | — |
+| [Chat Presets](#chat-presets) | Link templates for one-click import into chat apps. | **Visual**, **JSON** |
+| [Drawing](#drawing) | Toggles that control Midjourney proxy behavior. | — |
+
+</div>
+
+<Callout type="info" title="Tip">
+- If a panel is missing, a save is rejected, an announcement shows as unread, or chat import fails, see [Troubleshooting](#troubleshooting).
+</Callout>
+
+## Configuration Sections
+
+The seven sections below follow the order of the left navigation. For save buttons and when changes take effect, see [Saving and Applying Changes](#saving-and-applying-changes).
+
+### Data Dashboard
+
+- Console Content – Data Dashboard
+
+![Console Content – Data Dashboard page](/assets/guide/feature-guide/system-settings-console-content-data-dashboard.png)
+
+This section configures only how the backend collects usage statistics. Panel visibility is controlled separately.
+
+**Steps**
+
+1. Turn **Enable Data Dashboard** on or off.
+2. Enter a **Refresh Interval (Minutes)** and select a **Default Time Granularity**.
+3. Click **Save Changes** at the top of the page.
+
+<Callout type="info" title="Tip">
+- The **Enabled** toggle in each section controls its corresponding panel for Announcements, API Addresses, Frequently Asked Questions, and Uptime Kuma.
+- Panels such as Setup Guide, Usage Overview, and Performance Health have no individual toggles. Only administrators can see Performance Health.
+- The **Dashboard** toggle in the sidebar modules controls whether the dashboard entry is available. See <a href="/en/docs/guide/feature-guide/system-settings/settings-site#sidebar-modules" target="_blank" rel="noopener noreferrer">Site & Branding Configuration</a>.
+</Callout>
+
+**Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Enable Data Dashboard | Controls whether the backend periodically aggregates and writes usage data. | Toggle. | On |
+| Refresh Interval (Minutes) | Interval at which the backend aggregates usage data. | Enter an integer from 1 to 1440. The UI says, “Keep this value above 1 minute to avoid excessive database load.” You can edit this field only when **Enable Data Dashboard** is on. | `5` |
+| Default Time Granularity | The UI says, “UI granularity only — data is still aggregated hourly.” When users open the dashboard, it uses their own **Default Time Granularity** under **Preferences**. See the <a href="/en/docs/guide/feature-guide/user/dashboard#set-default-chart-views" target="_blank" rel="noopener noreferrer">Dashboard</a> guide. | Select **Hour**, **Day**, or **This Week**. You can edit this field only when **Enable Data Dashboard** is on. | Hour |
+
+</div>
+
+### Announcements
+
+- Console Content – Announcements
+
+![Console Content – Announcements page](/assets/guide/feature-guide/system-settings-console-content-announcement.png)
+
+- Console Content – Add Announcement
+
+![Console Content – Add Announcement page](/assets/guide/feature-guide/system-settings-console-content-add-announcement.png)
+
+**Steps**
+
+1. Click **Add Announcement**.
+2. Enter the content, publication date, type, and additional notes, then click **Add**.
+3. Click **Save Settings**.
+4. Turn on the **Enabled** toggle on the right.
+
+<Callout type="info" title="Tip">
+- The list supports up to 100 announcements and displays them by publication date, newest first.
+- The **Timeline** tab in the notification center shows only the first 20 announcements.
+- The browser tracks read status for each announcement. Editing an existing announcement preserves its read status.
+</Callout>
+
+**List Columns**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Column | Description |
+| --- | --- |
+| Content | Announcement body. |
+| Publication Date | Displays both the relative time and the exact date and time. |
+| Type | Announcement type. |
+| Extra | Additional notes. |
+| Actions | The edit icon opens **Edit Announcement**. Select **⋯** → **Delete** to remove the entry from the list. |
+
+</div>
+
+**Add Announcement Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Content | Announcement body. | Required. Up to 500 characters. Supports Markdown and HTML. | — |
+| Publication Date | Date and time when the announcement should appear. | Required. Use the date and time picker. | Time when the dialog opens |
+| Type | Announcement type, which determines its display style. | Select Default, Ongoing, Success, Warning, or Error. The UI displays these options in English. | Default |
+| Additional Notes (Optional) | Additional information. | Optional. Up to 100 characters. | Blank |
+
+</div>
+
+### API Addresses
+
+- Console Content – API Addresses
+
+![Console Content – API Addresses page](/assets/guide/feature-guide/system-settings-console-content-api-address.png)
+
+- Console Content – Add API Address
+
+![Console Content – Add API Address page](/assets/guide/feature-guide/system-settings-console-content-add-api-address.png)
+
+Each API address card on the dashboard offers **Test Latency**, **External Speed Test**, **Copy URL**, and **Open in New Tab**.
+
+**Steps**
+
+1. Click **Add API**.
+2. Enter the API URL, route description, and description, select a badge color, then click **Add**.
+3. Click **Save Settings**.
+4. Turn on the **Enabled** toggle on the right.
+
+<Callout type="info" title="Tip">
+- The list supports up to 50 entries.
+- The server rejects the save if the route description or description contains unsafe content such as scripts or iframes.
+</Callout>
+
+**List Columns**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Column | Description |
+| --- | --- |
+| URL | API access URL. |
+| Route | Route description. |
+| Description | Description of the address. |
+| Color | Badge color. |
+| Actions | The edit icon opens **Edit API Shortcut**. Select **⋯** → **Delete** to remove the entry from the list. |
+
+</div>
+
+**Add API Shortcut Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| API URL | Address used to access the API. | Required. Enter a valid URL starting with `http://` or `https://`, up to 500 characters. An invalid URL triggers the message “Must be a valid URL.” | — |
+| Route Description | Describes the route or network connection, such as CN2 GIA. | Required. Up to 100 characters. | — |
+| Description | Description of the address. | Required. Up to 200 characters. | — |
+| Badge Color | Color of the visual indicator on the API card. | Select a color from the dropdown. The UI displays color names in English. | Blue |
+
+</div>
+
+### Frequently Asked Questions
+
+- Console Content – Frequently Asked Questions
+
+![Console Content – Frequently Asked Questions page](/assets/guide/feature-guide/system-settings-console-content-frequently-asked-questions.png)
+
+- Console Content – Add FAQ
+
+![Console Content – Add FAQ page](/assets/guide/feature-guide/system-settings-console-content-add-frequently-asked-questions.png)
+
+**Steps**
+
+1. Click **Add FAQ**.
+2. Enter the question and answer, then click **Add**.
+3. Click **Save Settings**.
+4. Turn on the **Enabled** toggle on the right.
+
+<Callout type="info" title="Tip">
+- The list supports up to 100 entries.
+- Entries appear in list order. The UI provides no sorting controls.
+</Callout>
+
+**List Columns**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Column | Description |
+| --- | --- |
+| Question | Question text. |
+| Answer | Answer text. |
+| Actions | The edit icon opens **Edit FAQ**. Select **⋯** → **Delete** to remove the entry from the list. |
+
+</div>
+
+**Add FAQ Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Question | Question text. | Required. Up to 200 characters. | — |
+| Answer | Answer text. | Required. Up to 1,000 characters. Supports Markdown and HTML. | — |
+
+</div>
+
+### Uptime Kuma
+
+- Console Content – Uptime Kuma
+
+![Console Content – Uptime Kuma page](/assets/guide/feature-guide/system-settings-console-content-uptime-kuma.png)
+
+- Console Content – Add Uptime Kuma
+
+![Console Content – Add Uptime Kuma page](/assets/guide/feature-guide/system-settings-console-content-add-uptime-kuma.png)
+
+**Steps**
+
+1. Click **Add Group**.
+2. Enter the category name, Uptime Kuma URL, and status page slug, then click **Add**.
+3. Click **Save Settings**.
+4. Turn on the **Enabled** toggle on the right.
+
+<Callout type="info" title="Tip">
+- You can add up to 20 groups. Each category name must be unique.
+- The server fetches live status whenever you open the panel on the dashboard or click Refresh. Status is fetched independently of saving.
+</Callout>
+
+**List Columns**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Column | Description |
+| --- | --- |
+| Category Name | Display name of the monitoring Group. |
+| Uptime Kuma URL | Base URL of the Uptime Kuma instance. |
+| Status Page Slug | Alias for the status page. |
+| Actions | The edit icon opens **Edit Uptime Kuma Group**. Select **⋯** → **Delete** to remove the entry from the list. |
+
+</div>
+
+**Add Uptime Kuma Group Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Category Name | Display name of this monitoring Group. | Required. Up to 50 characters. Must be unique across groups. | — |
+| Uptime Kuma URL | Base URL of your Uptime Kuma instance. | Required. Enter a valid URL of up to 500 characters. | — |
+| Status Page Slug | Alias for the status page, appended to the URL as `…/status/…`. | Required. Up to 100 characters. Use only letters, digits, hyphens, and underscores. | — |
+
+</div>
+
+### Chat Presets
+
+- Console Content – Chat Presets (Visual)
+
+![Console Content – Chat Presets Visual tab](/assets/guide/feature-guide/system-settings-console-content-chat-presets-visual.png)
+
+- Console Content – Chat Presets (JSON)
+
+![Console Content – Chat Presets JSON tab](/assets/guide/feature-guide/system-settings-console-content-chat-presets-json.png)
+
+This section configures link templates for one-click import into chat apps. The **Visual** and **JSON** tabs edit the same presets. **Save Chat Settings** at the top of the page saves changes from either tab.
+
+**Steps**
+
+1. Click **Add Chat Preset** in the **Visual** tab, or switch to the **JSON** tab and edit the presets directly.
+2. Enter the chat client name and URL.
+3. Click **Save Chat Settings** at the top of the page.
+
+<Callout type="warn" title="Caution">
+- `{key}` appears in the URL when it opens. Configure import URLs only for trusted clients. Presets that point to third-party or unknown domains can send users’ API keys to those domains.
+- The URL format is not validated. Incorrect or unsupported placeholders produce no error during configuration and only become apparent when a user tries to import the preset.
+</Callout>
+
+**Visual**
+
+The list has **Chat Client Name**, **URL**, and **Actions** columns. Use **Search chat presets...** to filter it. The edit icon opens **Edit Chat Preset**. Select **⋯** → **Delete** to remove a preset immediately without a confirmation prompt. Edited presets move to the end of the list.
+
+**JSON**
+
+The **Chat Configuration JSON** editor accepts an array. The UI describes the format as “An array of chat client presets. Each item is an object containing one key-value pair with the client name and its URL.” If the format is incorrect, one of these messages appears below the editor: “Must be a JSON array.”, “Each entry must be an object containing a single key-value pair.”, “Each entry must contain exactly one key-value pair.”, or “Invalid JSON string.”
+
+**Placeholders**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Placeholder | Replaced With |
+| --- | --- |
+| `{key}` | The user’s API key. |
+| `{address}` | The server address in **Site & Branding › System Information**. |
+| `{cherryConfig}`, `{aionuiConfig}`, `{deepchatConfig}`, `{aqbotConfig}` | The corresponding client’s import configuration, including the API key and server address. |
+
+</div>
+
+<Callout type="info" title="Tip">
+- The 10 built-in client presets are Cherry Studio, AionUI, 流畅阅读, CC Switch, DeepChat, AQBot, the official Lobe Chat example, AI as Workspace, AMA 问天, and OpenCat.
+- The **流畅阅读** preset is available only in the **Chat** menu on an API key row, where it sends the key to the browser extension.
+</Callout>
+
+- Console Content – Add Chat Preset
+
+![Console Content – Add Chat Preset page](/assets/guide/feature-guide/system-settings-console-content-add-chat-presets.png)
+
+- Console Content – Edit Chat Preset
+
+![Console Content – Edit Chat Preset page](/assets/guide/feature-guide/system-settings-console-content-edit-chat-presets.png)
+
+**Add Chat Preset Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Chat Client Name | Display name of this chat client. | Required. If left blank, the UI displays “Chat client name is required.” | — |
+| URL | URL for this chat client. It can contain placeholders. | Required. If left blank, the UI displays “URL is required.” The format is not validated. | — |
+
+</div>
+
+### Drawing
+
+- Console Content – Drawing
+
+![Console Content – Drawing page](/assets/guide/feature-guide/system-settings-console-content-drawing.png)
+
+This section contains only six toggles that control how the Midjourney proxy handles drawing requests.
+
+**Steps**
+
+1. Turn the required toggles on or off.
+2. Click **Save Drawing Settings** at the top of the page.
+
+<Callout type="info" title="Tip">
+The Drawing section contains only toggles. To configure the upstream base URL, endpoints, keys, or account filter values, edit the Midjourney Channel in <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>.
+</Callout>
+
+**Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Enable Drawing | Turn this on to offer MjProxy-style image generation to end users. | Toggle. | On |
+| Allow Upstream Callbacks | Accepts MjProxy callbacks when enabled. This exposes the server’s IP address. | Toggle. | Off |
+| Allow the `accountFilter` Parameter | Keep this enabled if you need to proxy requests for different upstream accounts. | Toggle. | Off |
+| Rewrite Callback URLs to the Local Server | Automatically replaces upstream callback URLs with the server address. | Toggle. | On |
+| Remove Mode Flags from Prompts | Removes MjProxy parameters such as `--fast`, `--relax`, and `--turbo` from user prompts. | Toggle. | Off |
+| Require Task Success Before Follow-up Actions | Users must wait for the image generation task to succeed before upscaling or creating variations. | Toggle. | On |
+
+</div>
+
+## Saving and Applying Changes
+
+For saving methods, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#save-methods" target="_blank" rel="noopener noreferrer">System Settings Overview</a>. For when changes take effect across instances, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#scope-and-multi-instance-synchronization" target="_blank" rel="noopener noreferrer">Scope and Multi-Instance Synchronization</a>. For when the browser displays new values, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#frontend-display-and-caching" target="_blank" rel="noopener noreferrer">Frontend Display and Caching</a>. Unless otherwise specified, the node that handles the save request uses the new values immediately. Other nodes pick them up through system settings synchronization within about 3 seconds, or within one synchronization cycle at the latest. The `SYNC_FREQUENCY` environment variable sets the cycle length in seconds and defaults to 60. Restart New API after changing it. The table below shows when each setting takes effect.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| Data Dashboard › Enable Data Dashboard | **Save Changes** at the top of the page | The dashboard includes only usage recorded while this setting is on. Existing data is retained, and usage from periods when the setting was off is never backfilled. |
+| Data Dashboard › Refresh Interval (Minutes) | **Save Changes** at the top of the page | The new interval applies after the current wait ends. |
+| Data Dashboard › Default Time Granularity | **Save Changes** at the top of the page | — |
+| Four list sections › **Enabled** toggle | Changing the toggle saves it immediately. “Settings updated successfully” appears first, followed by “Settings saved.” | The corresponding panels for Announcements, API Addresses, Frequently Asked Questions, and Uptime Kuma appear or disappear after a page refresh. For announcements, this also applies to the notification center. |
+| Four list sections › List | Adding, editing, or deleting entries only changes the page data. Click **Save Settings** in the card to save the entire list. | The corresponding console panels show the new content after a page refresh. For announcements, this also applies to the notification center. |
+| Chat Presets | **Save Chat Settings** | The sidebar **Chat** entry and the **Chat** menu in the API key list update after a page refresh. |
+| Drawing › Enable Drawing | **Save Drawing Settings** | — |
+| Drawing › Other five toggles | **Save Drawing Settings** | Takes effect on the next relevant drawing request. |
+
+</div>
+
+**Additional Details**
+
+- **Saving lists.** Adding, editing, or deleting entries in any of the four list sections only changes the page data. The UI displays a message such as “… added. Click ‘Save Settings’ to apply.” Clicking **Save Settings** saves the entire list and displays a success message such as “Announcements saved successfully.”
+- **Confirming deletions.** When you delete a list entry, the UI asks “Are you sure?” After confirming, click **Save Settings** to apply the deletion.
+- **Saving without changes.** **Save Changes**, **Save Chat Settings**, and **Save Drawing Settings** submit only modified settings. If nothing has changed, they submit nothing and display no message.
+- **Recording usage.** Each node aggregates its own usage and writes it to the database at the configured refresh interval.
+- **Live status.** The server fetches live status for each Uptime Kuma status group whenever you open the panel or click Refresh, independently of saving.
+
+## Notes
+
+- **An invalid entry causes the server to reject the entire list.** When you click **Save Settings**, the server validates each entry and saves the list only if all entries are valid.
+- **Two announcement settings.** **Announcements** on this page and **System Announcement** in Site & Branding are separate settings. Each serves a distinct purpose.
+- **Panel visibility.** The **Enabled** toggle in each list section controls its panel, and the sidebar **Dashboard** module controls access to the dashboard. See [Data Dashboard](#data-dashboard).
+- **Chat preset URL validation.** Chat preset URLs are not validated, so incorrect placeholders only become apparent when a user tries to import the preset. See [Chat Presets](#chat-presets).
+- **Drawing settings.** The Drawing section contains only toggles. Configure upstream Midjourney settings at the Channel level. See [Drawing](#drawing).
+
+## Troubleshooting
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="A panel is missing">
+
+**Possible causes**
+
+- The corresponding section’s **Enabled** toggle is off.
+- The **Dashboard** sidebar module is off. This module controls access to the entire dashboard.
+
+**How to fix it**
+
+1. Turn on the **Enabled** toggle in the corresponding section.
+2. Turn on **Dashboard** in the Site & Branding sidebar modules.
+3. Refresh the page or reopen the dashboard.
+</Accordion>
+
+<Accordion title="The server rejects the save">
+
+**Possible cause**
+
+The server rejects the entire list if any entry is invalid. Common reasons include an invalid URL, a color outside the available choices, too many entries, or a missing required field.
+
+**How to fix it**
+
+1. Check the message, correct the issue, and try again.
+</Accordion>
+
+<Accordion title="An announcement shows as unread">
+
+Read status is tracked by announcement ID, or by a content hash if there is no ID. New announcements appear as unread. Editing an existing announcement preserves its read status. Opening the **Timeline** tab in the notification center marks announcements as read.
+</Accordion>
+
+<Accordion title="FAQs appear in the wrong order">
+
+The UI provides no sorting controls. FAQs appear in list order.
+</Accordion>
+
+<Accordion title="Uptime Kuma does not appear">
+
+**Possible causes**
+
+- The section is disabled.
+- The New API server cannot reach the Uptime Kuma URL.
+- There are more than 20 groups.
+</Accordion>
+
+<Accordion title="Chat import does not work">
+
+Incorrect values or unsupported placeholders only become apparent when the client tries to import the preset.
+
+**Possible causes**
+
+- The app name does not match the client template.
+- The URL does not support the placeholder used.
+</Accordion>
+
+<Accordion title="Drawing settings do not take effect">
+
+The upstream address and key are configured at the Midjourney Channel level.
+
+**Possible causes**
+
+- The relevant toggle is off, or you turned it on without saving.
+- The Midjourney Channel configuration is incorrect.
+</Accordion>
+
+<Accordion title="The display does not update after saving">
+
+Dashboard panels already open in the browser used to save the settings, along with its sidebar **Chat** entry, do not update automatically.
+
+**How to fix it**
+
+1. Refresh the page or reopen the affected section.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- How system settings take effect, synchronize across instances, and handle sensitive settings and change verification. <a href="/en/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">System Settings Overview</a>
+- System announcements, top navigation, and sidebar modules. <a href="/en/docs/guide/feature-guide/system-settings/settings-site" target="_blank" rel="noopener noreferrer">Site & Branding Configuration</a>
+- Upstream configuration for Midjourney and other drawing Channels. <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>
+- How to use API keys with API access URLs. <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a>
+- How to import settings into a chat client with one click. <a href="/en/docs/guide/feature-guide/user/chat-apps" target="_blank" rel="noopener noreferrer">User Guide · Chat</a>

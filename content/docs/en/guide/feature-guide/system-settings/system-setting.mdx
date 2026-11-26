@@ -1,0 +1,216 @@
+---
+title: System Settings Overview
+description: Learn how to access System Settings as Root, what the eight settings areas and their sections cover, how settings are saved and applied across instances, and how to handle sensitive settings and verify changes.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- Access to **System Settings** is restricted to Root.
+- This page covers the rules for saving, applying, and verifying changes and handling sensitive settings across all settings areas. For details on individual fields, see the documentation for the corresponding area.
+
+## Access and Permissions
+
+Root can open System Settings from any of the following three locations. All three open **Site & Branding › System Information**.
+
+1. **System Settings** at the bottom of the **Admin** group in the sidebar.
+2. **System Settings** in the avatar menu in the upper-right corner.
+3. The command palette, opened via **Search** in the top bar or by pressing ⌘/Ctrl+K. It lists the same pages as the sidebar.
+
+When models have pending pricing changes, the count appears next to **System Settings** in the sidebar and next to **Billing & Payments** and its **Model Pricing** section in the left navigation.
+
+## Settings Areas and Sections
+
+The **System Management** group in the sidebar contains eight settings areas. The table lists their sections and responsibilities in sidebar order. Select an area name to open its documentation. Sections marked “default” open automatically when you enter the area.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Settings Area | Sections (in Sidebar Order) | Primary Responsibilities |
+| --- | --- | --- |
+| <a href="/en/docs/guide/feature-guide/system-settings/settings-site" target="_blank" rel="noopener noreferrer">Site & Branding</a> | System Information (default), System Announcements, Top Navigation, Sidebar Modules | Site identity, public content and legal documents, system announcements, top navigation, and sidebar modules. |
+| <a href="/en/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">Authentication</a> | Basic Authentication (default), OAuth Integration, Passkey Authentication, Bot Protection, Custom OAuth | Password sign-in and registration, third-party OAuth, passkeys, human verification, and custom OAuth providers. |
+| <a href="/en/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">Billing & Payments</a> | Quota Settings (default), Currency & Display, Model Pricing, Group Pricing, Payment Gateways, Check-in Rewards | Quota and currency display, model and group pricing, payment gateways, and check-in rewards. |
+| <a href="/en/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">Models</a> | Global Model Configuration (default), Gemini, Claude, Grok, Model Deployment | Global model behavior, provider protocol adaptation, and io.net model deployment. |
+| <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">Request Policies</a> | Sessions & Retries (default), Channel Health | Session affinity and retries, channel health checks, and automatic channel disabling. |
+| <a href="/en/docs/guide/feature-guide/system-settings/settings-security" target="_blank" rel="noopener noreferrer">Security & Limits</a> | Rate Limits (default), SSRF Protection, Token Limits | Rate limits for model requests, SSRF protection for outbound requests, and the maximum number of tokens per user. |
+| <a href="/en/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">Console Content</a> | Data Dashboard (default), Announcements, API Endpoints, FAQ, Uptime Kuma, Chat Presets, Image Generation | Enabling and refreshing the data dashboard, managing announcements, API endpoints, FAQ, and Uptime Kuma panels in the console overview, and configuring chat presets and image generation. |
+| <a href="/en/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">Operations</a> | System Behavior (default), Model Performance Metrics, Email & Notifications, Worker Proxy, Log Maintenance, Performance, System Maintenance | Operating modes, model performance metrics, email and quota alerts, Worker proxy, log cleanup, performance safeguards, and version checks. |
+
+</div>
+
+## Saving and Applying Settings
+
+### Save Methods
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Save Method | Applicable Sections | Behavior | See Also |
+| --- | --- | --- | --- |
+| Save field by field (default) | All sections except those listed below | See the explanation below the table. | — |
+| Save the entire section | Both Request Policies sections, saved separately | The server validates all submitted changes together, then writes them in a single transaction. If any change is invalid, the entire submission is rejected. On success, the interface displays “Saved successfully.” The most recent save wins, as this method skips version conflict checks. | <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#saving-and-applying-changes" target="_blank" rel="noopener noreferrer">Request Policies Configuration</a> |
+| Save in a batch with conflict detection | Model prices under Billing & Payments › Model Pricing | When prices change, review the **Current Price** and **Price After Saving** for each model in **Confirm Price Changes**, then click **Confirm Save** to submit. Price changes for multiple models are submitted together and written in a single transaction. If someone else changed prices after you opened the page, the save is rejected. Reload the page before making your changes again. On success, the interface displays “Model pricing saved.” | <a href="/en/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">Billing & Payments Configuration</a> |
+| Save toggles immediately and lists separately | Console Content › Announcements, API Endpoints, FAQ, and Uptime Kuma | Changes to the **Enabled** toggle are saved immediately. Adding, editing, or deleting list entries updates the page data locally until you click **Save Settings** in the card. | <a href="/en/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">Console Content Configuration</a> |
+| Save per entry | Authentication › Custom OAuth | Add, edit, or delete providers individually in the list and its dialogs. The page header has no save button. For details on when changes take effect, see [Scope and Multi-Instance Synchronization](#scope-and-multi-instance-synchronization). | <a href="/en/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">Authentication Configuration</a> |
+| Confirm before saving | Domain settings under Authentication › Passkey Authentication | Confirmation is required before saving changes that alter the active domains, clear the primary domain, or remove a compatibility domain. | <a href="/en/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">Authentication Configuration</a> |
+| No save button | Operations › System Maintenance | Displays the current version, startup time, and update check. | <a href="/en/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">Operations Configuration</a> |
+
+</div>
+
+Field-by-field saving submits each changed field separately and displays “Setting updated successfully” for each successful update. If a field fails to save, submission stops at that field and earlier changes remain saved. If there are no changes, some sections display “No changes to save,” while others give no notification.
+
+<Callout type="info" title="Note">
+
+- Messages such as “Setting updated successfully” and “Saved successfully” confirm only that the server accepted the save. Connectivity to external services such as OAuth, SMTP, payment gateways, webhooks, and Workers remains unverified.
+</Callout>
+
+### Scope and Multi-Instance Synchronization
+
+1. Settings are stored as key-value pairs in the primary database. Once the node handling the save writes to the database, it immediately updates its in-memory values. The change takes effect without a restart.
+2. After a save, other nodes reload settings from the database within about 3 seconds. Each save registers a sync task, and each node checks for new tasks about every 3 seconds and reloads settings when it finds changes. This also applies to settings with dedicated save methods, such as request policies, model prices, and passkey domains. The individual settings pages summarize this as “Syncs with system settings within about 3 seconds (within one sync cycle at most, 60 seconds by default).”
+   - As a fallback, each node also reloads all settings every `SYNC_FREQUENCY` seconds (60 seconds by default). If the sync task could not be recorded, or if the cluster contains older nodes that have yet to be upgraded and do not check for sync tasks, those changes load on the next cycle.
+   - `SYNC_FREQUENCY` is an environment variable measured in seconds. It is configured outside the interface and read only at startup. Changing it requires a restart.
+   - Synchronization works with or without Redis, provided all nodes connect to the same primary database.
+   - Nodes may read different values until they finish loading. Check the **Sync** column of the instance table to see which nodes have loaded the changes. If a node fails to load them, the column shows **Update Failed**, and the node retries on its next check. See <a href="/en/docs/guide/feature-guide/admin/system-info#node-sync" target="_blank" rel="noopener noreferrer">System Information</a>.
+3. Master and Worker instances (`NODE_TYPE`) save and synchronize settings the same way. You can save changes on either type of node.
+
+Adding, editing, or deleting a provider under **Authentication › Custom OAuth** also registers a sync task. Other nodes load the changes automatically within about 3 seconds without a restart. Custom OAuth relies on sync tasks alone, so older nodes that have yet to be upgraded must restart to load these changes.
+
+The following changes require a restart to take effect.
+
+1. Changes to **Maximum Cached Sessions** under **Request Policies › Sessions & Retries** require a restart. This setting only applies when Redis is disabled. See <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#saving-and-applying-changes" target="_blank" rel="noopener noreferrer">Request Policies Configuration</a>.
+2. Deployment environment variables are configured outside the interface and read only at startup. Changes require a restart. Examples include `SYNC_FREQUENCY`, `NODE_TYPE`, and global rate limit variables such as `GLOBAL_API_RATE_LIMIT`.
+   - A few environment variables, including `CHANNEL_TEST_FREQUENCY` and `CHANNEL_TEST_ENABLED`, override values in the interface. See <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#channel-health" target="_blank" rel="noopener noreferrer">Channel Health</a>.
+
+### Frontend Display and Caching
+
+1. The interface gets its sign-in methods, system name, logo, footer, top navigation, sidebar modules, quota display format, and console panels from the site status. The server returns the in-memory settings of the node handling each request. The browser caches the response for 5 minutes and fetches it again on page refresh. System announcements in the Notification Center use a separate cache with the same behavior.
+2. After a save, the browser that submitted the changes automatically updates only certain display settings, such as the top navigation, sidebar modules, quota and currency display, server address, passkeys, and custom OAuth. Other settings, as well as pages that other users already have open, show the new values after a refresh.
+3. The server processes requests using the saved settings independently of the browser cache. Open pages may still show old navigation entries or forms until refreshed.
+
+## Sensitive Settings and Audit Logs
+
+**Sensitive Settings**
+
+- The settings read API omits entire entries whose keys end in `Token`, `Secret`, `Key`, `secret`, `api_key`, or `private_key`. These are primarily keys, tokens, and credentials. The corresponding fields always appear blank in the interface.
+- Leaving these fields blank generally retains their saved values. The interface submits a value only when you enter a new one. Some fields display “Leave blank to keep the existing key,” “Leave blank to keep the existing credentials,” or “Leave blank unless you are rotating the key.” Under **Operations › Worker Proxy**, saving with **Worker URL** blank also clears **Worker Access Key**. Custom OAuth client secrets also appear blank, and leaving the field blank while editing retains the saved secret.
+- The database stores setting values in plaintext. Protect the database and its backups to the same standard.
+
+**Audit Logs**
+
+- When fields are saved individually, the audit log records one entry per successful field update. The entry displays “Modify System Settings” followed by the configuration key and records only the key.
+- Settings with dedicated save methods record different details. Request Policies records only the request method and path. Model Pricing records the names of the models whose prices changed. Passkey domain changes, including changes to **Server Address** under **System Information**, record the removed domains and the number of affected credentials. Custom OAuth records only the operation type: add, edit, or delete.
+- Failed save requests also produce audit entries, with the configuration key omitted.
+- In the sidebar, go to **General › Audit Log**. Only Root can see audit entries for Root actions. See <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Log</a>.
+- Audit logs omit previous values, so configuration recovery requires a separate record. Continue to use external secret management and maintain separate change records.
+
+<Callout type="warn" title="Protect Your Secrets">
+Keep sensitive values such as client secrets, SMTP tokens, and payment keys out of screenshots, support tickets, and general-purpose logs. The read API omits plaintext credentials. Browsers, proxies, database backups, and operations environments still require credential protection.
+</Callout>
+
+## Recording and Verifying Changes
+
+System Settings has no configuration snapshots, version comparisons, or one-click rollback. Before making changes in production, record the original values and be prepared to restore them field by field. Record at least the following.
+
+- The settings area, section, and fields being changed.
+- The previous non-sensitive values and the versions of any sensitive credentials in your secret management system.
+- The pages, APIs, roles, and external services you expect to be affected.
+- The test steps, pass criteria, and conditions for restoring the previous settings.
+- The time to allow for synchronization in multi-instance deployments and which changes require a restart.
+
+After saving, verify the changes as follows.
+
+1. Check the notifications. When saving field by field, each modified field should produce a “Setting updated successfully” notification. If a save fails, the failed field and all subsequent fields remain unsaved.
+2. Refresh the page and check the non-sensitive fields. Sensitive fields always appear blank, so a refresh cannot verify their values. In a multi-instance deployment, wait for the other nodes to load important changes before refreshing to verify them.
+3. Test the affected workflows directly, such as signing in, sending email, running sandbox payments, testing callbacks, and making model requests.
+4. In a multi-instance deployment, confirm that each node has loaded the changes in the **Sync** column of the instance table, then verify the changes on other nodes. See <a href="/en/docs/guide/feature-guide/admin/system-info#node-sync" target="_blank" rel="noopener noreferrer">System Information</a>.
+5. Verify changes involving authentication, payments, billing, request policies, SSRF, or outbound callbacks on a test instance or during a maintenance window first.
+
+## Important Notes
+
+- **Field-by-field saves are not rolled back.** When saving multiple fields, earlier changes remain saved if a later field fails. Submission stops at the failed field. See [Save Methods](#save-methods).
+- **Synchronization takes time across nodes, and some changes require a restart.** Other nodes sync with system settings within about 3 seconds (within one sync cycle at most, 60 seconds by default). Changes to **Maximum Cached Sessions** and environment variables require a restart. See [Scope and Multi-Instance Synchronization](#scope-and-multi-instance-synchronization).
+- **Refresh the page to see display changes.** The browser caches site status. After a save, other users see the new values when they refresh the page, if they have not already appeared. See [Frontend Display and Caching](#frontend-display-and-caching).
+- **Environment variables can override values in the interface.** If `CHANNEL_TEST_FREQUENCY` or `CHANNEL_TEST_ENABLED` overrides a setting, the environment value may remain in effect after you change the setting in the interface.
+- **Key fields appear blank.** Leave them blank to retain the saved values. Saving with **Worker URL** blank also clears **Worker Access Key**. See [Sensitive Settings and Audit Logs](#sensitive-settings-and-audit-logs).
+- **Keep your own record of previous values.** Audit logs omit previous values, and System Settings has no version history to restore from. Record the original values before making changes. See [Recording and Verifying Changes](#recording-and-verifying-changes).
+
+## FAQ
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="System Settings is missing from the sidebar">
+Only Root accounts can see this entry.
+
+If it is also missing for Root, either **Admin Area** or **System Settings** may be disabled under **Site & Branding › Sidebar Modules**.
+
+1. Open **System Settings** from the avatar menu.
+</Accordion>
+
+<Accordion title="Admin sees “Access Forbidden” after clicking Go to Settings">
+**Message** — “Access Forbidden”
+
+Access to System Settings is restricted to Root.
+
+1. Contact Root to make the change.
+</Accordion>
+
+<Accordion title="A single save shows multiple “Setting updated successfully” notifications">
+**Message** — “Setting updated successfully”
+
+When saving field by field, the interface displays one notification for each modified field.
+</Accordion>
+
+<Accordion title="Only some fields take effect after saving">
+If a field fails to save, submission stops before the remaining fields.
+
+1. Use the error message to correct the issue, then save again.
+2. Refresh the page and check each field.
+</Accordion>
+
+<Accordion title="Clicking Save shows no notification">
+The section may have detected no changes. Some sections are silent when there is nothing to save.
+
+1. Check that you changed at least one field.
+</Accordion>
+
+<Accordion title="Nodes temporarily behave differently">
+**Possible causes**
+
+- A node failed to load changes, and the **Sync** column in the System Information instance table shows **Update Failed**.
+- The cluster contains older nodes that have yet to be upgraded. They load settings only at `SYNC_FREQUENCY` intervals and require a restart to load custom OAuth changes.
+- The nodes are connected to different primary databases.
+
+**What to do**
+
+1. Hover over the **Sync** column in the instance table to see which items failed and the associated errors, then check the affected node’s server logs. See <a href="/en/docs/guide/feature-guide/admin/system-info#sync-status" target="_blank" rel="noopener noreferrer">System Information</a>.
+2. Wait one sync cycle (60 seconds by default). The server logs `syncing options from database` once per cycle (`正在从数据库同步配置项` when `DEFAULT_LANGUAGE=zh-CN`).
+3. If an older node still has not loaded the custom OAuth changes, restart it.
+</Accordion>
+
+<Accordion title="A key field is blank">
+Sensitive fields appear blank by design. Leaving a field blank retains its current value.
+
+1. Enter the new value when replacing a key.
+</Accordion>
+
+<Accordion title="An external integration still fails after saving">
+Saving skips connectivity tests. The issue may involve the public address, callback, DNS, certificate, network, or permissions associated with the credentials.
+
+1. Check the third-party service logs.
+</Accordion>
+
+<Accordion title="You need to restore an earlier configuration">
+System Settings has no built-in version restore.
+
+1. Re-enter the original values you recorded before the change and save them field by field.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- Root and Admin roles and permissions. See <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a>.
+- Audit records for administrative actions, including changes to system settings. See <a href="/en/docs/guide/feature-guide/user/audit-log#event-categories" target="_blank" rel="noopener noreferrer">Audit Log</a>.
+- Startup parameters such as `SYNC_FREQUENCY` and `NODE_TYPE`. See <a href="/en/docs/installation/config-maintenance/environment-variables" target="_blank" rel="noopener noreferrer">Environment Variables</a>.
+- The **Sync** column in the instance table and node synchronization rules. See <a href="/en/docs/guide/feature-guide/admin/system-info" target="_blank" rel="noopener noreferrer">System Information</a>.
+- Shared databases and synchronization frequency for multi-node setups. See <a href="/en/docs/installation/deployment-methods/cluster-deployment" target="_blank" rel="noopener noreferrer">Cluster Deployment</a>.

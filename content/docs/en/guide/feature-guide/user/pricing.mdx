@@ -1,44 +1,491 @@
 ---
 title: Model Marketplace and Leaderboard
-description: Browse pricing information and status of AI models enabled on the platform; view usage rankings and trends of platform models and providers.
+description: Browse the models available on this site and their prices, view model performance and API examples, and see how models and providers rank by usage.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
+- Open **Model Marketplace** or **Leaderboard** from the site's top navigation.
+- Browse available models, prices, performance metrics, API examples, and usage rankings for models and providers.
+- Prices vary with the Ratio of the Group used for the request. When you call a model, the cost is deducted from your account Quota (wallet balance or subscription Quota).
 
+<Callout type="info" title="Tip">
 
-## Model Marketplace
-
-- Click "Model Marketplace" in the top right corner or visit `/pricing` to enter the Model Marketplace. The page displays prices publicly available to users on the platform, which may not be the same as the original prices from upstream service providers.
-- The Model Marketplace is used to browse AI models enabled on the platform, compare providers, billing prices, performance, and operational status of different models, helping users choose models suitable for their business scenarios.
-
-1. **Model Search**: Supports quickly finding target models based on model name, provider, endpoint, or tags.
-2. **Model Filtering**: Supports filtering models by conditions such as Group, provider, model type, and tags, and can also reset all filter conditions.
-3. **Price Viewing**: Displays input, output, and cache prices of models, and indicates billing methods such as pay-as-you-go.
-4. **Pricing Toggle**: Supports switching between standard prices and top-up prices, and allows viewing prices per 1M Tokens or per 1K Tokens.
-5. **Model Sorting**: Supports adjusting the display order of models based on conditions such as model name.
-6. **Display Mode**: Supports switching between grid view and list view.
-7. **Performance Information**: Displays model latency, throughput, and current operational status, facilitating evaluation of model availability and responsiveness.
-8. **Model Details**: Click "Details" to view the model's complete introduction, capabilities, and related configuration information.
-9. **Copy Model Name**: Click the copy button to quickly copy the model name, convenient for use in API calls or system configurations.
-
-![模型广场页](/assets/guide/feature-guide/model-marketplace.png)
-
-## Leaderboard
-
-- Click "Leaderboard" in the top right corner or visit `/rankings` to enter the Leaderboard.
-- The Leaderboard is used to view usage rankings and trends of platform models and providers, with data updated in real-time based on Token usage.
-
-1. **Time Range Toggle**: Supports viewing ranking data for different time ranges by Today, This Week, This Month, and This Year.
-2. **Popular Models**: Displays daily Token usage for each model via charts, facilitating comparison of model popularity.
-3. **LLM Leaderboard**: Displays the most popular models on the platform and their rankings based on Token usage.
-4. **Market Share**: Displays the proportion of Token usage for different model providers and daily changes.
-5. **Model Provider Ranking**: Ranks model providers based on total Token usage, facilitating understanding of each provider's usage scale.
-6. **Upward Trend**: Displays models with improving rankings and their rank changes.
-7. **Downward Trend**: Displays models with declining rankings and their rank changes.
-
-![排行榜页](/assets/guide/feature-guide/leaderboard.png)
-
-<Callout type="info">
-  Root (system administrator) can configure the display status and access permissions of "Model Marketplace" and "Leaderboard" in the top navigation. [View settings documentation →](/en/docs/guide/feature-guide/admin/settings-site)
+- You can view these pages while signed out. If the administrator requires sign-in, clicking either link opens a **Sign-in Required** dialog. After 5 seconds, you are redirected to the sign-in page. Once you sign in, you return to the original page.
+- Your Group determines which models you can use and which billing Ratio applies. While signed out, you see the Groups the site makes available to everyone. After signing in, you see the Groups and custom Ratios available to your account, so the models and prices may differ.
+- The currency symbol follows the site's Quota display settings. If the site displays Quota in Tokens, prices are still shown in US dollars.
+- If **Model Marketplace** or **Leaderboard** is missing from the top navigation, the administrator has disabled that entry. Contact the administrator. See <a href="/en/docs/guide/feature-guide/system-settings/settings-site#top-navigation" target="_blank" rel="noopener noreferrer">Site and Branding Configuration</a>.
 </Callout>
+
+## Model Marketplace Overview
+
+- Model Marketplace and Leaderboard – Model Marketplace Table View
+
+![Model Marketplace and Leaderboard – Model Marketplace Table View page](/assets/guide/feature-guide/top-navigation-model-marketplace-table-view.png)
+
+The top of the page shows “Total models currently enabled on this site: …”. The **Filters** panel is on the left, and the toolbar and model list are on the right. From here, you can do the following.
+
+- [Find and filter models](#find-and-filter-models)
+- [Switch views and price display](#switch-views-and-price-display)
+- [Understand model pricing](#understand-model-pricing)
+- [View model details](#view-model-details)
+- [View the leaderboard](#view-the-leaderboard)
+
+<Callout type="info" title="Tip">
+
+If the displayed price differs from the actual charge or a model call fails, see the [FAQ](#frequently-asked-questions).
+</Callout>
+
+**Field reference**
+
+The following table lists the columns in table view from left to right. The last two rows describe fields available only in card view. The page defaults to card view. The screenshot shows table view.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and restrictions | Notes |
+| --- | --- | --- | --- |
+| Model | The model name to use in API requests. | The administrator adds the name. You cannot edit it. | In card view, the button to the right of the name shows **Copy Model Name** on hover. |
+| Type | The model's billing method can be **Usage-Based Billing**, **Per-Request Billing**, **Dynamic Billing**, or **Task Billing**. | Determined by the pricing configured by the administrator. | See [Understand model pricing](#understand-model-pricing) for how to read each type of price. |
+| Price | The model's unit price. | Calculated from the price and Group Ratio configured by the administrator. If you leave the Group filter unset, the price uses the lowest Ratio among the Groups available to your account. If you select a Group, its Ratio applies. | Usage-based billing shows **Input**, **Output**, and the unit, such as **USD / 1M Tokens**. For models with dynamic billing, table view also shows the number of tiers, such as **2 Tiers**. Time-based pricing also shows **Current Time Slot Price**. Per-request billing shows the price for one request. |
+| Cache | The unit price for cached input. | Appears only when the administrator has configured a cache price. | In card view, it appears alongside the input and output prices. |
+| Provider | The model's provider, such as OpenAI. | Configured by the administrator. | Shows the provider's icon and name. |
+| Tags | Labels that describe model capabilities, such as **Reasoning** and **Tools**. | The administrator can set multiple tags. | Card view shows the first two tags and summarizes the rest as **+…**. |
+| Endpoints | The API endpoint types the model supports, such as openai and anthropic. | Configured by the administrator. | Card view shows the first two endpoint types. |
+| Groups | The Groups that can call the model. | Configured by the administrator. | May include Groups your account cannot use. See **Pricing by Group** in the model details for the Groups and prices available to your account. |
+| Description | A brief description of the model. | Configured by the administrator. If none is configured, the page shows **No description available.** | Appears only in card view, with a maximum of two lines. |
+| Status, Latency, Throughput | The model's recent success rate, average latency, and average output Tokens per second. | Calculated automatically from actual requests. See [Model status](#model-status). | Appears only in card view. If there is no data, the card shows **—**. Select **Details** in the lower-right corner of the card to open the model details. |
+</div>
+
+## Find and Filter Models
+
+**Steps**
+
+1. Enter a keyword in the search box at the top of the page. The placeholder reads **Search model names, providers, endpoints, or tags...**.
+2. In the **Filters** panel on the left, select a Group, provider, tag, pricing type, or endpoint type.
+3. Choose a sort order from the dropdown in the toolbar.
+4. To clear the filters, select **Reset** in the **Filters** panel.
+
+<Callout type="info" title="Tip">
+
+- Search is case-insensitive and matches model names, descriptions, tags, and providers. Use the **Endpoint Type** filter to find models by API type.
+- You can apply multiple filters at once. **Filters Active** appears when any filter is applied. **Reset** leaves the text in the search box intact.
+- Search, filters, sort order, and view apply only to the current page. Refreshing the page restores the defaults.
+- In a narrow window, such as on a phone, tablet, or resized browser window, use the **Filters** button in the toolbar to open the panel.
+- If no models match, the page shows **No models found**.
+</Callout>
+
+**Filter reference**
+
+All sections in the **Filters** panel are expanded by default. Select a section heading to collapse it. The following table lists the sections from top to bottom. The last row describes the sort control in the toolbar.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Filter | Definition | Requirements and restrictions | Default |
+| --- | --- | --- | --- |
+| Group | Shows only the models the selected Group can call and displays prices using that Group's Ratio. | Select one of the Groups available to your account. The list excludes `auto` and shows the Ratio beside each Group, such as **x1.5**. | **All Groups** |
+| All Providers | Filters by provider. | Select one provider. Each option shows the model count. | **All Providers** |
+| Model Tags | Filters by tag. | Select one tag. Each option shows the model count. | **All Tags** |
+| Pricing Type | Filters by billing method. | Select **All Models**, **Usage-Based Billing**, **Per-Request Billing**, or **Task Billing**. Models with dynamic billing are grouped by price structure. Models with a fixed per-request price at every tier appear under **Per-Request Billing**. Models with Token pricing appear under **Usage-Based Billing**. | **All Models** |
+| Endpoint Type | Filters by supported API type. | Select **All Types**, **Chat**, **Response**, **Anthropic**, **Gemini**, **Rerank**, **Image**, **Embedding**, or **Video**. | **All Types** |
+| Sort | Sets the order of the model list. | The toolbar offers **Name**, **Input Price: Low to High**, **Input Price: High to Low**, **Output Price: Low to High**, **Output Price: High to Low**, **Per-Request Price: Low to High**, and **Per-Request Price: High to Low**. When you sort by price, models without the selected price type appear last. | **Name** |
+</div>
+
+## Switch Views and Price Display
+
+- Model Marketplace and Leaderboard – Model Marketplace Card View
+
+![Model Marketplace and Leaderboard – Model Marketplace Card View page](/assets/guide/feature-guide/top-navigation-model-marketplace-card-view.png)
+
+**Steps**
+
+1. Use the view controls at the far right of the toolbar to select card view or table view.
+2. Select **Standard** or **Top-Up** to choose how prices are converted.
+3. Select **/1M** or **/1K** to choose the Token unit for usage-based prices.
+
+**Settings reference**
+
+From left to right, the toolbar shows the model count, price display mode, Token unit, sort control, and view controls. The table follows that order for the settings it covers. For sorting, see the [filter reference](#find-and-filter-models). The screenshot shows the page while signed out.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Setting | Definition | Requirements and restrictions | Default |
+| --- | --- | --- | --- |
+| Standard, Top-Up | The conversion method used for prices (**Price Display Mode**). | **Standard** uses the site's exchange rate. **Top-Up** uses the amount actually paid for an online top-up, excluding Group top-up Ratios and top-up discounts. Both modes give the same result by default and differ only if the administrator configures a top-up price that differs from the exchange rate. | **Standard** |
+| /1M, /1K | The Token unit for usage-based prices (**Token Unit**). | **/1M** means per 1 million Tokens, and **/1K** means per 1,000 Tokens. Per-request and task prices are unaffected. | **/1M** |
+| View Controls | Selects card view or table view (**View Mode**). | Hover to see **Card View** or **Table View**. Card view shows 20 models per page. In table view, **Rows per Page** defaults to 20, with options for 10, 20, 30, 40, 50, and 100. | Card view |
+</div>
+
+## Understand Model Pricing
+
+Prices in the list already account for the Group Ratio. If no Group is selected, they use the lowest Ratio among the available Groups. **Base Price** on the **Overview** tab of the model details shows the price at a Ratio of 1. Your actual charge uses the Group associated with the API key when you make the request.
+
+**Billing methods**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Billing method | Prices in card and table views | Prices on the model details Overview tab | How charges are calculated |
+| --- | --- | --- | --- |
+| Usage-Based Billing | Shows **Input** and **Output** prices per 1M or 1K Tokens. If a cache price is configured, it also appears. | **Base Price** lists input and output prices and any configured prices for **Cached Input**, **Cache Write**, **Image Input**, **Audio Input**, and **Audio Output**. | Input and output Tokens are billed separately based on their counts. Cache hits, images, and audio are billed at the corresponding rates. |
+| Per-Request Billing | Shows the price for one request. | **Base Price** shows the **Per Request** price. | Each request incurs a fixed charge regardless of the Token count. |
+| Dynamic Billing | Table view also shows the number of tiers, such as **2 Tiers**. Models with time-based pricing also show **Current Time Slot Price**. | **Dynamic Billing** states, “Prices adjust dynamically based on usage tiers and request conditions.” It shows the **Tiered Pricing Table** and, for some models, **Conditional Multipliers**. Cache pricing appears as **Cache Read**. | Prices vary by conditions such as input length or time of day. Each request is billed at the tier that applies. If pricing cannot be listed by tier, the page shows **Special Billing Expression** and **Raw Expression**. |
+| Task Billing | Shows prices per unit of usage, such as per second, per image, or per request. | May show **Pricing Examples** with **Specification** and **Example Price** columns and the note “Reference prices for common specifications.” | Asynchronous tasks, such as video and image tasks, are billed based on actual task usage. |
+</div>
+
+<Callout type="info" title="Tip">
+
+- The Model Marketplace shows unit prices only. To see the actual charge for each request, check the <a href="/en/docs/guide/feature-guide/user/log#view-log-details" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+- If a usage-based model has no configured price, the Model Marketplace shows the system default. In US dollars at a Group Ratio of 1, the input price is $75 per 1M Tokens and the output price varies by model. Calling the model returns a message that pricing has yet to be configured. See the [FAQ](#frequently-asked-questions).
+- If a task-billed model has no configured price, the page shows **Usage-Based Billing · Pricing Not Configured** or **Not Configured**. If only some service providers lack configured prices, it shows **Pricing Not Configured for Some Service Providers**.
+</Callout>
+
+## View Model Details
+
+**Steps**
+
+1. Select **Details** in the lower-right corner of a card or select the model's row in table view. **Model Details** opens on the right.
+2. Select **Overview**, **Performance**, or **API** to switch tabs.
+3. To copy the model name, select the copy button to the right of the name.
+4. Select **×** in the upper-right corner to close the panel.
+
+<Callout type="info" title="Tip">
+
+- Selecting a model name on the leaderboard opens a full-page view with the same details. Select **Back** in the upper-left corner to return to the Model Marketplace.
+- The full-page view shows **Model Not Found** if the model is unavailable, for example, if it has been removed from the Model Marketplace or your account lacks access.
+</Callout>
+
+### Overview
+
+- Model Marketplace and Leaderboard – Model Details Overview
+
+![Model Marketplace and Leaderboard – Model Details Overview page](/assets/guide/feature-guide/top-navigation-model-marketplace-model-details-overview.png)
+
+**Section reference**
+
+The table lists the sections from top to bottom. The screenshot shows a model with dynamic billing.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section | Definition | When it appears | Notes |
+| --- | --- | --- | --- |
+| Header | The model icon and name, followed by the provider, billing method, and model description. | Shared across all three tabs. | The copy button is to the right of the name. If the model has no description, the provider's description appears. |
+| TPS, Average Latency, Success Rate | Average output Tokens per second, average request duration, and success rate over the past 24 hours. | Always shown. If there is no data, the metrics show **—**. | See [Performance](#performance) for metric definitions and [Model status](#model-status) for success rate colors. |
+| Base Price | The unit price at a Ratio of 1. | Always shown under **Pricing**. | See [Understand model pricing](#understand-model-pricing) for what each billing method displays. |
+| Dynamic Billing | “Prices adjust dynamically based on usage tiers and request conditions,” followed by the **Tiered Pricing Table** and **Conditional Multipliers**. | Only for models with dynamic billing. | The administrator configures the tiers and conditions. The screenshot shows two tiers based on input length. |
+| Pricing by Group | The **Ratio** and price for each Group available to your account. | Lists the Groups your account can use to call this model. If no Groups are available, it shows **This model is unavailable in all Groups, or Group pricing has yet to be configured.** | **Automatic Group Chain** above the table shows the order in which Groups are tried when you use the `auto` Group. The note below the table reads “Prices are shown per 1M Tokens.” |
+| Model | **Provider**, **Type**, **Groups**, **Endpoints**, and **Tags**. | Fields appear when they have values. | **Groups** lists every Group that can call the model, including Groups your account may lack access to. See **Pricing by Group** for the Groups you can use. |
+</div>
+
+### Performance
+
+- Model Marketplace and Leaderboard – Model Details Performance
+
+![Model Marketplace and Leaderboard – Model Details Performance page](/assets/guide/feature-guide/top-navigation-model-marketplace-model-details-performance.png)
+
+The **Performance** tab shows statistics from actual requests to the model over the past 24 hours.
+
+**Section reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section | Definition | When it appears | Notes |
+| --- | --- | --- | --- |
+| TPS | Average output Tokens per second, labeled **Sustained Tokens per Second**. | This section and the sections below appear when statistics are available. | — |
+| Average Latency | The average time from when a request is sent to when it completes. | — | — |
+| Success Rate | The proportion of measured requests that succeeded. | — | The message below shows **No anomalies in the past 24 hours** or **… anomalous buckets in the past 24 hours**. Each anomalous bucket is an hour with a success rate below 100%. |
+| Performance by Group | **TPS**, **Average Time to First Token**, **Average Latency**, and **Success Rate** for each Group. | — | Average time to first Token measures the time from sending a request to receiving the first Token and covers streaming requests only. The section lists Groups with requests in the past 24 hours, which may include Groups your account cannot use. |
+| Latency Trend (Past 24 Hours) | Average time to first Token for each hour. | — | — |
+| Availability (Past 24 Hours) | The success rate for each hour. The note reads “The success rate excludes requests rejected by business rules and includes the current partial hour.” | — | **… Incidents** in the upper-right corner counts the hours with a success rate below 100%. |
+</div>
+
+<Callout type="info" title="Tip">
+
+- The success rate excludes failures caused by the request itself, such as invalid parameters, client cancellations, content safety blocks, and insufficient balance. It includes failures such as upstream timeouts, upstream errors, and rate limiting.
+- Statistics update about every 5 minutes by default. Values may differ slightly from those on the **Overview** tab.
+- If no statistics are available, the tab shows only **No performance data is available for this model.** This can happen if the model received no requests in the past 24 hours or if the administrator disabled performance tracking.
+</Callout>
+
+### API
+
+- Model Marketplace and Leaderboard – Model Details API
+
+![Model Marketplace and Leaderboard – Model Details API page](/assets/guide/feature-guide/top-navigation-model-marketplace-model-details-api.png)
+
+**Section reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section | Definition | When it appears | Notes |
+| --- | --- | --- | --- |
+| Request Examples | Example code for calling the model in cURL, Python, TypeScript, or JavaScript. | If the model supports multiple endpoint types, select one first. | The examples use the server address configured for the site. Replace the API key placeholder, such as `$NEW_API_KEY` or `<YOUR_API_KEY>`, with a key you create on the **API Keys** page. Use the button in the upper-right corner of the code example to copy it. |
+| Authentication | The format of the request headers. | Always shown. | Send `Authorization: Bearer <TOKEN>`. Anthropic-format endpoints also accept `x-api-key`. **Token** here refers to the API key. |
+| Supported Parameters | Common request parameters by model type (chat, reasoning, embedding, image, and video). | Shown for all models. | The parameters are illustrative. See the API documentation for the parameters the specific model supports. |
+| Rate Limits | RPM, TPM, and RPD values for each Group. | Shown for all models. | The values are illustrative. The administrator configures the site's actual limits. |
+</div>
+
+<Callout type="info" title="Tip">
+
+For instructions on making requests and finding the API address, see <a href="/en/docs/guide/feature-guide/user/token#copy-a-key-and-call-a-model" target="_blank" rel="noopener noreferrer">API Keys</a>.
+</Callout>
+
+## View the Leaderboard
+
+- Model Marketplace and Leaderboard – Leaderboard
+
+![Model Marketplace and Leaderboard – Leaderboard page](/assets/guide/feature-guide/top-navigation-leaderboard.png)
+
+The leaderboard ranks models and providers by Token usage across all users on the site. It combines usage across accounts and omits user information.
+
+**Steps**
+
+1. Select **Leaderboard** in the top navigation.
+2. Select **Today**, **This Week**, **This Month**, or **This Year** below the title.
+3. Hover over the charts to see usage for each model or provider.
+4. Select a model name to view its details. Select a provider name to open the Model Marketplace filtered to that provider's models.
+
+<Callout type="info" title="Tip">
+
+- The time ranges are rolling windows ending at the current time. **Today** covers the past 24 hours, **This Week** the past 7 days, **This Month** the past 30 days, and **This Year** the past 365 days.
+- The default is **This Week**. The screenshot shows **Today** selected, so the chart groups data by hour.
+- Usage is the sum of input and output Tokens. By default, new requests are counted after about 5–10 minutes.
+- Data appears only after the administrator enables statistics for the data dashboard. See <a href="/en/docs/guide/feature-guide/system-settings/settings-content#data-dashboard" target="_blank" rel="noopener noreferrer">Console Content Configuration</a>.
+- A model on the leaderboard may have been removed from the Model Marketplace or may be unavailable to your account. If so, selecting its name shows **Model Not Found**.
+</Callout>
+
+**Section reference**
+
+The table lists the sections in page order from top to bottom.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section | Contents | How to read it |
+| --- | --- | --- |
+| Popular Models | A stacked bar chart showing each model's Token usage by time interval. Total usage appears in the upper-right corner. | **Today** shows hourly data, **This Week** and **This Month** show daily data, and **This Year** shows weekly data. The 10 most-used models appear individually. All other models are grouped under **Others**. |
+| LLM Leaderboard | The 20 most-used models in two columns, with rank, model name, provider (**by …**), usage, and growth rate. | Growth compares usage with the preceding period of the same length. A green upward arrow indicates an increase, and a red downward arrow indicates a decrease. If the previous period had no usage, the growth rate shows 100%. |
+| Market Share | A 100% stacked chart showing each provider's share of usage by time interval. | The five providers with the most usage appear individually. All other providers are grouped under **Others**. |
+| By Model Provider | The top 12 providers by usage, with rank, usage, and share. The note reads “Providers are ranked by aggregate Token usage.” | Shares below 0.1% appear as `<0.1%`. If there is no data, the section shows **No provider data available**. |
+| Trending Up, Trending Down | Up to six models in each section that rose or fell in rank compared with the previous period. Each entry shows **#current rank · provider** and the change in rank. | Only models ranked in the previous period are eligible. If there is no change, the relevant section shows **No models are trending up significantly** or **No models are trending down significantly**. |
+</div>
+
+## Controls Reference
+
+### Model Marketplace Buttons and Filters
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Control | Location | Description |
+| --- | --- | --- |
+| Search box | Below the page title | The clear button on the right removes the search keywords. See [Find and filter models](#find-and-filter-models). |
+| Group, All Providers, Model Tags, Pricing Type, Endpoint Type | **Filters** panel on the left | Select a section heading to collapse or expand it. See [Find and filter models](#find-and-filter-models). |
+| Reset | Top of the **Filters** panel | Clears all filters and preserves the search keywords. |
+| Filters | Left side of the toolbar, in narrow windows | Opens the **Filters** panel. |
+| Standard, Top-Up, /1M, /1K | Toolbar | Changes how prices are displayed. See [Switch views and price display](#switch-views-and-price-display). |
+| Sort | Toolbar | Changes the order of the model list. See [Find and filter models](#find-and-filter-models). |
+| Card View, Table View | Far right of the toolbar | Switches the model list layout. |
+| Copy Model Name | To the right of the model name on a card | Copies the model name and shows **Copied!**. |
+| Details | Lower-right corner of a card or the model's row in table view | Opens **Model Details**. See [View model details](#view-model-details). |
+| Previous Page, Next Page | Bottom of card view | Moves between pages. The center shows **Page … of …**. |
+| Rows per Page, pagination | Bottom of table view | **Rows per Page** defaults to 20. |
+| Model column menu | Column header in table view | Use the toolbar to sort the list. The **Ascending** and **Descending** menu options leave the list order unchanged. **Hide** hides the column until the page is refreshed. |
+</div>
+
+### Model Details
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Control | Location | Description |
+| --- | --- | --- |
+| Overview, Performance, API | Tabs below the heading | Switches tabs. |
+| Copy Model Name | To the right of the model name | Copies the model name. |
+| Endpoint Type, cURL, Python, TypeScript, JavaScript | Upper-right corner of **Request Examples** on the **API** tab | Changes the endpoint type and language of the example. |
+| Copy | Upper-right corner of the code example | Copies the example code. |
+| Back | Upper-left corner of the full-page details view | Returns to the Model Marketplace. |
+| × | Upper-right corner of the drawer | Closes **Model Details**. |
+</div>
+
+### Leaderboard
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Control | Location | Description |
+| --- | --- | --- |
+| Today, This Week, This Month, This Year | Tabs below the page title | Changes the reporting period. The default is **This Week**. |
+| View values | **Popular Models** and **Market Share** charts | Hover to see the usage or share of each item for that time interval. **Popular Models** lists up to 10 items and summarizes the rest as **… more**. |
+| Model name | **LLM Leaderboard**, **Trending Up**, **Trending Down** | Opens the full-page model details view. |
+| Provider name | **LLM Leaderboard**, **By Model Provider**, **Trending Up**, **Trending Down** | Opens the Model Marketplace filtered to that provider's models. |
+</div>
+
+## Status Reference
+
+### Model Status
+
+The **Status** indicator at the bottom of each card and the success rate in the model details use the colors below. Each segment of the small bar to the right of **Status** represents one hour with requests, up to 24 segments.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Dark green | 100% success rate. | — |
+| Light green | Success rate of at least 90%. | — |
+| Yellow | Success rate of at least 70%. | — |
+| Red | Success rate below 70%. | Requests may fail. Check the success rate for each Group on the **Performance** tab, or switch to another model or Group. |
+| — | No recent statistics are available. | See **No performance data** in the [FAQ](#frequently-asked-questions). |
+</div>
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="Model Marketplace or Rankings is missing from the top navigation or redirects to the homepage">
+**Possible cause**  
+The administrator disabled the corresponding navigation entry. Once an entry is disabled, opening a bookmarked URL also redirects you to the homepage.
+
+**What to do**
+
+1. On narrow screens such as phones, open the top navigation menu on a public page such as the homepage. In the console, the top navigation is hidden when the window is less than 1024 px wide.
+2. If you need access, ask the administrator to enable the entry.
+</Accordion>
+
+<Accordion title="Model Marketplace or Rankings asks you to sign in">
+**Message shown**  
+“Please sign in to view ….” Below it, you’ll see “You will be redirected to the sign-in page in … seconds.”
+
+**Possible cause**  
+The administrator requires users to sign in to view the page, and you’re currently signed out.
+
+**What to do**
+
+1. Click **Sign In Now**, or wait 5 seconds to be redirected automatically.
+2. After signing in, you’ll automatically return to the page you were trying to view.
+</Accordion>
+
+<Accordion title="Prices in the Model Marketplace differ from the amounts charged">
+**Possible causes**
+
+- If you haven’t selected a Group, the list shows prices for the available Group with the lowest Ratio. Requests are billed according to the Group assigned to your API key.
+- Your account may have custom Ratios for certain Groups. Sign in to see the prices that apply to your account.
+- Models with dynamic billing are charged at the tier or time window that applies to each request. Cached content, images, and audio are billed at their respective rates.
+- If you select **Top Up**, the displayed prices are calculated from the amount paid for the top-up, before applying Group top-up Ratios or top-up discounts.
+
+**What to do**
+
+1. Sign in and use **Group** in the **Filters** bar to select the Group assigned to your API key and view its prices.
+2. In the model details, open **Overview** and check the Ratio under **Pricing by Group**.
+3. Check the billing breakdown for the request in <a href="/en/docs/guide/feature-guide/user/log#view-log-details" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+</Accordion>
+
+<Accordion title="A model shows a price, but requests report that pricing hasn’t been configured">
+**Message shown**  
+“Model … has not been priced by the administrator yet. Please contact the site administrator to enable this model.”
+
+**Explanation**  
+Until the administrator sets a price for the model, the Model Marketplace displays the system default price. When prices are displayed in USD and the Group Ratio is 1, input costs $75 / 1M Tokens, and output pricing varies by model. To use these models at the default price, enable **Accept Unpriced Models** in your <a href="/en/docs/guide/feature-guide/user/personal-setting#configure-notification-and-behavior-preferences" target="_blank" rel="noopener noreferrer">Profile</a>.
+
+**What to do**
+
+1. Use another model.
+2. If you need this model, ask the administrator to set its price.
+</Accordion>
+
+<Accordion title="A model appears in the Model Marketplace, but requests fail">
+**Explanation**  
+A model appears in the Model Marketplace when the site has an available Channel that provides it and at least one Group available to your account can use it. Access depends on the Group used for the request, and individual requests can still fail. Use the exact message to identify the cause.
+
+| Message shown | Possible cause | What to do |
+| --- | --- | --- |
+| “This token has no access to model …” | **Model Restrictions** are enabled for the API key, and the model is outside the allowed set. | Edit the key’s **Model Restrictions**. See <a href="/en/docs/guide/feature-guide/user/token#frequently-asked-questions" target="_blank" rel="noopener noreferrer">API Keys</a>. |
+| “No available channel for model … under group … (distributor)” | The Group assigned to the API key can’t use this model. | Check the available Groups under **Pricing by Group** in the model details, then change the Group assigned to the key. |
+| “Insufficient user quota, remaining quota: …” | Your account balance is too low. | Open your <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a> to top up or redeem Quota. |
+| Other upstream errors | The model’s upstream service is temporarily experiencing issues. | Check **Status** on the model card and **Performance** in the model details, then try again later or use another model. |
+</Accordion>
+
+<Accordion title="A model is missing, or the models and prices change after you sign in">
+**Possible causes**
+
+- The Model Marketplace lists only the models accessible through the Groups available to you. Before you sign in, it uses the Groups the site makes available to all users. After you sign in, it uses the Groups available to your account.
+- The administrator disabled the model, or all Channels that provide it have been disabled.
+- The administrator just changed the settings. The Model Marketplace updates in about 1 minute.
+
+**What to do**
+
+1. Sign in and refresh the page.
+2. Clear your search terms and click **Reset** in the **Filters** bar.
+3. If you still can’t find the model, ask the administrator whether it’s available to the Groups assigned to your account.
+</Accordion>
+
+<Accordion title="The model’s Groups list includes Groups your account can’t use">
+**Explanation**  
+The **Groups** field on cards, in tables, and in the **Model** section of the model details lists all Groups that can use the model. **Performance by Group** under **Performance** lists Groups that made requests in the past 24 hours. Both can include Groups your account can’t use. The **Group** filter and **Pricing by Group** list only the Groups available to your account.
+
+**What to do**
+
+1. Use **Pricing by Group** to check which Groups are available to you and what they charge.
+2. If you need to use another Group, contact the administrator.
+</Accordion>
+
+<Accordion title="Performance data is missing or Status shows “—”">
+**Message shown**  
+“Performance data is not yet available for this model.”
+
+**Possible causes**
+
+- The model had no requests that qualified for performance statistics in the past 24 hours. Failures caused by the requests themselves, such as invalid parameters or insufficient balance, are excluded.
+- The administrator disabled model performance metrics.
+- The data failed to load.
+
+**What to do**
+
+1. Refresh the page later.
+2. If the data remains unavailable, ask the administrator whether performance metrics are enabled.
+</Accordion>
+
+<Accordion title="Supported Parameters or Rate Limits in the API section differ from actual behavior">
+**Explanation**  
+These sections show reference examples generated from the model type. The parameters the model accepts and the limits the site enforces may differ from the examples.
+
+**What to do**
+
+1. Check the model provider’s documentation and the <a href="/en/docs/api" target="_blank" rel="noopener noreferrer">API Reference</a> for request parameters.
+2. Ask the administrator which rate limits apply.
+</Accordion>
+
+<Accordion title="The request example uses http://localhost:3000">
+**Possible cause**  
+The example uses the server URL configured by the administrator and falls back to `http://localhost:3000` if no URL is configured.
+
+**What to do**
+
+1. Replace the URL with the one shown under **API URL** on the <a href="/en/docs/guide/feature-guide/user/token#copy-a-key-and-call-a-model" target="_blank" rel="noopener noreferrer">API Keys</a> page.
+2. Ask the administrator to configure the server URL.
+</Accordion>
+
+<Accordion title="Rankings are empty, aren’t updating, or show “Unable to load rankings”">
+**Message shown**  
+“Unable to load rankings.” The specific reason appears below the message.
+
+**Possible causes**
+
+- The administrator hasn’t enabled usage statistics for the data dashboard, or the requests were made before statistics were enabled.
+- No requests were made during the selected time range.
+- By default, new requests take about 5–10 minutes to appear.
+- The network or service is temporarily experiencing issues.
+
+**What to do**
+
+1. Select a longer time range, such as **This Month**.
+2. Refresh the page later.
+3. If there’s still no data, ask the administrator whether usage statistics are enabled for the data dashboard.
+</Accordion>
+
+<Accordion title="Clicking a model name in Rankings shows “Model not found”">
+**Message shown**  
+“Model not found.” The description reads “The model you’re looking for does not exist.”
+
+**Possible cause**  
+Rankings are based on historical usage. The model may no longer be listed in the Model Marketplace, or the Groups available to your account may no longer have access to it.
+
+**What to do**
+
+1. Click **Back to Models** and look for an available alternative in the Model Marketplace.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a> — Create an API key, select a Group, and copy the API URL to make model requests.
+- <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> — View the billing breakdown for each request.
+- <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a> — Top up your balance, redeem Quota, and view subscriptions.
+- <a href="/en/docs/guide/feature-guide/user/playground" target="_blank" rel="noopener noreferrer">Playground</a> — Try models in your browser.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-site#top-navigation" target="_blank" rel="noopener noreferrer">Site and Branding Settings</a> — Root users can enable the Model Marketplace and Rankings and set whether users must sign in to view them.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-billing#model-pricing" target="_blank" rel="noopener noreferrer">Billing and Payment Settings</a> — Root users can configure model prices, Group Ratios, and how currencies are displayed.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-content#data-dashboard" target="_blank" rel="noopener noreferrer">Console Content Settings</a> — Root users can enable the usage statistics required for Rankings.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-operations#model-performance-metrics" target="_blank" rel="noopener noreferrer">Operations Settings</a> — Root users can enable model performance metrics.

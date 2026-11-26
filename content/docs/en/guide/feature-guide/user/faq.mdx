@@ -1,0 +1,323 @@
+---
+title: Frequently Asked Questions
+description: Find causes and solutions for issues that span multiple pages, including request failures, quota and charges, accounts and sign-in, and interface and display issues. Look up an issue by the exact message or by what you observe.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- This page covers issues you may encounter across multiple pages, such as failed requests, discrepancies in balances or charges, sign-in problems, and missing pages or menus.
+- Issues specific to a page are answered in that page’s FAQ. Links to those answers are listed here.
+- API response messages can appear in Simplified Chinese, Traditional Chinese, or English, usually depending on the account’s “Interface Language” setting. This page lists the original messages in both Chinese and English.
+
+<Callout type="info" title="Tips">
+
+- In each section, expand a question for the full answer. Tables list issues answered on other pages and link to those answers.
+- When a request fails, the message usually ends with “(request id: …)”. Include it when reporting the issue to an administrator.
+- For the complete first-time setup instructions, see the <a href="/en/docs/guide/feature-guide/user/quick-start" target="_blank" rel="noopener noreferrer">Quick Start</a>.
+
+</Callout>
+
+Browse by issue type — [Request Failures](#request-failures), [Quota and Charges](#quota-and-charges), [Accounts and Sign-in](#accounts-and-login), [Interface and Display](#interface-and-display).
+
+## Request Failures
+
+These issues occur when you call a model with an API key or from the Playground and receive an error.
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="A request returns “No available channel for model … under group …”, or the model does not exist">
+
+**Original message** — “分组 … 下模型 … 无可用渠道（distributor）” (English: “No available channel for model … under group … (distributor)”) or “分组 … 下模型 … 的可用渠道不存在（retry）” (English: “No available channel for model … under group … (retry)”)
+
+**Explanation** — The site also returns this message when the model name is incorrect, so a nonexistent model produces the same error.
+
+**Possible causes**
+
+- The model name is incorrect. For example, its capitalization or version suffix may differ from the name in the Model Hub.
+- The API key’s group cannot access this model.
+- All channels that serve the model are temporarily unavailable, or an administrator has disabled the model.
+
+**How to resolve it**
+
+1. Copy the model name from the <a href="/en/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">Model Hub and Leaderboard</a> and use it in the request.
+2. In the model’s “Overview” tab, check “Pricing by Group” to see which groups can access the model, then edit the API key’s “Group” setting. In the Playground, switch groups using the group and model selector.
+3. Try again later. If the issue persists, contact an administrator.
+
+</Accordion>
+
+<Accordion title="A request returns “You have reached the request limit” or “You have reached the total request limit”">
+
+**Original message** — “您已达到请求数限制：…分钟内最多请求…次” (English: “You have reached the request limit: maximum … requests in … minutes”) or “您已达到总请求数限制：…分钟内最多请求…次，包括失败次数，请检查您的请求是否正确” (English: “You have reached the total request limit: maximum … requests in … minutes, including failed attempts. Please check that your requests are correct”)
+
+**Explanation** — An administrator has enabled request limits, which return HTTP status code 429. All API keys on an account share the same request count. Administrators can set separate limits for specific groups. Playground requests are excluded from the count. If you receive a 429 with a different message, the upstream service is rate-limiting your requests. See “A request returns an upstream service error or ‘Database error, please contact the administrator’” in this section.
+
+**Possible causes**
+
+- The number of requests made within the time window shown in the message exceeded the site limit.
+- The total request limit includes failed requests, so repeatedly sending requests with incorrect parameters can quickly exhaust it.
+
+**How to resolve it**
+
+1. Wait until the time window shown in the message has elapsed, then retry at a lower request rate. In your application, add a delay before retrying a failed request.
+2. If you reach the total request limit, use the messages from the other failed requests to diagnose their cause first.
+3. Contact an administrator if you need a higher limit.
+
+</Accordion>
+
+<Accordion title="A request returns “User has been banned”">
+
+**Original message** — “用户已被封禁” (English: “User has been banned”)
+
+**Possible cause** — An administrator has disabled the account, so none of its API keys can make requests.
+
+**How to resolve it**
+
+1. Contact an administrator to confirm the account status.
+2. For the equivalent message when signing in on the website, see <a href="/en/docs/guide/feature-guide/user/auth#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Registration and Sign-in</a>.
+
+</Accordion>
+
+<Accordion title="A request returns “Regular users cannot specify a channel”">
+
+**Original message** — “普通用户不支持指定渠道” (English: “Regular users cannot specify a channel”)
+
+**Explanation** — If the part of an API key after `sk-` contains a hyphen, the content after that hyphen is interpreted as a channel selection. Only administrator accounts can specify a channel this way.
+
+**Possible causes**
+
+- You copied extra text with the key or pasted two pieces of text together.
+- You appended a hyphen and a channel number to the key using the administrator syntax.
+
+**How to resolve it**
+
+1. On the <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a> page, click the copy button to the right of the key to copy the complete key again.
+2. Confirm that the request header is `Authorization: Bearer sk-…` and that nothing follows the key.
+
+</Accordion>
+
+<Accordion title="A request returns “Invalid request”, “Model name not specified”, or HTTP 413">
+
+**Explanation** — Use the original message to identify the request formatting issue.
+
+| Original message | Possible cause | How to resolve it |
+| --- | --- | --- |
+| “无效的请求，…” (English: “Invalid request: …”) | The request body contains invalid JSON or uses a format the endpoint does not accept. | Check the request format against the <a href="/en/docs/api" target="_blank" rel="noopener noreferrer">API Reference</a>. |
+| “未指定模型名称，模型名称不能为空” (English: “Model name not specified, model name cannot be empty”) | The request is missing `model`. | Specify the model name in the request. |
+| HTTP status code 413 with “request body too large” (English only) | The request body exceeds the site limit (128 MB by default). For example, an attached image or file may be too large. | Compress the attachments or send fewer of them, then retry. Contact an administrator if you need a higher limit. |
+
+</Accordion>
+
+<Accordion title="A request returns an upstream service error or “Database error, please contact the administrator”">
+
+**Explanation** — The upstream services configured by the administrator process model requests. When an upstream service returns an error, the site displays the original message, which is usually in English, and redacts the upstream address. The HTTP status code usually matches the upstream response, such as 400, 429, 500, or 502.
+
+**Possible causes**
+
+- The upstream service is temporarily busy, rate-limiting requests, or experiencing an outage. Common status codes are 429 and 5xx.
+- The model does not support one or more request parameters, and the upstream service returns a 400-series error.
+- “数据库出错，请联系管理员” (English: “Database error, please contact the administrator”) indicates an error on this site.
+
+**How to resolve it**
+
+1. Try again later or use a different model or group.
+2. If the message concerns request parameters, use the <a href="/en/docs/api" target="_blank" rel="noopener noreferrer">API Reference</a> and the model provider’s documentation to correct them.
+3. If the issue persists, send the original message to an administrator, including the “(request id: …)” at the end.
+
+</Accordion>
+
+<Accordion title="What does “(request id: …)” at the end of an error message mean?">
+
+**Explanation** — The site generates an ID for each request. When a request fails, the ID appears at the end of the message. Administrators can use it to look up how the request was processed.
+
+**How to use it**
+
+1. Copy the complete original message, including the request ID, and send it to an administrator.
+2. If the request has a usage log entry, click “Expand” in <a href="/en/docs/guide/feature-guide/user/log#filter-logs-and-view-statistics" target="_blank" rel="noopener noreferrer">Usage Logs</a> and enter the ID in the “Request ID” field to find it.
+
+</Accordion>
+
+<Accordion title="A request failed and does not appear in Usage Logs">
+
+**Explanation** — The site rejects the following requests before calling the model. These requests incur no charges and produce no usage log entries.
+
+- Requests that fail API key validation, with messages such as “Invalid token”, “Your IP is not on the token’s allowlist”, or “User has been banned”.
+- Requests that lack permission to access a group or model, have no available channel, exceed a request limit, or use an invalid request format.
+- Requests with insufficient quota, with messages such as “Insufficient user quota” or “Failed to pre-deduct quota”.
+
+Other failed requests appear as “Error” entries only if the site has enabled error logging.
+
+**How to resolve it**
+
+1. Look up the original message on this page or in the FAQ for the relevant page.
+2. If an administrator needs to investigate, provide the “(request id: …)” at the end of the message.
+3. For details on when failed requests generate log entries, see <a href="/en/docs/guide/feature-guide/user/log#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+
+</Accordion>
+
+</Accordions>
+
+**Issues covered on other pages**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Issue | Explanation | See also |
+| --- | --- | --- |
+| A request returns “Invalid token” | The key is incorrect, deleted, disabled, expired, or out of quota, or the request is missing the key. | <a href="/en/docs/guide/feature-guide/user/token#frequently-asked-questions" target="_blank" rel="noopener noreferrer">API Keys</a> |
+| A request returns “This token does not have access to model …” | The key’s “Model Restrictions” exclude this model. | <a href="/en/docs/guide/feature-guide/user/token#frequently-asked-questions" target="_blank" rel="noopener noreferrer">API Keys</a> |
+| A request returns “Your IP is not on the token’s allowlist” | The request’s source IP address is outside the key’s “IP Allowlist”. | <a href="/en/docs/guide/feature-guide/user/token#frequently-asked-questions" target="_blank" rel="noopener noreferrer">API Keys</a> |
+| A request returns “Access denied to group …” or “Group … has been deprecated” | The group assigned to the key is no longer available. | <a href="/en/docs/guide/feature-guide/user/token#frequently-asked-questions" target="_blank" rel="noopener noreferrer">API Keys</a> |
+| A request returns an insufficient quota message | The account balance, subscription quota, or key’s own quota is insufficient to cover the request. | <a href="/en/docs/guide/feature-guide/user/token#frequently-asked-questions" target="_blank" rel="noopener noreferrer">API Keys</a> |
+| A request returns “The price for model … has not been configured by an administrator…” | An administrator has yet to set a price for the model. | <a href="/en/docs/guide/feature-guide/user/pricing#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Model Hub and Leaderboard</a>, <a href="/en/docs/guide/feature-guide/user/personal-setting#faq" target="_blank" rel="noopener noreferrer">Profile</a> |
+| A model request made with an access token returns “Invalid token” | Access tokens that start with `nap_` cannot be used to call models. | <a href="/en/docs/guide/feature-guide/user/security#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Security and Access</a> |
+| The Playground displays “Request error: …” | Use the original message to identify the cause. | <a href="/en/docs/guide/feature-guide/user/playground#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Playground</a> |
+| Running the “First API Request” command returns an error | The command uses the first enabled key in the list and the first available model. | <a href="/en/docs/guide/feature-guide/user/overview#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Overview</a> |
+| Requests fail even though the model is listed in the Model Hub | Access to a model listed in the Model Hub depends on the group. | <a href="/en/docs/guide/feature-guide/user/pricing#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Model Hub and Leaderboard</a> |
+| The API URL in a request example or imported configuration is `http://localhost:3000` | An administrator has yet to configure the server URL. | <a href="/en/docs/guide/feature-guide/user/pricing#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Model Hub and Leaderboard</a>, <a href="/en/docs/guide/feature-guide/user/chat-apps#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Chat</a> |
+| A chat app displays an unauthorized or forbidden error | Check the authorization header, key status, group, and IP restrictions. | <a href="/en/docs/guide/feature-guide/user/chat-apps#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Chat</a> |
+| A video, music, or image generation task fails | Check the task details for the cause. Quota is refunded for failed tasks. | <a href="/en/docs/guide/feature-guide/user/task-log#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Task Logs</a> |
+
+</div>
+
+## Quota and Charges
+
+For discrepancies in balances, charges, or usage statistics, see the FAQ on the relevant page.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Issue | Explanation | See also |
+| --- | --- | --- |
+| The balance does not increase after payment | The site credits the balance after receiving confirmation from the payment platform. Avoid paying again while the payment is pending. | <a href="/en/docs/guide/feature-guide/user/wallet#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Wallet</a> |
+| Redeeming a code returns “Redemption failed, please try again later” | The code does not exist, has already been used, has expired, has been disabled, or contains spaces. | <a href="/en/docs/guide/feature-guide/user/wallet#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Wallet</a> |
+| Requests fail after the subscription quota runs out | This depends on your “Billing Preference” setting. | <a href="/en/docs/guide/feature-guide/user/wallet#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Wallet</a> |
+| The balance does not update immediately after a successful check-in | The reward has been added to your balance. Refresh the page to see it. | <a href="/en/docs/guide/feature-guide/user/personal-setting#faq" target="_blank" rel="noopener noreferrer">Profile</a> |
+| The values in “Overview” stay the same after a top-up or an API request | The values are based on the account information loaded when you signed in. Refresh the browser page to update them. | <a href="/en/docs/guide/feature-guide/user/overview#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Overview</a> |
+| The page displays “Balance exhausted”, but requests still succeed | “Remaining Quota” reflects only the wallet balance. Subscription quota is tracked separately. | <a href="/en/docs/guide/feature-guide/user/overview#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Overview</a> |
+| “Usage in the Last 24 Hours” is 0 or differs from Usage Logs | Usage is aggregated into hourly buckets aligned to the top of each hour. New requests appear after a few minutes. | <a href="/en/docs/guide/feature-guide/user/overview#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Overview</a> |
+| Charges differ from what you expected | Group ratios, caching, tool calls, and tiered pricing all affect charges. | <a href="/en/docs/guide/feature-guide/user/log#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Usage Logs</a> |
+| “Usage” differs from the total charges or the Dashboard | The figures cover different data and are aggregated at different times. | <a href="/en/docs/guide/feature-guide/user/log#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Usage Logs</a>, <a href="/en/docs/guide/feature-guide/user/dashboard#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Dashboard</a> |
+| The price in the Model Hub differs from the actual charge | Billing uses the group selected when the request is made. | <a href="/en/docs/guide/feature-guide/user/pricing#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Model Hub and Leaderboard</a> |
+| Are failed requests charged? | Requests that return an error incur no charge. | <a href="/en/docs/guide/feature-guide/user/log#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Usage Logs</a> |
+| Are failed tasks charged? | Any quota deducted for a task is refunded in full if the task fails or times out. | <a href="/en/docs/guide/feature-guide/user/task-log#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Task Logs</a> |
+
+</div>
+
+## Accounts and Login
+
+Issues with logging in, registering, verifying your identity, and staying logged in.
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="You see “Session expired!” or are logged out">
+**Message**
+
+“Session expired!” appears, and you are returned to the login page.
+
+**Possible causes**
+
+- It has been 30 days since you logged in.
+- On another device, you revoked this session on the “Security and Access” page or clicked “Log out of other sessions.”
+- On another device, you changed your password, enabled or disabled two-step verification, regenerated your backup codes, or registered or removed a Passkey.
+- You reset your password using “Forgot Password,” or an administrator reset two-step verification or the Passkey for your account.
+
+**What to do**
+
+1. Log in again.
+2. If you did not make the change, log in, change your password immediately, and review your login history in the <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Log</a>.
+3. For details on how long you stay logged in and how to manage sessions, see <a href="/en/docs/guide/feature-guide/user/security#manage-login-sessions" target="_blank" rel="noopener noreferrer">Security and Access</a>.
+</Accordion>
+
+</Accordions>
+
+**Questions answered on other pages**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Issue | Explanation | See |
+| --- | --- | --- |
+| You see “Incorrect username or password, or the user has been banned” when logging in | The same message appears for all of these causes. | <a href="/en/docs/guide/feature-guide/user/auth#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Registration and Login</a> |
+| You see “Too many requests,” “The maximum number of active login sessions has been reached. …,” or a similar message when logging in | Use the exact message to identify the cause. | <a href="/en/docs/guide/feature-guide/user/auth#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Registration and Login</a> |
+| Login with a third-party account fails | Use the exact message to identify the cause. | <a href="/en/docs/guide/feature-guide/user/auth#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Registration and Login</a> |
+| The login page has no “Register” option or says registration is disabled | The site has disabled registration or only allows registration through third-party accounts. | <a href="/en/docs/guide/feature-guide/user/auth#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Registration and Login</a> |
+| You do not receive a registration verification code or password reset email | Check your spam folder. The site may also lack a configured email service. | <a href="/en/docs/guide/feature-guide/user/auth#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Registration and Login</a> |
+| You lost your authenticator device and cannot complete login verification | Log in with a backup code, then set up two-step verification again. | <a href="/en/docs/guide/feature-guide/user/security#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Security and Access</a> |
+| Passkey login fails, or your Passkey stops working after the site URL changes | A Passkey is tied to the site's domain at the time of registration. | <a href="/en/docs/guide/feature-guide/user/auth#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Registration and Login</a>, <a href="/en/docs/guide/feature-guide/user/security#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Security and Access</a> |
+| You do not receive a verification code for linking your email address | Check your spam folder and email rules. | <a href="/en/docs/guide/feature-guide/user/security#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Security and Access</a> |
+| You see a login record or session you do not recognize | Revoke the session and change your password. | <a href="/en/docs/guide/feature-guide/user/audit-log#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Audit Log</a>, <a href="/en/docs/guide/feature-guide/user/security#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Security and Access</a> |
+| How to change your display name, username, email address, or Group | Change your email address under “Security and Access.” Contact an administrator for the other changes. | <a href="/en/docs/guide/feature-guide/user/personal-setting#faq" target="_blank" rel="noopener noreferrer">Profile</a> |
+</div>
+
+## Interface and Display
+
+Issues with opening pages, finding menus, and how information is displayed.
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="The page shows “403” or “Access Forbidden,” or “404” or “Oops! Page Not Found!”">
+**Messages**
+
+“Access Forbidden” appears above “You do not have the necessary permissions to view this resource.” Alternatively, “Oops! Page Not Found!” appears above “The page you are looking for either does not exist or may have been removed.”
+
+**Possible causes**
+
+- You opened a page your account does not have permission to access, such as Favorites or an admin page someone sent you.
+- The address does not exist. It may be from an older version or contain a typo.
+
+**What to do**
+
+1. Click “Back” or “Back to Home.”
+2. Open the page you need from the sidebar or top navigation. For help finding it, see <a href="/en/docs/guide/feature-guide/user/quick-start#get-to-know-the-console-layout" target="_blank" rel="noopener noreferrer">Quick Start</a>.
+3. If you need access to an admin page, contact an administrator.
+</Accordion>
+
+<Accordion title="The page shows “Oops! Something went wrong” or “Too many requests”">
+**Messages**
+
+“Oops! Something went wrong” appears above “Please try again later.” Alternatively, “Too many requests” appears above “Please wait and try again.” Clicking a button may display only a single English message containing `429`.
+
+**Possible causes**
+
+- The site was recently upgraded, and your browser is still using page files from the previous version.
+- Your network connection was interrupted.
+- Too many requests came from the same public IP address in a short period, such as from a school, company, or proxy network. The site applies rate limits per source IP address. By default, it allows up to 120 page loads and 360 API calls in 3 minutes.
+
+**What to do**
+
+1. Wait a few minutes, then refresh the page.
+2. If the error persists, force a refresh (Ctrl+F5 on Windows or ⌘+Shift+R on Mac), or clear your browser cache for the site and try again.
+3. If the issue persists, contact an administrator.
+</Accordion>
+
+<Accordion title="The times shown on the page differ from your local time">
+**How times are displayed**
+
+Pages such as the Usage Log and Audit Log display times in the time zone of the computer running your browser. Daily check-ins use the server's date. The Overview and Data Dashboard aggregate statistics into hourly intervals that start on the hour.
+
+**What to do**
+
+1. Check your computer's time zone and clock settings.
+2. If check-in dates or reporting intervals differ from your local time, use the server time as the reference.
+</Accordion>
+
+</Accordions>
+
+**Questions answered on other pages**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Issue | Explanation | See |
+| --- | --- | --- |
+| A page is missing from the sidebar | You or an administrator hid the page under “Left Sidebar Personal Settings.” | <a href="/en/docs/guide/feature-guide/user/personal-setting#faq" target="_blank" rel="noopener noreferrer">Profile</a> |
+| “Model Marketplace” or “Leaderboard” is missing from the top navigation or takes you back to the home page | An administrator disabled the corresponding entry. | <a href="/en/docs/guide/feature-guide/user/pricing#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Model Marketplace and Leaderboard</a> |
+| You cannot find a button or menu | Check where items appear in the top bar and sidebar and when they are visible. | <a href="/en/docs/guide/feature-guide/user/quick-start#get-to-know-the-console-layout" target="_blank" rel="noopener noreferrer">Quick Start</a> |
+| Clicking “Playground” takes you back to “Overview” | An administrator disabled the Playground. | <a href="/en/docs/guide/feature-guide/user/playground#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Playground</a> |
+| API errors still appear in English after you change the interface language | Error messages are available only in Simplified Chinese, Traditional Chinese, and English. | <a href="/en/docs/guide/feature-guide/user/personal-setting#faq" target="_blank" rel="noopener noreferrer">Profile</a> |
+| Your Playground conversation history is missing | Conversation history is stored only in the current browser. | <a href="/en/docs/guide/feature-guide/user/playground#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Playground</a> |
+| You are unsure what terms such as “Token,” “Quota,” and “Balance” mean | Review the terms used in this guide and the other labels used in the interface. | <a href="/en/docs/guide/feature-guide/user/quick-start#basic-concepts" target="_blank" rel="noopener noreferrer">Quick Start</a> |
+</div>
+
+## Related Documentation
+
+- Follow the steps from registration and login to your first model call, and get familiar with the console. <a href="/en/docs/guide/feature-guide/user/quick-start" target="_blank" rel="noopener noreferrer">Quick Start</a>
+- Create and manage API keys, and learn how to use them to make API calls. <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a>
+- View billing details for each call and records of failed calls. <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Log</a>
+- Add funds, redeem Quota, and view subscriptions. <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a>
+- Look up request parameters and response formats for each endpoint. <a href="/en/docs/api" target="_blank" rel="noopener noreferrer">API Reference</a>

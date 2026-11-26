@@ -1,0 +1,459 @@
+---
+title: Task Logs
+description: View the status, progress, results, and failure reasons for asynchronous tasks such as video and music generation, as well as Midjourney image generation tasks. Learn about timeout and refund rules.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- In the sidebar, go to “General” → “Task Logs”.
+- View the status, progress, results, and failure reasons for asynchronous tasks such as video, music, and image generation.
+- The page has two tabs, “Drawing Logs” and “Task Logs”. The “Task Logs” tab opens by default when you enter from the sidebar.
+
+<Callout type="info" title="Tip">
+
+- Asynchronous tasks take time to produce results after submission. Examples include video and music generation and Midjourney image generation. When a submission succeeds, the system returns a task ID, then periodically checks and updates the task status in the background.
+- Regular users can only view tasks from their own accounts. Administrators can switch between “All” and “Only Me” in the upper-right corner of the page. This toggle is visible only to administrators. “Only Me” shows the same content that regular users see.
+- To view charges and refunds for tasks, see <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+- If “Task Logs” is missing from the left sidebar or the “Drawing Logs” and “Task Logs” tabs are missing from the page, open “Profile” and go to “Personal Sidebar Settings”. Enable “Console Section”, “Drawing Logs”, and “Task Logs”, then save your changes.
+
+</Callout>
+
+## Task Logs Overview
+
+- Task Logs – Task List
+
+![Task Logs – Task List page](/assets/guide/feature-guide/general-task-logs.png)
+
+In the “Task Logs” tab, you can find asynchronous tasks such as video and music generation by time range and task ID, then view their status, progress, and results.
+
+- [Filter Tasks](#filter-tasks)
+- [View Task Details and Artifacts](#view-task-details-and-artifacts)
+- [View Drawing Logs](#view-drawing-logs)
+- [View Prompts, Images, and Failure Reasons](#view-prompts-images-and-failure-reasons)
+- [View Refunds for Failed Tasks](#view-refunds-for-failed-tasks)
+
+<Callout type="info" title="Tip">
+If a task takes a long time to complete or fails, see [Frequently Asked Questions](#frequently-asked-questions).
+</Callout>
+
+**Field Descriptions**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and Restrictions | Notes |
+| --- | --- | --- | --- |
+| Submission Time | The times when the task was submitted and completed. | The system records these times automatically. They cannot be edited. | The submission time appears at the top. The completion time appears below in smaller gray text. Incomplete tasks display “-” in place of the completion time. |
+| Channel (Admins Only) | The channel that handled the task. | Appears only in the “All” view. | Displays the channel ID prefixed with “#”. Click to copy the ID. |
+| User (Admins Only) | The user who submitted the task. | Appears only in the “All” view. | Click the username to open the “User Information” dialog. |
+| Plugin (Admins Only) | The task plugin that handled the task. | Appears only in the “All” view. Tasks that were handled without a task plugin display “-”. | Displays the plugin name, “Plugin Key @ Version”, and the plugin author. If the author has a homepage, click the author’s name to open it in a new tab. |
+| Task ID | The task’s unique identifier. | The system generates this ID on submission. It cannot be edited. | Click to copy. The line below displays “Platform · Action”, such as “suno · Generate Music”. Unrecognized actions display “Unknown”. |
+| Duration | The elapsed time from submission to completion. | Appears once the task is complete. Incomplete tasks display “-”. | Measured in seconds. Values over 300 seconds appear in red. |
+| Status | The task’s current processing status. | The system updates this field using the result returned by the upstream provider. | For the meaning of each status, see [Task Status](#task-status). |
+| Progress | The task’s processing progress. | The system updates this field using the result returned by the upstream provider. | Examples include “0%”, “30%”, and “100%”. Failed tasks also display “100%”. Check “Status” to confirm the outcome. |
+| Artifact | The files the task generated, such as images, videos, or audio. | Available only for “Succeeded” tasks. Tasks with other statuses display “-”. | Displays an “Artifact” button. Some music and video tasks display “Click to Preview Music” or “Click to Preview Video”. Tasks whose results were not saved display “Result Not Retained”. See [View Task Details and Artifacts](#view-task-details-and-artifacts). |
+| Details | Access to the task’s full information. | — | Click “View Details” to open the “Task Details” dialog. For failed tasks, the failure reason appears in red below the button. The full reason is available in the “Task Details” dialog. |
+</div>
+
+## Filter Tasks
+
+**Steps**
+
+1. Click the “Task Logs” or “Drawing Logs” tab below the page title.
+2. Click “Time Range” and select a preset, or enter a “Start Time” and an “End Time” and click “Confirm”.
+3. If needed, enter the task ID in “Filter by Task ID” on the “Task Logs” tab or in “Filter by MjProxy Task ID” on the “Drawing Logs” tab.
+4. Click “Search” or press Enter in the input field.
+5. To clear the filters, click “Reset”.
+
+<Callout type="info" title="Tip">
+
+- By default, the page shows only tasks submitted in the range from 00:00:00 today to one hour after the current time. Adjust the time range to find earlier tasks.
+- Click “Search” to apply changes to the filters. The page does not refresh automatically. Click “Search” to see the latest task status.
+
+</Callout>
+
+**Filter Descriptions**
+
+The filter area has a single row. Only the task ID input differs between the two tabs. The table lists the filters in the order they appear.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Filter | Definition | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Time Range | Filters tasks by submission time, including both endpoints. | Presets include “Today”, “7 Days” (including today), “This Week” (Sunday through Saturday), “30 Days” (including today), and “This Month”. When entering a custom range, specify times to the second, then click “Confirm”. | 00:00:00 today to one hour after the current time |
+| Filter by Task ID | Finds tasks by ID in the “Task Logs” tab. | Optional. Matches the full ID. Click an ID in the “Task ID” column to copy it. | Empty |
+| Filter by MjProxy Task ID | Finds tasks by ID in the “Drawing Logs” tab. | Optional. Matches the full ID. | Empty |
+| Channel ID (Admins Only) | Filters tasks by the channel that handled them. | Appears only in the “All” view. Enter the numeric channel ID. | Empty |
+</div>
+
+## View Task Details and Artifacts
+
+- Task Logs – Task Details
+
+![Task Logs – Task Details dialog](/assets/guide/feature-guide/general-task-logs-task-details.png)
+
+**View Task Details**
+
+1. In the “Task Logs” tab, click “View Details” in the “Details” column for the task.
+2. Review the task information in the “Task Details” dialog. For a failed task, see “Failure Reason” for the full reason.
+
+**View Artifacts**
+
+1. For a task with the “Succeeded” status, click “Artifact” in the “Artifact” column. For some music and video tasks, click “Click to Preview Music” or “Click to Preview Video”.
+2. Preview the image or play the video or audio in the dialog.
+3. Click “Download” to open the file in a new tab and save it.
+
+<Callout type="warn" title="Caution">
+
+- The system fetches the artifact from the upstream provider each time. Once the upstream file expires or is deleted, you can no longer preview or download it. Download and save the file before it expires.
+- If the preview fails, the dialog displays “Media preview failed. Please try again.” Click “Retry” to reload it.
+
+</Callout>
+
+**Task Details Dialog**
+
+The table lists the fields from top to bottom as they appear in the dialog.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section | Field | Definition | Visibility |
+| --- | --- | --- | --- |
+| Basic Information | Task ID | The task’s unique identifier. | All tasks. |
+| Basic Information | Platform | The identifier of the platform that handled the task, such as suno. | All tasks. |
+| Basic Information | Action | The task type, such as “Generate Music” or “Generate Lyrics”. Unrecognized types display “Unknown”. | All tasks. |
+| Basic Information | Progress | The task’s processing progress. | All tasks. |
+| Basic Information | Submission Time, Start Time, Completion Time | The times when the task was submitted, started processing, and completed. An event that has yet to occur displays “-”. | All tasks. |
+| Basic Information | Original Model, Actual Model | The model requested at submission and the model actually used. | When the record contains model information. |
+| Basic Information | Failure Reason | The full reason why the task failed. For the meaning of each reason, see [Frequently Asked Questions](#frequently-asked-questions). | Tasks with the “Failed” status. |
+| Admin Only (Admins Only) | User, Channel, Group, Quota | The user who submitted the task, the channel that handled it, the group used, and the quota currently recorded for the task. | “All” view. |
+| Admin Only (Admins Only) | Request ID, Request Path | The ID and API endpoint path of the request that submitted the task. | “All” view, when the record contains this information. |
+| Admin Only (Admins Only) | Task Plugin, Plugin Key, Version, Plugin Author | Information about the plugin that handled the task. A link appears if the author has a homepage. | “All” view, when a task plugin handled the task. |
+| Root Diagnostics (Root Only) | API Version, Plugin Runtime Generation, Upstream Task ID, Node Name | Internal information for troubleshooting. | When Root uses the “All” view and the record contains the relevant information. |
+</div>
+
+## View Drawing Logs
+
+- Task Logs – Drawing Logs
+
+![Task Logs – Drawing Logs tab](/assets/guide/feature-guide/general-task-logs-drawing-logs.png)
+
+**Steps**
+
+1. Click the “Drawing Logs” tab below the page title.
+2. Set the time range as needed or enter the task ID in “Filter by MjProxy Task ID”, then click “Search”.
+3. View the task status, progress, and generated images.
+
+**Field Descriptions**
+
+The “Drawing Logs” tab has the columns listed below. For the columns you can select under “View”, see [Page Buttons and Filters](#page-buttons-and-filters).
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and Restrictions | Notes |
+| --- | --- | --- | --- |
+| Submission Time | The task’s submission time and status. | The system records this information automatically. It cannot be edited. | The submission time appears at the top, with the status below in colored text. For the meaning of each status, see [Drawing Task Status](#drawing-task-status). |
+| Channel (Admins Only) | The channel that handled the task. | Appears only in the “All” view. | Displays the channel ID prefixed with “#”. Click to copy the ID. |
+| Type | The type of drawing task. | Determined by the action taken at submission. | Examples include “Imagine”, “Upscale”, “Variation”, “Blend”, “Describe”, and “Vary (Region)”. Unrecognized types display “Unknown”. |
+| Task ID | The Midjourney task identifier. | The upstream provider generates this ID. It cannot be edited. | Click to copy. |
+| Duration | The elapsed time from submission to completion. | Appears once the task is complete. Incomplete tasks display “-”. | Measured in seconds. Values over 60 seconds appear in red. |
+| Submission Result (Admins Only) | The outcome of submitting the task to the upstream provider. | Appears only in the “All” view. | For possible values, see [Drawing Submission Results](#drawing-submission-results). |
+| Progress | The task’s processing progress. | Returned by the upstream provider. | For example, “100%”. |
+| Image | The generated image. | Displays “View” when an image is available and “-” otherwise. | Click “View” to open the “Image Preview” dialog. |
+| Prompt | The prompt entered when submitting the task. | — | Displays a truncated single line. Click it to open the “Prompt Details” dialog. |
+| Failure Reason | The reason why the task failed. | Only failed tasks display a reason. Other tasks display “-”. | Displays a truncated single line in red. Click it to open the “Failure Reason Details” dialog. |
+</div>
+
+## View Prompts, Images, and Failure Reasons
+
+- Task Logs – Prompt Details
+
+![Task Logs – Prompt Details dialog](/assets/guide/feature-guide/general-task-logs-drawing-logs-prompt-details.png)
+
+**View Prompts**
+
+1. In the “Drawing Logs” tab, click the text in the “Prompt” column for the task.
+2. Review the “Prompt” in the “Prompt Details” dialog. If an English translation is available, it appears below under “Prompt (English)”.
+3. Click the copy button in the upper-right corner of the content area to copy the prompt.
+
+**View Images**
+
+1. Click “View” in the “Image” column for the task.
+2. View the image and its URL in the “Image Preview” dialog.
+
+**View Failure Reasons**
+
+1. Click the red text in the “Failure Reason” column for the task.
+2. Review the “Error Message” in the “Failure Reason Details” dialog. Click the copy button to copy it.
+
+<Callout type="info" title="Tip">
+The upstream provider stores the image. If the image expires or the provider deletes it, the “Image Preview” dialog displays “Unable to load image”.
+</Callout>
+
+## View Refunds for Failed Tasks
+
+**Steps**
+
+1. In the “Task Logs” tab, click “View Details” for the failed task, confirm the “Failure Reason”, and copy the task ID. For a drawing task, copy the ID from the “Task ID” column in the “Drawing Logs” tab.
+2. Open <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>, select “Refund” from the type dropdown, set the time range to cover when the task failed, and click “Search”.
+3. Click “Asynchronous Task Refund” in the refund record’s “Details” column. Verify the task ID and reason in “Refund Details”.
+
+**Refund Rules**
+
+When you submit a task, the system deducts quota based on the price. If the task fails or times out, the system issues a full refund to the original source (wallet balance or subscription quota), restores the quota on the API key used for the task, and adds a “Refund” record to Usage Logs.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Scenario | “Failure Reason” Display | Refund |
+| --- | --- | --- |
+| The upstream provider reports that the task failed | The reason returned by the upstream provider, which may be in English | Full refund |
+| The upstream provider cannot find the task | “The upstream provider could not find this task” | Full refund |
+| Repeated attempts to retrieve the task status fail | “Failed to query upstream task status” | Full refund |
+| The task remains incomplete more than 3 days (by default) after submission | “Task timed out” | Full refund |
+| A task submitted before February 22, 2026 times out | “Task timed out (legacy task from the previous system, no refund issued, please contact an administrator)” | No refund. Contact an administrator. |
+| The channel used for the task is no longer available | “Failed to retrieve channel information. Please contact an administrator.” | Check Usage Logs for a refund record. If there is none, send the task ID to an administrator. |
+| A drawing task fails | The reason returned by the upstream provider | Full refund with the reason “Image composition failed” |
+| A drawing task remains incomplete more than 1 hour after submission | “Upstream task timed out (over 1 hour)” | Full refund with the reason “Image composition failed” |
+</div>
+
+<Callout type="info" title="Tip">
+
+- Confirm refunds by checking for a “Refund” record in Usage Logs. The “Failed” status alone does not confirm that a refund was issued.
+- The system bills successful tasks based on actual usage. If actual usage is lower than the quota deducted at submission, the system returns the difference and records it as a “Refund”. If actual usage is higher, the system deducts the difference and adds a “Consumption” record.
+
+</Callout>
+
+## Available Actions
+
+### Page Buttons and Filters
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| All / Only Me (Admins Only) | Upper-right corner of the page | Defaults to “All”, which shows tasks from all users, the “Channel”, “User”, “Plugin”, and “Submission Result” columns, the “Channel ID” filter, and the “Admin Only” section in “Task Details”. “Only Me” shows only tasks from the current account and displays the same content regular users see. |
+| Drawing Logs, Task Logs | Below the page title | Switch between the two tabs. The tabs appear only when both “Drawing Logs” and “Task Logs” are enabled in the left sidebar settings. |
+| Time Range, Channel ID (Admins Only) | Filter area | See [Filter Tasks](#filter-tasks). |
+| Filter by Task ID | Filter area in the “Task Logs” tab | See [Filter Tasks](#filter-tasks). |
+| Filter by MjProxy Task ID | Filter area in the “Drawing Logs” tab | See [Filter Tasks](#filter-tasks). |
+| Reset | Lower-right corner of the filter area | Available when a task ID or channel ID has been entered. Clears these filters and restores the default time range. |
+| Search | Lower-right corner of the filter area | Refreshes the list using the current filters and returns to page 1. |
+| View | Lower-right corner of the filter area in the “Task Logs” tab | Use “Toggle Columns” to choose which columns to display. The current browser saves your settings. You can toggle “Submission Time”, “Task ID”, “Status”, “Progress”, and “Details”. Administrators can also toggle “Channel”, “User”, and “Plugin”. The “Duration” and “Artifact” columns are always visible. |
+| View | Lower-right corner of the filter area in the “Drawing Logs” tab | Use “Toggle Columns” to choose which columns to display. The current browser saves your settings. You can toggle “Submission Time”, “Type”, “Task ID”, “Progress”, “Image”, “Prompt”, and “Failure Reason”. Administrators can also toggle “Channel” and “Submission Result”. The “Duration” column is always visible. |
+| Rows per Page, Pagination | Bottom of the list | “Rows per Page” defaults to 100 (20 on phones). The available options are 10, 20, 30, 40, 50, and 100. “Total” shows the number of tasks that match the filters. |
+</div>
+
+### Row Actions
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Copy Task ID | “Task ID” column | Click the ID to copy it. |
+| Copy Channel ID (Admins Only) | “Channel” column | Click the ID to copy it. |
+| View User Information (Admins Only) | Username in the “User” column of the “Task Logs” tab | Opens the “User Information” dialog. |
+| Open Plugin Author’s Homepage (Admins Only) | Author’s name in the “Plugin” column of the “Task Logs” tab | Opens the homepage in a new tab. |
+| View Artifacts | “Artifact” column in the “Task Logs” tab | See [View Task Details and Artifacts](#view-task-details-and-artifacts). |
+| View Details | “View Details” in the “Details” column of the “Task Logs” tab | Opens the “Task Details” dialog. |
+| View Image | “View” in the “Image” column of the “Drawing Logs” tab | Opens the “Image Preview” dialog. |
+| View Prompt | Text in the “Prompt” column of the “Drawing Logs” tab | Opens the “Prompt Details” dialog. |
+| View Failure Reason | Red text in the “Failure Reason” column of the “Drawing Logs” tab | Opens the “Failure Reason Details” dialog. |
+| Copy Prompt or Failure Reason | Copy button in the “Prompt Details” or “Failure Reason Details” dialog | See [View Prompts, Images, and Failure Reasons](#view-prompts-images-and-failure-reasons). |
+</div>
+
+## Status Descriptions
+
+### Task Status
+
+The “Status” column in the “Task Logs” tab typically progresses from “Not Started” → “Queued” → “In Progress”, then ends in “Succeeded” or “Failed”.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Not Started | The task was submitted, and the system has yet to retrieve its processing status from the upstream provider. | Progress is usually “0%”. Click “Search” again later to see the latest status. |
+| Queued | The upstream provider has received the task and queued it for processing. | Appears in yellow or orange. Both colors have the same meaning. |
+| In Progress | The upstream provider is generating the result. | — |
+| Succeeded | The task is complete. | View and download the result in the “Artifact” column. |
+| Failed | The task failed or timed out. | Progress displays “100%”. Check “Task Details” for the failure reason and see [View Refunds for Failed Tasks](#view-refunds-for-failed-tasks) for refund information. |
+</div>
+
+### Drawing Task Status
+
+In the “Drawing Logs” tab, the status appears below the timestamp in the “Submission Time” column.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Not Started | The task was submitted and is awaiting processing. | — |
+| Queued | The task is queued for processing. | — |
+| In Progress | The image is being generated. | — |
+| Succeeded | The image has been generated. | Click “View” in the “Image” column. |
+| Failed | The task failed or timed out. | Check the “Failure Reason” column for the reason. The system refunds the deducted quota. See [View Refunds for Failed Tasks](#view-refunds-for-failed-tasks). |
+| Waiting | The task requires a follow-up action before it can continue. | — |
+</div>
+
+### Drawing Submission Results
+
+The “Submission Result” column (visible only to administrators) in the “Drawing Logs” tab can show the following values.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Submission Result | Meaning | Notes |
+| --- | --- | --- |
+| Submitted | The task was submitted to and accepted by the upstream provider. | Once the background process starts checking task status, all accepted submissions display “Submitted”. |
+| Waiting, Duplicate | At submission, the upstream provider indicated that the task already existed or was queued. The task continues to be processed. | Changes to “Submitted” once the background process starts checking task status. |
+| Not Submitted | The task could not be submitted to the upstream provider. | See the “Failure Reason” column for the reason. Other results from the upstream provider display as “Unknown”. |
+</div>
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="A task stays in “Queued” or “In Progress”">
+
+**Possible causes**
+
+- Video, music, and image generation can take anywhere from tens of seconds to several minutes, or longer when the upstream provider is busy.
+- The backend checks task statuses periodically, so updates may be delayed.
+- The page requires a manual refresh to show status changes.
+
+**What to do**
+
+1. Click “Search” to view the latest status.
+2. Continue waiting. By default, if a task is still incomplete 3 days after submission, the system marks it as “Failed” and refunds the quota. For image generation tasks, the timeout is 1 hour.
+3. If the status stays the same for a long time, send the task ID to an administrator.
+
+</Accordion>
+
+<Accordion title="The task status is “Failed”">
+
+**Note**
+
+The “Failure Reason” field may show the original message from the upstream provider, which may be in English, or one of the following system messages.
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| “Task timed out” | The task was still incomplete 3 days after submission, the default timeout. | Resubmit the task and confirm the refund in Usage Logs. |
+| “Upstream task not found” | The upstream provider no longer has a record of the task. | Resubmit the task and confirm the refund in Usage Logs. |
+| “Failed to query the upstream task status” | Repeated attempts to retrieve the task status failed. | Resubmit the task later and confirm the refund in Usage Logs. |
+| “Failed to get the channel information. Please contact the administrator” | The channel used for the task is no longer available. | Look for the task’s refund record in Usage Logs. If you can’t find it, send the task ID to an administrator. |
+| “Upstream task timed out (over 1 hour)” | The image generation task was still incomplete 1 hour after submission. | Resubmit the task and confirm the refund in Usage Logs. |
+| “Task timed out (a task left by the old system is not refunded; contact the administrator)” | A task submitted before February 22, 2026, timed out. | Contact an administrator. |
+| Other reasons reported by the upstream provider, such as sensitive content in the prompt or copyrighted content in the lyrics | The upstream provider rejected the request or failed to generate a result. | Revise the prompt or other input based on the reported reason, then resubmit the task. |
+
+</Accordion>
+
+<Accordion title="Are failed tasks charged?">
+
+**Note**
+
+The system deducts quota when you submit a task. If the task fails or times out, the full amount is refunded to the original payment source, either your wallet balance or your subscription quota. The system also restores the quota deducted from the API key used for the task and creates a “Refund” entry in Usage Logs.
+
+**What to do**
+
+1. Follow the steps in [Check refunds for failed tasks](#view-refunds-for-failed-tasks) to verify the “Refund” entry in Usage Logs.
+2. If you can’t find a refund entry, send the task ID to an administrator.
+
+</Accordion>
+
+<Accordion title="Artifacts can’t be previewed or downloaded">
+
+**Messages**
+
+“Media preview failed. Please try again.”, “Preview unavailable”, or “Failed to load artifacts”
+
+**Possible causes**
+
+- The file stored by the upstream provider has expired or been deleted.
+- The network connection was interrupted or the upstream provider is temporarily unavailable.
+
+**What to do**
+
+1. Click “Retry”.
+2. Once you can open the artifact, click “Download” to save the file promptly.
+3. If it still fails, send the task ID to an administrator.
+
+</Accordion>
+
+<Accordion title="The “Artifacts” column shows “Result Not Retained”">
+
+**Message**
+
+“The result was returned in the API response and was not saved as an artifact”
+
+**Note**
+
+This message appears when you hover over “Result Not Retained”.
+
+**Possible cause**
+
+The API returned the result directly in the response to the submission request without storing it.
+
+**What to do**
+
+1. Save the result from the API response in the application that calls the API.
+
+</Accordion>
+
+<Accordion title="Can’t find a task">
+
+**Possible causes**
+
+- The date range is still set to today by default. The filter uses the task’s submission time.
+- The task ID is incomplete. The search requires an exact match for the full ID.
+- You’re viewing the wrong tab. Video, music, and similar tasks appear in “Task Logs”, while Midjourney image generation tasks appear in “Image Generation Logs”.
+- The administrator selected “Only Me”, but the task belongs to another user.
+
+**What to do**
+
+1. Set the date range to include the task’s submission time, then click “Search”.
+2. Paste the full task ID and search again.
+3. Switch to the other tab and look for the task there.
+
+</Accordion>
+
+<Accordion title="The “Image Generation Logs” or “Task Logs” tab is missing">
+
+**Possible causes**
+
+- “Image Generation Logs” or “Task Logs” is turned off in the left sidebar settings. Both must be enabled for the tabs to appear.
+- An administrator has disabled one of the features.
+
+**What to do**
+
+1. On the “Profile” page, go to “Personal Settings for the Left Sidebar”. Enable “Console Section”, “Image Generation Logs”, and “Task Logs”, then save your changes.
+2. If the tabs still don’t appear, contact an administrator.
+
+</Accordion>
+
+<Accordion title="The action below the task ID shows “Unknown”">
+
+**Note**
+
+The page recognizes some task types, such as “Generate Music” and “Generate Lyrics”, and displays “Unknown” for the others. Tasks still run and are billed as usual.
+
+</Accordion>
+
+<Accordion title="A successful task has a “Refund” or an additional “Usage” entry in Usage Logs">
+
+**Note**
+
+Some tasks are billed based on actual usage after they succeed. If actual usage is lower than the quota deducted at submission, the system refunds the difference and creates a “Refund” entry. If actual usage is higher, the system deducts the difference and creates an additional “Usage” entry. These refunds are billing adjustments for successful tasks.
+
+**What to do**
+
+1. Open the “Refund” entry in Usage Logs and check “Refund Details” for the task ID and reason.
+2. Match the initial “Usage” entry by submission time and model, since that entry omits the task ID.
+
+</Accordion>
+
+<Accordion title="How long are task records kept?">
+
+**Note**
+
+The system keeps task and image generation records without automatically deleting them. The upstream provider stores generated images, videos, and audio. Download and save the files promptly, while they’re still available to preview and download.
+
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> — View task charges and refunds.
+- <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a> — Check your balance and subscription quota after a refund.
+- <a href="/en/docs/api/management/tasks/task-self-get" target="_blank" rel="noopener noreferrer">Get Your Tasks</a> — Query asynchronous tasks for your account through the API.
+- <a href="/en/docs/api/management/tasks/mj-self-get" target="_blank" rel="noopener noreferrer">Get Your Midjourney Tasks</a> — Query image generation tasks for your account through the API.
+- <a href="/en/docs/api/ai-model/videos/sora/getvideo" target="_blank" rel="noopener noreferrer">Get Video Task Status</a> — Query the status and result of a video generation task.
+- <a href="/en/docs/api/ai-model/videos/sora/getvideocontent" target="_blank" rel="noopener noreferrer">Get Video Content</a> — Retrieve the video file for a completed video generation task.
+- <a href="/en/docs/api" target="_blank" rel="noopener noreferrer">API Reference</a> — Find other video and music generation endpoints.

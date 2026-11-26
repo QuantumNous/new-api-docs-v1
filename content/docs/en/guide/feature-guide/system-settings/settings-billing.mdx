@@ -1,0 +1,1255 @@
+---
+title: Billing and Payment Configuration
+description: Configure quotas, currency display, model and group pricing, payment gateways, and check-in rewards. Learn what each setting does, how to save changes, and what determines when payments are credited.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- Only Root users can access these settings. In the sidebar, go to “Admin” → “System Settings” and select a section under “Billing and Payments” in the left navigation.
+- Configure quotas, currency display, model and group pricing, payment gateways, and check-in rewards.
+- These settings directly affect charges, balances, and how payments are credited. For what to record before making changes and what to verify afterward, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#recording-and-verifying-changes" target="_blank" rel="noopener noreferrer">Recording and Verification for Changes</a>.
+
+<Callout type="info" title="Tip">
+
+- **Internal quota** is measured in quota points, the unit used for balances and charges.
+- **Displayed amounts** are quota points formatted for display.
+- **Model charges** are calculated from request usage and pricing rules.
+- **The amount a gateway actually collects** is determined by the order for that payment channel.
+- For guidance on handling secret fields, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#sensitive-settings-and-audit-logs" target="_blank" rel="noopener noreferrer">Sensitive Settings and Audit Logs</a>.
+
+</Callout>
+
+## Billing and Payment Configuration Overview
+
+“Billing and Payments” has six sections. Switch between them in the left navigation. “Quota Settings” opens by default.
+
+**Sections**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Section | Purpose | Tabs |
+| --- | --- | --- |
+| [Quota Settings](#quota-settings) | Quotas for new users, pre-deductions, referral rewards, and the top-up link. | — |
+| [Currency and Display](#currency-and-display) | Currency display modes, exchange rates, and Token statistics. | — |
+| [Model Pricing](#model-pricing) | Model prices, pricing expressions, tool prices, and upstream price sync. | “Model Prices”, “Models Without Pricing”, “Tool Prices”, “Upstream Price Sync” |
+| [Group Pricing](#group-pricing) | Request and top-up ratios, groups available to users, and Auto group order. | “Pricing Groups”, “Special Ratio Rules”, “Group Visibility”, “Auto Group Order” |
+| [Payment Gateways](#payment-gateway) | Compliance confirmation, top-up rules, and credentials and callbacks for each gateway. | “General”, “Epay”, “Stripe”, “Creem”, “Waffo Pancake”, “Waffo” |
+| [Check-in Rewards](#check-in-rewards) | Daily check-in toggle and reward range. | — |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- If prices stay the same after saving, or if you see a message when saving that the feature is disabled or the prices have already changed, see [Frequently Asked Questions](#frequently-asked-questions).
+
+</Callout>
+
+## Configuration Sections
+
+This section covers the six sections in the order they appear in the left navigation. For where to save each section and when changes take effect, see [Saving and Applying Changes](#saving-and-applying-changes).
+
+### Quota Settings
+
+- Billing and Payments → Quota Settings
+
+![Billing and Payments – Quota Settings page](/assets/guide/feature-guide/system-settings-billing-and-payments-quota-settings.png)
+
+**Steps**
+
+1. Convert the amount you want to enter to quota points. At the default conversion rate, `500000` quota points equal `$1`.
+2. Set the new user quota, wallet pre-deduction exemption threshold, input pre-deduction ratio, and free model quota pre-consumption.
+3. To offer referral rewards, first accept the compliance terms under [Payment Compliance Confirmation](#payment-compliance-confirmation).
+4. Set the referrer and invitee rewards.
+5. Enter the top-up link.
+6. Click “Save Changes” at the top of the page.
+
+<Callout type="warn" title="Warning">
+
+- Until you confirm payment compliance, a red warning appears above the form. “Nonzero referral rewards require you to accept the compliance terms in Payment Gateway settings first.”
+- Saving a referral reward greater than `0` is blocked until you confirm payment compliance. For the exact message, see [Frequently Asked Questions](#frequently-asked-questions).
+
+</Callout>
+
+**Configuration Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| New User Quota | Initial quota granted only to newly registered users. | Enter a nonnegative integer in quota points. The help text shows the converted amount as you type. | `0` |
+| Wallet Pre-deduction Exemption Threshold (USD) | When both the user's wallet balance and the balance of an API Token with a quota limit exceed this amount, the system skips pre-deduction and charges for actual usage. Set the threshold to `0` to always apply pre-deduction. Subscriptions and asynchronous tasks always use pre-deduction. | Enter a number greater than or equal to `0`. Decimals are allowed. Negative values trigger “Must be greater than or equal to 0.” | `10` |
+| Input Pre-deduction Ratio | The system multiplies the estimated input cost by this ratio to calculate the pre-deduction. The estimate excludes output Tokens. The final charge is based on actual usage. This setting applies only to usage-based billing and leaves per-request and task billing unchanged. | Enter a number greater than `0`. Decimals are allowed. Values outside this range trigger “Must be greater than 0.” | `1` |
+| Referrer Reward | Quota granted to the referrer after a qualifying referral signup. The reward is first credited to the referrer's referral quota. It enters the wallet balance when the referrer clicks “Transfer to Balance” in their wallet. | Enter a nonnegative integer in quota points. Values greater than `0` require payment compliance confirmation. | `0` |
+| Invitee Reward | Quota granted to the invitee. | Enter a nonnegative integer in quota points. Values greater than `0` require payment compliance confirmation. | `0` |
+| Free Model Quota Pre-consumption | When enabled, zero-cost models also consume quota in advance of final settlement. | Toggle. | Enabled |
+| Top-up Link | External link where users can purchase quota. Connecting it to this site's payment callbacks requires separate integration. | Optional. Enter a full URL such as `https://example.com/topup`. | Blank |
+
+</div>
+
+### Currency and Display
+
+- Billing and Payments → Currency and Display
+
+![Billing and Payments – Currency and Display page](/assets/guide/feature-guide/system-settings-billing-and-payments-currency-and-display.png)
+
+**Steps**
+
+1. Under “Display Mode”, select “USD”, “CNY”, or “Custom Currency”.
+2. If you select “Custom Currency”, enter the “Custom Currency Symbol” and “Units per USD”.
+3. Enter the “USD Exchange Rate” and turn “Show Token Statistics” on or off as needed.
+4. Click “Save Changes” at the top of the page.
+
+<Callout type="info" title="Tip">
+
+- At the default conversion rate, `500000` internal quota points equal `$1`.
+- “Reset” at the top of the page restores the saved values and displays “Form reset to saved values.” The button is available only when the form has unsaved changes.
+
+</Callout>
+
+**Configuration Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Display Mode | How quota values are displayed to users. | Select “USD”, “CNY”, or “Custom Currency”. | `USD` |
+| USD Exchange Rate | The actual exchange rate between USD and the payment gateway's currency. | Enter a value of at least `0.0001`. Lower values trigger “Exchange rate must be greater than 0.”<br/>In “CNY” display mode, the field is labeled “CNY–USD Exchange Rate”. | `7.3` |
+| Custom Currency Symbol | The prefix used when displaying prices. | Visible and required only in “Custom Currency” mode. Enter up to 8 characters. An empty field triggers “Custom currency symbol is required.” | `¤` |
+| Units per USD | The conversion rate from USD to the custom currency, expressed as `1 USD = X` units of the custom currency. | Visible and required only in “Custom Currency” mode. The minimum value is `0.0001`. An empty field triggers “Exchange rate is required.” | `1` |
+| Show Token Statistics | Determines whether the OpenAI-compatible quota endpoint returns quota and usage for the Token or for the entire account. | Toggle. The UI description reads “Show Token usage statistics in the user interface.” | Enabled |
+
+</div>
+
+### Model Pricing
+
+The page header has four tabs on the right: “Model Prices,” “Models Without Prices,” “Tool Prices,” and “Upstream Price Sync.” “Model Prices” opens by default. You can configure billing modes, prices for different types of usage, billing expressions, and tool call prices. You can also set prices for unpriced models and sync upstream prices.
+
+#### Model Prices
+
+- Billing and Payments → Model Pricing → Model Prices
+
+![Billing and Payments → Model Pricing → Model Prices page](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-model-prices.png)
+
+The model list is on the left, and the editor is on the right. If no model is selected, the editor displays “Select a model to edit its pricing.” The list includes only models with configured prices and models with built-in prices that enabled Channels currently use. The list does not automatically add models to Channels. The price configuration should match the model identifier used in requests and the billing path actually used.
+
+- Billing and Payments → Model Pricing → Model Prices → Add Model Pricing
+
+![Billing and Payments → Model Pricing → Model Prices → Add Model Pricing page](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-model-prices-add-model-pricing.png)
+
+- Billing and Payments → Model Pricing → Model Prices → Edit Model Pricing
+
+![Billing and Payments → Model Pricing → Model Prices → Edit Model Pricing page](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-model-prices-edit-model-pricing.png)
+
+**Add or edit model pricing**
+
+1. Click “Add Model” on the right side of the toolbar, or click the edit icon in a model row. When adding a model, enter its exact name. The model name cannot be changed directly when editing.
+2. Select the pricing currency and billing mode, then set the price or expression. For instructions on using the editor, see <a href="/en/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">Billing Expressions</a>.
+3. Enter known usage in the “Token Estimator” to check the cost.
+4. If the pricing includes request conditions, enter the request body, headers, and time in “Request Simulation.”
+5. Click “Save Model Prices.”
+6. In “Confirm Price Changes,” review the “Current Price” and “Price After Saving” for each model, then click “Confirm Save.”
+
+{/* */}
+
+- Billing and Payments → Model Pricing → Model Prices → Confirm Price Changes
+
+![Billing and Payments → Model Pricing → Model Prices → Confirm Price Changes page](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-model-prices-confirm-price-changes.png)
+
+<Callout type="info" title="Note">
+
+- “Preset Templates” are a starting point. Verify the provider’s current prices and caching rules before using them.
+- Below the “Confirm Price Changes” heading, the dialog displays “New prices take effect immediately after saving. … models have changes.”
+- If the only change is to “Expose Ratio API,” it is saved immediately without confirmation.
+- Changes in the editor are merged into the draft when you save, switch models, or copy pricing. They are persisted only after you click “Save Model Prices.”
+- The “Save Model Prices” button at the bottom of the editor works the same way as the button in the page header.
+</Callout>
+
+**Page header controls**
+
+These controls appear on the right side of the page header and apply to all model prices. They are available only on the “Model Prices” tab. On narrow screens, “Reset Prices,” “Switch to JSON,” and “Discard Changes” move into the “More Actions” menu.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Control | Description |
+| --- | --- |
+| Expose Ratio API | Disabled by default. When enabled, anyone can read this site's model price configuration, including billing expressions, through `/api/ratio_config`. Other sites can then select it as a source in “Upstream Price Sync.” When disabled, the endpoint returns 403.<br/>**Known issue in the current version**: The “?” tooltip next to the switch shows `/api/ratio`. The actual path is `/api/ratio_config`. |
+| Reset Prices | Opens the “Reset all model prices?” confirmation dialog. Click “Reset” to restore all model prices to the system defaults and clear saved custom prices, including billing expressions.<br/>The reset runs immediately after confirmation, without clicking “Save Model Prices.” On success, the interface displays “Model prices reset successfully.” |
+| Switch to JSON | View and edit legacy pricing fields in JSON, such as “Fixed Model Price,” “Model Ratio,” and “Completion Ratio.” In JSON mode, the button reads “Switch to Visual.” |
+| Discard Changes | Appears when there are unsaved changes. Restores the saved prices. |
+| Save Model Prices | Always visible and enabled only when there are unsaved changes. The button shows the change count, and “… unsaved changes” appears to its left. |
+
+</div>
+
+**Model list**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Item | Description |
+| --- | --- |
+| Search | Displays the placeholder “Search models...” and matches any part of the model name, regardless of case. |
+| “Mode” filter | Options include “Per Token (Deprecated),” “Per Request (Deprecated),” “Billing Expression,” and “Billing Expression – Task Pricing.” Each option shows a count. |
+| “Price Status” filter | The only option is “Pricing Pending Review,” described in [Pricing Pending Review](#pricing-pending-review). |
+| Add Model | On the right side of the toolbar. Opens the “Add Model Pricing” panel. |
+| Columns | Selection checkboxes, “Model Name,” “Mode,” “Price Summary,” and “Actions.” Pricing details appear in gray text under the summary. |
+| Draft badges | Unsaved changes are marked “New,” “Modified,” or “Pending Deletion” next to the model name. Modified rows show the old and new prices below the row. |
+| Other badges | “Tiered” indicates a non-task model that uses a billing expression.<br/>“Task Pricing” indicates a task model with a configured billing expression.<br/>“Pricing Pending Review” is described in [Pricing Pending Review](#pricing-pending-review). |
+| Edit icon | Opens the editor on the right. |
+| ⋯ → “Delete” | Appears only on rows with saved prices. The row is marked “Pending Deletion” and shown with strikethrough, and the Actions column changes to “Undo.” The price is deleted when you save. |
+| Copy … Pricing | Appears in the floating bar at the bottom after you select target rows. Copies pricing from the source model open in the editor on the right to the selected models. On success, the interface displays “Applied pricing from … to … models.”<br/>If no source model is open, the button is disabled and displays “Open a source model first.” The copied prices are added to the draft. Click “Save Model Prices” to persist them. |
+| Top of the editor | If the model has unsaved changes, the editor displays “Unsaved Price Changes” and compares the “Saved Price” with the “Price After Saving.” Click “Undo Changes” to revert them.<br/>If the pricing is pending review, the editor displays “Required Changes.” |
+
+</div>
+
+**Configuration fields**
+
+The table below lists the basic fields in the editor. For details on editor modes, preset templates, tiers and billing branches, Token and media prices, request rules, the Token Estimator, Request Simulation, and billing expression variables, functions, and syntax, see <a href="/en/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">Billing Expressions</a>.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and constraints | Default |
+| --- | --- | --- | --- |
+| Model Name | The exact model identifier used in API requests. | Required when adding a model. Cannot be changed directly when editing. | — |
+| Pricing Currency | The currency used to enter prices. The system uses USD internally. Select the site currency to enter prices in that currency and convert them to USD at the site's exchange rate. | “Site Currency (…)” is available when the display mode is “Yuan” or “Custom Currency.”<br/>Switching currencies leaves the actual price unchanged. Raw billing expressions always use USD. | “US Dollar (USD)” |
+| Billing Mode | How the model is billed. | Options include “Billing Expression,” “Per Token (Deprecated),” and “Per Request (Deprecated).” “Billing Expression” is recommended.<br/>When a deprecated mode is selected, click “Convert to Billing Expression” to generate a draft expression. The expression takes effect when you save. | — |
+
+</div>
+
+#### Pricing Pending Review
+
+When a task model provided by a plugin cannot be billed, the model price list flags it. The sidebar entry “System Settings” and the left navigation entries “Billing and Payments” and “Model Pricing” also show the number of models pending review. For task model billing rules, see <a href="/en/docs/guide/feature-guide/admin/billing-expression#task-models" target="_blank" rel="noopener noreferrer">Billing Expressions</a>.
+
+**Models included in the count**
+
+- Models currently available through enabled Channels.
+- Models that a plugin no longer provides but that still have saved prices.
+- Models from disabled plugins retain their prices and are excluded from the count.
+
+**Resolve pricing issues**
+
+1. Click “Review Prices” in the “… models have prices that need review” notice at the top of the “Model Prices” tab, or select “Pricing Pending Review” from the toolbar’s “Price Status” filter.
+2. Select a model. Under “Required Changes” at the top of the editor, review the reason and resolution for each plugin.
+3. Follow the steps in the table below, then click “Save Model Prices” and confirm.
+
+<Callout type="info" title="Note">
+
+- “Review Prices” lists only models pending review and opens the editor for the first model. Click “Show All Models” to restore the full list.
+- The review notice appears only on the “Model Prices” tab.
+- “Pricing Pending Review” appears next to the model name, with “Plugin Name: Reason” in gray text below it.
+- If uploading, installing, enabling, or changing the version of a plugin makes any models unbillable, the plugin management page also displays “Pricing for the following models needs review:”.
+</Callout>
+
+**Reasons and resolutions**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Reason | Resolution |
+| --- | --- |
+| No price has been set | Select the relevant plugin below, set a price for the model, and save. |
+| The price uses a usage metric the plugin no longer provides | Select the relevant plugin below, reconfigure the price using the current billing fields, and save. |
+| The plugin no longer provides this model | Select the relevant plugin below, remove the saved price, and save your changes. |
+
+</div>
+
+#### Models Without Prices
+
+- Billing and Payments → Model Pricing → Models Without Prices
+
+![Billing and Payments → Model Pricing → Models Without Prices page](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-models-without-prices.png)
+
+This tab lists models on enabled Channels that have no configured prices. It uses the models available through those Channels and the current pricing snapshot to determine which models to show. It uses the same list layout as “Model Prices,” with the “Add Model” and delete actions unavailable.
+
+**Set model prices**
+
+1. Click the edit icon in a model row and set the price in the editor on the right.
+2. To set prices in bulk, open a source model whose pricing you have verified in the editor on the right. Select the target models, then click “Copy … Pricing” in the floating bar at the bottom.
+3. Check each target model for differences in protocol, caching, and media billing.
+4. Click “Save Model Prices” at the bottom of the editor, then click “Confirm Save” in “Confirm Price Changes.”
+
+<Callout type="info" title="Note">
+
+- This tab shares a draft with “Model Prices.” Click “Save Model Prices” to persist changes made on either tab.
+- The page header controls are available on the “Model Prices” tab. Use that tab to access “Expose Ratio API,” “Reset Prices,” and “Switch to JSON.”
+- If all models have prices, the interface displays “No models without prices.”
+- If the enabled models fail to load, the interface displays “Failed to fetch enabled models.”
+</Callout>
+
+#### Tool Prices
+
+- Billing and Payments → Model Pricing → Tool Prices
+
+![Billing and Payments → Model Pricing → Tool Prices page](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-tool-prices.png)
+
+Configure call prices for tools such as search, file retrieval, and image generation in one place. These prices determine the surcharges for tool calls.
+
+**Set tool prices**
+
+1. Choose the scope. Use a generic tool identifier for all models, or use `tool_name:model_prefix*` for a specific model family.
+2. Edit an existing row, or click “Add” and enter the tool identifier and price. Enter the price in USD per 1,000 calls.
+3. Use the target model name to identify the longest matching prefix rule, then calculate the base cost per call.
+4. Click “Save Tool Prices” at the bottom right of the tab.
+
+<Callout type="info" title="Note">
+
+- Surcharge for one tool = price (USD per 1,000 calls) × billable calls ÷ 1,000 × Group Ratio.
+- Total tool surcharge = the sum of the surcharges for all tools.
+- Models billed per request incur no additional tool charges.
+</Callout>
+
+**Tool pricing actions**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Add | Toolbar above the table in visual mode | Adds a tool pricing rule. The new row has a blank tool identifier and a price of `0`. |
+| Delete icon | End of the row | Removes the row from the draft. Saving removes the corresponding custom configuration. If no built-in rule matches, the system uses the built-in fallback price. |
+| Restore Defaults | Toolbar above the table | Replaces the current draft, including custom entries, with the built-in default price list. Click “Save Tool Prices” to apply the defaults. |
+| Switch to JSON, Switch to Visual | Right side of the toolbar | Switches between the table and a JSON object. Keys are tool identifiers, and values are non-negative numbers, as in `{"web_search":10}`. Fix any JSON errors before switching. |
+| Copy | Toolbar above the table in JSON mode | Copies the contents of the JSON editor so you can keep a copy of the previous configuration. On success, the interface displays “Copied to clipboard.” |
+| Save Tool Prices | Bottom right of the tab | Submits the entire current price configuration. On success, the interface displays “Settings updated successfully.”<br/>For invalid prices, it displays “Enter a valid number.”<br/>For JSON errors, it displays “Fix the JSON errors before saving.” |
+
+</div>
+
+**Configuration fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and constraints | Default |
+| --- | --- | --- | --- |
+| Tool Identifier | Identifies the tool the price applies to and optionally limits the rule to matching models. | Use `tool_name` for a generic rule or `tool_name:model_prefix*` for a model-specific rule, such as `web_search_preview:gpt-4o*`. | Built-in default price list |
+| Price ($/1K Calls) | Price in USD per 1,000 tool calls. | Must be a number greater than or equal to `0`. Decimals are supported. A value of `10` means $10 per 1,000 calls, for a base cost of $0.01 per call. | `0` for new rows |
+
+</div>
+
+#### Upstream Price Sync
+
+- Billing and Payments → Model Pricing → Upstream Price Sync
+
+![Billing and Payments → Model Pricing → Upstream Price Sync page](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-upstream-price-sync.png)
+
+Fetch model prices from presets or upstream Channels and compare them with the local configuration. Select a price source for each model, then preview and confirm the changes to update the local billing configuration in bulk.
+
+**Sync upstream prices**
+
+1. Click “Select Price Sources,” then search for and select one or more presets or Channels.
+2. Verify the API addresses and sync endpoints. You can keep the defaults when using a preset.
+3. Click “Confirm Selection” and wait for the comparison results.
+4. Use the model search, type filter, and pagination to find the target models.
+5. Select the source for each target model, or use the source column header to select multiple models at once.
+6. Review the selection count at the bottom, then click “Apply Sync.”
+7. In “Preview Price Changes,” review “Price Source,” “Model,” “Current Billing,” and “Final Price to Save.”
+8. Click “Confirm Changes.”
+
+**Sync results**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Situation | What the interface displays | Next action |
+| --- | --- | --- |
+| Fetching prices | “Fetching upstream prices...” | — |
+| All prices match local prices | The notice reads “No price differences found.” The table displays “No upstream price differences found.” | Select “Show Models with Matching Prices” to see models with matching prices. |
+| Some sources fail | A yellow notice displays “Some Channels failed: …”. Results from the remaining sources are still displayed. | — |
+| All sources fail | “Failed to fetch upstream prices” or the original server message. The toolbar displays “Retry.” | Click “Retry.” |
+| Sync succeeds | “Prices synced successfully.” Local prices are refreshed. | — |
+| Sync fails | “Failed to sync prices” or the original server message. | — |
+| Another user changed the prices | The preview dialog displays an error and a “Reload Pricing” button. “Confirm Changes” is disabled. | Click “Reload Pricing.” |
+
+</div>
+
+**Comparison table fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and constraints | Notes |
+| --- | --- | --- | --- |
+| Model | The name of the model whose pricing appears in the row. | The name may include a version suffix. Use the full name. | — |
+| Current Price | The local model billing configuration used for this comparison. | Taken from the local configuration loaded for this comparison. | — |
+| Price source column | The model price from the source, such as “Official Pricing Preset.” | Populated from the current fetch results. | “Same as Local” appears when the prices match. “Verify Upstream Price” appears when confidence in the source price is low. For expression-based pricing, click “Copy Billing Expression” to copy the expression.<br/>The unit “USD / 1M Token” appears at the upper right of the table. |
+
+</div>
+
+**Toolbar and action bar controls**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Select Price Sources | Right side of the top toolbar | Opens the “Select Price Sources” dialog. You can select multiple existing price sources and choose their sync endpoints. |
+| Adjust Selected Prices in Bulk | Left side of the top toolbar | Applies “Keep Source Price,” “Divide by Exchange Rate,” or “Multiply by Exchange Rate” to all selected prices. Use the ⇆ button next to a price to adjust it individually.<br/>Exchange rate adjustments require a valid site currency exchange rate and a display mode of “Yuan” or “Custom Currency.” Without a valid rate, the interface displays “Set a valid site currency exchange rate first.” The control is also unavailable while loading or when no models are selected. |
+| Search Model Names | Above the table | Enter a model name or part of one. Matching is case-insensitive. |
+| Type filter | Above the table | Filters by the billing mode provided by the source. Options include “All Types,” “Expression-Based Billing,” “Per Token,” and “Per Request.” The default is “All Types.” |
+| Show Models with Matching Prices | Above the table | Includes models whose prices match the local prices. By default, the box is unchecked and the table shows only models with price differences. |
+| × / ÷ buttons | Bottom action bar | Apply to all selected models. The left side displays “… models selected” and “Exchange rate adjustment: … models.” |
+| Clear Selection | Bottom action bar | Clears the selected sources. |
+| Apply Sync | Bottom action bar | Opens “Preview Price Changes.” Available when at least one model is selected. |
+
+</div>
+
+- Billing and Payments → Model Pricing → Upstream Price Sync → Select Price Sources
+
+![Billing and Payments → Model Pricing → Upstream Price Sync → Select Price Sources page](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-upstream-price-sync-select-price-source.png)
+
+**“Select Price Sources” fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and constraints | Notes |
+| --- | --- | --- | --- |
+| Name | The name of the preset or local Channel. | — | The built-in “Official Pricing Preset” and “models.dev Pricing Preset” each have an “Official” badge next to their names. |
+| API Address | The base URL of the price source. | A relative sync path is appended to this address. A full URL is requested directly. | — |
+| Status | The Channel status. | — | Enabled, Disabled, or Automatically Disabled. |
+| Sync Endpoint | The endpoint type or address used to fetch prices. | Select `pricing`, `ratio_config`, `OpenRouter`, or `custom` from the dropdown. The source must support the selected endpoint. | Defaults to `pricing`. |
+
+</div>
+
+**“Select Price Sources” actions**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Description |
+| --- | --- |
+| Search by Name or URL | Enter a keyword to filter presets or Channels. The search matches display names and API addresses regardless of case. |
+| Row checkbox | Selects a source to include in the price comparison. You can select multiple sources. |
+| Custom endpoint field | Appears only in `custom` mode and displays the placeholder `/your/endpoint`. Relative paths are appended to the API address. Full URLs are used directly. Use HTTP or HTTPS. |
+| Confirm Selection | Fetches prices from the selected sources and compares them with the local prices. If no source is selected, the interface displays “Select at least one Channel.” |
+
+</div>
+
+- Billing and Payments → Model Pricing → Upstream Price Sync → Preview Price Changes
+
+![Billing and Payments → Model Pricing → Upstream Price Sync → Preview Price Changes page](/assets/guide/feature-guide/system-settings-billing-and-payments-model-pricing-upstream-price-sync-apply-sync.png)
+
+**“Preview Price Changes” fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition |
+| --- | --- |
+| Price Source | The source of the updated price for the selected model. |
+| Model | The name of the model to update. |
+| Current Billing | The local billing mode and price before the change. |
+| Final Price to Save | The price or expression that will be saved. The adjustment method, such as “Keep Source Price,” appears above it. |
+
+</div>
+
+### Group Pricing
+
+Configure request ratios, top-up ratios, the groups users can select, and the automatic group order. You can also set custom ratios and group availability rules for specific user groups.
+
+This section contains a single card with four tabs: “Pricing Groups,” “Special Ratio Rules,” “Group Visibility,” and “Automatic Group Order.” On the right side of the card description, “Usage Guide” opens the guide to using groups, and “Switch to JSON” lets you edit the corresponding JSON directly. Click “Save Group Settings” in the page header to save changes across all four tabs at once.
+
+#### Pricing Groups
+
+- Billing & Payments – Group Pricing – Pricing Groups
+
+![Billing & Payments – Group Pricing – Pricing Groups page](/assets/guide/feature-guide/system-settings-billing-and-payments-group-pricing-pricing-groups.png)
+
+Manage group names, base request ratios, top-up ratios, and whether each group is selectable by default. These settings govern group billing and selection.
+
+**Steps**
+
+1. Click “Add Group” and set the name, request ratio, top-up ratio, and whether users can select the group.
+2. Configure the channels and models available to the group in <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>.
+3. Set the account group in <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a>.
+4. After configuring the special ratio rules, group visibility, or automatic group order described below, click “Save Group Settings” in the page header.
+
+{/* */}
+
+- Billing & Payments – Group Pricing – Usage Guide
+
+![Billing & Payments – Group Pricing – Usage Guide page](/assets/guide/feature-guide/system-settings-billing-and-payments-group-pricing-usage-guide.png)
+
+- Billing & Payments – Group Pricing – Group Details
+
+![Billing & Payments – Group Pricing – Group Details page](/assets/guide/feature-guide/system-settings-billing-and-payments-group-pricing-group-details.png)
+
+**Controls**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Add Group | Card title row | Adds a group row. |
+| Search | Above the table | Displays the placeholder “Search by group name or description” and filters groups by name or description. |
+| Details icon | End of the row | Opens “Group Details,” where you can view the basic settings, special ratio rules involving this group, visibility rules, and the group’s position in the automatic group order. |
+| Delete icon | End of the row | Deletes the group. |
+| Usage Guide | Right side of the card description | Opens the guide to how user groups, token groups, ratios, and special rules work together. |
+| Switch to JSON | Right side of the card description | Lets you edit group settings in JSON. Changes sync to the visual editor. In JSON mode, the button reads “Switch to Visual Editor.” |
+
+</div>
+
+**Configuration Options**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Group Name | Identifies the group in user group assignments, token billing group assignments, and related rules. | Must be unique. Duplicate names trigger the message “Duplicate group names found (…).” | — |
+| Ratio | Base ratio applied to the calculated model charge when a request is billed under this group. | — | — |
+| Top-up Ratio | Ratio applied to eligible online top-up amounts based on the user’s account group. | If left blank, the field displays “Not Set” and uses `1` for calculations. | Blank |
+| User Selectable | Whether the group is included in the global default set of selectable token groups. | — | — |
+| Description | Text users see when selecting the group. | Can be entered only when “User Selectable” is selected. | Blank |
+
+</div>
+
+#### Special Ratio Rules
+
+- Billing & Payments – Group Pricing – Special Ratio Rules
+
+![Billing & Payments – Group Pricing – Special Ratio Rules page](/assets/guide/feature-guide/system-settings-billing-and-payments-group-pricing-special-multiplier-rules.png)
+
+Set a custom ratio for a specific user group when it uses a specific billing group. When the rule matches, the custom ratio overrides the billing group’s base ratio.
+
+- Billing & Payments – Group Pricing – Special Ratio Rules – Add User Group
+
+![Billing & Payments – Group Pricing – Special Ratio Rules – Add User Group page](/assets/guide/feature-guide/system-settings-billing-and-payments-group-pricing-special-multiplier-rules-add-user-group.png)
+
+- Billing & Payments – Group Pricing – Special Ratio Rules – Add Ratio Override
+
+![Billing & Payments – Group Pricing – Special Ratio Rules – Add Ratio Override page](/assets/guide/feature-guide/system-settings-billing-and-payments-group-pricing-special-multiplier-rules-user-group-add-multiplier-override.png)
+
+**Steps**
+
+1. Click “Add User Group,” select the group you want to configure in “User Group Name,” and click “Add.”
+2. Click “+” for that user group. In “Add Ratio Override,” select a billing group, enter the ratio, and click “Add.”
+3. Click “Save Group Settings” in the page header.
+
+<Callout type="info" title="Tip">
+
+- Each user group displays its override count as “… overrides.” You can edit or delete existing overrides directly in the row. The edit dialog uses an “Update” button.
+- When no rules have been added, the tab displays “No special ratios configured.”
+</Callout>
+
+**Configuration Options**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| User Group | The account group to which these rules apply. | Select a group from the “User Group Name” dropdown in “Add User Group.” | — |
+| Billing Group | The group used to bill the user’s requests. | Select a group from the “Billing Group” dropdown in “Add Ratio Override.” | — |
+| Ratio | The special ratio applied when the specified user group uses the specified billing group. | — | — |
+
+</div>
+
+#### Group Visibility
+
+- Billing & Payments – Group Pricing – Group Visibility
+
+![Billing & Payments – Group Pricing – Group Visibility page](/assets/guide/feature-guide/system-settings-billing-and-payments-group-pricing-group-visibility.png)
+
+Add or hide specific token group options based on the user’s group so that different user groups can select from different sets of token groups. The card in this tab is titled “Special Group Availability Rules.”
+
+**Steps**
+
+1. Select a user group in “Add Rule for User Group” at the bottom.
+2. Select “Show as an Additional Option” or “Hide” as the rule type, then select the target group.
+3. For “Show as an Additional Option,” enter a description if needed.
+4. Click “Save Group Settings” in the page header.
+
+**Configuration Options**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| User Group | The account group to which these visibility rules apply. | Select a group in “Add Rule for User Group.” | — |
+| Rule Type | Determines how the target group is handled. | “Show as an Additional Option” adds the target group to the options available to this user group and uses the description from this rule.<br/>“Hide” removes the target group from the options available to this user group by default. | — |
+| Group Name | The group to add to the available options or hide. | — | — |
+| Description | The target group description shown to the specified user group. | Can be entered only for “Show as an Additional Option” rules. | Blank |
+
+</div>
+
+#### Automatic Group Order
+
+- Billing & Payments – Group Pricing – Automatic Group Order
+
+![Billing & Payments – Group Pricing – Automatic Group Order page](/assets/guide/feature-guide/system-settings-billing-and-payments-group-pricing-auto-group-order.png)
+
+Set the global order in which candidate groups are tried in automatic group mode, whether new tokens use automatic grouping by default, and how many groups each token can specify in its custom list.
+
+**Steps**
+
+1. Click “Add Group” and select a group from “Pricing Groups” that is not yet in the list. The selected group is added to the end of the list.
+2. Drag groups or use the up and down arrows to reorder them. Click × to remove a group.
+3. Configure “Use Automatic Grouping by Default” and “Maximum Custom Groups per Token.”
+4. Click “Save Group Settings” in the page header.
+
+<Callout type="info" title="Tip">
+
+- If “Maximum Custom Groups per Token” has an invalid value, clicking “Save Group Settings” switches back to the visual editor, opens this tab, and focuses the input field.
+</Callout>
+
+**Configuration Options**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Ordered List | The global list of candidate groups inherited by `auto` tokens. Groups are tried from top to bottom. | Groups absent from the Pricing Groups table are labeled “Not in the Pricing Groups table.” | Empty |
+| Use Automatic Grouping by Default | When enabled and `auto` is available to the user, the default group for new tokens changes from an empty group to `auto`. These tokens inherit the global order above. | Toggle. | Off |
+| Maximum Custom Groups per Token | Limits the number of groups in a custom Auto group list saved for an individual token. Tokens that inherit the global list are exempt from this limit. | Must be a positive integer. Invalid values trigger the message “Enter a positive integer.” | `5` |
+
+</div>
+
+### Payment Gateway
+
+Configure payment channels, preset top-up amounts, discounts, and payment notifications in one place so users can pay through connected platforms and receive account quota.
+
+The compliance confirmation panel appears at the top of the card. The form below has six tabs: “General,” “Epay,” “Stripe,” “Creem,” “Waffo Pancake,” and “Waffo.” The “General” tab opens by default. Click “Save All Settings” at the top of the page to save changes across all tabs. The form is grayed out and disabled until compliance is confirmed.
+
+**When gateways appear in the wallet**
+
+After you complete [Payment Compliance Confirmation](#payment-compliance-confirmation), each gateway appears in the wallet when it meets the following requirements.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Gateway | Requirements |
+| --- | --- |
+| EPay | Enter the “Epay Endpoint” and “Epay Merchant ID.” For MD5, enter the “Epay Secret Key.” For RSA, enter the “Merchant Private Key” and “Platform Public Key.” Add at least one entry under “General › Payment Methods.” |
+| Stripe | Enter the “API Key,” “Webhook Secret,” and “Price ID.” |
+| Creem | Enter the “API Key” and add at least one product. Processing payment notifications also requires the “Webhook Secret.” |
+| Waffo Pancake | Enter the “Merchant ID” and “API Private Key,” then save the store and product bindings. |
+| Waffo | Turn on “Enable Waffo” and enter the API key, RSA private key, and Waffo public key for the current environment (production or sandbox). |
+
+</div>
+
+#### Payment Compliance Confirmation
+
+- Billing and Payments › Payment Gateway › Payment Compliance Confirmation
+
+![Billing and Payments › Payment Gateway › Payment Compliance Confirmation page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-compliance-terms-confirmation.png)
+
+A super administrator must confirm the operational compliance statement to unlock payments, redemption codes, subscription plans, and referral rewards. The statement covers authorization from upstream providers, the permitted scope of service use and commercialization, and the applicable operational obligations and liabilities. The confirmation dialog contains the full terms. Complete this confirmation before configuring payment gateways, accepting top-ups, or processing payments.
+
+**Procedure**
+
+1. Click “Confirm Compliance” on the right side of the compliance panel.
+2. Read the terms and enter the requested confirmation text in each field in order.
+3. Click “Confirm and Enable.”
+
+<Callout type="info" title="Tip">
+
+- Enter the confirmation text in four parts, in this order: “I have read and understood the compliance notice above,” “I acknowledge the associated legal risks,” “I accept legal responsibility for deployment,” and “operation, and charging fees.”
+- If an entry differs from the required text, the dialog displays “The entered text does not match the required text.” The “Confirm and Enable” button becomes available once all four entries match.
+- On success, the dialog displays “Compliance confirmed successfully.” On failure, it displays “Failed to confirm compliance.”
+- The system records the time of confirmation, the user who confirmed, the IP address, and the version of the terms.
+
+</Callout>
+
+**Status**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Status | Meaning | What you see |
+| --- | --- | --- |
+| Unconfirmed | A super administrator has yet to confirm the terms or has confirmed an earlier version. Updated terms require a new confirmation. Payments, redemption codes, subscription plans, and referral rewards remain locked. | A red “Compliance terms require confirmation” alert lists six statements, with a “Confirm Compliance” button on the right. The form below is grayed out and disabled.<br/>A separate alert appears under [Quota Settings](#quota-settings). |
+| Confirmed | A super administrator has confirmed the current terms, unlocking the features listed above. | A gray panel displays “Compliance confirmed” and “Confirmed by user #… at ….” |
+
+</div>
+
+#### General Settings
+
+- Billing and Payments › Payment Gateway › General Settings
+
+![Billing and Payments › Payment Gateway › General Settings page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-general.png)
+
+The “General” tab contains settings shared by all payment gateways. From top to bottom, its four sections are “General Settings,” “Payment Methods,” “Top-up Amount Options,” and “Amount Discounts.”
+
+- Billing and Payments › Payment Gateway › Add Payment Method
+
+![Billing and Payments › Payment Gateway › Add Payment Method page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-general-payment-methods-add-method.png)
+
+- Billing and Payments › Payment Gateway › Add Discount Tier
+
+![Billing and Payments › Payment Gateway › Add Discount Tier page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-general-amount-discounts-add-discount-tier.png)
+
+**Procedure**
+
+1. Under “General Settings,” enter the price and minimum top-up amount.
+2. Under “Payment Methods,” click “Add Method” or use “Templates” to insert a common payment method (Epay Alipay, Epay WeChat Pay, Stripe, or a custom Epay method).
+3. In “Add Payment Method,” enter the name, payment handler ID, icon, and minimum top-up amount. Click “Add.”
+4. Under “Top-up Amount Options,” enter an amount in “Add New Amount” and click “Add.”
+5. Under “Amount Discounts,” click “Add Discount Tier” and enter the top-up amount and discount rate.
+6. Click “Save All Settings” at the top of the page.
+
+<Callout type="info" title="Tip">
+
+- Amount due = top-up amount × price (local currency per USD) × user group top-up ratio × applicable discount rate.
+- For example, a user tops up `100` USD through Epay. The price is `7.3` units of local currency per USD, the user group’s top-up ratio is `1`, and the configured discount tier is `100 → 0.85`. The user pays `620.50` units of local currency and receives `100` USD in account credit.
+- In “Payment Methods” and “Top-up Amount Options,” you can switch between “Visual Editor” and “JSON Editor.”
+
+</Callout>
+
+**General settings and payment methods**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Setting | Section | Description | Requirements and limits | Default |
+| --- | --- | --- | --- | --- |
+| Price (local currency per USD) | General Settings | Amount Epay charges for each USD of account credit. | Enter a value of `0` or greater based on the provider’s payment currency and pricing. | `7.3` |
+| Minimum Top-up (USD) | General Settings | Minimum top-up amount Epay accepts. | Enter a value of `0` or greater that meets the provider’s minimum payment requirement. | `1` |
+| Name | Payment Methods | Payment method name shown to users. | Required, for example, “Alipay.” If blank, the form displays “Payment method name cannot be empty.” | — |
+| Payment Handler ID | Payment Methods | Determines which payment flow the button starts. | Required. Select an ID from the drop-down list or enter one manually. If blank, the form displays “Payment handler ID cannot be empty.”<br/>`stripe` routes payments to Stripe, and `waffo_pancake` routes them to Waffo Pancake. The system submits other values to Epay as payment types. Use a type your provider supports, such as `alipay` or `wxpay`. | — |
+| Icon | Payment Methods | Icon shown on the payment button. | Enter a react-icons component name, such as `SiAlipay` or `SiWechat`. If the name cannot be resolved, the button appears without an icon. | — |
+| Minimum Top-up (optional) | Payment Methods | Additional minimum amount for an individual payment button. | Optional, for example, `50`. | — |
+
+</div>
+
+**Top-up amounts and discounts**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Section | Description | Requirements and limits | Default |
+| --- | --- | --- | --- | --- |
+| Top-up Amount Options | Top-up Amount Options | Preset amounts users can select in the wallet. | Enter integers greater than `0`, such as `1000`, one at a time under “Add New Amount.”<br/>In the JSON editor, enter an array. Otherwise, the form displays “Amount options must be a JSON array.” | `[10,20,50,100,200,500]` |
+| Top-up Amount (USD) | Amount Discounts | Top-up amount that qualifies for this discount. | Enter a positive integer. The requested amount must match exactly. You cannot change the amount when editing a tier.<br/>For values of `0` or less, the form displays “Amount must be greater than 0.”<br/>For non-integers, it displays “Amount must be an integer.” | — |
+| Discount Rate | Amount Discounts | Factor applied to the amount due. For example, `0.85` means the user pays 85% of the price. | The rate must be greater than `0` and at most `1`.<br/>For values of `0` or less, the form displays “Discount rate must be greater than 0.”<br/>For values above `1`, it displays “Discount rate must be ≤ 1.” | — |
+| Savings | Amount Discounts | Percentage reduction shown in the list. | Calculated automatically from the discount rate. A rate of `0.85` gives `15%` savings. | — |
+
+</div>
+
+#### EPay
+
+- Billing and Payments › Payment Gateway › EPay
+
+![Billing and Payments › Payment Gateway › EPay page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-epay.png)
+
+Connect an Epay payment aggregator in China to accept Alipay, WeChat Pay, and other payment methods. The system credits top-ups automatically when it receives payment notifications.
+
+**Procedure**
+
+1. Select the signature method and enter the endpoint, merchant ID, and corresponding keys.
+2. Verify the callback base URL. The system appends `/api/user/epay/notify` to it.
+3. Click “Save All Settings” at the top of the page.
+
+<Callout type="warn" title="Epay Security Notice">
+
+- Epay is a payment protocol with no single official website. Verify the service provider yourself before trusting a third-party Epay site.
+
+</Callout>
+
+**Configuration settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Epay Endpoint | Connects to the payment provider to initiate payment requests. | Required. Enter the base URL supplied by the Epay provider, such as `https://pay.example.com`. It must begin with `http://` or `https://`. | — |
+| Callback URL | Site base URL for payment notifications. | Optional. Enter only the site’s base URL, such as `https://api.example.com`. Including a path such as `/api/user/epay/notify` triggers the message “Enter only the callback domain, for example https://api.example.com, without any path.” Leave blank to use the server address. | — |
+| Epay Merchant ID | Identifies the merchant receiving payments. | Required for setup. The ID must correspond to the endpoint and keys. | — |
+| Signature Method | Specifies the signature method configured in the Epay merchant dashboard. | Select “MD5” or “RSA.” The help text reads “Use the same signature method as in the Epay merchant dashboard.” | MD5 |
+| Merchant Private Key | Signs requests when using RSA. | Appears when RSA is selected. The form hides the saved private key. Leave blank to keep the existing value. | — |
+| Platform Public Key | Verifies payment notifications when using RSA. | Appears when RSA is selected. The form displays the key after it is saved. | — |
+| Epay Secret Key | Signs requests and verifies payment results. | Appears when MD5 is selected. Enter the key during initial setup. The form hides the saved key. Leave blank when updating settings to keep the existing value. | — |
+
+</div>
+
+#### Stripe
+
+- Billing and Payments › Payment Gateway › Stripe
+
+![Billing and Payments › Payment Gateway › Stripe page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-stripe.png)
+
+Connect Stripe to accept international credit card payments and receive payment results through a webhook.
+
+**Procedure**
+
+1. In the Stripe Dashboard, add the webhook URL shown on the settings page.
+2. Configure the webhook to receive payment status notifications.
+3. Enter the Stripe API key, webhook secret, and price ID.
+4. Set the top-up unit price and minimum top-up amount. Enable promotion codes if needed.
+5. Click “Save All Settings” at the top of the page.
+
+<Callout type="info" title="Tip">
+
+- Use `<ServerAddress>/api/stripe/webhook` as the webhook URL and subscribe to both `checkout.session.completed` and `checkout.session.expired`.
+- The webhook setup instructions on the tab list the URL and required events and include a “Stripe Dashboard” link.
+
+</Callout>
+
+**Configuration settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| API Key | Authorizes New API to call the Stripe API. | During initial setup, enter a server-side key with the required permissions. Accepted prefixes are `sk_` and `rk_`. After setup, leave blank unless you are updating the key. | Empty |
+| Webhook Secret | Verifies signatures on Stripe payment notifications. | Obtain the signing secret from the corresponding webhook configuration. Its format is `whsec_...`. Leave blank unless you are updating it. | Empty |
+| Price ID | Selects the Stripe price to use for the product. | Enter the Stripe product’s price ID in the format `price_...`. | Empty |
+| Unit Price (local currency per USD) | Calculates the estimated amount due shown in the wallet. | Set the preview unit price to match the actual Stripe price. | `8` |
+| Minimum Top-up (USD) | Minimum top-up amount for Stripe. | Must be `0` or greater. | `1` |
+| Promotion Codes | Allows users to enter a promotion code at Stripe Checkout. | Enable if needed. | Off |
+
+</div>
+
+#### Creem
+
+- Billing and Payments › Payment Gateway › Creem
+
+![Billing and Payments › Payment Gateway › Creem page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-creem.png)
+
+Connect the Creem international payment platform and map Creem products to top-up packages. After a successful purchase, the system credits the configured number of quota points to the user’s account.
+
+- Billing and Payments › Payment Gateway › Creem › Add Creem Product
+
+![Billing and Payments › Payment Gateway › Creem › Add Creem Product page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-creem-add-product.png)
+
+**Procedure**
+
+1. In the Creem dashboard, set the webhook URL to `<ServerAddress>/api/creem/webhook`.
+2. Enter the API key and webhook secret, then select test or live mode.
+3. Click “Add Product” and enter the name, product ID, currency, and price.
+4. Convert the balance you want to credit into quota points and enter the result in “Quota.”
+5. Verify that the locally configured price and currency match the Creem product.
+6. Click “Save All Settings” at the top of the page.
+
+**Configuration settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| API Key | Used to create checkout sessions through the Creem API. | Enter the Creem API key. After setup, leave blank unless you are updating it. | Empty |
+| Webhook Secret | Verifies signatures on Creem payment notifications. | Enter the webhook signing secret. After setup, leave blank unless you are updating it. | Empty |
+| Test Mode | Selects the test or live API. | The system stores a single API key, webhook secret, and product list. When switching modes, enter the values for the selected environment. | Off |
+
+</div>
+
+**“Add Product” settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Product Name / Name | Top-up package name shown to users. | Required, for example, “Basic Top-up Package.” | — |
+| Product ID | Links the package to a product in Creem. | Required. Obtain the ID from the Creem dashboard. Its format is `prod_...`. | — |
+| Currency | Product currency configured locally. | Select `USD` or `EUR` to match the Creem dashboard. | `USD` |
+| Price | Product price displayed and recorded locally. | Enter at least `0.01`, for example, `10`. | `0` (must be changed) |
+| Quota | Number of quota points added to the user’s account. | Enter an integer of at least `1`, for example, `500`. | `0` (must be changed) |
+
+</div>
+
+#### Waffo Pancake
+
+- Billing and Payments › Payment Gateway › Waffo Pancake
+
+![Billing and Payments › Payment Gateway › Waffo Pancake page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-waffo-pancake-mor.png)
+
+Link a Pancake merchant, store, and top-up product to create checkout sessions for the amount each user chooses to top up.
+
+<Callout type="info" title="Waffo Pancake MoR">
+
+- Start accepting payments globally without registering a company. Waffo Pancake is designed for independent developers, one-person businesses (OPCs), and startup teams.
+- As your Merchant of Record, Waffo Pancake handles compliance for global payments, including consumption taxes, invoicing, subscription management, refunds, and chargebacks.
+- Individual developers can launch quickly and focus on their products while Pancake handles compliance. Onboarding takes minutes, from a single prompt to a complete integration.
+
+</Callout>
+
+**Procedure**
+
+1. In Pancake, set the webhook URL for the appropriate environment. Use `<ServerAddress>/api/waffo-pancake/webhook/test` for testing and `<ServerAddress>/api/waffo-pancake/webhook/prod` for production.
+2. Enter the merchant ID and API private key. Wait for credential verification and for the catalog to load.
+3. Select an existing store and an active product.
+4. To create a new store and product, first enter the payment return URL, then click “+ Create ….”
+5. Click “Save All Settings” at the top of the page.
+
+<Callout type="info" title="Tip">
+
+- Creating a store and product adds them to Pancake. Click “Save All Settings” to save their bindings on this site.
+- If you create a product with the payment return URL blank, the browser asks “The payment return URL is empty. Create the product without a SuccessURL redirect?”
+- Once enabled, Waffo Pancake appears automatically as a payment method in the wallet. To customize its display name, icon, or minimum top-up amount, add an entry under “General › Payment Methods” with the handler ID `waffo_pancake`.
+
+</Callout>
+
+**Results**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Situation | Message | Next step |
+| --- | --- | --- |
+| Credential verification failed | “Credential verification failed: …” | Check the merchant ID and API private key. |
+| Merchant has no stores | “This merchant has no stores yet. Set the return URL, then click Create to create the first store and product pair.” | Enter the payment return URL, then create the store and product. |
+| Creation succeeded | “Store and product created: …” | Click “Save All Settings.” |
+| Creation failed | “Creation failed: …” | — |
+| Save rejected | If the merchant ID is missing, “Merchant ID is required.”<br/>If a store or product is missing, “Select or create both a store and a product before saving.” | Complete the missing fields and save again. |
+| Save completed | On success, “Waffo Pancake settings saved.”<br/>On failure, “Failed to save Waffo Pancake settings: …” | — |
+
+</div>
+
+**Configuration settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap [&_td_code]:wrap-anywhere">
+
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Merchant ID | Identifies the current Pancake merchant. | During setup, enter the merchant ID supplied by the platform. Its format is `MER_...`. | — |
+| API Private Key | Authorizes access to the Pancake merchant API. | During initial setup, enter the private key for the target environment. Leave blank to keep an existing key. | — |
+| Link Pancake Store | Selects the store New API uses. | Select a store after the catalog loads with valid credentials. Switching stores clears the current product selection. | — |
+| Link Pancake Product | Selects the product used for wallet top-ups. | Select an active product in the store. The same product supports checkout for different top-up amounts, so one product is sufficient. | — |
+| Payment Return URL | Sets the redirect destination after a successful payment when creating a product. | Enter the URL before creating the product, for example, `https://api.example.com/wallet`. If you leave it blank, the browser asks for confirmation. | — |
+
+</div>
+
+#### Waffo
+
+- Billing and Payments › Payment Gateway › Waffo
+
+![Billing and Payments › Payment Gateway › Waffo page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-waffo.png)
+
+Connect the Waffo payment aggregator to manage environment-specific credentials, payment settings, and the payment methods available to users.
+
+<Callout type="info" title="Waffo Payment Aggregator">
+
+- The payment aggregation model is designed for businesses. Register with Waffo using your own registered company (offshore entity).
+- Use the Waffo dashboard to obtain the API key, merchant ID, and RSA key pair and to configure the callback URL.
+
+</Callout>
+
+- Billing and Payments › Payment Gateway › Waffo › Add Waffo Payment Method
+
+![Billing and Payments › Payment Gateway › Waffo › Add Waffo Payment Method page](/assets/guide/feature-guide/system-settings-billing-and-payments-payment-gateway-waffo-add-payment-method.png)
+
+**Procedure**
+
+1. Turn on “Enable Waffo.” Turn on “Sandbox Mode” if needed.
+2. Enter the API key, RSA private key, and Waffo public key for the selected environment. Enter the merchant ID and configure the amount settings.
+3. Verify the notification callback URL and payment return URL.
+4. Add or edit a payment method and click “Confirm” in the dialog.
+5. Click “Save All Settings” at the top of the page.
+
+<Callout type="info" title="Tip">
+
+- Clicking “Confirm” in the payment method dialog updates the list. Click “Save All Settings” to save the changes.
+
+</Callout>
+
+**Credential settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Enable Waffo | Controls whether this payment channel is available. | Turn on during setup and configure the credentials for the selected environment. | Off |
+| Sandbox Mode | Selects which environment’s credentials to use. | Turn on for sandbox or off for production. Use a matching set of credentials for the selected environment. | Off |
+| API Key (production / sandbox) | Authorizes API calls in the corresponding environment. | Enter the key the first time you use the environment. Leave blank to keep an existing key. | Empty |
+| Merchant ID | Identifies the merchant receiving payments. | Enter the ID provided in the Waffo dashboard. | Empty |
+| RSA Private Key (production / sandbox) | Signs payment requests in the corresponding environment. | Paste the complete private key that matches the credentials registered with the platform. Leave blank to keep an existing key. | Empty |
+| Waffo Public Key (production / sandbox) | Verifies payment notifications in the corresponding environment. | Enter the public key supplied by Waffo. Clearing the field and saving removes the existing key. | Empty |
+
+</div>
+
+**Amount and URL settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap [&_td_code]:wrap-anywhere">
+
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Currency | Specifies the currency for payment orders. | Read-only in the current interface. The system treats a blank value as `USD` and saves it as `USD`. | `USD` |
+| Unit Price (USD) | Determines the amount charged per top-up unit. | The form accepts values of `0` or greater. Waffo calculates the payment amount using this unit price in USD. | `1` |
+| Minimum Top-up Quantity | Sets the minimum number of units a user can top up. | Enter an integer of at least `1`. | `1` |
+| Notification Callback URL | Receives payment results from Waffo’s servers. | Optional. Enter a complete URL that includes `/api/waffo/webhook`, such as `https://api.example.com/api/waffo/webhook`. If blank, the system builds the URL from the callback base URL or server address. | Empty |
+| Payment Return URL | Specifies where the browser redirects after payment. | Optional. Enter a complete page URL, such as `https://api.example.com/wallet`. If blank, the system appends `/wallet?show_history=true` to the server address. | Empty |
+
+</div>
+
+**“Add Payment Method” settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Display Name | Payment method name shown in the wallet. | Required, for example, “Card.” If blank, the form displays “Payment method name cannot be empty.” | — |
+| Icon | Image used for the payment method. | Optional. Click “Upload” to select a PNG, JPG, SVG, or WebP image up to 100 KB. The recommended maximum dimensions are 128 × 128 pixels. Click “Clear” to remove the icon.<br/>For files larger than 100 KB, the form displays “Icon file must be 100 KB or smaller.” | Empty |
+| Payment Method Type | Value sent to Waffo as `payMethodType`. | Enter a type supported by the merchant. | — |
+| Payment Method Name | Value sent to Waffo as `payMethodName` to specify a particular payment method. | Optional. Use the value specified by the platform. Users see the separate “Display Name” field in the wallet. | Empty |
+
+</div>
+
+#### Verifying Charges and Account Credit
+
+Use the table below to verify the amount due and the quota credited for each gateway.
+
+**What to verify**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Gateway | Checks during setup |
+| --- | --- |
+| EPay | Check the local unit price, top-up ratio, and discount against the amount the provider actually collects. The quota credited is based on the top-up amount in the order. |
+| Stripe | Verify the local quote and the amount charged under the Stripe Price separately. The group ratio affects the credit applied on the site. Stripe promotion codes and local discounts use separate mechanisms. |
+| Creem | Verify that the actual product price matches the price shown on the site. The system credits the configured quota points directly to the user’s account. |
+| Waffo | Check the environment, actual payment currency, unit price, ratio, and notification URL. The displayed exchange rate cannot be used to infer the gateway charge. |
+| Waffo Pancake | Wallet checkout uses the USD price calculated for the current top-up. The unit price defaults to `1` USD and has no corresponding input field in the interface. The calculation also applies the top-up ratio and amount discount. Verify provider taxes and fees and the final amount due at checkout. |
+
+</div>
+
+### Check-in Rewards
+
+- Billing and Payments – Check-in Rewards
+
+![Billing and Payments – Check-in Rewards page](/assets/guide/feature-guide/system-settings-billing-and-payments-check-in-rewards.png)
+
+Enable or disable daily check-ins and set the minimum and maximum Quota rewards. Users receive a reward in that range when they successfully check in.
+
+**Steps**
+
+1. Turn on “Enable Check-in.”
+2. Enter the Minimum Check-in Quota and Maximum Check-in Quota.
+3. Click “Save Check-in Settings” at the top of the page.
+
+<Callout type="warn" title="Important">
+
+- If the maximum exceeds the minimum, the system randomly awards an amount from the inclusive range. Otherwise, it always awards the minimum.
+- The current form accepts a minimum greater than the maximum without showing a validation error.
+- The service process’s local date determines when a new check-in day begins for all users. In multi-instance deployments, use the same time zone on every node.
+- A unique constraint on the user and date prevents users from claiming more than one reward on the same day.
+- When Turnstile is enabled globally, check-in requests must also pass Turnstile verification.
+
+</Callout>
+
+**Configuration Options**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Enable Check-in | Controls whether users can claim random Quota rewards through daily check-ins. | Toggle labeled “Allow users to earn random Quota rewards by checking in daily.” | Off |
+| Minimum Check-in Quota | The lower limit for a single check-in reward, expressed in internal Quota units. | Appears when check-in is enabled. Enter an integer greater than or equal to `0`. | `1000` |
+| Maximum Check-in Quota | The upper limit for a single check-in reward, expressed in internal Quota units. | Appears when check-in is enabled. Enter an integer greater than or equal to `0`. | `10000` |
+
+</div>
+
+## Saving and Applying Changes
+
+For instructions on saving, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#save-methods" target="_blank" rel="noopener noreferrer">System Settings Overview</a>. For details on when changes take effect across instances, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#scope-and-multi-instance-synchronization" target="_blank" rel="noopener noreferrer">Scope and Multi-instance Synchronization</a>. For when browsers display updated values, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#frontend-display-and-caching" target="_blank" rel="noopener noreferrer">Frontend Display and Caching</a>.
+
+Unless otherwise noted, the node that handles the save request applies the new values immediately. Other nodes pick them up through system settings synchronization, typically within about 3 seconds and no later than one sync interval, which defaults to 60 seconds. The `SYNC_FREQUENCY` environment variable sets the sync interval in seconds. Restart New API after changing it. The tables below show when each setting takes effect.
+
+**Quota, Currency, and Display**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| New User Quota | Click “Save Changes” at the top of the page. | Applies only to users who complete registration after the change. Existing users keep their current Quota. |
+| Referrer Reward, Invitee Reward | Click “Save Changes” at the top of the page. | Rewards apply only to registrations completed through an invitation after the change. |
+| Wallet Pre-charge Exemption Threshold (USD) | Click “Save Changes” at the top of the page. | The new threshold applies when the next request is evaluated for a pre-charge. In-flight requests use the previous threshold. |
+| Input Pre-charge Ratio, Pre-charge for Free Models | Click “Save Changes” at the top of the page. | The new values apply to the next request’s pre-charge calculation. In-flight requests use the previous values. |
+| Top-up Link | Click “Save Changes” at the top of the page. | Users see the new link the next time they open the Wallet page. |
+| Show Token Statistics | Click “Save Changes” at the top of the page. | The OpenAI-compatible Quota query endpoint uses the new setting starting with the next call. |
+| Other Currency and Display Fields | Click “Save Changes” at the top of the page. | Users see amounts based on the new settings after refreshing the page. The browser used to save the changes updates automatically. New log entries record amounts using the updated settings, and existing entries retain their recorded amounts. |
+
+</div>
+
+**Model and Tool Pricing**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| Model Pricing | “Save Model Pricing” submits all modified models at once. “Confirm Changes” in “Upstream Price Sync” works the same way. | The new prices apply to pre-charges and settlement starting with the next request. In-flight requests are settled at the prices set when they started. Users who already have the Model Marketplace open see the new prices after refreshing the page. |
+| Reset Pricing | Runs immediately after confirmation, without a separate “Save Model Pricing” step. | Takes effect on the same schedule as model pricing changes. |
+| Expose Ratio Endpoint | Submitted with model pricing when you click “Save Model Pricing.” | Responses from the public endpoint can be cached for up to about 30 seconds. The node that handles the model pricing save request updates immediately. |
+| Tool Pricing | Click “Save Tool Pricing” at the bottom of the tab. | Applies the next time a tool call is billed. |
+
+</div>
+
+**Group Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| Ratios, Special Ratio Rules | Click “Save Group Settings” at the top of the page to submit all four subtabs together. | The new Ratios apply to billing starting with the next request. In-flight requests are settled using the Ratios set when they started. |
+| Top-up Ratio | Click “Save Group Settings” at the top of the page. | The new Ratio applies the next time a user estimates or starts a top-up. |
+| User-Selectable Groups, Group Visibility | Click “Save Group Settings” at the top of the page. | The system validates the Token’s Group on every request. If you make a Group unavailable for selection or delete it, the system rejects requests from existing Tokens that use that Group starting with their next request. |
+| Automatic Group Order | Click “Save Group Settings” at the top of the page. | The system selects Groups in the new order starting with the next request. Tokens that follow the global order inherit the change. |
+| Maximum Custom Groups per Token | Click “Save Group Settings” at the top of the page. | Starting with the next request, the system filters each Token’s custom Group list using the new limit. |
+| Use Automatic Group Selection by Default | Click “Save Group Settings” at the top of the page. | Applies only to newly created Tokens. Existing Tokens retain their assigned Groups. |
+
+</div>
+
+**Payment Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| Payment Compliance Confirmation | Click “Confirm and Enable.” This submits the confirmation separately from “Save All Settings.” | Confirmation immediately lifts restrictions on payments, redemption codes, subscription plans, and invitation rewards. |
+| General Settings | Click “Save All Settings.” | Users see the new payment methods and amount options the next time they open the Wallet page. The new prices, discounts, and minimum top-up amount apply when users place an order. |
+| Gateway Credentials and Parameters | Click “Save All Settings.” Leave key fields blank to retain their existing values. | The system reads the new values the next time it creates an order or receives a payment notification. Existing orders retain the callback URL set when they were created. |
+
+</div>
+
+**Check-in Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| Enable Check-in | Click “Save Check-in Settings” at the top of the page. The button is available only when there are changes. | Turning off check-ins causes the system to reject the user’s next check-in attempt. The check-in card on the Personal Settings page appears or disappears after a refresh. |
+| Minimum Check-in Quota, Maximum Check-in Quota | Click “Save Check-in Settings” at the top of the page. The button is available only when there are changes. | The new range applies starting with the next check-in. Previously claimed rewards keep their original amounts. |
+
+</div>
+
+**Additional Notes**
+
+- **Saving individual settings.** “Save Changes,” “Save Group Settings,” “Save All Settings,” and “Save Check-in Settings” submit only modified settings. Each successful update displays “Settings updated successfully.” With no changes, “Save Group Settings” shows no message, while the other save actions show “No changes to save.”
+- **Unsaved changes.** If you leave the page with unsaved changes under Quota Settings or Currency and Display, the “Unsaved Changes” dialog lets you choose “Leave” or “Stay.”
+- **Model pricing confirmation and messages.** If pricing has changed, confirm the changes in “Confirm Pricing Changes” first. A successful save displays “Model pricing saved.” If there are no changes, the message is “No model pricing changes to save.”
+- **Pricing changed by someone else.** If someone else changes the same model’s pricing after you open the page, the system rejects your save. Click “Reload Pricing” and reapply your changes.
+- **Changing the EPay signature method.** In a single save, the system writes the private and public keys before writing the signature method. If the signature method is RSA and a required key cannot be parsed, the system rejects the save and displays either “EPay merchant private key is missing or incorrectly formatted” or “EPay platform public key is missing or incorrectly formatted.”
+
+## Important Considerations
+
+- **“Reset Pricing” clears all custom prices**, including billing expressions. See [Model Pricing](#model-prices).
+- **Estimates and actual charges can differ.** The Token Estimator excludes request rules and Group Ratios. Check the Usage Logs for actual charges.
+- **Wallet credit depends on the payment notification.** The wallet is credited when the payment gateway sends a payment notification to the site. Returning to the site after completing payment does not trigger the credit. For gateway requirements, see [Payment Gateways](#payment-gateway).
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="Why did the price stay the same after I saved?">
+
+**Possible causes**
+
+- The changes are still a draft awaiting final confirmation.
+- The model name, active mode, provider override, or pricing snapshot taken at the start of the request differs from what you expected.
+
+</Accordion>
+
+<Accordion title="Does removing a price make it free?">
+
+**Explanation**
+
+Removing an override may restore the default price. Tool pricing may also match a more specific prefix. An explicit zero, an unset price, and a deleted price are distinct states.
+
+</Accordion>
+
+<Accordion title="Why can't I access the public pricing endpoint?">
+
+**Explanation**
+
+The current endpoint path is `/api/ratio_config`.
+
+**Possible cause**
+
+“Expose Ratio Endpoint” is turned off.
+
+</Accordion>
+
+<Accordion title="Why doesn't the discount for 100 apply to 200?">
+
+**Explanation**
+
+Discounts require an exact match on the original amount. A discount configured for 100 applies only to 100.
+
+</Accordion>
+
+<Accordion title="Why does the Stripe quote differ from the checkout page?">
+
+**Possible causes**
+
+- The Stripe Price currency, unit price, or quantity differs from what you expected.
+- The local unit price, top-up Ratio, discounts, and Stripe promotion codes may have been conflated.
+
+</Accordion>
+
+<Accordion title="Why doesn't a Creem product Quota of 1 credit 1 USD?">
+
+**Explanation**
+
+This field uses internal Quota points. At the default conversion rate, 1 USD corresponds to 500,000 Quota units.
+
+</Accordion>
+
+<Accordion title="Does an empty key field mean the key is unset?">
+
+**Explanation**
+
+A key may already be configured even if the field is blank. For the general rules on how key fields are displayed, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#sensitive-settings-and-audit-logs" target="_blank" rel="noopener noreferrer">Sensitive Configuration and Audit Records</a>. Clearing the Waffo public key field and saving removes the existing key. A blank private key field retains its existing value.
+
+</Accordion>
+
+<Accordion title="Why can't a user select a particular Group?">
+
+**Possible causes**
+
+- The public list of available Groups, special rules, the account’s own Group, Ratio settings, or Token restrictions prevent the user from selecting the Group.
+- The user is using Auto, but `auto` is unavailable.
+
+</Accordion>
+
+<Accordion title="Why is Pancake still unconfigured after successful creation?">
+
+**Explanation**
+
+Creating the external resource, selecting it, and saving the local binding are three separate steps.
+
+**Resolution**
+
+Verify the selected store and product, then click “Save All Settings” to save the binding.
+
+</Accordion>
+
+<Accordion title="Why is the check-in reward always the minimum?">
+
+**Possible causes**
+
+- The maximum is less than or equal to the minimum.
+- The values were entered in a unit other than Quota points.
+
+</Accordion>
+
+<Accordion title="Why does saving invitation rewards show a feature-disabled message?">
+
+**Message**
+
+“Payment, redemption, subscription, and invitation reward features are disabled. The administrator must confirm compliance terms before enabling them.”
+
+**Possible cause**
+
+Payment compliance has yet to be confirmed, and either “Referrer Reward” or “Invitee Reward” is set to a value greater than `0`.
+
+**Resolution**
+
+1. Have a Root user confirm the compliance terms under “Payment Gateways.” See [Payment Compliance Confirmation](#payment-compliance-confirmation).
+2. Return to “Quota Settings” and save again.
+
+</Accordion>
+
+<Accordion title="Why does saving model pricing show a message that the pricing has changed?">
+
+**Message**
+
+The message includes `model pricing changed; reload before saving` (English only).
+
+**Possible cause**
+
+After you opened the page, someone else changed pricing for the same model, or it was changed in another window.
+
+**Resolution**
+
+1. Click “Reload Pricing.”
+2. Reapply your changes and save.
+
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">System Settings Overview</a> — Where to configure settings and how changes take effect.
+- <a href="/en/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">Model Management</a> — Model catalog and metadata.
+- <a href="/en/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">Billing Expressions</a> — Expression variables, functions, request rules, and cost simulation.
+- <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a> — Channel models, Groups, and routing.
+- <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a> — User Groups and account maintenance.
+- <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a> — User top-ups, balances, and plan usage.
+- <a href="/en/docs/guide/feature-guide/admin/subscription" target="_blank" rel="noopener noreferrer">Subscription Management</a> — Plans and standalone payment products.
+- <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> — Request usage and charge details.
+- <a href="/en/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">Task Logs</a> — Status of asynchronous tasks.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">Model Configuration</a> — Global model behavior and provider integration.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">Request Policy Configuration</a> — Retries and cross-Group retries for the `auto` Group.

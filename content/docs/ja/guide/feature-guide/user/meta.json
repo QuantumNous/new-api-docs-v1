@@ -2,15 +2,20 @@
   "title": "ユーザーガイド",
   "defaultOpen": false,
   "pages": [
+    "quick-start",
     "auth",
-    "personal-setting",
-    "token",
-    "api",
+    "playground",
     "chat-apps",
-    "pricing",
+    "overview",
+    "dashboard",
+    "token",
     "log",
-    "topup",
-    "subscription",
-    "task"
+    "audit-log",
+    "task-log",
+    "wallet",
+    "personal-setting",
+    "security",
+    "pricing",
+    "faq"
   ]
 }

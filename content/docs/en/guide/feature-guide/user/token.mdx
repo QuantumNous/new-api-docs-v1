@@ -1,61 +1,326 @@
 ---
 title: API Keys
-description: API keys are credentials for calling New API. Create and manage each key by setting quotas, models, groups, and source restrictions.
+description: Create, copy, and manage API keys for calling models. Set quota and expiration limits, restrict models and IP addresses, and import keys into clients such as CC Switch in one click.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-Click 'API Keys' in the left navigation, or directly visit `/keys`. The page displays information such as key name, masked key, enabled status, quota usage, and group, and supports filtering, copying, editing, enabling/disabling, and batch deletion. The row menu also allows copying connection information, opening admin-configured chat presets, and sending the key to supported client integrations.
+- In the sidebar, go to “General” → “API Keys”.
+- Create and manage API keys.
+- Model calls deduct quota from your account (wallet balance or subscription quota) based on pricing.
 
-![API密钥信息页](/assets/guide/feature-guide/keys-info.png)
+<Callout type="info" title="Tip">
 
-## Create API Keys
-
-1.  Open 'API Keys' and click 'Create API Key'.
-2.  Fill in the key name to easily distinguish applications or environments.
-3.  Set quota, expiration time, model restrictions, IP restrictions, and groups as needed.
-4.  After saving, view and copy the complete key from the list.
-
-![创建API密钥页](/assets/guide/feature-guide/create-key.png)
-
-### Configuration Item Description
-
-| Setting | Function |
-| --- | --- |
-| Name | API Key Name (recommended to name by purpose, e.g., "Production Environment", "Test Use") |
-| Group | Specify the channel group used by this token |
-| Auto Group Order | Only displayed when the group is `auto`; can inherit Root's global order, or set key-level order. |
-| Cross-Group Retry Switch | When enabled, if the current group channel fails, it will attempt the next group's channel in order. |
-| Expiration Time | Refuse to use this key after expiration |
-| Quantity | Multiple API keys can be created at once (a random suffix will be added to the name) |
-| Quota | Restrict the quota that this key can consume |
-| Unlimited Quota Switch | Enable unlimited quota for this API key when turned on |
-| Model Restrictions | Restrict this token to call only specified models; leave blank for no restrictions |
-| IP Whitelist | Supports filling in IP or CIDR line by line; leave blank for no restrictions; should be used with trusted reverse proxies/CDNs |
-
-<Callout type="warn">
-  API keys are equivalent to passwords. Do not submit the complete key to code repositories, screenshots, logs, or chat tools; if you suspect a leak, immediately delete it and create a new key.
+- An API key is a credential that a program or client uses to call models. It starts with `sk-` and is also called a “Token” in some messages.
+- The site determines the quota unit.
+- If “API Keys” is missing from the left sidebar, go to “Profile”, find “Personal Left Sidebar Settings”, enable “Console Section” and “Token Management”, and save your changes.
 </Callout>
 
-## View and Copy API Keys
+## API Keys Overview
 
-In the API key list, click the masked key to view and copy the complete value as prompted on the page. The complete key is a sensitive credential, and viewing it may require additional security verification.
+- API Keys – List
 
-'Copy Connection Info' will copy the key and platform address as application import information; click the target preset chat application in the left sidebar 'Chat', and the browser will attempt to launch the installed chat application and automatically jump to fill in the configuration information.
-![查看API密钥页](/assets/guide/feature-guide/view-key.png)
+![API Keys list page](/assets/guide/feature-guide/general-api-key.png)
 
-## Edit API Keys
+Use the list to filter by API key, key name, or status, and to view and manage your keys.
 
-In the API key list, find the target key, click the 'Edit' button on the right to modify the key's configuration options (excluding the API key itself).
+- [Create an API Key](#create-an-api-key)
+- [Copy a Key and Call a Model](#copy-a-key-and-call-a-model)
+- [Import into CC Switch or a Chat App](#import-into-cc-switch-or-a-chat-app)
+- [Edit, Disable, or Delete a Key](#edit-disable-or-delete-a-key)
 
-![编辑API密钥页](/assets/guide/feature-guide/edit-key.png)
-
-## Enable, Disable, and Delete API Keys
-
-You can enable, disable, or delete keys in the list row operations; multiple rows can be selected for batch deletion. Disabling retains the configuration and stops calls, while deleting is irreversible.
-
-![删除API密钥页](/assets/guide/feature-guide/delete-key.png)
-
-<Callout type="warn">
-  After deletion confirmation, the API key will immediately become invalid and cannot be recovered. Before deleting, please confirm the selected key to avoid accidentally deleting production keys.
+<Callout type="info" title="Tip">
+If a model call fails, see [Frequently Asked Questions](#frequently-asked-questions).
 </Callout>
+
+**Field descriptions**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and limits | Notes |
+| --- | --- | --- | --- |
+| Name | The key name, used to identify its purpose or environment. | Required when creating or editing a key. Up to 50 English characters or approximately 16 Chinese characters. | — |
+| Status | The key’s current status: Enabled, Disabled, Expired, or Exhausted. | You cannot edit the status directly. Use the power icon in the row to switch between “Enabled” and “Disabled”. The system automatically marks keys as “Expired” or “Exhausted”. You cannot enable these keys directly. | See [API Key Status](#api-key-status) for details. Rows for keys that are not enabled appear grayed out. |
+| API Key | The credential used to call models. It starts with `sk-`. | The system generates the key when you create it. The key cannot be changed. Viewing and copying full keys is rate-limited, including when copying connection info, importing into CC Switch or chat apps, and copying in bulk. Too many actions in a short period will fail. Wait before trying again. You may need to wait more than 10 minutes. | The list shows only the first and last few characters. Click the key text to view the full key or click the icon on the right to copy it. |
+| Quota (…) | The key’s available and used quota. The site’s quota unit appears in parentheses. | Configure this with “Quota” and “Unlimited Quota” in the create or edit dialog. This setting limits usage for the key itself. Model calls still deduct quota from your account. | Keys with unlimited quota show “Unlimited” and the amount used. Keys with a quota limit show the remaining quota, used quota, and a progress bar. Click to view “Remaining”, “Used”, and “Current Total Quota”. |
+| Group | The group used for model calls, which determines available routes and billing ratios. | Select a group under “Group” in the create or edit dialog. You can select only groups your account has access to. | Shows the group name and ratio, such as “1x”. If no group is specified, “User Group” and “Inherited” indicate that the key uses the account’s group. “Cross-Group” indicates that the key uses the `auto` group. |
+| Models | The models the key can call. | Select models under “Model Restrictions” in “Advanced Settings”. You can select only models available to your account. | Shows the number of selected models. Hover to see the list. “Unlimited” means the key can call all available models. |
+| IP Restrictions | The range of IP addresses allowed to use the key. | Configure the “IP Allowlist” in “Advanced Settings”. Only IP addresses on the allowlist can use the key. | Shows the number of IP addresses or subnets entered. Hover to see the list. “Unlimited” means there are no IP restrictions. |
+| Time | The key’s creation time and last-used time. | The system records these times automatically. They cannot be changed. | Shows “Created At” and “Last Used”. For a newly created key, both timestamps are the same. |
+| Expiration | The time at which the key expires. | Set this under “Expiration Time” in the create or edit dialog. The key cannot be used to call models after it expires. | “Never” means the key does not expire. Past expiration times appear in red. This column is hidden in the screenshot. To show it again, select it under “View”. |
+| Actions | The controls for actions on an individual key. | “Chat” appears only if an administrator has configured chat apps. | Includes the in-row enable/disable icon, edit icon, and ⋯ menu. See [Row Actions](#row-actions). |
+</div>
+
+## Create an API Key
+
+- API Keys – Create API Key
+
+![Create API Key page](/assets/guide/feature-guide/general-api-key-create.png)
+
+**Steps**
+
+1. Click “Create API Key” in the upper-right corner of the page.
+2. Enter a key name that identifies the app or environment.
+3. Configure the quota, expiration time, model restrictions, IP restrictions, group, and other settings as needed.
+4. Click “Save Changes”.
+
+**Configuration options**
+
+The dialog has three sections: “Basic Information”, “Quota Settings”, and “Advanced Settings”. “Advanced Settings” is collapsed by default. Click its heading to expand it. The table lists the options in the order they appear in the dialog.
+
+<div id="create-api-key-configuration-options" className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Option | Section | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- | --- |
+| Name | Basic Information | The key name, used to identify its purpose or environment. | Required. Include the name of the app or environment that uses the key. The limit is 50 English characters or approximately 16 Chinese characters. If you exceed the limit, the dialog displays “Token name is too long”. | Blank |
+| Group | Basic Information | The group used for model calls, which determines available routes and billing ratios. | Optional. The dropdown lists only groups your account has access to, along with each group’s description and ratio. Select `auto` to let the system choose an available group automatically. | No selection (“Select a Group”), so the key uses the account’s group. Some sites select `auto` by default. |
+| Auto Group Order | Basic Information | The groups the key tries when using the `auto` group, in the order it tries them. | Appears when “Group” is set to `auto`. Keep the default order or click “Add Auto Group” and drag the groups to reorder them. A custom order must include at least one group with no duplicates. The dialog shows the maximum number of groups (5 by default). | “Inherit Global Auto Order” |
+| Cross-Group Retry | Basic Information | Controls whether a failed model call is retried with the next group in the list. | Appears when “Group” is set to `auto`. Enable or disable it as needed. It applies only to the `auto` group. The “Request Policy” link at the end of the description is visible only to Root and opens the relevant system settings for the site. | Enabled automatically when `auto` is selected |
+| Expiration Time | Basic Information | The time at which the key expires. | Optional. Choose a date and time or click “Never”, “1 Month”, “1 Day”, or “1 Hour”. The three durations are measured from the current time. The system accepts past times, which makes the key unusable for model calls as soon as you save it. | Blank (“Never Expires”) |
+| Quantity | Basic Information | The number of keys to create at once. | Appears only when creating keys. The minimum is 1. If you create multiple keys, the first key uses the name you entered. The other keys get a random seven-character suffix, and the same length limit applies to the resulting names. If creation fails partway through, the process stops and any keys already created are retained. Each account has a key limit (1,000 by default). Exceeding it displays “Maximum token count reached (…)”. | 1 |
+| Quota (…) | Quota Settings | The maximum quota this key can use. The site’s quota unit appears in parentheses, as in “Quota ($)”. | Appears when “Unlimited Quota” is off. Enter a non-negative number. If the value exceeds the maximum, the dialog displays “Quota value is out of range. The maximum is …”. The key cannot call models once its quota is exhausted. | 10 |
+| Unlimited Quota | Quota Settings | Controls whether the key has its own usage limit. | Turn this setting on or off as needed. Turning it off shows the “Quota” field above it. Turning it on removes the key’s usage limit. Model calls still deduct quota from your account and fail if the account has insufficient quota. | On |
+| Model Restrictions | Advanced Settings | The models the key can call. | Optional. You can select multiple models from those available to your account. Leave the field empty to allow calls to all available models. | No selection (unrestricted) |
+| IP Allowlist (CIDR supported) | Advanced Settings | The IP addresses or subnets allowed to use the key. | Optional. Enter one IP address or CIDR subnet per line, such as 192.168.1.0/24. Comma-separated entries are unsupported. Leave the field blank to allow any IP address. The system ignores malformed lines. If every line is invalid, no address can use the key. IP addresses can be spoofed, so avoid relying on the allowlist as your only security measure. | Blank (unrestricted) |
+| Allow User Quota Queries | Advanced Settings | Controls whether the <a href="/en/docs/api/management/token-management/usage-token-get" target="_blank" rel="noopener noreferrer">Get Token Usage</a> endpoint also returns the account’s remaining and used quota when called with this key. | Turn this setting on or off as needed. It does not affect model calls. | On |
+</div>
+
+## Copy a Key and Call a Model
+
+**Steps**
+
+1. In the key’s row, click the copy button next to the key in the “API Key” column.
+2. Paste the key into your client.
+3. Click “API Address” in the upper-right corner of the page.
+4. Use the descriptions to choose an API address, then click the copy button next to it.
+5. Paste the API address into your client.
+
+**Calling models**
+
+1. In a client, the API address usually comes without `/v1`. Most OpenAI-compatible clients expect the API address followed by `/v1` in the Base URL field. Check your client’s documentation.
+2. For a direct request, append the endpoint path to the API address. The example below uses `/v1/chat/completions` for the chat endpoint.
+
+```bash
+curl https://your-host/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-xxxxxxxx" \
+  -d '{"model":"模型名称","messages":[{"role":"user","content":"你好"}]}'
+```
+
+- Replace `https://your-host` with the API address you copied, `sk-xxxxxxxx` with your API key, and `模型名称` with an available model name.<br/>This command works in macOS and Linux terminals and in Git Bash on Windows.
+- To see which models the key can call, send a request to the API address with `/v1/models` appended. See <a href="/en/docs/api/ai-model/models/list/listmodels" target="_blank" rel="noopener noreferrer">List Models (Native OpenAI Format)</a>.<br/>For other endpoints and parameters, see the API documentation, including <a href="/en/docs/api/ai-model/chat/openai/createchatcompletion" target="_blank" rel="noopener noreferrer">ChatCompletions Format</a>.
+
+<Callout type="warn" title="Keep Your API Key Secure">
+
+  - Anyone who obtains your API key can use it to consume your account quota.
+  - Do not share your key in group chats or include it in screenshots or public code repositories.
+  - If you suspect a key has been exposed, delete it immediately and create a new one.
+</Callout>
+
+## Import into CC Switch or a Chat App
+
+- API Keys – Import into CC Switch
+
+![Import into CC Switch page](/assets/guide/feature-guide/general-api-key-import-cc-switch.png)
+
+<a href="/en/docs/apps/cc-switch" target="_blank" rel="noopener noreferrer">CC Switch</a> is a desktop tool for managing Claude Code, Codex, and Gemini CLI configurations. Install it on your computer before using this feature.
+
+**Import into CC Switch**
+
+1. Open the ⋯ menu at the end of the key’s row and select “CC Switch” from the main menu to open the “Import into CC Switch” dialog.
+2. Under “App”, select Claude, Codex, or Gemini.
+3. Enter the configuration details as needed.
+4. Click “Open CC Switch”.
+5. Your browser prompts you to open CC Switch. After you confirm, CC Switch imports the API address, selected key, and model configuration.
+
+**Import into another chat app**
+
+1. Click ⋯ at the end of the selected key’s row to open the menu.
+2. Under “Chat”, select the chat app you want to import the configuration into.
+
+<Callout type="info" title="Tip">
+
+- Web apps open in a new tab. Install desktop apps and browser extensions first so the browser can launch them or pass the key to them directly.
+- “Chat” in the sidebar automatically uses the most recently created enabled key.
+</Callout>
+
+## Edit, Disable, or Delete a Key
+
+- API Keys – Update API Key
+
+![Update API Key page](/assets/guide/feature-guide/general-api-key-update.png)
+
+**Edit a key**
+
+1. Click the edit icon in the key’s row.
+2. Change the settings in the “Update API Key” dialog as needed.
+3. Click “Save Changes”.
+
+**Disable or enable a key**
+
+1. Click the power icon in the key’s row. The icon shows “Disable” for enabled keys and “Enable” for keys in all other states.
+2. The change takes effect immediately without a confirmation dialog.
+
+<Callout type="info" title="Tip">
+You cannot directly enable keys marked “Expired” or “Exhausted”. See [API Key Status](#api-key-status) for instructions.
+</Callout>
+
+**Delete a key**
+
+1. Click ⋯ at the end of the key’s row and select “Delete”.
+2. Check the key name and click “Delete”. To delete multiple keys at once, see [Bulk Actions](#bulk-actions).
+
+<Callout type="warn" title="Warning">
+  Deletion is permanent. Programs and clients using the key will immediately lose the ability to call models with it. To suspend a key temporarily, select “Disable”.
+</Callout>
+
+**Configuration options**
+
+The “Update API Key” dialog has the same options as the creation dialog and opens with the key’s current settings. For option definitions, requirements, limits, and defaults, see [Create API Key Configuration Options](#create-api-key-configuration-options). The table below lists the options that behave differently when you update a key.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Option | “Create API Key” dialog | “Update API Key” dialog |
+| --- | --- | --- |
+| Quantity | Shown with a default of 1. You can create multiple keys at once. | Hidden. You can edit one key at a time. |
+| Group | No group is selected by default. Some sites select `auto` by default. | Shows the key’s current group. If that group is no longer available, the dialog automatically selects an available group when it opens. The change takes effect when you save. |
+| Expiration Time, Quota (…) | The values you enter take effect when you save. | After changing these settings for an “Expired” or “Exhausted” key, select “Enable” in the list to reactivate it. |
+</div>
+
+<Callout type="info" title="Tip">
+
+- To replace a key, create a new key and delete the old one. To enable or disable a key, use the power icon in its row.
+</Callout>
+
+## Actions and Controls
+
+### Page Buttons and Filters
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Create API Key | Upper-right corner of the page | Opens the “Create API Key” dialog. See [Create an API Key](#create-an-api-key). |
+| API Address | Upper-right corner of the page | Lists the API addresses provided by the site. Each entry has a name, an address, a description, and a copy button. The description may be blank. If the site has no custom API addresses configured, the list shows a single “Default API Address” or “Current Domain” entry. |
+| Filter by Name... | Toolbar above the list | Finds keys by name and refreshes the list automatically as you type. The filter matches the full name by default. For a partial match, add `%` before and after the keyword, as in `%notebook%`. Use at most two `%` characters and enter at least two other characters. |
+| Filter by API Key... | Toolbar above the list | Finds keys by their full value. You can omit the `sk-` prefix. Partial matching follows the same rules as the name filter. |
+| Status | Toolbar above the list | Filters by one status at a time. The filter applies only to keys loaded on the current page. If you have many keys, increase “Rows per Page” first. |
+| View | Toolbar above the list | Use “Toggle Columns” to choose which columns to show. Your settings are saved in the current browser. |
+| Reset | Toolbar above the list | Appears when filters are active. Click it to clear all filters. |
+| Rows per Page, pagination | Bottom of the list | “Rows per Page” defaults to 20. Choose from 10, 20, 30, 40, 50, or 100. |
+</div>
+
+### Row Actions
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| View Full Key | Key text in the “API Key” column | Shows the full key in the “Full API Key” dialog. |
+| Copy API Key | Copy icon on the right side of the “API Key” column | Copies the full key in that row. |
+| Enable / Disable | Power icon in the “Actions” column | Toggles the key’s enabled status immediately without a confirmation dialog. You cannot directly enable keys marked “Expired” or “Exhausted”. See [API Key Status](#api-key-status). |
+| Edit | Edit icon in the “Actions” column | Opens the “Update API Key” dialog. See [Edit, Disable, or Delete a Key](#edit-disable-or-delete-a-key). |
+| Copy Key | ⋯ menu in the “Actions” column | Copies the full key in that row. |
+| Copy Connection Info | ⋯ menu in the “Actions” column | Copies the full key and this site’s address so administrators can fill in the “Create Channel” dialog in New API in one click. Model calls do not require this action. |
+| CC Switch | ⋯ menu in the “Actions” column | Opens the “Import into CC Switch” dialog. See [Import into CC Switch or a Chat App](#import-into-cc-switch-or-a-chat-app). |
+| Chat | ⋯ menu in the “Actions” column | Expands the list of configured chat apps. This option appears only if an administrator has configured chat apps. See [Import into CC Switch or a Chat App](#import-into-cc-switch-or-a-chat-app). |
+| Delete | ⋯ menu in the “Actions” column | Permanently deletes the key after confirmation. |
+</div>
+
+### Bulk Actions
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Select Key | Checkbox at the start of each row | Selects an individual key. Selecting a key shows the bulk action bar at the bottom of the page. |
+| Select All on Current Page | Checkbox in the table header | Selects all keys on the current page. |
+| Copy Selected Keys | Bulk action bar at the bottom | Copies all selected keys, one per line, with a tab between each name and key. |
+| Delete Selected API Keys | Bulk action bar at the bottom | Permanently deletes all selected keys after confirmation. |
+| Clear Selection | × on the left side of the bulk action bar | Clears all selections. You can also press Esc. |
+</div>
+
+## Status Reference
+
+### API Key Status
+
+The following four statuses appear in the list’s “Status” column and in the “Status” filter.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Enabled | The key can be used to call models. | — |
+| Disabled | The key was manually disabled. | To re-enable it, select “Enable” in the list. |
+| Expired | The key’s “Expiration Time” has passed. | Trying to enable the key directly displays “The token has expired and cannot be enabled…”. Edit the key, set “Expiration Time” to a future time or “Never”, and save. Then select “Enable” in the list. |
+| Exhausted | The key has used up its own quota. The account balance is tracked separately. | Trying to enable the key directly displays “The token’s available quota is exhausted and it cannot be enabled…”. Edit the key, increase “Quota” or turn on “Unlimited Quota”, and save. Then select “Enable” in the list. |
+</div>
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="A request returns “Invalid token”">
+**Error message** — “Invalid token”
+
+**Possible causes** — The request may be missing an API key, or the key may be incorrect, deleted, disabled, expired, or out of Quota. All of these cases return the same error message.
+
+**How to resolve**
+
+1. Copy the key again from the list. Make sure the request header is `Authorization: Bearer sk-…` with no extra spaces or line breaks before or after the key.
+2. In the “Status” column, verify that the key is “Enabled.” Check the “Expiration” and “Quota” columns to confirm that the key is still valid and has Quota remaining. For troubleshooting steps, see [API Key Status](#api-key-status).
+3. Make sure you are using an API key. Access Tokens created under “Security & Access” are for account management only. Model requests require an API key. See <a href="/en/docs/guide/feature-guide/user/security#create-and-manage-access-tokens" target="_blank" rel="noopener noreferrer">Security & Access</a>.
+4. If the issue persists, create a new key and try again, or contact your administrator.
+</Accordion>
+
+<Accordion title="A request returns “This token has no access to model …”">
+**Error message** — “This token has no access to model …”
+
+**Possible cause** — The key has “Model Restrictions” enabled, and the requested model is outside the allowed set.
+
+**How to resolve**
+
+1. Edit the key and expand “Advanced Settings.”
+2. Add the model to “Model Restrictions,” or clear “Model Restrictions” to allow requests to all available models.
+3. Click “Save Changes.”
+</Accordion>
+
+<Accordion title="A request returns “Your IP address is not on this token's allowlist”">
+**Error message** — “Your IP address is not on this token's allowlist”
+
+**Possible causes**
+
+- The key has an “IP Allowlist,” and the request is coming from an address outside that list. If you send the request through a proxy, the egress IP address may differ from your machine’s IP address.
+- The allowlist contains incorrectly formatted entries. The system ignores invalid entries. If every entry is invalid, requests using the key are blocked from all addresses.
+
+**How to resolve**
+
+1. Edit the key and open “Advanced Settings.” Under “IP Allowlist,” add the machine’s egress IP address or subnet, with one entry per line.
+2. If you cannot identify the invalid entry, clear the allowlist and add the entries back one at a time.
+3. Click “Save Changes.”
+</Accordion>
+
+<Accordion title="A request returns a Group access or deprecation error">
+**Error message** — “No permission to access group …” or “Group … has been deprecated”
+
+**Possible cause** — The Group assigned to the key is no longer available. For example, an administrator may have changed the Group settings.
+
+**How to resolve**
+
+1. Edit the key. When you open the edit dialog, the “Group” field may already show an available Group selected automatically.
+2. Verify that the selected “Group” is available in the drop-down list.
+3. Click “Save Changes.”
+</Accordion>
+
+<Accordion title="A request returns an insufficient Quota error, including for keys with “Unlimited Quota” enabled">
+**Note** — “Unlimited Quota” removes the usage limit for the key itself. Requests still draw from your account Quota. Use the exact error message to identify the cause.
+
+| Error message | Possible cause | How to resolve |
+| --- | --- | --- |
+| “Insufficient user quota”<br/>“Not enough quota to pre-consume” | Your account balance is too low. “Not enough quota to pre-consume” means the balance is below the estimated cost of the request. Longer inputs, higher model prices, and higher Group Ratios increase the estimate. | Top up your balance or redeem Quota in your <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a>. |
+| “Subscription quota is insufficient or no subscription is configured” | The request is billed against a subscription, but the subscription has insufficient Quota or no subscription is available. | Check your subscription in your <a href="/en/docs/guide/feature-guide/user/wallet#subscription-plans" target="_blank" rel="noopener noreferrer">Wallet</a>. |
+| token quota is not enough (English only) | The key has a usage limit, and its remaining Quota is too low to cover the request. | Edit the key and increase its “Quota.” |
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a> — Top up your balance, redeem Quota, and view your account balance and subscriptions.
+- <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> — View details and charges for each request.
+- <a href="/en/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">Model Marketplace and Leaderboard</a> — View available models and their prices.
+- <a href="/en/docs/guide/feature-guide/user/chat-apps" target="_blank" rel="noopener noreferrer">Chat</a> — Open a chat app from “Chat” in the sidebar or configure a client manually.

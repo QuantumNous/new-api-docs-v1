@@ -1,0 +1,870 @@
+---
+title: Security & Access
+description: Change your password, link your email address and third-party accounts, enable two-step verification and Passkey, manage login sessions and access tokens, choose whether to log IP addresses, or delete your account.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- In the sidebar, go to “Personal” → “Security & Access”.
+- Manage your login password, linked accounts, two-step verification, Passkey, login sessions, and access tokens. You can also choose whether to log IP addresses or delete your account.
+- Verify your identity before performing sensitive actions such as changing your password, linking an account, or creating an access token. Most of these actions use the “Security Verification” dialog.
+
+<Callout type="info" title="Tip">
+
+- “Access Tokens” start with `nap_` and are used to manage your account from scripts. To call models, use an <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API key</a> that starts with `sk-`.
+- The “Security Verification” section on the right manages Passkey and two-step verification. The identity confirmation prompt that opens during sensitive actions has the same name. This page calls it the “Security Verification” dialog.
+- Third-party account linking and Passkey are available only after the administrator enables the corresponding login methods. See <a href="/en/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">Authentication Configuration</a>.
+- If “Security & Access” is missing from the left sidebar:<br/>Go to “Personal Profile”, open the “Personal Sidebar Settings” section, enable “Personal Center” and “Security & Access”, and save your changes.
+</Callout>
+
+## Security & Access overview
+
+- Security & Access — Overview
+
+![Security & Access overview page](/assets/guide/feature-guide/personal-security-and-access.png)
+
+The left side of the page contains “Login & Authentication”, “Sessions & Access”, and “Account Actions”. The right side contains “Security Verification” and “Privacy”. From this page, you can:
+
+- [Complete security verification](#complete-security-verification)
+- [Change or set your password](#change-or-set-your-password)
+- [Link your email address and third-party accounts](#link-your-email-address-and-third-party-accounts)
+- [Enable two-step verification](#enable-two-step-verification)
+- [Regenerate backup codes](#regenerate-backup-codes)
+- [Disable two-step verification](#disable-two-step-verification)
+- [Enable Passkey](#enable-passkey)
+- [Remove a Passkey](#remove-a-passkey)
+- [Manage login sessions](#manage-login-sessions)
+- [Create and manage access tokens](#create-and-manage-access-tokens)
+- [View access token activity](#view-access-token-activity)
+- [Choose whether to log IP addresses](#configure-ip-address-logging)
+- [Delete your account](#delete-your-account)
+
+<Callout type="info" title="Tip">
+If verification fails, account linking fails, or a request using an access token returns an error, see the [FAQ](#frequently-asked-questions).
+</Callout>
+
+**Field descriptions**
+
+Each card occupies one row. The table follows the order of the cards from top to bottom on the left, then from top to bottom on the right. On narrow screens, the cards appear in a single column in the same order.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Card | Section | Description | Requirements and limits | Notes |
+| --- | --- | --- | --- | --- |
+| Change Password | Login & Authentication | Change your login password. | Requires security verification. | Appears as “Set Password” if your account has no password, such as when you registered using only a third-party account. |
+| Linked Accounts | Login & Authentication | The email address and third-party accounts linked to your account. | “Email” always appears. Other accounts appear only after the administrator enables the corresponding login methods. | Linked entries display the account and “Linked”. Unlinked entries display “Not Linked”. “GitHub Enterprise” in the screenshot is a third-party login method added by the administrator. |
+| Login Sessions | Sessions & Access | Devices currently signed in to your account. | Sessions are created automatically when you sign in and become invalid when they expire. | The current browser session is marked “Current”. |
+| Access Tokens | Sessions & Access | Credentials used to call the dashboard API from scripts. | Up to 20 per account. | Displays the name, `nap_…`, permissions, creation time, expiration time, and recent usage. “Top-up and Subscription Management” in the screenshot is a permission that only an administrator can grant. |
+| Delete Account | Account Actions | Delete the current account. | Requires you to enter your username and complete security verification. | The Root account cannot be deleted. |
+| Passkey Login | Security Verification | Sign in without a password using your device’s fingerprint recognition, facial recognition, PIN, or security key. | You can register one Passkey per account. | “Passkey Authentication” shows “Enabled” or “Disabled”, along with “Last used:”. |
+| Two-Step Verification | Security Verification | Enter a one-time code from your authenticator in addition to your password when signing in or performing sensitive actions. | — | When enabled, shows “Remaining backup codes: …”. Dialogs and buttons also refer to this feature as “Two-Factor Authentication” or “2FA”. The interface refers to backup codes as “Backup Codes” or “Recovery Codes”. |
+| Log IP Addresses | Privacy | Controls whether usage logs include the caller’s IP address. | Click “Save Settings” after making a change. | Disabled by default. |
+</div>
+
+## Complete security verification
+
+- Security & Access — Security Verification
+
+![Security & Access security verification page](/assets/guide/feature-guide/personal-security-and-access-security-verification.png)
+
+Actions that require verification in the table below open the “Security Verification” dialog with the message “Please verify your identity before performing this sensitive action.” When you delete an account, the dialog is titled “Delete Account”. The screenshot shows three versions of the dialog for different account states.
+
+**Steps**
+
+1. If multiple verification methods are available, select one at the top of the “Security Verification” dialog.
+2. Enter the verification code or password for the selected method, or follow your device’s prompts to verify with Passkey.
+3. Click “Verify”. If you selected “Linked Account”, click “Continue with …” and complete authorization in the pop-up window.
+
+<Callout type="info" title="Tip">
+
+- After verification succeeds, complete the action within 1 minute. Each verification is valid for a single action. If you change the details of the action, such as the permissions or email address, verify your identity again.
+- If your account has two-step verification enabled or a Passkey registered, verification is limited to those two methods.
+- If your account has a Passkey registered, “Passkey” is selected by default.
+</Callout>
+
+**Verification methods**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Verification method | When available | What to enter or do |
+| --- | --- | --- |
+| Authenticator Code | Two-step verification is enabled on the account. | In “Authenticator Code or Backup Code”, enter the 6-digit code from your authenticator or an unused backup code. When regenerating backup codes, enter the 6-digit code. After 5 consecutive incorrect attempts, verification is locked for 5 minutes. |
+| Passkey | A Passkey is registered to the account, and the administrator has enabled Passkey. | Follow your browser or operating system prompts to confirm with fingerprint recognition, facial recognition, a PIN, or a security key. If the site has multiple Passkey domains, click “Use a passkey from another website” to select a domain. |
+| Password | The account has a password and has neither two-step verification enabled nor a Passkey registered. | Enter your current login password. When changing your password, the value entered in “Current Password” verifies your identity directly, so the “Security Verification” dialog stays closed. |
+| Linked Account | The account has no password and has neither two-step verification enabled nor a Passkey registered. | Click “Continue with …” and authorize with the linked third-party account in the pop-up window. |
+</div>
+
+**Actions that require security verification**
+
+| Action | Available verification methods |
+| --- | --- |
+| Set or change your password, link an email address or third-party account, unlink a third-party account, enable two-step verification, enable Passkey, create an access token, change access token permissions, revoke an access token, or delete your account | Use two-step verification or Passkey if either is set up. Otherwise, use your password, or use a linked account if you have no password. |
+| Remove a Passkey | Two-step verification or Passkey only. |
+| Regenerate backup codes or disable two-step verification | Two-step verification or Passkey only. When regenerating backup codes with two-step verification, enter the 6-digit authenticator code. Backup codes are unavailable for this action. |
+| Change only an access token’s name, end a login session, save “Log IP Addresses”, or view access activity | No security verification required. |
+
+## Change or set your password
+
+- Security & Access — Change Password
+
+![Security & Access change password page](/assets/guide/feature-guide/personal-security-and-access-change-password.png)
+
+**Steps**
+
+1. Under “Login & Authentication”, click “Change Password”. If your account has no password, click “Set Password”.
+2. In the dialog, fill in “Current Password”, “New Password”, and “Confirm New Password”. “Current Password” appears only when you change an existing password.
+3. Click “Change Password” or “Set Password” at the bottom of the dialog.
+4. Complete verification if the “Security Verification” dialog opens.
+
+<Callout type="info" title="Tip">
+
+- When you change your password, the “Current Password” field verifies your identity directly if you have neither two-step verification enabled nor a Passkey registered. If either is set up, the “Security Verification” dialog opens and requires one of those methods. When you set a password, complete verification in the “Security Verification” dialog.
+- After a successful change, all sessions on other devices end and the current device stays signed in. The system sends a notification to the email address on your account.
+- If the administrator disables password login, “Password” is unavailable in the “Security Verification” dialog.
+</Callout>
+
+**Field descriptions**
+
+The fields below appear in the order shown in the “Change Password” and “Set Password” dialogs.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Current Password | Your account’s current login password. | Required and shown only when changing your password. If left blank, the dialog shows “Please enter your current password”. If the password is incorrect, it shows “The current password is incorrect.” | Blank |
+| New Password | The login password you want to set. | Required, 8–128 characters. Password strength and suggestions appear below the field and follow the same rules as <a href="/en/docs/guide/feature-guide/user/auth#create-an-account" target="_blank" rel="noopener noreferrer">Registration and Login</a>. The strength rating does not affect submission. If the length is outside the allowed range, the dialog shows “The password must be 8–128 characters long.” If the new password matches the current one, it shows “The new password must be different from the current password”. | Blank |
+| Confirm New Password | Enter the new password again. | Required. After you enter the password, “Passwords match” or “Passwords do not match” appears below the field. If the passwords differ, you cannot submit the form and the dialog shows “Passwords do not match”. | Blank |
+</div>
+
+## Link your email address and third-party accounts
+
+- Security & Access — Link Email
+
+![Security & Access link email page](/assets/guide/feature-guide/personal-security-and-access-account-binding.png)
+
+“Email” always appears under “Linked Accounts”. GitHub, Discord, OIDC, Telegram, LinuxDO, WeChat, and any other login methods added by the administrator appear only after the administrator enables them.
+
+**Link or change your email address**
+
+1. Click “Link” next to “Email”. If an address is already linked, click “Change”.
+2. Enter your email address in “Email Address”, then click “Continue”.
+3. Complete verification in the “Security Verification” dialog.
+4. In “New Email Verification Code”, enter the 6-digit code sent to your new email address. If you are changing your email address and used neither two-step verification nor Passkey to verify your identity, also enter the code sent to your previous address in “Current Email Verification Code”.
+5. Click “Confirm Email”.
+
+**Link a third-party account**
+
+1. Click “Link” next to the third-party account.
+2. Complete verification in the “Security Verification” dialog.
+3. Click “Continue” in the “Continue Linking Account” dialog.
+4. Sign in to the third-party account and authorize the connection in the pop-up window.
+
+**Link WeChat**
+
+1. Click “Link” next to “WeChat”.
+2. Scan the QR code in the “Link WeChat” dialog and follow the prompts to get a verification code.
+3. Enter the code in “Verification Code” and click “Link”.
+4. Complete verification in the “Security Verification” dialog.
+
+**Unlink a third-party account**
+
+1. Click “Unlink” next to the linked account.
+2. Confirm in the “Confirm Unlinking” dialog.
+3. Complete verification in the “Security Verification” dialog.
+
+<Callout type="info" title="Tip">
+
+- Email verification codes are valid for 10 minutes. After 60 seconds, you can click “Resend Code”. After 5 consecutive incorrect attempts, click “Start Over”. Once linking is complete, the system sends notifications to both the new and previous email addresses.
+- Once GitHub, Discord, OIDC, Telegram, LinuxDO, or WeChat is linked, the button shows “Linked” and is disabled. Contact the administrator to unlink one of these accounts. The page shows “Unlink” only for other login methods added by the administrator.
+- Your account must have at least one login method. If you try to remove the last one, the dialog shows “Add another login method before unlinking this account.”
+- Each third-party account can be linked to only one account.
+</Callout>
+
+## Enable two-step verification
+
+- Security & Access — Two-Step Verification Disabled
+
+![Security & Access page with two-step verification disabled](/assets/guide/feature-guide/personal-security-and-access-2fa-not-enabled.png)
+
+- Security & Access — Set Up Two-Factor Authentication
+
+![Security & Access two-factor authentication setup page](/assets/guide/feature-guide/personal-security-and-access-enable-2fa.png)
+
+**Steps**
+
+1. Under “Two-Step Verification”, click “Enable”.
+2. Complete verification in the “Security Verification” dialog.
+3. In step 1, “Scan QR Code”, use an authenticator app such as Google Authenticator or Microsoft Authenticator to scan the QR code. You can also click the copy button next to the key and add it to the app manually. Click “Next”.
+4. In step 2, “Save Backup Codes”, click “Copy All Codes”, save the 4 backup codes in a secure place, and click “Next”.
+5. In step 3, “Verify Setup”, enter the 6-digit code from your authenticator in “Verification Code”, then click “Enable 2FA”.
+
+<Callout type="warn" title="Save your backup codes">
+
+- Each backup code can be used once. If your authenticator is unavailable, you can enter a backup code in place of a verification code when signing in or in the “Security Verification” dialog.
+- You can view these backup codes only while the dialog is open. If you lose them, regenerate them.
+</Callout>
+
+<Callout type="info" title="Tip">
+
+- After completing security verification, finish all three steps within 5 minutes. If the setup times out, the dialog shows “Setup has expired. Scan the new QR code and save the new backup codes.” The system generates a new QR code and new backup codes, and the old ones become invalid.
+- The verification code changes every 30 seconds. If your phone’s clock is inaccurate, verification may fail.
+- After you enable two-step verification, all sessions on other devices end.
+</Callout>
+
+## Regenerate backup codes
+
+- Security & Access — Two-Step Verification Enabled
+
+![Security & Access page with two-step verification enabled](/assets/guide/feature-guide/personal-security-and-access-2fa-enabled.png)
+
+- Security & Access — Regenerate Backup Codes
+
+![Security & Access regenerate backup codes page](/assets/guide/feature-guide/personal-security-and-access-2fa-regenerate-backup-codes.png)
+
+**Steps**
+
+1. Under “Two-Step Verification”, click “Regenerate Backup Codes”.
+2. In the confirmation dialog, click “Generate New Codes”.
+3. In the “Security Verification” dialog, enter the 6-digit code from your authenticator or verify with Passkey.
+4. In the “Your New Backup Codes Are Ready” dialog, click “Copy All Codes”, save the codes, and click “Done”.
+
+<Callout type="info" title="Tip">
+
+- Regenerating backup codes invalidates all previous codes and creates 4 new ones. You can view them only while the dialog is open.
+- Backup codes are unavailable as a verification method for this action.
+- After you regenerate the codes, all sessions on other devices end.
+</Callout>
+
+## Disable two-step verification
+
+- Security & Access — Disable Two-Factor Authentication
+
+![Security & Access disable two-factor authentication page](/assets/guide/feature-guide/personal-security-and-access-2fa-disable-2fa.png)
+
+**Steps**
+
+1. Under “Two-Step Verification”, click “Disable 2FA”.
+2. In the “Disable Two-Factor Authentication” dialog, select “I understand that disabling 2FA will remove authenticator verification and its backup codes.”
+3. Click “Disable 2FA”.
+4. In the “Security Verification” dialog, enter a verification code or backup code, or verify with Passkey.
+
+<Callout type="warn" title="Note">
+
+- Disabling two-step verification deletes the authenticator key and all backup codes. Signing in no longer requires a verification code, which reduces your account’s security.
+- After you disable two-step verification, all sessions on other devices end. To re-enable it, scan a new QR code with your authenticator app.
+</Callout>
+
+## Enable Passkey
+
+- Security & Access — Passkey Disabled
+
+![Security & Access page with Passkey disabled](/assets/guide/feature-guide/personal-security-and-access-passkey-not-enabled.png)
+
+- Security & Access — Enable Passkey
+
+![Security & Access enable Passkey page](/assets/guide/feature-guide/personal-security-and-access-enable-passkey.png)
+
+**Steps**
+
+1. Under “Passkey Login”, click “Enable Passkey”.
+2. Complete verification in the “Security Verification” dialog.
+3. Follow your browser or operating system prompts to confirm with fingerprint recognition, facial recognition, a PIN, or a security key.
+
+<Callout type="info" title="Tip">
+
+- Passkey is available only after the administrator enables it. Otherwise, the “Security Verification” dialog shows “Passkey authentication is disabled.” See <a href="/en/docs/guide/feature-guide/system-settings/settings-auth#passkey-authentication" target="_blank" rel="noopener noreferrer">Authentication Configuration</a>.
+- Browser and operating system prompts vary by device. The screenshot shows the Windows prompt.
+- If your device or browser lacks support, the page shows “This device does not support passkeys” and the “Enable Passkey” button is disabled. If you access the site without HTTPS, registration may fail. Contact the administrator.
+- You can register one Passkey per account. If you switch devices, remove the existing Passkey first, then register it again on the new device. A Passkey is tied to the website domain used during registration and may stop working if the site’s address changes.
+- After you register a Passkey, all sessions on other devices end.
+</Callout>
+
+## Remove a Passkey
+
+- Security & Access — Passkey Enabled
+
+![Security & Access page with Passkey enabled](/assets/guide/feature-guide/personal-security-and-access-passkey-enabled.png)
+
+- Security & Access — Remove Passkey
+
+![Security & Access remove Passkey page](/assets/guide/feature-guide/personal-security-and-access-passkey-unbind.png)
+
+**Steps**
+
+1. Under “Passkey Login”, click “Remove Passkey”.
+2. In the “Remove passkey?” dialog, click “Remove”.
+3. In the “Security Verification” dialog, verify with two-step verification or Passkey.
+
+<Callout type="warn" title="Note">
+
+- Removing your Passkey disables Passkey login and ends all sessions on other devices.
+- The confirmation dialog says you’ll need to use a password the next time you sign in. If your account has no password, set one first or confirm that another login method is available.
+</Callout>
+
+## Manage login sessions
+
+**End a single session**
+
+1. Under “Login Sessions”, click “Revoke” next to another device or “Log Out” next to the current device.
+2. Confirm in the confirmation dialog.
+
+**End all other sessions**
+
+1. Click “Log Out of Other Sessions” in the upper-right corner of “Login Sessions”.
+2. In the “Log out of other sessions?” dialog, click “Log Out of Other Sessions”.
+
+<Callout type="info" title="Tip">
+
+- Ending a session immediately revokes the device’s access. To regain access on that device, sign in again. If you log out of the current device, you are redirected to the login page.
+- Ending a session does not require security verification.
+- The list shows only sessions that have yet to expire or be ended manually. Sessions become invalid automatically when they expire.
+- If you see a device you don’t recognize, revoke its session and change your password.
+</Callout>
+
+**Field descriptions**
+
+Each session occupies one row. The table lists the fields from top to bottom.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Description | Requirements and limits | Notes |
+| --- | --- | --- | --- |
+| Device | The browser and operating system used to sign in, such as “Chrome · Windows”. | Detected by the system. | If the system cannot identify the browser or device, it shows “Browser” or “Unknown Device”. The current browser session is marked “Current”. |
+| IP | The IP address used to sign in or most recently refresh the session. | Recorded automatically by the system regardless of the “Log IP Addresses” setting. | Shows “Unknown” if the address is unavailable. |
+| Login Method | The login method used to create the session. | Recorded automatically by the system. | Examples include “Password”, “Two-Factor Authentication”, “Passkey”, “WeChat”, “Telegram”, and “OAuth · GitHub”. |
+| Last Active | The most recent time the session was used. | Recorded automatically by the system. | Shown as a relative time, such as “15 minutes ago”. |
+| Expiration Time | The time the session becomes invalid. | The system sets this to 30 days after login and does not allow changes. | You must sign in again after the session expires. |
+</div>
+
+## Create and Manage Access Tokens
+
+- Security & Access – Access Tokens
+
+![Security & Access – Access Tokens page](/assets/guide/feature-guide/personal-security-and-access-access-token.png)
+
+- Security & Access – Create Access Token
+
+![Security & Access – Create Access Token page](/assets/guide/feature-guide/personal-security-and-access-access-token-create.png)
+
+Use access tokens in scripts to call dashboard APIs for account management, such as retrieving your profile, balance, and logs. Each token has only the permissions selected when it was created. Access tokens cannot be used to call models.
+
+**Create an access token**
+
+1. Click **Create Access Token** in the upper-right corner of **Access Tokens**.
+2. Enter a **Token Name** and select an **Expiration**.
+3. Under **Permissions**, select the actions you want to grant, such as **View** for **Profile**.
+4. Click **Create Access Token** at the bottom of the dialog.
+5. Complete verification in the **Security Verification** dialog.
+6. In the **Access Token** dialog, click **Copy Token**. Save the token, then click **Close**.
+
+<Callout type="warn" title="Keep your access tokens secure">
+
+- The token is shown only once, when you create it. You cannot view it again after closing the dialog. If you lose it, revoke it and create a new one.
+- Anyone who obtains an access token can act on the account within the token’s permissions. Grant **Edit** for **Account Security** with care. It allows actions such as changing the password, changing two-step verification settings, and deleting the account.
+
+</Callout>
+
+<Callout type="info" title="Tips">
+
+- Include `Authorization: Bearer nap_…` in the request headers.
+- Each account can have up to 20 access tokens. Tokens that expired within the past 7 days still count toward the limit. At the limit, **Create Access Token** is disabled.
+- To manage access tokens or login sessions, sign in to the web interface. Access tokens do not grant access to these operations.
+
+</Callout>
+
+**Edit an access token**
+
+1. Click ⋯ to the right of the token and select **Edit**.
+2. In the **Edit Access Token** dialog, change the **Token Name** or **Permissions**.
+3. Click **Save**. If you changed the permissions, complete verification in the **Security Verification** dialog.
+
+**Revoke an access token**
+
+1. Click ⋯ to the right of the token and select **Revoke**.
+2. Review the prompt in the confirmation dialog, “Revoke this access token? Scripts that use it will stop working immediately,” then confirm the revocation.
+3. Complete verification in the **Security Verification** dialog.
+
+<Callout type="warn" title="Warning">
+
+Revoking a token immediately invalidates and deletes it. You cannot restore it. API calls from scripts that use the token will fail immediately.
+
+</Callout>
+
+<Callout type="info" title="Tip">
+
+Legacy tokens created before the upgrade appear at the top of the list with a **Legacy Token** label and the message “Legacy tokens will be disabled on …. Create new tokens to replace them.” Legacy tokens stop working once disabled. Create new tokens to replace them and revoke the legacy tokens.
+
+</Callout>
+
+**Token list fields**
+
+Each token appears on one row. The table below lists the fields in the order they appear from top to bottom.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and limits | Notes |
+| --- | --- | --- | --- |
+| Name | The token’s name. | Enter a name when creating or editing the token. | The right side shows `nap_…` and the last few characters of the token so you can identify it. |
+| Permissions | The resources the token can access. | Select permissions when creating or editing the token. | Shows up to three resource names. Any remaining resources are shown as **+…**. |
+| Created At, Expiration | When the token was created and when it expires. | The system records these values. You cannot change the expiration after creating the token. | Shows **Created on …** and **Expires on …**. Tokens with no expiration show **Never Expires** in yellow. Expired tokens show **Expired** in red. See [Access Token Status](#access-token-status). |
+| Last Used | The time and IP address of the token’s most recent use. | The system records this automatically regardless of the **Log IP Addresses** setting. | Shows **Last used on … · IP**. If the token has never been used, shows **Never Used**. |
+</div>
+
+**Configuration options**
+
+The table lists the options in the order they appear in the **Create Access Token** dialog.
+
+<div id="访问令牌配置项说明" className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Option | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Token Name | A name that helps identify the token. | Required, 1–64 characters. If left blank, the dialog shows “Enter a name.” If it exceeds the limit, the dialog shows “The name cannot exceed 64 characters.” Names can be reused. | Blank |
+| Expiration | When the token expires. | Select **30 Days**, **90 Days**, **180 Days**, **1 Year**, **Custom**, or **Never Expires**. For **Custom**, the time must be at least one hour in the future. Otherwise, the dialog shows “Select a time at least one hour from now.” If you select **Never Expires**, the dialog shows “A token that never expires stays valid until revoked. We recommend setting an expiration.” | **30 Days** |
+| Permissions | The actions the token can perform. | Select at least one permission. Otherwise, the dialog shows “Select at least one permission.” Permissions are organized by Group, with **… / … selected** beside each Group heading. Use **Select All** or **Clear** to update the selection. Click the icon next to a resource name to see what each action does. See the table below for available permissions. | None selected |
+</div>
+
+**Permissions**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Group | Resource | Actions | Description |
+| --- | --- | --- | --- |
+| Personal | Profile | View, Edit | View your profile, Group, and available models. Change your display name and personal settings. |
+| Personal | API Keys | View, Edit, View Full Key | **View** shows API keys and their settings with the full key hidden. **Edit** allows you to create, edit, and delete API keys. **View Full Key** shows the full API key. |
+| Personal | Usage | View | View usage logs, statistics, tasks, and audit logs. |
+| Personal | Wallet | View, Edit | View your balance, top-up history, subscriptions, and referral information. Add funds, pay for subscriptions, check in, and transfer referral rewards. |
+| Personal | Account Security | View, Edit | View the status of passkeys, two-step verification, and linked sign-in methods. Edit actions that require security verification include changing the password, changing two-step verification settings, and deleting the account. |
+| Administration (administrators only) | Users, Top-Up and Subscription Management, Models, Deployments, Logs, Redemption Codes, Groups, and other resources | Varies by resource | Provides access to administrative functions. Administrators can see and grant only permissions they already have. |
+| System (Root only) | System Settings, Task Plugins, Operations | View, Edit | Provides access to Root system management functions. |
+</div>
+
+**Edit dialog options**
+
+The **Edit Access Token** dialog uses the same options as the [create dialog](#访问令牌配置项说明), with the differences listed below.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Option | Create Access Token Dialog | Edit Access Token Dialog |
+| --- | --- | --- |
+| Token Name | Required. | You can change the name. Saving a name change alone requires no security verification. |
+| Expiration | The selected expiration takes effect when you create the token. | Hidden and cannot be edited. |
+| Permissions | Select at least one permission and complete security verification to create the token. | You can change permissions. The dialog shows “Saving permission changes requires security verification.” |
+</div>
+
+<Callout type="info" title="Tip">
+
+The token value is fixed. To replace it, create a new token and then revoke the old one.
+
+</Callout>
+
+## View Access Token Activity
+
+- Security & Access – Access Records
+
+![Security & Access – Access Records page](/assets/guide/feature-guide/personal-security-and-access-access-token-access-records.png)
+
+- Security & Access – Access Record Details
+
+![Security & Access – Access Record Details page](/assets/guide/feature-guide/personal-security-and-access-access-token-access-records-details.png)
+
+**View access records**
+
+1. To view records for all tokens, click **Access Records** in the upper-right corner of **Access Tokens**. To view records for a specific token, click ⋯ to its right and select **Access Records**.
+2. Set the time range, result, and token scope as needed. The list refreshes automatically.
+3. Click **Details** in the record’s **Details** column to open the **Log Details** dialog.
+
+<Callout type="info" title="Tips">
+
+- Every request made with an access token is logged, including denied requests. For denied requests, the details show the reason for the failure. The top of the drawer shows “Only audit records collected after this feature was enabled appear here. Earlier records are still available in the general logs.”
+- These records also appear under **Access Tokens** in the <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Log</a>. For the contents of the **Log Details** dialog, see **View Audit Details** in that guide.
+
+</Callout>
+
+**Filters**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Filter | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Time Range | Filters by request time. | If the start time is later than the end time, the drawer shows “The end time must be later than the start time.” | Blank (no time limit) |
+| Result | Filters by request outcome. | Select **All Results**, **Success**, or **Failure**. | **All Results** |
+| Token Scope | Filters by token. | Select **All Tokens**, **Current Token**, or **Historical Tokens**. When you open the drawer from the upper-right corner of the card, only **All Tokens** is available. When you open it from a token’s menu, **Current Token** refers to that token and **Historical Tokens** covers other tokens, including revoked ones. | **Current Token** when opened from a token’s menu, otherwise **All Tokens** |
+</div>
+
+**Access record fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and limits | Notes |
+| --- | --- | --- | --- |
+| Time | When the request was made. | Recorded automatically by the system. | — |
+| IP | The IP address the request came from. | Recorded automatically by the system regardless of the **Log IP Addresses** setting. | — |
+| Client | Information about the client that made the request. | Recorded automatically by the system. | Hidden on phones. |
+| Request Method, Route | The HTTP method and API endpoint for the request. | Recorded automatically by the system. | — |
+| HTTP | The HTTP status code returned for the request. | Recorded automatically by the system. | — |
+| Result | Whether the request succeeded. | Determined by the system. | **Success** or **Failure**. |
+| Details | The full details of the record. | — | Click **Details** to open the **Log Details** dialog. |
+</div>
+
+## Configure IP Address Logging
+
+**Change the setting**
+
+1. In **Privacy**, turn **Log IP Addresses** on or off.
+2. Click **Save Settings**.
+
+<Callout type="info" title="Tips">
+
+- This setting is off by default. Once enabled, new **Consumption** and **Error** entries capture the caller’s IP address and show it under **Log Details** in the <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Log</a>. Existing entries are unaffected.
+- This setting applies only to usage logs. IP addresses are always recorded for login sessions, access tokens, and audit logs.
+
+</Callout>
+
+## Delete Your Account
+
+**Delete the account**
+
+1. Click **Delete Account** under **Account Actions**.
+2. Enter your full username in the confirmation dialog. The username is case-sensitive.
+3. Click **Delete Account**.
+4. Complete verification in the **Security Verification** dialog titled **Delete Account**.
+
+<Callout type="warn" title="Warning">
+
+- Account deletion is permanent. All login sessions and access tokens for the account are invalidated immediately, and you are redirected to the sign-in page.
+- You cannot register again with the username of a deleted account. If email verification is enabled on the site, you also cannot use the account’s email address to register again. Registration shows “The username already exists or the account has been deleted.”
+- Before deleting your account, make sure you no longer need your balance or subscriptions.
+- Root accounts cannot be deleted. If you attempt to delete one, the system shows “You do not have permission to perform this action.”
+
+</Callout>
+
+## Actions
+
+### Page Buttons and Filters
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Change Password / Set Password | Right side of the password card under **Sign-In & Authentication** | See [Change or Set Your Password](#change-or-set-your-password). |
+| Link / Change / Unlink | Right side of each account under **Linked Accounts** | All buttons are temporarily disabled while linking is in progress. Linked GitHub, Discord, OIDC, Telegram, LinuxDO, and WeChat accounts show **Linked** and cannot be clicked. See [Link Your Email and Third-Party Accounts](#link-your-email-address-and-third-party-accounts). |
+| Sign Out of Other Sessions | Upper-right corner of **Login Sessions** | Disabled when there are no other sessions. See [Manage Login Sessions](#manage-login-sessions). |
+| Access Records | Upper-right corner of **Access Tokens** | Opens **Access Records** for all tokens. See [View Access Token Activity](#view-access-token-activity). |
+| Create Access Token | Upper-right corner of **Access Tokens** | Disabled when the account reaches the 20-token limit. See [Create and Manage Access Tokens](#create-and-manage-access-tokens). |
+| Delete Account | Right side of the **Account Actions** card | See [Delete Your Account](#delete-your-account). |
+| Enable Passkey / Unlink Passkey | **Passkey Sign-In** card | See [Enable Passkey](#enable-passkey) and [Unlink Passkey](#remove-a-passkey). |
+| Enable | **Two-Step Verification** card | See [Enable Two-Step Verification](#enable-two-step-verification). |
+| Regenerate Backup Codes, Disable 2FA | **Two-Step Verification** card, after two-step verification is enabled | See [Regenerate Backup Codes](#regenerate-backup-codes) and [Disable Two-Step Verification](#disable-two-step-verification). |
+| Log IP Addresses, Save Settings | **Privacy** card | See [Configure IP Address Logging](#configure-ip-address-logging). |
+| Time Range, Result, Token Scope | Top of the **Access Records** drawer | See [View Access Token Activity](#view-access-token-activity). |
+| Reset, Search | Filter area of the **Access Records** drawer | **Reset** clears the filters. **Search** runs the query again with the current filters. |
+| View | Filter area of the **Access Records** drawer | Choose which columns to display under **Toggle Columns**. The **Details** column is always visible. |
+| Rows per Page, pagination controls | Bottom of the **Access Records** drawer | **Rows per Page** defaults to 20. **Total** shows the number of matching records. |
+| Retry | When a page or card fails to load | Reloads that section. |
+</div>
+
+### Row Actions
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Revoke | Right side of another device under **Login Sessions** | After you confirm “Revoke this session?”, the device is signed out immediately. |
+| Sign Out | Right side of the current device under **Login Sessions** | After you confirm “Sign out of this device?”, you are signed out and redirected to the sign-in page. |
+| Edit | ⋯ menu to the right of an access token | Opens the **Edit Access Token** dialog. |
+| Access Records | ⋯ menu to the right of an access token | Opens **Access Records** for that token. |
+| Revoke | ⋯ menu to the right of an access token | Permanently deletes the token after you confirm and complete security verification. |
+| Access Records, Revoke | Right side of a **Legacy Token** row | Appears only if the account has a legacy token. These actions work the same way as for other tokens. |
+| Details | **Details** column in **Access Records** | Opens the **Log Details** dialog. |
+| Copy | Copy button to the right of a value in the **Log Details** dialog | Copies values such as the client, route, request ID, or token identifier. |
+</div>
+
+## Status Indicators
+
+### Two-Step Verification Status
+
+The status appears next to **Two-Step Verification** on the **Two-Step Verification** card.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Disabled | Two-step verification is off. | Click **Enable**. See [Enable Two-Step Verification](#enable-two-step-verification). |
+| Enabled | A verification code is required to sign in and perform sensitive actions. | Also displays **Backup codes remaining: …**. |
+| Locked | Two-step verification is temporarily unavailable after five consecutive failed attempts. | Appears alongside **Enabled**. The lock clears automatically after five minutes. You can use a passkey in the meantime. |
+</div>
+
+### Passkey Status
+
+The status appears next to **Passkey Authentication** on the **Passkey Sign-In** card.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Disabled | The account has no registered passkey. | Click **Enable Passkey**. |
+| Enabled | The account has a registered passkey. | Shows **Last used:** or **Never Used** if the passkey has never been used. |
+</div>
+
+### Linked Account Status
+
+The status appears below each account under **Linked Accounts**.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Not Linked | The account has yet to be linked. | Click **Link**. |
+| Linked | The account is linked, and its email address or account identifier appears. | Use **Change** to update your email address or **Unlink** to remove a sign-in method added by an administrator. Contact an administrator to unlink other third-party accounts. |
+</div>
+
+### Access Token Status
+
+The status appears on the line that shows the token’s creation and expiration times.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Expires on … | The token is valid until the displayed time. | — |
+| Never Expires | The token remains valid until revoked. | Yellow. |
+| Expired | The token’s expiration time has passed. Requests return “The access token has expired.” | Red. To continue making requests, create a new token. The expiration time is fixed. The token is removed from the list seven days after it expires. |
+| Legacy Token | The token was created before the upgrade and has no permission scope. | Shows the date the token will be disabled. After that date, requests return “The legacy access token has been disabled. Create a new access token in Security Settings.” Create a new token to replace it. |
+</div>
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="The Security Verification dialog shows “No verification method is available for this action.”">
+**Message**  
+“No verification method is available for this action.” The message lists why each method is unavailable.
+
+**Explanation**  
+Use the reason shown to find the appropriate solution.
+
+| Message | Possible cause | Solution |
+| --- | --- | --- |
+| “Password authentication is disabled.” | The administrator disabled password login, and you have neither enabled two-factor authentication nor registered a Passkey. | Contact your administrator. If you can still log in, enable two-factor authentication first. |
+| “Passkey authentication is disabled.” | The administrator has not enabled Passkey authentication. | Use another verification method or contact your administrator. |
+| “No linked OAuth provider is available.” | Your account has no password and no linked third-party account from an enabled provider. | Contact your administrator. |
+| “Two-factor authentication is temporarily locked.” | Five consecutive verification attempts failed. | Wait 5 minutes and try again, or use a Passkey. |
+</Accordion>
+
+<Accordion title="Verification returns “Verification failed. Please try again.”">
+**Message**  
+“Verification failed. Please try again.”
+
+**Possible causes**
+
+- You entered an incorrect verification code, backup code, or password.
+- Your phone's clock is inaccurate, so the code generated by your authenticator has expired.
+
+**Solution**
+
+1. Check the value and enter it again. Verification codes refresh every 30 seconds, so use the latest code.
+2. Correct the time on your phone and try again. Five consecutive failed attempts lock verification for 5 minutes.
+</Accordion>
+
+<Accordion title="The message “Security verification has expired. Please verify again.” appears">
+**Explanation**  
+After verification succeeds, complete the action within 1 minute. Each verification authorizes a single action. Use the exact message to identify the cause.
+
+| Message | Possible cause | Solution |
+| --- | --- | --- |
+| “Security verification has expired. Please verify again.” | More than 1 minute elapsed between verification and completion of the action. | Verify again and complete the action immediately. |
+| “Security verification is no longer valid. Please verify again.” | This verification has already been used. | Retry the action and verify again. |
+| “Verification does not match this action's details. Please verify again.” | You changed the details of the action after verification, such as the permissions or email address. | Confirm the action details and verify again. |
+</Accordion>
+
+<Accordion title="You lost your authenticator device and cannot enter a verification code">
+**Explanation**  
+You can use an unused backup code in place of a verification code when logging in or in the Security Verification dialog. Each backup code can be used only once.
+
+**Solution**
+
+1. When logging in, enter an unused backup code on the two-factor authentication page.
+2. Select “Disable 2FA” on this page and enter another backup code in the Security Verification dialog.
+3. Re-enable two-factor authentication using your new device and save the new backup codes.
+4. If you have used or lost all your backup codes, contact your administrator to reset two-factor authentication.
+</Accordion>
+
+<Accordion title="Enabling two-factor authentication returns “Setup expired…” or “The authenticator code is incorrect.”">
+**Explanation**  
+Use the exact message to identify the cause.
+
+| Message | Possible cause | Solution |
+| --- | --- | --- |
+| “Setup expired. Scan the new QR code and save the new backup codes.”<br/>“The two-factor setup has expired or changed. Start setup again.” | More than 5 minutes have elapsed since you completed security verification, or you started setup again. | Delete the entry you just added in your authenticator app, scan the new QR code, and save the new backup codes. |
+| “The authenticator code is incorrect.” | The verification code is incorrect or has expired. | Enter the latest 6-digit code from your authenticator app. If verification still fails, correct the time on your phone. |
+</Accordion>
+
+<Accordion title="Unable to enable Passkey">
+**Explanation**  
+Use the message or symptom to identify the cause.
+
+| Message or symptom | Possible cause | Solution |
+| --- | --- | --- |
+| “Passkey not supported on this device” | Your browser or device does not support passkeys. | Switch to a browser and device that support biometrics or security keys. |
+| “Passkey authentication is disabled.” | The administrator has not enabled Passkey authentication. | Contact your administrator. |
+| “Passkey registration was cancelled” | You canceled the operation in the browser or system prompt. | Click “Enable Passkey” again. |
+| “Registration flow expired. Please try again.” | The registration flow failed to start properly. | Click “Enable Passkey” again. If registration still fails, contact your administrator. |
+| Registration fails when the site address starts with http:// | The site is not using HTTPS. | Contact your administrator. |
+</Accordion>
+
+<Accordion title="Passkey stops working after the site URL changes">
+**Message**  
+“This Passkey domain is not available on this website. Use its original website or another verification method.”
+
+**Possible cause**  
+A Passkey is tied to the site's domain at the time of registration. The current URL differs from the one used to register it.
+
+**Solution**
+
+1. Access the site using the URL you used to register the Passkey.
+2. Alternatively, choose another method in the Security Verification dialog, unlink the Passkey, and register it again at the new URL.
+</Accordion>
+
+<Accordion title="The email verification code does not arrive or is reported as incorrect">
+**Explanation**  
+Use the exact message to identify the cause.
+
+| Message | Possible cause | Solution |
+| --- | --- | --- |
+| “Verification email could not be sent. Start email verification again.” | The site's email service encountered an error. | Click “Start Again.” If sending still fails, contact your administrator. |
+| “Please wait before requesting another verification code.” | You requested another code within 60 seconds. | Wait for the countdown to end, then click “Resend Verification Code.” |
+| “Email verification code is incorrect.” | You entered the wrong verification code. | Check the 6-digit code in the email and enter it again. |
+| “Too many incorrect codes. Start email verification again.” | You entered an incorrect code five times in a row. | Click “Start Again.” |
+| “Email verification has ended. Start again to continue.” | More than 10 minutes elapsed without completing verification. | Click “Start Again.” |
+
+Also check your spam folder for the verification email.
+</Accordion>
+
+<Accordion title="An email address or third-party account is reported as already in use when you try to link it">
+**Explanation**  
+Use the exact message to identify the cause.
+
+| Message | Possible cause | Solution |
+| --- | --- | --- |
+| “This email address is already in use.” | The email address is already linked to another account. | Use a different email address. |
+| “This email address is not allowed by the administrator's email policy.” | The site restricts which email domains or aliases you can use. | Use an email address that meets the requirements or contact your administrator. |
+| “This external account is already bound.”<br/>“This Telegram account is already bound.” | The third-party account is already linked to another account. | Use a different third-party account or unlink it from the original account first. |
+| “OAuth pop-up was blocked” | Your browser blocked the authorization window. | Allow pop-ups for this site, then click “Continue” again. |
+</Accordion>
+
+<Accordion title="Unable to unlink a third-party account">
+**Message**  
+“Add another login method before unlinking this account.”
+
+**Possible causes**
+
+- This third-party account is your only remaining login method.
+- Once you link a GitHub, Discord, OIDC, Telegram, LinuxDO, or WeChat account, the page displays a “Linked” button and provides no unlink option.
+
+**Solution**
+
+1. Set a password or link another login method before unlinking the account.
+2. Contact your administrator to unlink a GitHub, Discord, OIDC, Telegram, LinuxDO, or WeChat account.
+</Accordion>
+
+<Accordion title="An error appears when changing your password">
+**Explanation**  
+Use the exact message to identify the cause.
+
+| Message | Possible cause | Solution |
+| --- | --- | --- |
+| “Current password is incorrect.” | You entered the wrong password in the “Current Password” field. | Enter it again. If you forgot your password, log out and reset it from the login page. |
+| “Password must contain between 8 and 128 characters.” | The new password is too short or too long. | Enter a password that is 8–128 characters long. |
+| “New password must be different from current password” | You entered your current password as the new password. | Enter a different password. |
+| “Passwords do not match” | The two entries for the new password differ. | Enter the new password again in the “Confirm New Password” field. |
+| “Password settings have changed. Reload the page and try again.” | The account password was changed or set in another window. | Reload the page and try again. |
+</Accordion>
+
+<Accordion title="Other devices are signed out after you change your password or enable two-factor authentication">
+**Explanation**  
+Changing your password, enabling or disabling two-factor authentication, regenerating backup codes, or registering or unlinking a Passkey signs you out of all other devices. You stay signed in on the current device.
+
+**Solution**
+
+1. Log in again on your other devices.
+</Accordion>
+
+<Accordion title="Calling a model with an access token returns “Invalid token”">
+**Message**  
+“Invalid token”
+
+**Possible cause**  
+You are using an access token that starts with `nap_`. Access tokens work only with the dashboard API.
+
+**Solution**
+
+1. On the <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a> page, create a key that starts with `sk-` and use it to call models.
+</Accordion>
+
+<Accordion title="An API request using an access token is denied">
+**Explanation**  
+Denied requests also appear in the token's “Access Logs.” Use the exact message to identify the cause.
+
+| Message | Possible cause | Solution |
+| --- | --- | --- |
+| “The access token lacks the required permission: …” | The token lacks the permission required for this action. | Edit the token to add the required permission. Saving the change requires security verification. |
+| “a dashboard login session is required” | The action requires an active login session in the web dashboard, as is the case for managing access tokens and login sessions. | Log in to the web dashboard and perform the action there. |
+| “Unauthorized, the access token has expired” | The token has expired. | Create a new token and replace the one in your script. |
+| “Legacy access tokens have been retired. Create a new access token in security settings” | You are using a retired legacy token. | Create a new token on this page. |
+| “Unauthorized, invalid access token” | The token was revoked or entered incorrectly. | Check the token in the request header. If it was revoked, create a new one. |
+</Accordion>
+
+<Accordion title="Unable to create an access token">
+**Explanation**  
+Use the exact message to identify the cause.
+
+| Message | Possible cause | Solution |
+| --- | --- | --- |
+| “You can create up to … access tokens” | You have reached the limit of 20 tokens, which includes tokens that expired within the past 7 days. | Revoke tokens you no longer use. |
+| “Choose a time at least one hour from now” | The custom expiration time is less than 1 hour away. | Choose a time at least 1 hour from now or select a preset duration. |
+| “Select at least one permission” | You have not selected any permissions. | Select at least one permission. |
+| “You cannot grant one or more of these permissions.” | You selected permissions that your account does not have. | Deselect those permissions and try again. |
+</Accordion>
+
+<Accordion title="You forgot to copy an access token after creating it">
+**Message**  
+“Copy this token now. It will not be shown again.”
+
+**Explanation**  
+The token value is displayed only once, when you create it.
+
+**Solution**
+
+1. Revoke the token.
+2. Create a new token, then click “Copy Token” in the “Access Token” dialog and save it.
+</Accordion>
+
+<Accordion title="You see an unfamiliar login session">
+**Possible causes**
+
+- You logged in on another device or browser.
+- Your password or third-party account has been compromised.
+
+**Solution**
+
+1. In “Login Sessions,” revoke the session or click “Sign Out Other Sessions.”
+2. Change your password.
+3. Enable two-factor authentication or Passkey.
+4. Review your login history in the <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Logs</a> and revoke any access tokens you do not recognize.
+5. If the issue persists, contact your administrator.
+</Accordion>
+
+<Accordion title="Login sessions and access logs still show IP addresses after you turn off “Record IP Addresses”">
+**Explanation**  
+“Record IP Addresses” applies only to usage logs. Login sessions, the last-used IP address for each access token, access logs, and audit logs always record IP addresses regardless of this setting.
+</Accordion>
+
+<Accordion title="Unable to delete your account">
+**Message**  
+“You do not have permission to perform this action.”
+
+**Possible causes**
+
+- You are using the Root account, which cannot be deleted.
+- The “Delete Account” button is disabled because the username you entered does not exactly match your account username. The comparison is case-sensitive.
+
+**Solution**
+
+1. Check your username and enter it again, matching the capitalization exactly.
+2. If you are using the Root account, this message is expected because the account cannot be deleted.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a> — Create `sk-` keys for model calls. These keys are separate from access tokens.
+- <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Logs</a> — Review logins and actions involving account security settings and access tokens.
+- <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> — After enabling “Record IP Addresses,” view the caller's IP address in the log details.
+- <a href="/en/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">Profile</a> — Configure notification methods and choose which pages appear in the left sidebar.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">Authentication Settings</a> — Use the Root account to enable third-party login, Passkey authentication, and password login.

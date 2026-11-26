@@ -1,0 +1,297 @@
+---
+title: Quick Start
+description: Follow the shortest path from signing up and logging in to adding quota, creating an API key, sending your first request, and checking the charge in Usage Logs. This guide also introduces the console's top bar and sidebar.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+- If you're new to this site, follow the six steps on this page to sign up, log in, and make your first model call.
+- Each step covers only the essential actions. See the pages linked in each step for other options and troubleshooting.
+- Model calls draw from your account quota at the applicable price, using your wallet balance or subscription quota.
+
+<Callout type="info" title="Tip">
+
+- New accounts start with no quota or API keys by default. If the administrator has configured a signup bonus, your account receives quota when you sign up. Some sites automatically create an API key during signup.
+- The administrator configures the available login methods, top-up options, subscription plans, and models. These vary by site. If you can't find an option in any step, contact your administrator.
+- Each site defines its own quota unit.
+</Callout>
+
+## Basic Concepts
+
+The interface may use several names for the same thing. The table below lists the terms used in this guide and other labels you may see in the interface.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Term | Meaning | Other Labels in the Interface |
+| --- | --- | --- |
+| API Key | A credential that starts with `sk-` and lets a program or client call a model. | “Token,” as in “Invalid token.” |
+| Access Token | A credential that starts with `nap_` and is used only for account management in scripts. See <a href="/en/docs/guide/feature-guide/user/security#create-and-manage-access-tokens" target="_blank" rel="noopener noreferrer">Security and Access</a>. | — |
+| Quota | The amount available to spend in your account. Each model call deducts quota at the applicable price. Both wallet balance and subscription quota count as quota. | “Balance,” “Quota,” or “Funds,” as in “Current Balance,” “Unlimited Quota,” or “Add Funds.” |
+| Group | A routing and pricing tier defined by the administrator. It determines which models you can call and which billing ratio applies. | Group names and ratios, such as “default” and “1x.” |
+| Playground | A page where you can chat with models directly in your browser using your account quota, without an API key. | “Playground,” as in “Verify the route using Playground or your client.” |
+</div>
+
+## Make Your First Model Call
+
+<Steps>
+
+<Step>
+
+### Sign Up or Log In
+
+**Steps**
+
+1. Click “Log In” in the upper-right corner of the site to open the login page.
+2. If you already have an account, log in with your username and password, a third-party account, or a passkey.
+3. If you don't have an account yet, click “Sign Up” on the login page or “Get Started” on the home page. Fill in the required fields, click “Create Account,” and log in with your new account.
+
+<Callout type="info" title="Tip">
+
+- After you log in, the “Overview” page opens by default. The “Setup Guide” at the top of that page covers steps 3–5 of this guide. You can complete them in any order. After completing the steps, refresh the page to see the checkmarks. See <a href="/en/docs/guide/feature-guide/user/overview#get-started-with-the-setup-guide" target="_blank" rel="noopener noreferrer">Overview</a>.
+- For login methods, email verification during signup, and troubleshooting, see <a href="/en/docs/guide/feature-guide/user/auth" target="_blank" rel="noopener noreferrer">Registration and Login</a>.
+</Callout>
+
+</Step>
+
+<Step>
+
+### View Models and Pricing
+
+**Steps**
+
+1. Click “Model Marketplace” in the top navigation.
+2. Enter a keyword in the search box or use the “Filters” panel on the left to filter by group, provider, or other criteria.
+3. Click “Details” in the lower-right corner of the model card. Under “Overview,” find “Pricing by Group” to see the groups and prices available to your account.
+4. Click the copy button to the right of the model name to copy it for later use.
+
+<Callout type="info" title="Tip">
+
+- You can browse without logging in if the site allows public access. After you log in, the site displays models and prices based on your account's available groups and account-specific ratios, so they may differ from what you saw before logging in.
+- The charge is based on the group used for the call. For help reading model prices, see <a href="/en/docs/guide/feature-guide/user/pricing#understand-model-pricing" target="_blank" rel="noopener noreferrer">Model Marketplace and Rankings</a>.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Add Quota
+
+**Steps**
+
+1. In the sidebar, click “Personal” → “Wallet.”
+2. Choose one of the methods below based on what your site offers.
+3. Check “Current Balance” or “My Subscriptions” to confirm that the quota has been credited.
+
+**Ways to Add Quota**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Method | Steps | Details |
+| --- | --- | --- |
+| Redemption Code | Paste your code into “Enter your redemption code” at the bottom of “Add Funds,” then click “Redeem Quota.” | <a href="/en/docs/guide/feature-guide/user/wallet#redemption-codes" target="_blank" rel="noopener noreferrer">Redemption Codes</a> |
+| Online Top-Up | Under “Add Funds,” select or enter an amount, then click a payment method. In the “Confirm Payment” dialog, click “Confirm Payment,” then complete the payment on the payment page. | <a href="/en/docs/guide/feature-guide/user/wallet#add-funds-online" target="_blank" rel="noopener noreferrer">Online Top-Up</a> |
+| Subscription Plan | Under “Subscription Plans,” click “Subscribe Now” for the plan you want, then click “Pay with Balance” or choose another payment method to complete the purchase. | <a href="/en/docs/guide/feature-guide/user/wallet#subscription-plans" target="_blank" rel="noopener noreferrer">Subscription Plans</a> |
+</div>
+
+<Callout type="info" title="Tip">
+
+- If the wallet offers no options, the administrator hasn't configured any yet. Contact your administrator for quota or a redemption code.
+- If your balance doesn't increase after payment or your redemption fails, see the FAQ in <a href="/en/docs/guide/feature-guide/user/wallet#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Wallet</a>.
+- “Remaining Quota” on the “Overview” page reflects only your wallet balance. If you purchased only a subscription and your wallet balance is 0, the checkmark next to “2. Add Quota” in the “Setup Guide” appears after your first successful model call.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Create an API Key
+
+**Steps**
+
+1. In the sidebar, click “General” → “API Keys.”
+2. Click “Create API Key” in the upper-right corner of the page.
+3. Enter a “Name” and leave the other settings at their defaults.
+4. Click “Save Changes.”
+5. In the new key's row, click the copy button to the right of the key in the “API Key” column.
+
+<Callout type="info" title="Tip">
+
+- With the default settings, the key has no quota limit, can access all models available to your account, and never expires. Calls draw from your account quota. To set quota, model, or IP restrictions, see <a href="/en/docs/guide/feature-guide/user/token#create-an-api-key" target="_blank" rel="noopener noreferrer">API Keys</a>.
+- If you plan to use only the Playground, you can skip this step.
+</Callout>
+
+<Callout type="warn" title="Keep Your API Key Secure">
+Anyone who obtains your API key can use it to spend your account quota. Keep it out of group chats, screenshots, and public code repositories.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Send Your First Request
+
+Choose one of the three methods below.
+
+**Method 1 — Send a Request in the Playground**
+
+1. In the sidebar, click “Chat” → “Playground.”
+2. Click the group and model selectors below the input box on the right, then select a group and a model.
+3. Enter a message in the input box and click “Send.”
+
+**Method 2 — Send a Request with curl**
+
+1. Open a terminal on macOS or Linux, or use Git Bash on Windows. On Windows, the command requires Git Bash to run as written.
+2. Copy the command below, replace the three values listed in the table, and run it.
+
+```bash
+curl https://your-host/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-xxxxxxxx" \
+  -d '{"model":"模型名称","messages":[{"role":"user","content":"你好"}]}'
+```
+
+<div className="[&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Value in the Command | Replace With | Where to Find It |
+| --- | --- | --- |
+| `https://your-host` | API address | On the “API Keys” page, click “API Address” in the upper-right corner, then click the copy button to the right of the address you want to use. |
+| `sk-xxxxxxxx` | API key | The API key you copied in step 4. |
+| `模型名称` | Model name | The model name you copied in step 2. |
+</div>
+
+**Method 3 — Run the Example Command from the Overview Page**
+
+1. In the sidebar, click “General” → “Overview.”
+2. Click “Copy” in the upper-right corner of “First API Request.”
+3. Paste the command into your terminal and run it as copied.
+
+<Callout type="info" title="Tip">
+
+- The call succeeded if the terminal returns a JSON response containing the model's reply. If you get an error, look up the exact error message in the <a href="/en/docs/guide/feature-guide/user/faq" target="_blank" rel="noopener noreferrer">FAQ</a>.
+- The command in “First API Request” already includes the API address, the first enabled key in the list, and the first available model. Run it as copied in any terminal supported by the curl command above. If the setup guide is collapsed, click “Show Setup Guide” or “Setup Guide” to the right of the page title. See <a href="/en/docs/guide/feature-guide/user/overview#copy-the-example-command-to-send-your-first-request" target="_blank" rel="noopener noreferrer">Overview</a>.
+- For help choosing an API address and making calls from other clients, see <a href="/en/docs/guide/feature-guide/user/token#copy-a-key-and-call-a-model" target="_blank" rel="noopener noreferrer">Copy the Key and Call a Model</a>.
+- Calls from the Playground draw from your account quota without using an API key. See <a href="/en/docs/guide/feature-guide/user/playground" target="_blank" rel="noopener noreferrer">Playground</a>.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Check the Charge in Usage Logs
+
+**Steps**
+
+1. In the sidebar, click “General” → “Usage Logs.”
+2. Click “Search” to refresh the list.
+3. Find an entry of type “Consumption” and check the “Cost” column.
+4. Click the summary in the entry's “Details” column. In “Log Details,” check “Token Breakdown” and “Billing Details.”
+
+<Callout type="info" title="Tip">
+
+- The page title is “General Logs.” By default, the page shows only today's entries. Click “Search” to refresh them manually.
+- For Playground calls, the “Token” column shows `playground-` followed by the group name, such as `playground-default`.
+- Only successful calls incur charges. If you can't find an entry, see the FAQ in <a href="/en/docs/guide/feature-guide/user/log#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+</Callout>
+
+</Step>
+
+</Steps>
+
+<Callout type="info" title="Tip">
+If you run into an issue at any step, start with the FAQ on the page linked in that step. For issues that span multiple pages, such as failed calls or balance discrepancies, see the <a href="/en/docs/guide/feature-guide/user/faq" target="_blank" rel="noopener noreferrer">FAQ</a>.
+</Callout>
+
+## Get to Know the Console Layout
+
+After you log in, the console has three parts: the top bar, the left sidebar, and the main content area. The red numbers in the image match the numbers in the two tables below.
+
+- Quick Start – Console Layout
+
+![Quick Start – Console Layout](/assets/guide/feature-guide/quick-start-console-layout.png)
+
+### Top Bar
+
+The table lists the items in the top bar from left to right.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Item | Location | What It Does | When It Appears |
+| --- | --- | --- | --- |
+| 1. Sidebar Toggle | Far left of the top bar | Expands or collapses the left sidebar. | Always visible. |
+| 2. Site Name | To the right of the sidebar toggle | Takes you back to the site home page. | Always visible. The administrator sets the name and icon. |
+| 3. Top Navigation | Right side of the top bar | Opens “Home,” “Console,” “Model Marketplace,” “Rankings,” “Docs,” or “About.” | The administrator can enable or disable each item. The navigation is visible at screen widths of 1024px or more. |
+| 4. Search | To the right of the top navigation | Finds and opens sidebar pages by name. | Always visible. On narrow screens, only the icon appears. |
+| 5. Notifications | Bell icon to the right of Search | Opens the “System Announcements” dialog, where you can read site notifications and announcements. | Always visible. |
+| 6. Language | Icon to the right of Notifications | Changes the interface language. See <a href="/en/docs/guide/feature-guide/user/personal-setting#set-the-interface-language" target="_blank" rel="noopener noreferrer">Set the Interface Language</a>. | Always visible. |
+| 7. Theme Settings | Palette icon to the right of Language | Adjusts the interface theme, colors, fonts, layout, and other appearance settings. | Visible at screen widths of 768px or more. |
+| 8. Avatar | Far right of the top bar | Opens a menu with “Profile,” “Security and Access,” “Wallet,” “System Settings” (visible only to Root), and “Log Out.” | Always visible. |
+</div>
+
+<Callout type="info" title="Tip">
+
+- Press Ctrl+B (⌘B on Mac) to expand or collapse the sidebar, or Ctrl+K (⌘K on Mac) to open the search dialog. At the bottom of the search dialog, you can switch between the “Light,” “Dark,” and “System” themes.
+- In the top navigation, “Console” opens the “Overview” page. The administrator can require users to log in before viewing “Model Marketplace” or “Rankings.”
+- In the “System Announcements” dialog, the “Notifications” tab shows site notifications posted by the administrator. The “Timeline” tab shows up to 20 announcements posted by the administrator, matching the “Announcements” panel on the “Overview” page. When empty, the tabs display “No announcements at this time” and “No system announcements,” respectively.
+- When you have unread items, the unread count appears in the upper-right corner of the bell icon. Opening the dialog marks the items on the “Notifications” tab as read. Switching to the “Timeline” tab marks its announcements as read. Your current browser stores the read status. Items appear unread again if you switch browsers or clear site data.
+- The language selector controls the same setting as “Interface Language” on the “Profile” page. “Theme Settings” are stored in your current browser, so you need to set them again if you switch browsers or devices. Click “Reset” to restore the defaults.
+- The avatar menu lists your display name, role, and group at the top, in that order. If “Security and Access” or “Wallet” is hidden in the sidebar, the corresponding item is also hidden in the avatar menu. “Profile” is always visible. After you click “Log Out” and confirm in the dialog, the site returns you to the login page.
+- On pages such as Home, Model Marketplace, and Rankings, the top bar contains only the top navigation, language selector, theme switcher, notifications, and “Log In” (your avatar if you're logged in). On narrow screens, only the theme switcher, avatar, and menu button appear directly. The top navigation and “Log In” are available through the menu button.
+</Callout>
+
+Press Ctrl+K (⌘K on Mac) or click “Search” to open the search dialog, where you can find and open sidebar pages by name.
+
+- Quick Start – Search Dialog
+
+![Quick Start – Search Dialog](/assets/guide/feature-guide/quick-start-search.png)
+
+Click the bell icon to open the “System Announcements” dialog. The “Notifications” and “Timeline” tabs show site notifications and announcements, respectively.
+
+- Quick Start – System Announcements Dialog
+
+![Quick Start – System Announcements Dialog](/assets/guide/feature-guide/quick-start-notifications.png)
+
+Click the palette icon to open “Theme Settings” and adjust the interface appearance and layout.
+
+- Quick Start – Theme Settings
+
+![Quick Start – Theme Settings](/assets/guide/feature-guide/quick-start-theme-settings.png)
+
+Click your avatar to open the menu and go to “Profile,” “Security and Access,” “Wallet,” or “System Settings” (visible only to Root), or click “Log Out” to end your session.
+
+- Quick Start – Avatar Menu
+
+![Quick Start – Avatar Menu](/assets/guide/feature-guide/quick-start-avatar-menu.png)
+
+### Sidebar
+
+The table lists the sidebar sections from top to bottom. The section numbers match those in the “Quick Start – Console Layout” image above.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section | Pages | Description |
+| --- | --- | --- |
+| 9. Chat | “Playground” | Chat with models directly in your browser. See <a href="/en/docs/guide/feature-guide/user/playground" target="_blank" rel="noopener noreferrer">Playground</a>. |
+| 9. Chat | “Chat” | Expand this item to open one of the chat apps configured by the administrator. This item appears only if the site has chat presets. See <a href="/en/docs/guide/feature-guide/user/chat-apps" target="_blank" rel="noopener noreferrer">Chat</a>. |
+| 10. General | “Overview,” “Dashboard” | View quota, usage, and the setup guide, as well as call statistics grouped by time and model. See <a href="/en/docs/guide/feature-guide/user/overview" target="_blank" rel="noopener noreferrer">Overview</a> and <a href="/en/docs/guide/feature-guide/user/dashboard" target="_blank" rel="noopener noreferrer">Dashboard</a>. |
+| 10. General | “API Keys” | Create and manage API keys for calling models. See <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a>. |
+| 10. General | “Usage Logs,” “Audit Logs,” “Task Logs” | View model calls and charges, account activity, and asynchronous and image generation tasks. See <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>, <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Logs</a>, and <a href="/en/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">Task Logs</a>. |
+| 11. Personal | “Wallet,” “Profile,” “Security and Access” | Manage top-ups and subscriptions, personal preferences, passwords, and login security. See <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a>, <a href="/en/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">Profile</a>, and <a href="/en/docs/guide/feature-guide/user/security" target="_blank" rel="noopener noreferrer">Security and Access</a>. |
+| 12. Administration (visible only to administrators) | Management pages for channels, models, users, and more | See the administrator guide in the <a href="/en/docs/guide/feature-guide#administrator-guide" target="_blank" rel="noopener noreferrer">Feature Guide Overview</a>. |
+</div>
+
+<Callout type="info" title="Tip">
+
+- Two levels of settings control the sidebar. Pages disabled by the administrator are hidden from all users. You can hide more pages under “Personal Sidebar Settings” on the “Profile” page. See <a href="/en/docs/guide/feature-guide/user/personal-setting#choose-which-pages-appear-in-the-left-sidebar" target="_blank" rel="noopener noreferrer">Choose Which Pages Appear in the Left Sidebar</a>.
+- When collapsed, the sidebar displays only icons. Hover over an icon to see the page name. Your current browser remembers whether the sidebar is expanded or collapsed.
+- At screen widths below 768px, such as on phones, the sidebar is hidden by default. Click the sidebar toggle to slide it in from the left. It closes automatically when you select a page.
+- Open Model Marketplace and Rankings from the top navigation.
+</Callout>
+
+## Related Documentation
+
+- Create an account, use the available login methods, or reset a forgotten password. See <a href="/en/docs/guide/feature-guide/user/auth" target="_blank" rel="noopener noreferrer">Registration and Login</a>.
+- View available models and pricing. See <a href="/en/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">Model Marketplace and Rankings</a>.
+- Add funds, redeem quota, or purchase a subscription plan. See <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a>.
+- Create an API key and copy the API address and key to call models. See <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a>.
+- Chat with models directly in your browser. See <a href="/en/docs/guide/feature-guide/user/playground" target="_blank" rel="noopener noreferrer">Playground</a>.
+- View the billing details for each call. See <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+- Follow the setup guide to make your first call and copy the example command. See <a href="/en/docs/guide/feature-guide/user/overview" target="_blank" rel="noopener noreferrer">Overview</a>.
+- Set the interface language and choose which pages appear in the left sidebar. See <a href="/en/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">Profile</a>.
+- Troubleshoot issues that span multiple pages, such as failed calls or balance discrepancies. See the <a href="/en/docs/guide/feature-guide/user/faq" target="_blank" rel="noopener noreferrer">FAQ</a>.
+- For Root users configuring the top navigation, sidebar modules, and system announcements, see <a href="/en/docs/guide/feature-guide/system-settings/settings-site#top-navigation" target="_blank" rel="noopener noreferrer">Site and Branding Settings</a>.

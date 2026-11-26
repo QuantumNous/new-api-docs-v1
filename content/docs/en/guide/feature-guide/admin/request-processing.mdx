@@ -1,0 +1,718 @@
+---
+title: Request Processing
+description: Root can add request processing instances to inspect or modify requests before they are sent upstream. Select plugins and their scope, adjust execution order, run tests, and add instances to Channels.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- Only Root can access this page. In the sidebar, go to “Admin” → “Request Processing”.
+- Add request processing instances to inspect or modify requests before they are sent upstream.
+- Install, enable, disable, and manage versions of request processing plugins in <a href="/en/docs/guide/feature-guide/admin/task-plugins" target="_blank" rel="noopener noreferrer">Plugin Management</a>. Use this page to add and manage instances.
+
+<Callout type="info" title="Tip">
+
+- Each row on this page is an instance. Select a request processing plugin and configure its settings. After you save it, the instance applies to matching requests.
+- An instance can apply to all requests, to specific Groups, or only to the Channels you add it to. See [Add an Instance to a Channel](#add-an-instance-to-a-channel).
+- The “Request Processing” card on the “Request and Response” tab of the Channel editing drawer contains Channel-specific options such as forced formatting and reasoning-to-content conversion. Those options are configured separately.
+
+</Callout>
+
+## Request Processing Overview
+
+- Request Processing – Instance List
+
+![Request Processing instance list page](/assets/guide/feature-guide/request-processing-list.png)
+
+The page lists all request processing instances, one per row. They run from top to bottom.
+
+- [Add and Edit Instances](#add-and-edit-instances)
+- [Reorder, Enable, or Delete Instances](#reorder-enable-or-delete-instances)
+- [Dry Run](#dry-run)
+- [Add an Instance to a Channel](#add-an-instance-to-a-channel)
+
+<Callout type="info" title="Tip">
+If a request is rejected, the client receives HTTP 500, or an instance does not take effect, see [Frequently Asked Questions](#frequently-asked-questions).
+</Callout>
+
+**Field Reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and Limits | Notes |
+| --- | --- | --- | --- |
+| Order | The instance’s position in the list, which determines when it runs. | Use the move up and move down buttons to the right of the position number. | See [Execution Stages and Order](#execution-stages-and-order). |
+| Name | The instance name. | Edit it in the instance dialog. The maximum is 64 characters. It defaults to the plugin name. | — |
+| Plugin | The plugin the instance uses. | Select it when adding the instance. The selection is permanent. | Shows the plugin icon and name. If the plugin is disabled or missing, it shows the plugin key and “Plugin disabled”. See [Instance Status](#instance-status). |
+| Scope | Which requests the instance processes. | Set this under “Where to Apply” in the instance dialog. | Shows “All Requests”, the selected Group names, or “Channel Only”. “Channel Only” corresponds to “Only When Added to a Channel” in the dialog. If the instance applies to specific models, “Models: …” appears below. |
+| Enabled | The switch that enables the instance. | New instances are enabled by default. Changes are saved immediately. | See [Instance Status](#instance-status). |
+| Actions | Edit or delete the instance. | — | See [Row Actions](#row-actions). |
+
+</div>
+
+## Common Operations
+
+This section covers adding, editing, reordering, enabling, disabling, and deleting instances, as well as running tests and adding instances to Channels.
+
+### Add and Edit Instances
+
+- Request Processing – Add Request Processing
+
+![Add Request Processing page](/assets/guide/feature-guide/request-processing-add-instance.png)
+
+**To Add an Instance**
+
+1. Click “Add” in the upper-right corner of the page.
+2. Click a plugin card in the “Add Request Processing” dialog.
+3. To rename the instance, click the pencil icon next to the name at the top of the dialog. The name defaults to the plugin name and can be up to 64 characters long. Clearing the name restores the plugin name.
+4. Configure the plugin under “Settings”. For the settings of each built-in plugin, see [Built-in Request Processing Plugins](#built-in-request-processing-plugins).
+5. Under “Where to Apply”, select the scope on the first row and the applicable models on the second. See the table at the end of this section for the available options.
+6. To test the instance, select “Sample Request” or “Paste Request” under “Try It” on the right, then click “Run”.
+7. Check the “Enabled” switch in the lower-left corner, then click “Save”.
+
+<Callout type="info" title="Tip">
+
+- The text below the dialog title reads “Choose a plugin to get started. You can change its settings at any time.”
+- Each plugin card shows the plugin description and execution stages, such as “Before Reading the Request”, “Before Sending”, and “Check Response”.
+- The card also shows how the plugin handles errors, either “Skip on Error” or “Reject Request on Error”.
+- Cards for plugins that already have instances show “… added”.
+- To select a different plugin, click “Change Plugin” in the lower-left corner. The name and settings reset to the new plugin’s defaults. The “Where to Apply” and “Enabled” selections are retained.
+- If a setting is invalid, the reason appears below the field, such as “This field is required”.
+- If server-side validation fails, “Invalid settings for request processing instance …: …” appears below “Where to Apply” and the dialog stays open.
+- On a successful save, the dialog closes and the new instance appears at the end of the list.
+- Click “Cancel” to discard unsaved changes. The dialog reopens with the last saved values.
+
+</Callout>
+
+**“Try It” Panel Reference**
+
+The panel shows the following controls and sections from top to bottom. Conditional sections appear only when their conditions are met.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Section | When It Appears | Description |
+| --- | --- | --- |
+| “Run” | — | In the upper-right corner of the panel. Runs the instance with the current settings in the dialog. If the settings contain errors, the button is disabled and “Fix the issues in Settings before running” appears below. |
+| “Sample Request” | — | Selected by default. Shows the sample request included with the plugin. If the plugin has no sample, a generic sample is used. |
+| “Attached Images” | The sample request contains images | Shows each sample image’s thumbnail, format, file size, and pixel dimensions. |
+| “Sample Response” | “Sample Request” is selected and the plugin inspects model responses | Shows the model response included in the sample. |
+| “Paste Request” | — | Select the request format from the dropdown, then paste JSON into “Request Body”. The options are “OpenAI Chat Completions” (default), “OpenAI Responses”, “Claude Messages”, and “Gemini”.<br/>The prompt reads “The request body must be a JSON object.” |
+| “Response to Check (Optional)” | “Paste Request” is selected and the plugin inspects model responses | Enter a model response to inspect alongside the request. |
+| Footer message | — | Before a run, the panel shows “Uses the current settings.” If you change the settings after a run, “Settings changed. Run again to see the result.” appears above the results. |
+
+</div>
+
+**“Try It” Results**
+
+After the run, the results replace the sample. The last line shows “Completed in … ms”.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Outcome | What the Panel Shows |
+| --- | --- |
+| The instance rejects the request | A red box labeled “This request would be rejected”, with the plugin’s message and code below. |
+| The instance encounters an error | A yellow box with the original error message below the title. The title depends on the plugin’s “On Error” behavior and the stage where it failed.<br/>“Reject Request on Error”: “The plugin encountered an error. This request would be rejected.”<br/>“Skip on Error”: “The plugin encountered an error. The request would be sent without its changes.”<br/>“Reject Request on Error” during “Check Response”: “The plugin encountered an error. This response would be stopped.”<br/>“Skip on Error” during “Check Response”: “The plugin encountered an error. The response would be sent without its changes.” |
+| No changes | “No changes. The request would be sent upstream as is.” If the run includes a response, the panel shows “No changes. The request and response would both pass through as is.” |
+| Images compressed | Two images labeled “Original” and “Sent Upstream”, with the percentage reduction (such as −62%). |
+| Text rewritten | A comparison of “Original” and “Sent Upstream”, with changes highlighted. |
+| Reasoning effort set | The previous and new “Reasoning Effort” values. If it had no previous value, the panel shows “Not Set”. |
+| Response stopped or masked | “This response would be stopped”, with the plugin’s message and code, or a comparison of “Model Response” and “Sent to Client”. |
+| Usage log entry | “What the Usage Log Would Show”, followed by the log entry. |
+| Unable to run | The original error appears in red above the results, such as “Invalid settings for request processing instance …: …”. |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- “Try It” uses the current settings in the dialog, even before you save them.
+- It runs only the current instance.
+- It runs under “All Requests” and “All Models”, regardless of the “Where to Apply” and “Enabled” selections. It bypasses Channels.
+- “Try It” sends no request upstream and incurs no charges.
+- “Content Moderation” makes a live call to the moderation endpoint in its settings.
+
+</Callout>
+
+**To Edit an Instance**
+
+1. Click the edit icon at the end of the instance’s row.
+2. Update the name, settings, and “Where to Apply” as needed.
+3. Click “Save”.
+
+**Differences Between Adding and Editing**
+
+Both operations use the same dialog. The table lists the differences.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Item | Add | Edit |
+| --- | --- | --- |
+| Entry point | Click “Add” in the upper-right corner of the page, then select a plugin in “Add Request Processing”. | Click the edit icon at the end of the row to open the settings directly. |
+| “Change Plugin” | Appears in the lower-left corner. | This button is hidden because the plugin selection is permanent. |
+| Initial values | The name matches the plugin name. The plugin uses its default settings, applies to “All Requests” and “All Models”, and is enabled. | The instance’s saved values. |
+| Position after saving | End of the list. | The instance stays in its current position. |
+| Plugin disabled or missing | The plugin picker lists only available plugins. | “Settings” shows “This plugin is disabled or missing. The instance will not run. Its settings will be retained.”<br/>“Try It” is hidden.<br/>You can still change “Where to Apply”. Saving retains the existing plugin settings.<br/>Turn off “Enabled” before saving. |
+
+</div>
+
+**“Where to Apply” Options**
+
+New instances default to “All Requests” and “All Models”.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Option | Description |
+| --- | --- |
+| “All Requests” | Runs for every request, regardless of Group or Channel. |
+| “Specific Groups” | Processes requests from the selected Groups only. Select at least one Group under “Select Groups” below. |
+| “Only When Added to a Channel” | Applies only to Channels that include the instance in their settings. See [Add an Instance to a Channel](#add-an-instance-to-a-channel). |
+| “All Models” | Runs regardless of which model the client requests. |
+| “Specific Models” | Processes requests for the selected models only.<br/>Select at least one model under “Select Models or Add a Custom Model” below. You can also enter model names that do not appear in the list.<br/>You can specify up to 100 models, with up to 128 characters per model name.<br/>Matching uses the model name in the client request before model mapping. |
+
+</div>
+
+### Reorder, Enable, or Delete Instances
+
+Perform these actions directly in the instance list. Each action saves the entire list immediately. Successful saves produce no notification.
+
+**List Actions**
+
+- To reorder instances, click the move up or move down button to the right of the position number in the “Order” column.
+- To enable or disable an instance, click the switch in the “Enabled” column. If the save fails, the switch returns to its previous state.
+- To change settings, see [Add and Edit Instances](#add-and-edit-instances).
+
+**To Delete an Instance**
+
+1. Click the delete icon at the end of the instance’s row.
+2. Click “Delete” in the “Delete Instance?” confirmation dialog.
+
+<Callout type="warn" title="Caution">
+
+- The confirmation dialog says “… will stop processing requests, including on Channels it was added to.” Deletion is permanent.
+- Channels retain their references to the deleted instance and show it as “Deleted”. See [Add an Instance to a Channel](#add-an-instance-to-a-channel).
+- If the save fails, the server’s original error message appears in a pop-up and the list stays as it was.
+- A common cause is an enabled instance that uses a disabled plugin. See [Instance Status](#instance-status).
+
+</Callout>
+
+### Dry Run
+
+- Request Processing – Dry Run
+
+![Request Processing dry run page](/assets/guide/feature-guide/request-processing-dry-run.png)
+
+“Dry Run” runs saved instances against a sample request. It sends no request upstream and incurs no charges. “Content Moderation” instances make live calls to the moderation endpoint.
+
+**To Perform a Dry Run**
+
+1. Click “Dry Run” in the upper-right corner of the page.
+2. Select the “Format” and enter a “Model”.
+3. Enter a “Group” and “Channel ID” if needed.
+4. Enter a sample request in “Request Body” and click “Run”.
+5. Review the “Results”.
+
+<Callout type="info" title="Tip">
+
+- A dry run runs only saved, enabled instances and omits the “Check Response” stage.
+- Execution stops at the first rejection or error that causes the request to fail. Subsequent instances are skipped.
+- Closing and reopening the dialog resets all inputs to their default values.
+
+</Callout>
+
+**Results Reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Section | What It Shows |
+| --- | --- |
+| Summary | “The request passed all instances.” No instance rejected the request or caused it to fail. This message also appears if an instance with “On Error” set to “Skip” fails. Its “Action” column in the execution steps shows `fail`.<br/>“Rejected by …: … (code: …)” The instance rejected the request, and subsequent instances were skipped.<br/>“… failed: …” An instance with “On Error” set to “Reject Request” encountered an error, such as an unreachable moderation endpoint. An actual request would receive HTTP 500. See [Frequently Asked Questions](#frequently-asked-questions). |
+| Execution steps | Shows each “Instance” with the plugin name below it, along with “Stage”, “Action”, “Change Count”, “Matches”, and “Duration”. “Action” shows “Passed”, “Rejected”, or “Not Checked”. On error, it shows `fail` and the reason. “Matches” shows the rule (category) × count, or “—” if there are no matches. If no instance ran, it shows “No instances ran for this request.” |
+| Request Body | Changes the instances made to the request body. If there are none, it shows “The request body was unchanged.” |
+| Request Header Changes | Request headers that were set or removed. If there are none, it shows “No request headers changed.” |
+| Reasoning Effort | Shows “Reasoning Effort: …” if an instance set the reasoning effort. |
+| What Users See in the Log | Entries that users can see in the usage log, such as “Blocked (code: …)”. If there are none, it shows “The user log will show no processing details for this request.” |
+
+</div>
+
+**Configuration Reference**
+
+The dialog uses a single section. The table follows the order of the fields in the dialog.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Format | The sample request format. | “OpenAI Chat Completions”, “OpenAI Responses”, “Claude Messages”, or “Gemini”. Changing the format resets “Model” and “Request Body” to the defaults for that format. | OpenAI Chat Completions |
+| Model | The requested model name. | Required. “Run” is disabled while the field is empty. This value determines whether “Specific Models” instances run. | Depends on the format, such as `gpt-4.1-mini` |
+| Group | The Group the request belongs to. | Optional. Select or enter a Group name. Leave it blank to skip “Specific Groups” instances. | Blank |
+| Channel ID | The Channel to use for the run. | Optional. Enter a Channel ID to also run instances added to that Channel.<br/>Validation messages include “Enter a valid Channel ID.” and “Channel does not exist”. | Blank |
+| Request Body | The sample request. | Must be a JSON object. Otherwise, the dialog shows “The request body must be a JSON object.” | A sample request in the selected format |
+
+</div>
+
+### Add an Instance to a Channel
+
+Instances with “Where to Apply” set to “Only When Added to a Channel” run only on the Channels they are added to. Other instances also run on requests for the Channels they are added to.
+
+**To Add an Instance**
+
+1. Edit the Channel in <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a> and open the “Request and Response” tab.
+2. Find “Request Processing Plugins” under “Override Rules” and select an instance from the “Add Instance” dropdown.
+3. Use the move up and move down buttons or drag the instances to reorder them. Click × to remove an instance.
+4. Click “Update Channel” to save.
+
+<Callout type="info" title="Tip">
+
+- The “Request Processing Plugins” field is visible only to accounts with the “Bind Task Plugins” permission.
+- “Request Processing Plugins” is a sensitive Channel setting.
+- If an instance already ran for the request because it applies to all requests or to the request’s Group, it is skipped on the Channel.
+
+</Callout>
+
+**Configuration Reference**
+
+See Channel Management for the rest of the Channel form settings.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Request Processing Plugins | Instances added to this Channel. The field description reads “Instances that apply to all requests or to this Channel’s Group also run.” | The dropdown lists every instance that has yet to be added, including disabled instances. Selecting an instance adds it to the end of the list. Once all instances have been added, the dropdown shows “No more instances”. The list order determines the execution order for instances added to this Channel.<br/>Disabled instances are marked “Disabled” and are skipped. Deleted instances show “Deleted” and the instance ID. | Blank |
+
+</div>
+
+<Callout type="warn" title="Caution">
+After an instance is deleted, any remaining reference in a Channel shows “Deleted”. Remove the reference before saving the Channel. Otherwise, the save fails with “Request processing instance … does not exist”.
+</Callout>
+
+## Rules and Behavior
+
+This section covers execution stages and order, how blocked requests are handled and logged, and settings for the six built-in request processing plugins.
+
+### Execution Stages and Order
+
+Each plugin declares which stages it runs in. These stages appear on the plugin card and at the top of the instance dialog.
+
+**Execution Stages**
+
+- “Before Reading the Request” inspects or modifies the client request after it arrives and before a Channel is selected. Instances added to a Channel run after that Channel is selected.
+- “Before Format Conversion” runs after Channel selection and before the request is converted to the Channel’s format.
+- “Before Sending” runs before each attempt to send the request to the Channel and before Channel parameter overrides are applied.
+- “Final Check” inspects the outgoing request after Channel parameter overrides are applied. At this stage, instances can reject the request only.
+- “Check Response” inspects the model response and stops it when a rule matches.
+
+**Execution Order**
+
+- The text above the list reads “Instances run from top to bottom. Instances that apply to all requests run first, followed by instances for the request’s Group, then instances added to the Channel.”
+- Within each scope, instances run in list order. Instances added to a Channel run in the order set on that Channel.
+- Changing the order can change the result. Use [Dry Run](#dry-run) to check the result after reordering instances.
+- To set parameter rules that apply across all Channels, configure a [Global Parameter Override](#global-parameter-override) instance.
+
+### Blocking and Logging
+
+When an instance rejects a request or encounters an error, the client receives an error according to the plugin’s error handling behavior. The usage log records the outcome.
+
+**Errors Returned to Clients**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Situation | What the Client Receives | Sent Upstream |
+| --- | --- | --- |
+| An instance rejects the request | HTTP 400 with error code `request_rejected`.<br/>The message comes from the plugin, such as the “Rejection Message” in Request Filtering. Content Moderation returns an English message. If no message is set, the default is “Request rejected by policy”. The message ends with “(code: …)”, such as `request_filtered` for Request Filtering, `sensitive_content` for Request Redaction, or `moderation.flagged` for Content Moderation. | No. The request is also ineligible for retry on another Channel. |
+| An instance encounters an error and the plugin’s “On Error” setting is “Reject Request”, such as when the moderation endpoint is unreachable | HTTP 500 with error code `request_plugin_failed`.<br/>Message “A request plugin failed”. | No. The request is also ineligible for retry on another Channel. |
+| An instance encounters an error and the plugin’s “On Error” setting is “Skip” | — | Yes. The instance is skipped and the request is sent as usual. |
+| A response is stopped during “Check Response” | Error code `response_rejected`. A non-streaming response returns HTTP 400. A streaming response ends with an error after any content already sent.<br/>The message comes from the plugin and defaults to “Response stopped by policy”. The message ends with “(code: …)”. | Yes. The model response is stopped. |
+
+</div>
+
+**Log Entries**
+
+View the following entries in the <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Location | What It Shows | Notes |
+| --- | --- | --- |
+| Log list | “Processed” below the model name. Hover over it to see “Request Processing: …”. | Appears when request processing modifies or blocks the request, or detects matching content. |
+| “Request Processing” section of log details | What each instance did. Shows “Blocked (code: …)” if an instance rejects the request or if an instance with “On Error” set to “Reject Request” encounters an error. Shows “Stopped (code: …)” if a response is stopped. | Changes superseded by Channel parameter overrides are marked “Overridden by Channel Settings”. If the instance could not read the request, it is marked “Not Checked”. See [Important Notes](#important-notes). |
+| “Request Processing Steps” in log details | Each instance’s stage, duration, and error, if any. | Visible to administrators only. |
+| Error log | Blocked requests generate an error log entry and are excluded from consumption logs. | Written only when error logging is enabled. See <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#request-decision-records" target="_blank" rel="noopener noreferrer">Request Decision Logging</a>. |
+
+</div>
+
+### Built-in Request Processing Plugins
+
+New API includes the following six request processing plugins. The list can change by version. You can also upload other request processing plugins or install them from the plugin marketplace in <a href="/en/docs/guide/feature-guide/admin/task-plugins" target="_blank" rel="noopener noreferrer">Plugin Management</a>.
+
+**Plugin Reference**
+
+When a plugin encounters an error and its “On Error” behavior is “Reject Request”, the request is rejected. See [Blocking and Logging](#blocking-and-logging). If the behavior is “Skip”, the instance is skipped and the request is sent as usual.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Plugin | Execution Stages | On Error | Purpose |
+| --- | --- | --- | --- |
+| Request Filtering (`request-filter`) | Before Reading the Request, Final Check, Check Response | Reject Request | Rejects requests whose text matches a keyword or regular expression. See [Request Filtering](#request-filtering). |
+| Request Redaction (`request-redact`) | Before Reading the Request, Final Check, Check Response | Reject Request | Replaces personal information and secrets in request text before sending. See [Request Redaction](#request-redaction). |
+| Content Moderation (`content-moderation`) | Before Reading the Request, Check Response | Reject Request | Checks user content through an OpenAI-compatible moderation endpoint and rejects flagged requests. See [Content Moderation](#content-moderation). |
+| Global Parameter Override (`param-override`) | Before Sending | Reject Request | Applies parameter override rules to all requests, specific Groups, or specific models. See [Global Parameter Override](#global-parameter-override). |
+| Automatic Reasoning Effort (`auto-reasoning`) | Before Format Conversion | Skip | Sets reasoning effort based on the size of the request. See [Automatic Reasoning Effort](#automatic-reasoning-effort). |
+| Image Compression (`image-compress`) | Before Sending | Skip | Compresses large images in requests before sending them upstream. See [Image Compression](#image-compression). |
+
+</div>
+
+<Callout type="info" title="Tip">
+The following sections list each plugin’s settings. “Default” refers to the value used for a new instance.
+</Callout>
+
+### Request Filtering
+
+- Request Processing – Request Filtering Configuration
+
+![Request Filtering configuration page](/assets/guide/feature-guide/request-processing-add-request-filtering.png)
+
+Rejects requests whose text matches a keyword or regular expression. At “Before Reading the Request”, the plugin checks all request text, including messages from every role, system prompts, tool definitions and call arguments, tool results, prompts, and attached text, PDF, and DOCX files. At “Final Check”, it checks the outgoing request again, including any text added by Channel parameter overrides. On a match, the client receives HTTP 400 with error code `request_rejected`. The response uses the “Rejection Message” followed by `(code: request_filtered)`.
+
+**Configuration Reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Rules | Rejects the request if any rule matches. Click “Add Rule” to add rules individually. | Optional. Up to 500 rules. | None |
+| Rules › Keyword or Expression | The keyword or regular expression to match. | Required. 1–1024 characters. Regular expressions starting with `(?i)` are case-insensitive. Correct invalid expressions before saving. | — |
+| Rules › Match Type | “Keyword” or “Regular Expression”. | — | Keyword |
+| Rules › Case Sensitive | Whether matching is case-sensitive. | — | Off |
+| Rules › Rule ID | Recorded in the usage log when the rule matches. | Optional. Up to 64 characters. Leave blank to assign IDs in order, such as rule-1, rule-2, and so on. | Blank |
+| Keyword List | One keyword per line. A request is rejected if it contains any of them. | Optional. Useful for large keyword lists. If only the keyword list matches, the log records `keywords`. | Blank |
+| Case-Sensitive Keywords | Whether the keyword list is case-sensitive. | — | Off |
+| Rejection Message | The message returned to the client. | Optional. Up to 256 characters. Leave blank to use “Request rejected by policy”. The gray text in the input field is an example. | Blank |
+| Check Response | Also stops model responses that match the rules. | If the response is stopped, the client receives error code `response_rejected`. For streaming responses, the plugin briefly buffers a short trailing segment of text so it can detect keywords split across chunks. | Off |
+
+</div>
+
+### Request Redaction
+
+- Request Processing – Request Redaction Configuration
+
+![Request Redaction configuration page](/assets/guide/feature-guide/request-processing-add-request-redaction.png)
+
+At “Before Reading the Request”, the plugin replaces personal information and secrets in request text, then continues processing the request. It applies “Built-in Types” first, followed by “Custom Rules”, to messages, system prompts, prompts, and attached text files. Tool definitions are excluded. Files such as PDFs and DOCX documents cannot be rewritten. If they contain sensitive information, the “Pre-Send Check” setting determines how to handle the request.
+
+**Configuration Reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Built-in Types | Types of information to replace, including email addresses, phone numbers, national ID numbers, bank card numbers, API keys and Tokens, and IPv4 addresses. | Click one or more tags to select types. Phone numbers include mainland China mobile numbers and international numbers with a leading +. National ID and bank card numbers are replaced only if they pass check digit validation. | All selected except “IPv4 Addresses” |
+| Custom Rules | Regular expressions applied after the built-in types. Click “Add Rule” to add rules individually. | Optional. Up to 50 rules. | None |
+| Custom Rules › Regular Expression | The expression that matches text to replace. | Required. 1–1024 characters. Correct invalid expressions before saving. | — |
+| Custom Rules › Replacement Text | The replacement text for this rule. | Optional. Up to 64 characters. Leave blank to use “Default Replacement Text”. | Blank |
+| Custom Rules › Rule ID | Recorded in the usage log when the rule matches. | Optional. Up to 64 characters. Leave blank to assign IDs in order. | Blank |
+| Default Replacement Text | The text used to replace each match. | Up to 64 characters. | `[REDACTED]` |
+| Pre-Send Check | How to handle outgoing requests that still contain sensitive information. Select “Reject Request” or “Off”. | With “Reject Request”, the plugin rejects the request with “Request rejected by policy” followed by `(code: sensitive_content)` in any of these cases. The “Final Check” stage finds sensitive information still present, such as text added by Channel parameter overrides. An attachment cannot be rewritten. The request has more than 512 matches, so some cannot be replaced. With “Off”, the request is sent as usual in all these cases. If the limit is exceeded, only the first 512 matches are replaced. | Reject Request |
+| Mask Response | Also masks text in model responses that matches these types and rules. | All matches in responses are replaced with `***`, regardless of the configured replacement text. For streaming responses, the plugin briefly buffers a short trailing segment of text. | Off |
+
+</div>
+
+<Callout type="info" title="Tip">
+“IPv4 Addresses” is off by default because version numbers and example addresses can look like IPv4 addresses and be replaced by mistake.
+</Callout>
+
+### Content Moderation
+
+- Request Processing – Content Moderation Configuration
+
+![Content Moderation configuration page](/assets/guide/feature-guide/request-processing-add-content-moderation.png)
+
+At “Before Reading the Request”, the plugin sends user messages, including their images and text from attached documents, to an OpenAI-compatible moderation endpoint. If the content is flagged, the plugin rejects the request. The client receives HTTP 400 with error code `request_rejected` and the message `The request was flagged by content moderation (code: moderation.flagged)` (English only). The plugin checks user messages and prompts in requests such as completions, embeddings, and image generation. It excludes system prompts and tools. You need a reachable moderation endpoint, such as OpenAI’s moderation endpoint.
+
+**Configuration Reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td_code]:wrap-anywhere [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Moderation Endpoint URL | The endpoint that accepts OpenAI moderation requests. | Required. Enter a full URL starting with http:// or https://, up to 2048 characters. | `https://api.openai.com/v1/moderations` |
+| API Key | The key used to call the moderation endpoint, sent as a Bearer Token. | Optional. Leave blank if the endpoint requires no key. Up to 1024 characters. | Blank |
+| Moderation Model | The model name sent to the moderation endpoint. | Leave blank to use the endpoint’s default model. Up to 128 characters. | `omni-moderation-latest` |
+| Text to Check | Which user messages to send to the moderation endpoint. Select “Last User Message” or “All User Messages”. | If the text is too long to submit in full, the plugin rejects the request with `The request is too long for content moderation (code: moderation.too_long)` (English only). | Last User Message |
+| Check Images | Also sends images from user messages to the moderation endpoint. | Up to 3 images are submitted per request. | On |
+| Categories to Block | Rejects requests flagged in any of the selected categories. There are 13 categories, including “Harassment”, “Hate”, and “Violence”. | Click one or more tags to select categories. If none are selected, all flagged requests are rejected. | None selected |
+| Moderate Responses | Also moderates model responses and stops them if flagged. | Non-streaming responses are submitted in full. Streaming responses are submitted in chunks of approximately 1000 characters and sent to the client only after they pass moderation. If the response is stopped, the client receives error code `response_rejected` and the message `The reply was flagged by content moderation (code: moderation.flagged)` (English only). | Off |
+
+</div>
+
+<Callout type="warn" title="Caution">
+
+- User messages, images, and text from attached documents are sent to the “Moderation Endpoint URL”. Use a service you trust.
+- Each request calls the moderation endpoint. With “Moderate Responses” enabled, responses also call it, increasing response times and endpoint usage. “Try It” and “Dry Run” also call the endpoint.
+- If the moderation endpoint is unreachable, returns an error, or takes longer than 15 seconds for a call, the plugin treats it as an execution error. The request is rejected and the client receives HTTP 500. See [Blocking and Logging](#blocking-and-logging).
+
+</Callout>
+
+### Global Parameter Override
+
+- Request Processing – Global Parameter Override Configuration
+
+![Global Parameter Override configuration page](/assets/guide/feature-guide/request-processing-add-global-parameter-overrides.png)
+
+Applies parameter override rules to all requests, specific Groups, or specific models. The syntax is the same as for Channel parameter overrides. See <a href="/en/docs/guide/feature-guide/admin/channel#parameter-override-system" target="_blank" rel="noopener noreferrer">Parameter Override System</a>. The plugin runs at “Before Sending” each time a request is sent to a Channel, before the Channel applies its own parameter overrides. If both set the same parameter, the Channel setting takes precedence. Request header changes from these rules also apply before Channel request header overrides.
+
+**Configuration Reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Parameter Overrides | Parameter override rules. | Enter a JSON object. Edit it directly or click “Visual Editor” to use the same editor as for Channels. See “Examples” below the editor for reference. Use `{}` to leave the request unchanged. A `return_error` rule rejects the request. The client receives HTTP 400 with error code `request_rejected` and the rule’s message followed by its code. The response always uses HTTP 400 regardless of the status code set in `return_error`. | `{}` |
+
+</div>
+
+<Callout type="info" title="Tip">
+To modify a single Channel, use that Channel’s parameter overrides.
+</Callout>
+
+### Automatic Reasoning Effort
+
+- Request Processing – Automatic Reasoning Effort Configuration
+
+![Automatic Reasoning Effort configuration page](/assets/guide/feature-guide/request-processing-add-auto-reasoning-effort.png)
+
+Sets reasoning effort based on request size, including the number of messages and tools, text length, and whether the request contains images. It runs at “Before Format Conversion”. If the instance encounters an error, it is skipped and the request is sent as usual.
+
+**Configuration Reference**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Rules | Rules are checked in order. The first match determines reasoning effort. Click “Add Rule” to add rules individually, and use the arrows to reorder them. | Up to 50 rules. A rule matches when all conditions with values are met. Blank conditions impose no restriction. | Two rules. “Minimum Tool Count” 1 → “High”. “Total Text Length” 4000 → “High”. |
+| Rules › Minimum Message Count | Matches when the request contains at least this many messages. | Optional. Integer of 0 or greater. | Blank |
+| Rules › Minimum Tool Count | Matches when the request contains at least this many tools. | Optional. Integer of 0 or greater. | Blank |
+| Rules › Last User Message Length | Matches when the last user message contains at least this many characters. | Optional. Integer of 0 or greater, in characters. | Blank |
+| Rules › Total Text Length | Matches when the combined text contains at least this many characters. | Optional. Integer of 0 or greater, in characters. | Blank |
+| Rules › Images Only | Whether the rule matches only requests containing images. | When off, the rule can also match requests without images. | Off |
+| Rules › Reasoning Effort | The reasoning effort to set when the rule matches. | Required. Select “Off”, “Minimal”, “Low”, “Medium”, “High”, “Extra High”, or “Maximum”. “Off” disables reasoning. | — |
+| Default Reasoning Effort | The reasoning effort to set when no rule matches. | “Not Set” leaves the request unchanged. | Not Set |
+| Minimum Reasoning Effort | Raises reasoning effort to this level if it is lower. | — | Not Set |
+| Maximum Reasoning Effort | Lowers reasoning effort to this level if it is higher. | — | Not Set |
+| Override Reasoning Effort in Request | Whether to replace reasoning effort already set in the request. | When off, the plugin leaves the request unchanged if it already specifies reasoning effort, including through the model name. The minimum and maximum settings are also skipped. | Off |
+
+</div>
+
+<Callout type="warn" title="Caution">
+Models without reasoning support may reject requests that specify reasoning effort. Select “Specific Models” on the second row of “Where to Apply” and choose only models that support reasoning.
+</Callout>
+
+### Image Compression
+
+- Request Processing – Image Compression Configuration
+
+![Image Compression configuration page](/assets/guide/feature-guide/request-processing-add-image-compression.png)
+
+At “Before Sending”, the plugin compresses large images embedded in the request as base64. Images referenced by URL are skipped. If the instance encounters an error, it is skipped and the images are sent as is.
+
+**Configuration Reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Compression Mode | “Lossless” or “Lossy”. | Lossless mode converts only PNG and GIF images to WebP, preserving every pixel and the original dimensions. The upstream service must support WebP. JPEG and WebP images are skipped. | Lossless |
+| Minimum Image Size | Images at or above this size are compressed. | 0 or greater. Available units are B, KB, and MB, with 1 KB equal to 1000 bytes. | 512 KB |
+| Longest Side | Images whose longest side exceeds this value are compressed and scaled down proportionally. | Appears when “Compression Mode” is “Lossy”. Range 16–16384 px. In lossy mode, an image is compressed if it reaches “Minimum Image Size” or its longest side exceeds this value. | 2048 |
+| Output Format | “Auto”, “JPEG”, or “PNG”. “Auto” uses PNG for images with transparency and JPEG for the rest. | Appears when “Compression Mode” is “Lossy”. | Auto |
+| JPEG Quality | Higher values preserve more detail and save less space. | Appears when “Compression Mode” is “Lossy” and “Output Format” is “Auto” or “JPEG”. Range 1–100. | 85 |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- The plugin keeps the original image if the compressed version is the same size or larger.
+- The plugin skips animated GIFs and images larger than 20 MiB or 40 million pixels.
+- The plugin compresses up to 32 images per request. Any remaining images are sent as is.
+
+</Callout>
+
+## Action Reference
+
+### Page Buttons and Filters
+
+**Page Header**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Node Sync Status | In the upper-right corner of the page, to the left of “Dry Run” | Appears in multi-instance deployments with at least two online nodes. Click to see whether each node has loaded the latest instance settings. See [Node Sync Status](#node-sync-status). |
+| Dry Run | Upper-right corner of the page | Available after the instance list finishes loading. See [Dry Run](#dry-run). |
+| Add | Upper-right corner of the page | Available after the instance list finishes loading and while no save is in progress. See [Add and Edit Instances](#add-and-edit-instances). |
+
+</div>
+
+### Row Actions
+
+**Instance List**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Move up, move down | To the right of the position number in the “Order” column | Swaps the instance with the row above or below and saves immediately. The first row can only move down, and the last row can only move up. See [Reorder, Enable, or Delete Instances](#reorder-enable-or-delete-instances). |
+| Enabled | Switch in the “Enabled” column | Enables or disables the instance and saves immediately. If the save fails, the switch returns to its previous state. |
+| Edit icon | End of the row | Opens the instance dialog. See [Add and Edit Instances](#add-and-edit-instances). |
+| Delete icon | End of the row, to the right of the edit icon | Opens the “Delete Instance?” confirmation dialog. See [Reorder, Enable, or Delete Instances](#reorder-enable-or-delete-instances). |
+
+</div>
+
+<Callout type="info" title="Tip">
+These buttons and switches are disabled while a save is in progress.
+</Callout>
+
+## Status Reference
+
+### Instance Status
+
+The instance list shows the following statuses.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Enabled (switch on) | The instance runs according to “Where to Apply”. | New instances are enabled by default. The plugin must be available to save the instance with the switch on. |
+| Disabled (switch off) | The instance is skipped, and its settings are retained. | Channels that include the instance show it as “Disabled”. |
+| Plugin disabled | The plugin is disabled, missing, or deleted. The instance is skipped. | The “Plugin” column shows the plugin key and a gray “Plugin disabled” label.<br/>While the instance is enabled, saving any change to the list fails with “Plugin … is missing or disabled”.<br/>Enable the plugin in <a href="/en/docs/guide/feature-guide/admin/task-plugins" target="_blank" rel="noopener noreferrer">Plugin Management</a> or disable the instance first. |
+
+</div>
+
+### List Status
+
+The instance list area shows the following statuses.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| No request processing instances yet | The list is empty. | The text below reads “Add an instance to inspect or modify requests before they reach the model.” |
+| Oops! Something went wrong | The instance list failed to load. | The original error appears below. Click “Retry” to reload the list. |
+
+</div>
+
+### Node Sync Status
+
+In multi-instance deployments with at least two online nodes, the upper-right corner of the page shows one of the following summaries.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Applied on … nodes | All online nodes have loaded the latest instance settings. | Click the summary to see “Applied” for each node under “Nodes”. |
+| …/… nodes updated | Some nodes are still loading the settings. | Nodes that are still loading show “Updating”. See [Saving and Applying Changes](#saving-and-applying-changes) for sync timing. |
+| … nodes failed to update | One or more nodes failed to load the settings. | Affected nodes show “Update Failed”, with “Settings” and the original error message below. |
+
+</div>
+
+## Saving and Applying Changes
+
+Adding, editing, deleting, reordering, enabling, or disabling an instance immediately saves the entire list as system settings. Changes take effect immediately on the node handling the save request. Other nodes usually receive the changes within about 3 seconds through system setting synchronization, and at the latest within one sync interval, which defaults to 60 seconds.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | How It Is Saved | When It Takes Effect |
+| --- | --- | --- |
+| Add or edit an instance | Click “Save” in the dialog. | The new settings apply starting with the next request. |
+| Reorder, enable, or disable an instance | Click a move up or move down button or the “Enabled” switch. The list saves immediately, with no notification on success. | The new order and status apply starting with the next request. |
+| Delete an instance | Click “Delete” in the “Delete Instance?” confirmation dialog. A successful save produces no notification. | The instance stops running starting with the next request, including on Channels it was added to. |
+| Add an instance to a Channel | Click “Update Channel” in the Channel drawer. | See <a href="/en/docs/guide/feature-guide/admin/channel#saving-and-applying-changes" target="_blank" rel="noopener noreferrer">Channel Management</a>. |
+
+</div>
+
+**Additional Details**
+
+- **Dry runs are read-only.** “Dry Run” uses saved instances only. “Try It” in the dialog uses the current settings, including unsaved changes. Both leave the instance list untouched.
+- **Plugin switches.** Request processing operates independently of the global “Enable Plugins” switch on the Plugin Management page. Disabling an individual request processing plugin stops its instances from running and retains their settings. See [Instance Status](#instance-status).
+- **Save failures.** If a list action fails to save, the server’s original error appears in a pop-up and the list stays as it was. If a save fails in the dialog, the original error appears below “Where to Apply”.
+
+## Important Notes
+
+- **Deleting an instance affects Channels it was added to.** The confirmation dialog says “… will stop processing requests, including on Channels it was added to.” Deletion is permanent.
+- **Blocked requests are ineligible for retry.** A request rejected by an instance returns HTTP 400 immediately, with no retry on another Channel. See [Blocking and Logging](#blocking-and-logging).
+- **Order affects results.** Instances within each scope run in list order. Reordering them can change the result. Use “Dry Run” to check the result after reordering. See [Execution Stages and Order](#execution-stages-and-order).
+- **Request body passthrough skips some instances.** When “Pass Through Request Body” is enabled on the Channel or “Enable Request Passthrough” is enabled under “Global Model Configuration” in System Settings, the request is sent upstream as is. The “Before Format Conversion” and “Before Sending” stages are skipped, including Automatic Reasoning Effort, Image Compression, and Global Parameter Override. Channel-added instances are also skipped at “Before Reading the Request”. “Final Check” and “Check Response” run as usual, with “Final Check” inspecting the unchanged request. The usage log marks skipped “Before Sending” instances and skipped “Before Reading the Request” steps of Channel-added instances as “Not Checked”.
+- **Automatic Reasoning Effort requires models with reasoning support.** Select “Specific Models” on the second row of “Where to Apply” and choose only models that support reasoning. See [Automatic Reasoning Effort](#automatic-reasoning-effort).
+- **Content Moderation sends user text to the configured endpoint.** User messages, images, and text from attached documents are sent to the moderation endpoint in the settings. See [Content Moderation](#content-moderation).
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="The request is rejected and the client receives HTTP 400">
+
+**Error Message**
+
+“Request rejected by policy (code: …)” or the plugin’s message followed by “(code: …)”. The error code is `request_rejected`.
+
+**Possible Cause**
+
+The request matched a rule in a request processing instance, such as a Request Filtering keyword.
+
+**Resolution**
+
+1. In the usage log details, check the “Request Processing” section to identify the instance that blocked the request.
+2. Reproduce the issue with “Dry Run” on this page. Adjust the instance’s settings or scope, or disable it as needed.
+
+</Accordion>
+
+<Accordion title="The client receives HTTP 500 and the message A request plugin failed">
+
+**Error Message**
+
+“A request plugin failed” with error code `request_plugin_failed`.
+
+**Possible Cause**
+
+An instance encountered an error. For example, Content Moderation may have an invalid endpoint URL or API key, or the endpoint may be unreachable or take longer than 15 seconds to respond.
+
+**Resolution**
+
+1. Reproduce the issue with “Dry Run” on this page. The first line of the results shows “… failed: …” and the reason.
+2. Update the instance settings based on the error, or temporarily disable the instance.
+
+</Accordion>
+
+<Accordion title="An instance does not take effect">
+
+**Possible Causes**
+
+- The instance is disabled, or its plugin is disabled or missing. In the latter case, the list shows “Plugin disabled”. See [Instance Status](#instance-status).
+- The request’s Group or model is outside the instance’s scope.
+- The instance is set to “Only When Added to a Channel” and has yet to be added to the Channel that processed the request.
+- The Channel that processed the request has request body passthrough enabled, so the “Before Format Conversion” and “Before Sending” stages are skipped. See [Important Notes](#important-notes).
+
+**Resolution**
+
+1. Run “Dry Run” with the same model, Group, and Channel ID to see which instances run.
+
+</Accordion>
+
+<Accordion title="Request Processing Plugins is missing when editing a Channel">
+
+**Possible Cause**
+
+The current account lacks the “Bind Task Plugins” permission.
+
+**Resolution**
+
+1. Have Root grant the permission in <a href="/en/docs/guide/feature-guide/admin/user#administrator-permissions" target="_blank" rel="noopener noreferrer">Admin Permissions</a>.
+
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- Install, enable, and disable request processing plugins, and view their versions in <a href="/en/docs/guide/feature-guide/admin/task-plugins" target="_blank" rel="noopener noreferrer">Plugin Management</a>.
+- Add instances to Channels and configure parameter overrides in <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>.
+- Root can configure session persistence, retries, and Channel health in <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">Request Policy Configuration</a>.
+- View request processing records in the <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>.

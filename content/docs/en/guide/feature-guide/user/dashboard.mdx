@@ -1,58 +1,452 @@
 ---
-title: Overview and Dashboard
-description: Use the overview page and dashboard to understand gateway status, usage, model calls, traffic splitting, and more.
+title: Data Dashboard
+description: View model call counts, Token usage, and Quota consumption by time range, see how calls are routed across API keys, Groups, and models, and set the default chart views.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-## Overview Page
+- In the sidebar, go to “General” → “Data Dashboard.”
+- Select a time range to view model call counts, Token usage, Quota consumption, and call routing.
+- Data is aggregated into clock-hour buckets. New calls usually appear within a few minutes.
 
-- After logging in, click the "Overview" button in the left navigation bar to enter the overview page `/dashboard/overview`.
-You can view cards such as Quick Start Guide, Usage and Health Status, API Information, Announcements, FAQ, and Uptime.
+<Callout type="info" title="Tip">
 
-### Quick Start Guide
-
-1. Click "Create API Key" to go to `/keys`.
-2. Add quota to your wallet (if billing is enabled).
-3. Open the playground or use your client to send the first request to verify the route.
-
-![快速开始页](/assets/guide/feature-guide/overview-get-started.png)
-
-### Usage and Health Status
-
-The page summarizes metrics such as balance, consumption, request count, success rate, latency, and throughput based on current account and instance data.
-
-![概览信息页1](/assets/guide/feature-guide/overview-info-1.png)
-
-### API Information, Announcements, FAQ, and Uptime
-
-The page displays information such as API Information, Announcements, FAQ, and Uptime.
-
-![概览信息页2](/assets/guide/feature-guide/overview-info-2.png)
-
-<Callout type="info">
-  These cards are configured by Root in "System Settings" → "Console Content".
+- The page title matches the active tab. When you open the page from the sidebar, the title is “Model Usage Analysis.”
+- Regular users can view only their own account data. Administrators can view data for all users on the site and use the “Username” field under “Filter” to view an individual user’s data.
+- The dashboard collects statistics only while the administrator has enabled data collection. Calls made before data collection was enabled or while it was disabled are excluded from the dashboard. Dashboard data is retained indefinitely and is unaffected by clearing historical logs.
+- To configure data collection, go to “System Settings” → “Console Content” → “Data Dashboard” (visible only to Root). “Enable Data Dashboard” controls whether new calls are recorded. “Refresh Interval (Minutes)” controls how often new calls are aggregated and defaults to 5 minutes. See <a href="/en/docs/guide/feature-guide/system-settings/settings-content#data-dashboard" target="_blank" rel="noopener noreferrer">Console Content Configuration</a>.
+- The site determines the Quota unit. Monetary amounts follow the site’s currency display settings.
+- If “Data Dashboard” is missing from the left sidebar, open “Profile,” go to “Left Sidebar Preferences,” enable both “Console Section” and “Data Dashboard,” and save your changes. The “Data Dashboard” toggle controls both the “Overview” and “Data Dashboard” entries.
 </Callout>
 
-## Dashboard
+## Data Dashboard Overview
 
-- After logging in, click the "Dashboard" button in the left navigation bar to enter the dashboard page `/dashboard/models`.
-You can view model call analysis and traffic splitting; for user statistics, please go to `/dashboard/users` (Admin and Root users only).
+- Data Dashboard – Model Usage Analysis
 
-### Model Call Analysis
+![Data Dashboard model usage analysis page](/assets/guide/feature-guide/general-dashboard-model-usage-analysis.png)
 
-View call counts, Token usage, consumption distribution, and performance metrics by time range, model, and group.
+The page has three tabs for viewing usage statistics and charts by time range. “Model Usage Analysis” shows model usage, “Routing” shows how calls flow through each stage, and “User Statistics” is available only to administrators.
 
-![数据看板信息页1](/assets/guide/feature-guide/dashboard-info-1.png)
+- [Filter Data](#filter-data)
+- [Set Default Chart Views](#set-default-chart-views)
+- [View Model Usage Analysis](#view-model-usage-analysis)
+- [View Routing](#view-routing)
+- [View User Statistics](#view-user-statistics)
 
-### Traffic Splitting
+<Callout type="info" title="Tip">
+If a chart is empty or its data differs from the usage logs, see [Frequently Asked Questions](#frequently-asked-questions).
+</Callout>
 
-View request flow between users, API keys, groups, models, and channels.
+**Page sections**
 
-![数据看板信息页2](/assets/guide/feature-guide/dashboard-info-2.png)
+The table lists the sections of the “Model Usage Analysis” tab from top to bottom. See the corresponding sections for the “Routing” and “User Statistics” tabs.
 
-### User Statistics
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section | Description | When shown | Notes |
+| --- | --- | --- | --- |
+| Tabs | “Model Usage Analysis,” “Routing,” and “User Statistics” (administrators only). | Always shown. | Click a tab to switch views. The page title changes to match the active tab. |
+| Preferences | Set the default time range and charts when opening the page. | On the “Model Usage Analysis” tab. | In the upper-right corner of the page. See [Set Default Chart Views](#set-default-chart-views). |
+| Filter | Set the time range, time granularity (the duration represented by each data point), and username (administrators only). | On the “Model Usage Analysis” and “Routing” tabs. | In the upper-right corner of the page. Both tabs share the same filters. See [Filter Data](#filter-data). |
+| Statistics Cards | “Total Count,” “Total Quota,” “Total Token Count,” “Cache Reads,” “Cache Writes,” “Average RPM,” and “Average TPM” for the selected time range. | On the “Model Usage Analysis” tab. | See [View Model Usage Analysis](#view-model-usage-analysis) for metric definitions. A card displays “--” if its data fails to load. |
+| Performance Health (administrators only) | Site-wide “Success Rate,” “Average Latency,” and “Throughput” for requests over the past 24 hours, along with the models with the most traffic and their success rates. | Administrators only. | Always covers the past 24 hours, regardless of the filters. Displays “No performance data available” when there is no data. Success rate colors are dark green at 100%, light green from 90% to under 100%, yellow from 70% to under 90%, and red below 70%. |
+| Consumption Distribution | Quota consumption over time for each model. | On the “Model Usage Analysis” tab. | “Total:” to the right of the title shows the total Quota consumed in the selected time range. |
+| Model Usage Analysis | The call count for each model. | On the “Model Usage Analysis” tab. | Shares its name with the page title. “Total:” to the right of the title shows the total call count. |
+</div>
 
-Only Admin and Root can access `/dashboard/users` to view user analysis; this section will not be displayed in the navigation for regular users.
+## Filter Data
 
-![数据看板信息页3](/assets/guide/feature-guide/dashboard-info-3.png)
+- Data Dashboard – Model Analysis Filters
+
+![Data Dashboard model analysis filters](/assets/guide/feature-guide/general-dashboard-filters.png)
+
+**Steps**
+
+1. On the “Model Usage Analysis” or “Routing” tab, click “Filter” in the upper-right corner of the page.
+2. Under “Quick Range,” select “1 Day,” “7 Days,” “14 Days,” or “29 Days,” or set the “Start Time” and “End Time” under “Custom Time Range.”
+3. Under “Time Granularity,” select “Hour,” “Day,” or “This Week” as needed.
+4. To view an individual user’s data, enter their full username in “Username” (administrators only).
+5. Click “Apply Filters.”
+6. To restore the default filters, click “Reset.”
+
+<Callout type="info" title="Tip">
+
+- “Model Usage Analysis” and “Routing” share the same filters, which stay in effect when you switch tabs. Reloading the page restores the defaults from “Preferences.”
+- The time range is measured backward from when you open the page. For example, “1 Day” covers the preceding 24 hours. To see the latest data, click “Reset” or reload the page.
+- On the “Routing” tab, the filter dialog is titled “Routing Filters” and contains the same options. The routing diagram aggregates data across the entire time range, regardless of the “Time Granularity” setting.
+</Callout>
+
+**Filter options**
+
+The dialog has four sections. “Quick Range,” “Custom Time Range,” and “Chart Settings” are available to all users. “Administrators Only” is visible only to administrators. The table follows the order of the options in the dialog.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Filter | Section | Description | Requirements and limits | Default |
+| --- | --- | --- | --- | --- |
+| Quick Range | Quick Range | The last 1, 7, 14, or 29 days, counting back from the current time. | Selecting a range fills in both the start and end times and sets the granularity to “Hour” for “1 Day,” “Day” for “7 Days” and “14 Days,” or “This Week” for “29 Days.” Manually editing either time clears the button highlight. | “Default Range” in “Preferences,” initially “1 Day” |
+| Start Time, End Time | Custom Time Range | The start and end times of the query. | Select a date and enter a time to the nearest second. Click × on the right to clear a field. If both fields are empty, the default range for the selected granularity applies (1 day for “Hour,” 7 days for “Day,” and 29 days for “This Week”). Queries by regular users have a maximum time span of 365 days by default. If a query exceeds the limit, “Routing” displays “Time span cannot exceed … days,” while the “Model Usage Analysis” cards display 0 and its charts are empty. | Calculated from the quick range |
+| Time Granularity | Chart Settings | The duration represented by each data point in a chart. | Select “Hour,” “Day,” or “This Week.” Data is recorded in clock-hour buckets. Granularity changes how the charts group data, while the statistics cards show totals and averages for the selected range. With “This Week,” each point is labeled with a seven-day date range, and its value is the total for the first day of that range. | “Default Time Granularity” in “Preferences,” initially “Hour” |
+| Username (administrators only) | Administrators Only | Show data for a single user. | Enter the exact username. Leave blank to include all users on the site. | Blank |
+</div>
+
+## Set Default Chart Views
+
+- Data Dashboard – Model Analysis Defaults
+
+![Data Dashboard model analysis default settings](/assets/guide/feature-guide/general-dashboard-model-usage-analysis-preferences.png)
+
+**Steps**
+
+1. On the “Model Usage Analysis” tab, click “Preferences” in the upper-right corner of the page.
+2. In the “Model Analysis Defaults” dialog, select a default for each setting.
+3. Click “Save Preferences.”
+
+<Callout type="info" title="Tip">
+
+- Preferences are saved in the current browser. Switching browsers or devices, or clearing browser data, restores the defaults.
+- Saving preferences immediately resets the active filters to the new defaults.
+- The “Routing” tab also uses “Default Range” and “Default Time Granularity.”
+- Changing the time granularity on the “User Statistics” tab (administrators only) also updates “Default Time Granularity.”
+- Changing the chart type in the upper-right corner of a chart applies only to the current view.
+</Callout>
+
+**Settings**
+
+The table follows the order of the settings in the dialog.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Default Range | The time range selected when the page opens. | Select “1 Day,” “7 Days,” “14 Days,” or “29 Days.” | “1 Day” |
+| Default Time Granularity | The time granularity selected when the page opens. | Select “Hour,” “Day,” or “This Week.” | “Hour” |
+| Default Consumption Distribution Chart | The chart type initially shown in “Consumption Distribution.” | Select “Bar Chart” or “Area Chart.” | “Bar Chart” |
+| Default Model Usage Chart | The view initially shown in the “Model Usage Analysis” chart. | Select “Call Trends,” “Call Count Distribution,” or “Call Count Ranking.” | “Call Trends” |
+</div>
+
+## View Model Usage Analysis
+
+**Steps**
+
+1. Click the “Model Usage Analysis” tab.
+2. Check the statistics cards for totals and averages over the selected time range.
+3. In the upper-right corner of “Consumption Distribution,” select “Bar Chart” or “Area Chart” to view Quota consumption by model.
+4. In the upper-right corner of the “Model Usage Analysis” chart, select “Call Trends,” “Call Count Distribution,” or “Call Count Ranking.”
+5. Hover over the chart to see exact values. Click a model name in the legend to show only that model.
+
+<Callout type="info" title="Tip">
+
+- Administrators see totals across all users by default. Regular users see data for their own account only.
+- The statistics cards and charts include only “Consumption” records. Records such as “Error,” “Refund,” and “Top-up” are excluded.
+</Callout>
+
+**Metrics**
+
+The table lists the statistics cards from left to right.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Metric | Description | Calculation | Notes |
+| --- | --- | --- | --- |
+| Total Count | Number of calls. | Each “Consumption” record in the selected time range counts as one call. | The label below the value is “Statistics Count.” Long values are abbreviated. Hover to see the full value. |
+| Total Quota | Total Quota consumed. | Uses the same records as “Total Count.” | The label below the value is “Statistics Quota.” |
+| Total Token Count | Combined input and output Token count. | Uses the same records as “Total Count.” Asynchronous tasks such as video and music contribute zero Tokens. | The label below the value is “Statistics Token Count.” |
+| Cache Reads | Total number of Tokens read from the cache. | Uses the same records as “Total Count.” The value is 0 for periods before the site began tracking cache usage and for calls where the upstream provider returned no cache information. | The label below the value is “Statistics Token Count.” |
+| Cache Writes | Total number of Tokens written to the cache. | The same rules as “Cache Reads” apply. | The label below the value is “Statistics Token Count.” |
+| Average RPM | Average calls per minute. | “Total Count” divided by the total minutes in the selected time range, including minutes with zero calls. | The label below the value is “Requests per Minute.” A longer range with more idle time lowers the average. |
+| Average TPM | Average Tokens per minute. | “Total Token Count” divided by the total minutes in the selected time range. | The label below the value is “Tokens per Minute.” |
+</div>
+
+**Charts**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Chart | What it shows | How to switch | Notes |
+| --- | --- | --- | --- |
+| Consumption Distribution | Quota consumed at each time point, stacked by model. | Select “Bar Chart” or “Area Chart” in the upper-right corner of “Consumption Distribution.” | The area chart shows the 15 models with the highest consumption individually and groups the rest under “Other.” Hovering lists up to 15 models. When there are fewer than seven time points, the chart pads the left side with empty points. |
+| Call Trends | How each model’s call count changes over time. | Use the selector in the upper-right corner of the “Model Usage Analysis” chart. | Shows the 20 most-called models individually and groups the rest under “Other.” |
+| Call Count Distribution | Each model’s share of total calls in a doughnut chart. | Same as above. | Lists all models. |
+| Call Count Ranking | Models with the highest call counts in a bar chart. | Same as above. | Shows the top 20 models and groups the rest under “Other.” |
+</div>
+
+## View Routing
+
+- Data Dashboard – Routing
+
+![Data Dashboard routing page](/assets/guide/feature-guide/general-dashboard-routing.png)
+
+The routing diagram shows the stages each call passes through from left to right. Each column represents a stage, and each block represents an item in that stage. Thicker links between columns indicate more Quota, Tokens, or calls along that path.
+
+**Steps**
+
+1. Click the “Routing” tab.
+2. Under “Link Thickness,” select “By Quota,” “By Token Count,” or “By Request Count.”
+3. Read the columns from left to right. Hover over a link to see the path’s Quota, Token count, request count, and “Share.”
+4. Click a block or link to highlight every path that passes through it. Click it again or click an empty area to clear the highlight.
+5. To view only certain items, select them under “Node Filter.” To hide a column, click its name above the chart on the right.
+6. Before taking a screenshot or sharing your screen, click the “Hide Sensitive Data” eye icon in the upper-right corner of the page.
+
+<Callout type="info" title="Tip">
+
+- “Share” is the link’s value as a percentage of the total for the selected time range.
+- The diagram combines data from the entire time range into a single view.
+- The routing diagram includes only calls with a recorded Group. Calls made before the site started recording routing data still count toward “Model Usage Analysis.”
+</Callout>
+
+**Columns**
+
+Columns appear from left to right in the following order for each role.
+
+- Regular user → Token → Group → Model
+- Administrator → User → Group → Model → Channel. The screenshot shows this view.
+- Root → User → Node → Token → Group → Model → Channel
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Column | Description |
+| --- | --- |
+| User (administrators only) | The user who made the call. |
+| Node (Root only) | The deployment node that handled the call. |
+| Token | The name of the API key used for the call. Deleted keys appear as “Deleted(…).” |
+| Group | The Group used for the call. |
+| Model | The model called. |
+| Channel (administrators only) | The upstream Channel that handled the call. |
+</div>
+
+**Settings**
+
+The table lists the settings from left to right on the page.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Link Thickness | The metric used to calculate link thickness and “Share.” | Select “By Quota,” “By Token Count,” or “By Request Count.” | “By Quota” |
+| Display Count | The number of items to keep in each column. | Select “Top 10,” “Top 20,” “Top 50,” or “Top 100.” The diagram keeps the items with the highest values for the metric selected under “Link Thickness.” | “Top 50” |
+| Overflow Items | How to handle items beyond the “Display Count” limit. | “Merge into Other” groups those items under labels such as “Other Users” or “Other Models.” “Hide” removes paths through those items and reduces the total shown in the diagram. | “Merge into Other” |
+| Node Filter | Show only paths that pass through the selected items. | Click “All Nodes” to search for and select one or more items across the available columns. Use “Clear” to clear the selection. Use the separate “User” filter to filter by user. | “All Nodes” |
+| User (administrators only) | Show only paths for the selected users. | Use the multi-select field on the right side of the page. It displays \* when no users are selected. | All users |
+| Column Names | Show or hide individual columns. | Click a column name above the chart on the right. At least two columns must remain visible. | All columns visible |
+| Hide Sensitive Data | Mask User, Node, Token, Group, and Channel names as ••••. | Click the eye icon in the upper-right corner of the page to toggle masking. Model names stay visible. Reloading the page restores all names. Masking is enabled in the screenshot. | Off (names are visible) |
+</div>
+
+## View User Statistics
+
+- Data Dashboard – User Statistics
+
+![Data Dashboard user statistics page](/assets/guide/feature-guide/general-dashboard-user-statistics.png)
+
+The “User Statistics” tab (administrators only) summarizes site-wide Quota consumption by user, independently of the settings under “Filter.”
+
+**Steps**
+
+1. Click the “User Statistics” tab.
+2. Select the time range “1 Day,” “7 Days,” “14 Days,” or “29 Days.”
+3. Select the time granularity “Hour,” “Day,” or “This Week.”
+4. Under “Top Users,” select “Top 5,” “Top 10,” “Top 20,” or “Top 50.”
+5. View each user’s Quota consumption in “User Consumption Ranking” and “User Consumption Trends.”
+
+<Callout type="info" title="Tip">
+
+- Changing the time granularity resets the time range to the default for that granularity (1 day for “Hour,” 7 days for “Day,” and 29 days for “This Week”). It also saves the selected granularity as “Default Time Granularity” in “Preferences.”
+- Both charts measure Quota consumption only. “Total:” is the combined Quota consumption of the users shown.
+</Callout>
+
+**Charts**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Chart | What it shows | Notes |
+| --- | --- | --- |
+| User Consumption Ranking | Users with the highest Quota consumption in the selected time range, shown in a horizontal bar chart. | “Top Users” determines how many users are shown. |
+| User Consumption Trends | How Quota consumption changes over time for those users, shown in an area chart. | Includes only the users in the ranking. There is no “Other” category. |
+</div>
+
+**Settings**
+
+The table lists the settings from left to right on the page.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Setting | Description | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Time Range | The reporting period, measured backward from the current time. | Select “1 Day,” “7 Days,” “14 Days,” or “29 Days.” | Based on “Default Time Granularity” (1 day for “Hour,” 7 days for “Day,” and 29 days for “This Week”) |
+| Time Granularity | The duration represented by each data point in a chart. | Select “Hour,” “Day,” or “This Week.” “This Week” works the same way as under “Filter.” | “Default Time Granularity” in “Preferences” |
+| Top Users | The number of users with the highest consumption to show. | Select “Top 5,” “Top 10,” “Top 20,” or “Top 50.” | “Top 10” |
+</div>
+
+## Controls Reference
+
+### Page Buttons and Filters
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Control | Location | Description |
+| --- | --- | --- |
+| Model Usage Analysis, Routing, User Statistics (administrators only) | Tabs below the page title | Switches the active tab and updates the page title. |
+| Preferences | Upper-right corner of the “Model Usage Analysis” tab | Opens the “Model Analysis Defaults” dialog. See [Set Default Chart Views](#set-default-chart-views). |
+| Filter | Upper-right corner of the “Model Usage Analysis” and “Routing” tabs | Opens the “Model Analysis Filters” or “Routing Filters” dialog. See [Filter Data](#filter-data). |
+| Apply Filters | Lower-right corner of the filter dialog | Refreshes the data using the selected filters and closes the dialog. |
+| Reset | Lower-right corner of the filter dialog | Restores the default range and time granularity from “Preferences,” clears the username, and closes the dialog. |
+| Hide Sensitive Data, Show Sensitive Data | Eye icon in the upper-right corner of the “Routing” tab | See [View Routing](#view-routing). |
+| Link Thickness, Display Count, Overflow Items, Node Filter, User (administrators only) | Above the diagram on the “Routing” tab | See [View Routing](#view-routing). |
+| Time Range, Time Granularity, Top Users | Above the charts on the “User Statistics” tab | See [View User Statistics](#view-user-statistics). |
+</div>
+
+### Chart Controls
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Control | Location | Description |
+| --- | --- | --- |
+| Bar Chart, Area Chart | Upper-right corner of “Consumption Distribution” | Switches the chart type for the current view only. |
+| Call Trends, Call Count Distribution, Call Count Ranking | Upper-right corner of the “Model Usage Analysis” chart | Switches the chart for the current view only. |
+| Legend | Below the chart | Click a model name to show only that model. If the legend spans multiple pages, use the arrows on the right to navigate. |
+| View Values | Chart | Hover over a data point or item to see its value. |
+| Column Names | Above the routing diagram on the right | Click to show or hide a column. At least two columns must remain visible. |
+| Blocks and Links | Routing diagram | Click to highlight paths that pass through the block or link. Click it again or click an empty area to clear the highlight. |
+</div>
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="Charts are empty and summary cards show 0 or “--”">
+
+**Possible causes**
+
+- There were no API calls in the selected time range.
+- Recent calls are still pending aggregation. They typically appear within a few minutes. By default, the dashboard aggregates data every 5 minutes.
+- Dashboard statistics may be disabled. Calls made before the administrator enabled statistics or while statistics were disabled are excluded from aggregation, even after statistics are enabled.
+- The administrator turned off “Log Quota Usage,” so calls no longer generate “Consumption” records.
+- The time range selected by a regular user exceeds the limit of 365 days by default. The summary cards show 0 without a separate message.
+- “--” on a summary card means the data failed to load, for example, because the network connection was interrupted.
+
+**How to resolve**
+
+1. Click “Filter,” select “1 Day,” and click “Apply Filters.”
+2. Wait a few minutes, then refresh the page.
+3. If the dashboard is still empty, ask the administrator to confirm that dashboard statistics are enabled.
+
+</Accordion>
+
+<Accordion title="Dashboard data differs from Usage Logs">
+
+**Explanation**
+
+The dashboard aggregates calls into hourly buckets aligned to the hour. Usage Logs record each call individually.
+
+**Possible causes**
+
+- If the start time falls between hour boundaries, the dashboard excludes the hour containing the start time.
+- Calls from the last few minutes are still pending aggregation.
+- The dashboard counts only “Consumption” records. It excludes records such as “Error,” “Refund,” and “Top-up,” and does not subtract refunds from its totals.
+- The dashboard excludes calls made before the administrator enabled dashboard statistics. If Usage Logs are cleared, the dashboard retains the totals already aggregated.
+- The dashboard shows site-wide data to administrators by default. Usage Logs may be set to “Only Me” or have other filters applied.
+
+**How to resolve**
+
+1. Set both views to the same time range with start and end times on the hour, such as 08:00 to 10:00.
+2. To verify individual charges, refer to the <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+
+</Accordion>
+
+<Accordion title="“Cache Reads” and “Cache Writes” show 0">
+
+**Possible causes**
+
+- The selected time range predates the start of cache usage logging on the site.
+- The model or upstream provider did not return cache information, or the call did not hit the cache.
+- Token usage is not tracked for asynchronous tasks such as video or music generation.
+
+**How to resolve**
+
+1. Select a more recent time range and check again.
+2. To check cache usage for an individual call, look in the “Token” column of the <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+
+</Accordion>
+
+<Accordion title="“Traffic Flow” shows “No flow data available” or omits older calls">
+
+**Message**
+
+“No flow data available”
+
+**Possible causes**
+
+- There were no API calls in the selected time range.
+- The flow chart includes only calls with a recorded Group. Calls made before the site started logging flow data are excluded.
+- There were no calls in the selected time range for the nodes or users selected in “Node Filter” or “User.”
+
+**How to resolve**
+
+1. Select a recent time range in “Filter.”
+2. Click “Clear” in “Node Filter.”
+
+</Accordion>
+
+<Accordion title="“Traffic Flow” shows “Failed to load”">
+
+**Message**
+
+“Failed to load” appears above the reason, such as “The time range cannot exceed … days.”
+
+**Possible causes**
+
+- The time range selected by a regular user exceeds the limit of 365 days by default.
+- The network connection was interrupted or a server error occurred.
+
+**How to resolve**
+
+1. Shorten the time range and try again.
+2. Refresh the page.
+3. If the issue persists, contact your administrator.
+
+</Accordion>
+
+<Accordion title="Names in the flow chart appear as ••••">
+
+**Possible cause**
+
+“Hide Sensitive Data” is enabled.
+
+**How to resolve**
+
+1. Click the “Show Sensitive Data” eye icon in the upper-right corner of the page.
+
+</Accordion>
+
+<Accordion title="Date ranges for data points overlap after selecting “This Week”">
+
+**Explanation**
+
+When you select “This Week,” each data point is labeled with a seven-day date range. Each point shows the total for the first day of its labeled range, so the ranges for adjacent points overlap.
+
+**How to resolve**
+
+1. To view daily totals, set “Time Granularity” to “Day.”
+2. To view the total for a specific week, set the time range to that week and check the total on the summary cards.
+
+</Accordion>
+
+<Accordion title="The “User Statistics” tab, “Performance Health,” or the “Username” filter is missing">
+
+**Explanation**
+
+These features are available only to administrators. The dashboard for regular users shows data for their own account in the “Model Call Analysis” and “Traffic Flow” tabs.
+
+</Accordion>
+
+<Accordion title="“Preferences” are not retained">
+
+**Possible causes**
+
+- Preferences are stored in the browser. They revert to the defaults when you switch browsers or devices or clear your browser data.
+- When an administrator changes the time granularity in “User Statistics,” the change also updates “Default Time Granularity.”
+
+**How to resolve**
+
+1. Set your preferences again in the current browser and click “Save Preferences.”
+
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- View your account Quota, usage over the past 24 hours, and setup guidance in <a href="/en/docs/guide/feature-guide/user/overview" target="_blank" rel="noopener noreferrer">Overview</a>.
+- View billing details for each call in the <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+- Manage the API keys shown in the flow chart’s “Token” column under <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a>.
+- Root users can enable dashboard statistics in <a href="/en/docs/guide/feature-guide/system-settings/settings-content#data-dashboard" target="_blank" rel="noopener noreferrer">Console Content Configuration</a>.
+- Root users can configure “Log Quota Usage” and the maximum log time range in <a href="/en/docs/guide/feature-guide/system-settings/settings-operations#log-maintenance" target="_blank" rel="noopener noreferrer">Operations Configuration</a>.

@@ -1,291 +1,301 @@
 ---
-title: 環境変数設定ガイド
+title: 環境変数の設定ガイド
 ---
 
-このドキュメントでは、New APIがサポートするすべての環境変数とその設定について説明します。これらの環境変数を設定することで、システムの動作をカスタマイズできます。
+このドキュメントでは、New API がサポートするすべての環境変数とその設定方法を説明します。これらの環境変数を設定することで、システムの動作をカスタマイズできます。
 
 <Callout type="info" title="ヒント">
-  New API は `.env` ファイルから環境変数を読み込むことをサポートしています。`.env.example`
-  ファイルを参照し、使用する際は `.env` に名前を変更してください。
+  New API は `.env` ファイルから環境変数を読み込めます。`.env.example`
+  ファイルを参照し、使用する際はファイル名を `.env` に変更してください。
 </Callout>
 
 ## 基本設定
 
-| 環境変数 | 説明                 | デフォルト値 | 例                      |
-| -------- | -------------------- | ------------ | ----------------------- |
-| `PORT`   | サービスリスニングポート | `3000`       | `PORT=8080`             |
-| `TZ`     | タイムゾーン設定     | -            | `TZ=America/New_York`   |
-| `VERSION`| 実行バージョン番号を上書き | -            | `VERSION=1.2.3`         |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `PORT` | サービスのリッスンポート | `3000` | `PORT=8080` |
+| `TZ` | タイムゾーン設定 | - | `TZ=America/New_York` |
+| `VERSION` | 実行時のバージョン番号を上書き | - | `VERSION=1.2.3` |
 
 ## データベース設定
 
-| 環境変数                | 説明                           | デフォルト値                   | 例                                                                                                                             |
-| ----------------------- | ------------------------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| `SQL_DSN`               | データベース接続文字列         | SQLite (`one-api.db`) | PostgreSQL（推奨）: `SQL_DSN=postgresql://root:123456@postgres:5432/new-api` \| MySQL: `SQL_DSN=root:123456@tcp(localhost:3306)/new-api` |
-| `SQL_MAX_IDLE_CONNS`    | アイドル接続プールの最大接続数 | `100`                    | `SQL_MAX_IDLE_CONNS=50`                                                                                                          |
-| `SQL_MAX_OPEN_CONNS`    | 接続プールの最大オープン接続数 | `1000`                   | `SQL_MAX_OPEN_CONNS=500`                                                                                                         |
-| `SQL_MAX_LIFETIME`      | 接続の最大ライフタイム（秒）   | `60`                     | `SQL_MAX_LIFETIME=120`                                                                                                           |
-| `LOG_SQL_DSN`           | ログテーブル独立データベース接続文字列 | -                        | `LOG_SQL_DSN=postgresql://root:123456@postgres:5432/oneapi_logs`                                                                 |
-| `SQLITE_PATH`           | SQLiteデータベースパス         | `one-api.db`             | `SQLITE_PATH=/var/lib/new-api/new-api.db`                                                                                        |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `SQL_DSN` | データベース接続文字列 | SQLite (`one-api.db`) | PostgreSQL（推奨） `SQL_DSN=postgresql://root:123456@postgres:5432/new-api` \| MySQL `SQL_DSN=root:123456@tcp(localhost:3306)/new-api` |
+| `SQL_MAX_IDLE_CONNS` | 接続プールの最大アイドル接続数 | `100` | `SQL_MAX_IDLE_CONNS=50` |
+| `SQL_MAX_OPEN_CONNS` | 接続プールで開ける最大接続数 | `1000` | `SQL_MAX_OPEN_CONNS=500` |
+| `SQL_MAX_LIFETIME` | 接続の最大有効期間（秒） | `60` | `SQL_MAX_LIFETIME=120` |
+| `LOG_SQL_DSN` | ログテーブル専用データベースの接続文字列 | - | `LOG_SQL_DSN=postgresql://root:123456@postgres:5432/oneapi_logs` |
+| `SQLITE_PATH` | SQLite データベースのパス | `one-api.db` | `SQLITE_PATH=/var/lib/new-api/new-api.db` |
 
-<Callout type="info" title="データベースの推奨">
-  本番環境では PostgreSQL を優先して推奨します。MySQL は互換オプションとして
-  引き続き利用できます。`SQL_DSN` 未設定時の SQLite はローカル開発とテスト向けです。
+<Callout type="info" title="推奨データベース">
+  本番環境では PostgreSQL を推奨します。MySQL も引き続き互換オプションとして利用できます。`SQL_DSN`
+  が未設定の場合に使用される SQLite は、ローカルでの開発やテストに適しています。
 </Callout>
 
 ## キャッシュ設定
 
-| 環境変数                | 説明                                   | デフォルト値 | 例                                                       |
-| ----------------------- | -------------------------------------- | -------- | ---------------------------------------------------------- |
-| `REDIS_CONN_STRING`     | Redis接続文字列                        | -        | `REDIS_CONN_STRING=redis://default:redispw@localhost:6379` |
-| `REDIS_POOL_SIZE`       | Redis接続プールサイズ                  | `10`     | `REDIS_POOL_SIZE=20`                                       |
-| `MEMORY_CACHE_ENABLED`  | メモリキャッシュを有効にするか（Redis有効化後に自動有効化） | `false`  | `MEMORY_CACHE_ENABLED=true`                                |
-| `SYNC_FREQUENCY`        | キャッシュ同期頻度、および独立 Redis 構成での Session キャッシュの最大陳腐化時間（秒） | `60`     | `SYNC_FREQUENCY=120`                                       |
-| `BATCH_UPDATE_ENABLED`  | データベースの一括更新集約を有効にする | `false`  | `BATCH_UPDATE_ENABLED=true`                                |
-| `BATCH_UPDATE_INTERVAL` | 一括更新集約の時間間隔（秒）           | `5`      | `BATCH_UPDATE_INTERVAL=10`                                 |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `REDIS_CONN_STRING` | Redis 接続文字列 | - | `REDIS_CONN_STRING=redis://default:redispw@localhost:6379` |
+| `REDIS_POOL_SIZE` | Redis 接続プールのサイズ | `10` | `REDIS_POOL_SIZE=20` |
+| `MEMORY_CACHE_ENABLED` | メモリキャッシュを有効にするかどうか（Redis を有効にすると自動的に有効化） | `false` | `MEMORY_CACHE_ENABLED=true` |
+| `SYNC_FREQUENCY` | キャッシュの同期間隔。ノードごとに Redis を配置する場合は、セッションキャッシュが古い状態のまま残る最長時間（秒）も指定します。他のノードは約 3 秒ごとに同期タスクを別途確認し、この設定値はフォールバックとしての全件再読み込み間隔を指定します | `60` | `SYNC_FREQUENCY=60` |
+| `BATCH_UPDATE_ENABLED` | データベースの更新をまとめて一括処理する機能を有効化 | `false` | `BATCH_UPDATE_ENABLED=true` |
+| `BATCH_UPDATE_INTERVAL` | 更新をまとめて一括処理する間隔（秒） | `5` | `BATCH_UPDATE_INTERVAL=10` |
 
-Session Redis Hash の TTL は、Session の残り有効期間と有効な `SYNC_FREQUENCY` のうち短い方です。読み取りでは TTL は延長されません。独立 Redis 構成では、値を大きくすると Session 状態の収束が遅くなり、値を小さくするとデータベース参照が増えます。遅延して完了した active キャッシュの書き戻しにも、元のデータベース参照時点から残っている観測ウィンドウだけが使われます。
+`REDIS_CONN_STRING` には、単一の Redis 互換エンドポイントを指定する必要があります。認証情報は URI に直接含めてください。New API は Redis Cluster や Sentinel のノードリストをネイティブに解析しません。Redis の高可用性が必要な場合は、マネージドサービスまたはプロキシで単一の互換エンドポイントを提供してください。
 
-New API が直接受け付ける Redis 設定は `REDIS_CONN_STRING` と `REDIS_POOL_SIZE` です。Redis Cluster や Sentinel のノード一覧をアプリケーションへ直接渡す方式には対応していません。高可用性が必要な場合は、`REDIS_CONN_STRING` に単一の Redis 互換接続エンドポイントを指定してください。
+管理画面のセッション状態の正本はデータベースです。Redis 内のセッションハッシュの TTL には、セッションの残り有効期間と実効 `SYNC_FREQUENCY` のうち短い方が適用され、読み取りによる延長はありません。有効（active）なセッションのキャッシュへの書き戻しが遅れて完了した場合は、データベースの読み取り時点を起点とする観測ウィンドウの残り時間のみを使用します。そのため、セッションの失効を示すトゥームストーン（tombstone）の期限が切れた後に、本来の TTL が再び付与されることはありません。
 
-## マルチノードとセキュリティ設定
+## マルチノードとセキュリティの設定
 
-| 環境変数                    | 説明                                           | デフォルト値 | 例                                        |
-| --------------------------- | ---------------------------------------------- | -------- | ------------------------------------------- |
-| `SESSION_SECRET`            | セッションキー（マルチマシンデプロイに必須） | -        | `SESSION_SECRET=your_session_secret`        |
-| `CRYPTO_SECRET`             | Redis キャッシュキー用 HMAC シークレット（未設定時は `SESSION_SECRET` を使用） | デフォルトは `SESSION_SECRET` | `CRYPTO_SECRET=your_crypto_secret`          |
-| `FRONTEND_BASE_URL`         | フロントエンドベースURL（スレーブノードで使用、未一致のルーティングをこのアドレスにリダイレクト） | -        | `FRONTEND_BASE_URL=https://<your-newapi-domain>` |
-| `NODE_TYPE`                 | ノードタイプ                                   | `master` | `NODE_TYPE=slave`                           |
-| `TLS_INSECURE_SKIP_VERIFY`  | グローバルTLS証明書検証をスキップ              | `false`  | `TLS_INSECURE_SKIP_VERIFY=true`             |
-| `TRUSTED_REDIRECT_DOMAINS`  | 信頼されたリダイレクトドメインリスト（カンマ区切り） | -        | `TRUSTED_REDIRECT_DOMAINS=example.com,api.example.com` |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `SESSION_SECRET` | セッションの秘密鍵（複数マシンでのデプロイ時は必須） | - | `SESSION_SECRET=your_session_secret` |
+| `CRYPTO_SECRET` | キャッシュキー用の HMAC 鍵。Redis を共有するノードでは同じ実効値を使用する必要があります | デフォルトでは `SESSION_SECRET` と同じ値 | `CRYPTO_SECRET=your_crypto_secret` |
+| `FRONTEND_BASE_URL` | フロントエンドのベース URL（セカンダリノードで使用し、ルートに一致しないリクエストをこの URL にリダイレクト） | - | `FRONTEND_BASE_URL=https://<your-newapi-domain>` |
+| `NODE_TYPE` | ノードの種類 | `master` | `NODE_TYPE=slave` |
+| `TLS_INSECURE_SKIP_VERIFY` | TLS 証明書の検証をシステム全体でスキップ | `false` | `TLS_INSECURE_SKIP_VERIFY=true` |
+| `TRUSTED_REDIRECT_DOMAINS` | 信頼するリダイレクト先ドメインのリスト（カンマ区切り） | - | `TRUSTED_REDIRECT_DOMAINS=example.com,api.example.com` |
+| `TRUSTED_PROXIES` | 信頼するリバースプロキシの IP アドレスまたは CIDR（カンマ区切り）。`none` を指定すると、いずれのプロキシも信頼しません。プロキシのアドレスが指定範囲外の場合、すべてのリクエストをプロキシの IP アドレスでカウントします | 未設定または空欄の場合は、ループバック、プライベートネットワーク（`10.0.0.0/8`、`172.16.0.0/12`、`192.168.0.0/16`）、IPv6 ULA の各アドレスを信頼します | `TRUSTED_PROXIES=203.0.113.10,10.1.0.0/16` |
+| `NODE_NAME` | インスタンスを識別するためのノード名。複数のインスタンスに同じ名前を付けないでください | 未設定の場合は OS のホスト名を使用 | `NODE_NAME=node-1` |
+| `PASSWORD_LOGIN_ENCRYPTION_ENABLED` | パスワードの送信時に暗号化を有効にするかどうか。起動時にのみ読み込まれるため、変更後は再起動が必要です。すべてのノードで同じ値を設定してください | `false` | `PASSWORD_LOGIN_ENCRYPTION_ENABLED=true` |
 
-<Callout type="warn" title="SESSION_SECRET の注意事項">
-  `SESSION_SECRET` を `random_string` に設定することはできません。設定するとプログラムは起動を拒否します。マルチマシンデプロイの場合、すべてのノードで同じキーを使用する必要があります。
-</Callout>
-
-<Callout type="info" title="Redis 構成と CRYPTO_SECRET">
-  Redis は全ノードで共有する、ノードごとに独立して配置する、または使用しない、のいずれも選択できます。同じ Redis を共有するノード同士では、有効な `CRYPTO_SECRET` も同一にしてください。独立 Redis 構成では、Session の失効は有効な `SYNC_FREQUENCY` 以内に共有データベースを再参照して収束します。
+<Callout type="warn" title="SESSION_SECRET に関する注意事項">
+  `SESSION_SECRET` に `random_string` を設定すると、プログラムは起動しません。複数マシンにデプロイする場合は、すべてのノードで同じ秘密鍵を使用する必要があります。
 </Callout>
 
 <Callout type="info" title="クラスターデプロイ">
-  これらの環境変数を使用して完全なクラスターデプロイを構築する方法については、[クラスターデプロイガイド](/ja/docs/installation/deployment-methods/cluster-deployment)を参照してください。
+  これらの環境変数を使用してクラスター全体を構成する方法については、[クラスターデプロイガイド](/ja/docs/installation/deployment-methods/cluster-deployment)を参照してください。
 </Callout>
 
-## ユーザーおよびトークン設定
+## ユーザーとトークンの設定
 
-| 環境変数                             | 説明                         | デフォルト値 | 例                              |
-| ------------------------------------ | ---------------------------- | -------- | ------------------------------- |
-| `GENERATE_DEFAULT_TOKEN`             | 新規登録ユーザーに初期トークンを生成 | `false`  | `GENERATE_DEFAULT_TOKEN=true`   |
-| `NOTIFICATION_LIMIT_DURATION_MINUTE` | 通知制限の持続時間（分）     | `10`     | `NOTIFICATION_LIMIT_DURATION_MINUTE=15` |
-| `NOTIFY_LIMIT_COUNT`                 | 指定された持続時間内の最大通知数 | `2`      | `NOTIFY_LIMIT_COUNT=3`          |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `GENERATE_DEFAULT_TOKEN` | 新規登録ユーザーの初期トークンを生成 | `false` | `GENERATE_DEFAULT_TOKEN=true` |
+| `NOTIFICATION_LIMIT_DURATION_MINUTE` | 通知数を制限する時間枠（分） | `10` | `NOTIFICATION_LIMIT_DURATION_MINUTE=15` |
+| `NOTIFY_LIMIT_COUNT` | 指定した時間枠内の最大通知数 | `2` | `NOTIFY_LIMIT_COUNT=3` |
 
-## リクエスト制限設定
+## リクエスト制限の設定
 
-| 環境変数                         | 説明                           | デフォルト値 | 例                                     |
-| -------------------------------- | ------------------------------ | -------- | ---------------------------------------- |
-| `GLOBAL_API_RATE_LIMIT_ENABLE`   | グローバルAPIレート制限スイッチ | `true`   | `GLOBAL_API_RATE_LIMIT_ENABLE=false`     |
-| `GLOBAL_API_RATE_LIMIT`          | グローバルAPIレート制限（単一IP） | `180`    | `GLOBAL_API_RATE_LIMIT=100`              |
-| `GLOBAL_API_RATE_LIMIT_DURATION` | グローバルAPIレート制限ウィンドウ（秒） | `180`    | `GLOBAL_API_RATE_LIMIT_DURATION=120`     |
-| `GLOBAL_WEB_RATE_LIMIT_ENABLE`   | グローバルWebレート制限スイッチ | `true`   | `GLOBAL_WEB_RATE_LIMIT_ENABLE=false`     |
-| `GLOBAL_WEB_RATE_LIMIT`          | グローバルWebレート制限（単一IP） | `60`     | `GLOBAL_WEB_RATE_LIMIT=30`               |
-| `GLOBAL_WEB_RATE_LIMIT_DURATION` | グローバルWebレート制限ウィンドウ（秒） | `180`    | `GLOBAL_WEB_RATE_LIMIT_DURATION=120`     |
-| `CRITICAL_RATE_LIMIT_ENABLE`     | クリティカル操作レート制限スイッチ | `true`   | `CRITICAL_RATE_LIMIT_ENABLE=false`       |
-| `CRITICAL_RATE_LIMIT`            | クリティカル操作レート制限回数 | `20`     | `CRITICAL_RATE_LIMIT=10`                 |
-| `CRITICAL_RATE_LIMIT_DURATION`   | クリティカル操作レート制限ウィンドウ（秒） | `1200`   | `CRITICAL_RATE_LIMIT_DURATION=600`       |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `GLOBAL_API_RATE_LIMIT_ENABLE` | グローバル API レート制限の有効化 | `true` | `GLOBAL_API_RATE_LIMIT_ENABLE=false` |
+| `GLOBAL_API_RATE_LIMIT` | グローバル API レート制限の上限（IP アドレスごと） | `360` | `GLOBAL_API_RATE_LIMIT=100` |
+| `GLOBAL_API_RATE_LIMIT_DURATION` | グローバル API レート制限の時間枠（秒） | `180` | `GLOBAL_API_RATE_LIMIT_DURATION=120` |
+| `GLOBAL_WEB_RATE_LIMIT_ENABLE` | グローバル Web レート制限の有効化 | `true` | `GLOBAL_WEB_RATE_LIMIT_ENABLE=false` |
+| `GLOBAL_WEB_RATE_LIMIT` | グローバル Web レート制限の上限（IP アドレスごと） | `120` | `GLOBAL_WEB_RATE_LIMIT=30` |
+| `GLOBAL_WEB_RATE_LIMIT_DURATION` | グローバル Web レート制限の時間枠（秒） | `180` | `GLOBAL_WEB_RATE_LIMIT_DURATION=120` |
+| `CRITICAL_RATE_LIMIT_ENABLE` | 重要な操作に対するレート制限の有効化 | `true` | `CRITICAL_RATE_LIMIT_ENABLE=false` |
+| `CRITICAL_RATE_LIMIT` | 重要な操作に対するレート制限の上限回数 | `20` | `CRITICAL_RATE_LIMIT=10` |
+| `CRITICAL_RATE_LIMIT_DURATION` | 重要な操作に対するレート制限の時間枠（秒） | `1200` | `CRITICAL_RATE_LIMIT_DURATION=600` |
+| `GLOBAL_STATIC_RATE_LIMIT_ENABLE` | 静的リソースに対するグローバルレート制限の有効化 | `false` | `GLOBAL_STATIC_RATE_LIMIT_ENABLE=true` |
+| `GLOBAL_STATIC_RATE_LIMIT` | 静的リソースに対するグローバルレート制限の上限（IP アドレスごと） | `1000` | `GLOBAL_STATIC_RATE_LIMIT=500` |
+| `GLOBAL_STATIC_RATE_LIMIT_DURATION` | 静的リソースに対するグローバルレート制限の時間枠（秒） | `180` | `GLOBAL_STATIC_RATE_LIMIT_DURATION=120` |
+| `SEARCH_RATE_LIMIT_ENABLE` | 検索レート制限の有効化 | `true` | `SEARCH_RATE_LIMIT_ENABLE=false` |
+| `SEARCH_RATE_LIMIT` | 検索レート制限の上限回数 | `10` | `SEARCH_RATE_LIMIT=20` |
+| `SEARCH_RATE_LIMIT_DURATION` | 検索レート制限の時間枠（秒） | `60` | `SEARCH_RATE_LIMIT_DURATION=120` |
 
-## リレーとプロキシ設定
+## リレーとプロキシの設定
 
-| 環境変数                       | 説明                                        | デフォルト値 | 例                             |
-| ------------------------------ | ------------------------------------------- | -------- | -------------------------------- |
-| `RELAY_TIMEOUT`                | リクエストタイムアウト（秒）、0は無制限     | `0`      | `RELAY_TIMEOUT=60`               |
-| `STREAMING_TIMEOUT`            | ストリーミングの一回応答のタイムアウト時間（秒） | `300`    | `STREAMING_TIMEOUT=120`          |
-| `RELAY_MAX_IDLE_CONNS`         | リレーHTTPクライアントプールの最大アイドル接続数 | `500`    | `RELAY_MAX_IDLE_CONNS=1000`      |
-| `RELAY_MAX_IDLE_CONNS_PER_HOST`| リレーHTTPクライアントプールの一ホストあたりの最大アイドル接続数 | `100`    | `RELAY_MAX_IDLE_CONNS_PER_HOST=200` |
-| `MAX_FILE_DOWNLOAD_MB`         | 最大ファイルダウンロードサイズ（MB）        | `64`     | `MAX_FILE_DOWNLOAD_MB=128`       |
-| `MAX_REQUEST_BODY_MB`          | 最大リクエストボディサイズ（MB、解凍後；zip bomb/OOM防止） | `128`    | `MAX_REQUEST_BODY_MB=256`        |
-| `STREAM_SCANNER_MAX_BUFFER_MB` | SSEストリームスキャンバッファの最大サイズ（MB） | `64`     | `STREAM_SCANNER_MAX_BUFFER_MB=128` |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `RELAY_TIMEOUT` | リレーリクエストのタイムアウト（秒）。0 は無制限 | `0` | `RELAY_TIMEOUT=60` |
+| `STREAMING_TIMEOUT` | ストリーミングレスポンス 1 回あたりのタイムアウト（秒） | `300` | `STREAMING_TIMEOUT=120` |
+| `RELAY_MAX_IDLE_CONNS` | リレー用 HTTP クライアントの接続プールにおける最大アイドル接続数 | `500` | `RELAY_MAX_IDLE_CONNS=1000` |
+| `RELAY_MAX_IDLE_CONNS_PER_HOST` | リレー用 HTTP クライアントの接続プールにおけるホストごとの最大アイドル接続数 | `100` | `RELAY_MAX_IDLE_CONNS_PER_HOST=200` |
+| `MAX_FILE_DOWNLOAD_MB` | ダウンロードできるファイルの最大サイズ（MB） | `64` | `MAX_FILE_DOWNLOAD_MB=128` |
+| `MAX_REQUEST_BODY_MB` | リクエストボディの最大サイズ（MB、展開後のサイズで計測。ZIP ボムやメモリ不足（OOM）を防止） | `128` | `MAX_REQUEST_BODY_MB=256` |
+| `STREAM_SCANNER_MAX_BUFFER_MB` | SSE ストリームのスキャンバッファーの最大サイズ（MB） | `128` | `STREAM_SCANNER_MAX_BUFFER_MB=128` |
 
-<Callout type="warn" title="RELAY_TIMEOUT 設定の警告">
-  環境変数 `RELAY_TIMEOUT` を設定する際は注意してください。短すぎると以下の問題が発生する可能性があります：
+<Callout type="warn" title="RELAY_TIMEOUT の設定に関する警告">
+  `RELAY_TIMEOUT` 環境変数を設定する際は注意してください。短すぎる値を設定すると、次の問題が発生する可能性があります。
 </Callout>
 
-    - アップストリームAPIはリクエストを完了し課金済みだが、ローカルではタイムアウトにより課金が完了していない
+    - 上流 API ではリクエストの処理と課金が完了していても、ローカルではタイムアウトにより課金処理が完了しない
 
-    - 課金の不整合が発生し、システム損失につながる可能性がある
+    - 課金に不整合が生じ、システムに損失が発生する可能性がある
 
-    - ご自身で何をしているか理解している場合を除き、設定しないことを推奨します
+    - 設定の影響を理解している場合を除き、未設定のままにすることを推奨
 
-## チャネル管理設定
+## チャネル管理の設定
 
-| 環境変数                        | 説明                               | デフォルト値                             | 例                                |
-| ------------------------------- | ---------------------------------- | ---------------------------------- | ----------------------------------- |
-| `CHANNEL_UPDATE_FREQUENCY`      | チャネル残高を定期的に更新（分）   | -（設定しない場合は無効）                  | `CHANNEL_UPDATE_FREQUENCY=1440`     |
-| `CHANNEL_TEST_FREQUENCY`        | チャネルを定期的にチェック（分）、データベース設定を上書き | -（設定しない場合はデータベース設定を使用）  | `CHANNEL_TEST_FREQUENCY=1440`       |
-| `POLLING_INTERVAL`              | リクエストポーリング間隔（秒）     | `0`                                | `POLLING_INTERVAL=5`                |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `CHANNEL_UPDATE_FREQUENCY` | チャネル残高の定期更新間隔（分）。バックグラウンドのシステムタスク「残高の一括更新」として実行 | -（未設定の場合は無効） | `CHANNEL_UPDATE_FREQUENCY=1440` |
+| `CHANNEL_TEST_FREQUENCY` | チャネルの定期チェック間隔（分）。データベースの設定を上書き | -（未設定の場合はデータベースの設定を使用） | `CHANNEL_TEST_FREQUENCY=1440` |
+| `POLLING_INTERVAL` | リクエストのポーリング間隔（秒） | `0` | `POLLING_INTERVAL=5` |
+| `CHANNEL_TEST_ENABLED` | 「チャネルの定期テスト」の有効・無効を強制指定。設定すると、画面上の値を上書き | -（未設定の場合はデータベースの設定を使用） | `CHANNEL_TEST_ENABLED=false` |
 
-### チャネルアップストリームモデル同期
+### チャネルの上流モデルの同期
 
-| 環境変数                                              | 説明                               | デフォルト値 | 例 |
-| ----------------------------------------------------- | ---------------------------------- | -------- | ---- |
-| `CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_ENABLED`          | アップストリームプロバイダーのモデルリストの定期同期を有効にする | `true`   | `CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_ENABLED=false` |
-| `CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_INTERVAL_MINUTES` | モデルリスト同期間隔（分）         | `30`     | `CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_INTERVAL_MINUTES=60` |
-| `CHANNEL_UPSTREAM_MODEL_UPDATE_MIN_CHECK_INTERVAL_SECONDS` | 単一チャネルの最小チェック間隔（秒） | `300`    | `CHANNEL_UPSTREAM_MODEL_UPDATE_MIN_CHECK_INTERVAL_SECONDS=600` |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_ENABLED` | 上流プロバイダーのモデル一覧の定期同期を有効化 | `true` | `CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_ENABLED=false` |
+| `CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_INTERVAL_MINUTES` | モデル一覧の同期間隔（分） | `30` | `CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_INTERVAL_MINUTES=60` |
+| `CHANNEL_UPSTREAM_MODEL_UPDATE_MIN_CHECK_INTERVAL_SECONDS` | チャネルごとの最小チェック間隔（秒） | `300` | `CHANNEL_UPSTREAM_MODEL_UPDATE_MIN_CHECK_INTERVAL_SECONDS=600` |
 
-## モデルとリクエスト処理設定
+## モデルとリクエスト処理の設定
 
-| 環境変数                     | 説明                                                 | デフォルト値 | 例                                 |
-| ---------------------------- | ---------------------------------------------------- | -------- | ------------------------------------ |
-| `FORCE_STREAM_OPTION`        | クライアントのstream_optionsパラメータを上書きし、ストリーミング使用量情報を強制的に取得する | `true`   | `FORCE_STREAM_OPTION=false`          |
-| `CountToken`                 | ローカルトークンカウントを有効にするか             | `true`   | `CountToken=false`                   |
-| `GET_MEDIA_TOKEN`            | ストリーミングモードで画像/音声トークンをカウントするか | `true`   | `GET_MEDIA_TOKEN=false`              |
-| `GET_MEDIA_TOKEN_NOT_STREAM` | 非ストリーミングモードで画像/音声トークンをカウントするか | `false`  | `GET_MEDIA_TOKEN_NOT_STREAM=true`    |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `FORCE_STREAM_OPTION` | クライアントの `stream_options` パラメーターを上書きし、ストリーミング時の使用量情報を強制的に取得 | `true` | `FORCE_STREAM_OPTION=false` |
+| `CountToken` | ローカルでのトークンカウントを有効にするかどうか | `true` | `CountToken=false` |
+| `GET_MEDIA_TOKEN` | ストリーミングモードで画像・音声のトークンをカウントするかどうか | `true` | `GET_MEDIA_TOKEN=false` |
+| `GET_MEDIA_TOKEN_NOT_STREAM` | 非ストリーミングモードで画像・音声のトークンをカウントするかどうか | `false` | `GET_MEDIA_TOKEN_NOT_STREAM=true` |
 
-## 非同期タスク設定
+## 非同期タスクの設定
 
-| 環境変数               | 説明                                                        | デフォルト値 | 例                               |
-| ---------------------- | ----------------------------------------------------------- | -------- | ---------------------------------- |
-| `UPDATE_TASK`          | 非同期タスクのポーリング更新（MJ、Sunoなど）を有効にするか | `true`   | `UPDATE_TASK=false`                |
-| `TASK_QUERY_LIMIT`     | 各ポーリングでクエリする最大タスク数                        | `1000`   | `TASK_QUERY_LIMIT=500`             |
-| `TASK_TIMEOUT_MINUTES` | 非同期タスクのタイムアウト（分）、タイムアウト後に失敗とマークされ返金、0は無効 | `1440`   | `TASK_TIMEOUT_MINUTES=720`         |
-| `TASK_PRICE_PATCH`     | タスク価格パッチ、設定されたモデルは回数制課金のみ、モデル名は英語のカンマで区切る | -        | `TASK_PRICE_PATCH=sora-2,sora-2-pro` |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `UPDATE_TASK` | 非同期タスク（MJ、Suno など）のポーリングによる更新を有効にするかどうか | `true` | `UPDATE_TASK=false` |
+| `TASK_QUERY_LIMIT` | 1 回のポーリングで照会する最大タスク数 | `1000` | `TASK_QUERY_LIMIT=500` |
+| `TASK_TIMEOUT_MINUTES` | 非同期タスクのタイムアウト（分）。タイムアウトしたタスクは失敗としてマークされ、返金されます。0 は無効 | `4320` | `TASK_TIMEOUT_MINUTES=720` |
+| `TASK_PRICE_PATCH` | タスク料金の補正設定。指定したモデルは実行回数に応じてのみ課金されます。モデル名は半角カンマで区切ります | - | `TASK_PRICE_PATCH=sora-2,sora-2-pro` |
+| `TASK_PLUGIN_ENABLED` | プラグインを有効にするかどうかを指定するグローバル設定「プラグインを有効にする」の初期値。画面で設定を保存した後は、保存済みの値が優先されます | `true` | `TASK_PLUGIN_ENABLED=false` |
+| `TASK_POLL_MAX_FAILURES` | 判別不能または一時的なポーリング失敗の連続回数がこの値に達すると、タスクは失敗としてマークされ、返金されます | `20` | `TASK_POLL_MAX_FAILURES=10` |
 
-## 特定モデル設定
+## モデル固有の設定
 
-| 環境変数                      | 説明                         | デフォルト値               | 例                                   |
-| ----------------------------- | ---------------------------- | -------------------- | -------------------------------------- |
-| `AZURE_DEFAULT_API_VERSION`   | AzureチャネルのデフォルトAPIバージョン | `2025-04-01-preview` | `AZURE_DEFAULT_API_VERSION=2023-05-15` |
-| `COHERE_SAFETY_SETTING`       | Cohereモデルのセキュリティ設定 | `NONE`               | `COHERE_SAFETY_SETTING=CONTEXTUAL`     |
-| `DIFY_DEBUG`                  | Difyチャネルのワークフローとノード情報を出力 | `true`               | `DIFY_DEBUG=false`                     |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `AZURE_DEFAULT_API_VERSION` | Azure チャネルのデフォルト API バージョン | `2025-04-01-preview` | `AZURE_DEFAULT_API_VERSION=2023-05-15` |
+| `COHERE_SAFETY_SETTING` | Cohere モデルの安全性設定 | `NONE` | `COHERE_SAFETY_SETTING=CONTEXTUAL` |
+| `DIFY_DEBUG` | Dify チャネルのワークフローとノードの情報を出力 | `true` | `DIFY_DEBUG=false` |
 
-## サブスクリプションキャッシュ設定
+## サブスクリプションキャッシュの設定
 
-| 環境変数                          | 説明                           | デフォルト値 | 例 |
-| --------------------------------- | ------------------------------ | -------- | ---- |
-| `SUBSCRIPTION_PLAN_CACHE_TTL`     | サブスクリプションプランキャッシュTTL（秒） | `300`    | `SUBSCRIPTION_PLAN_CACHE_TTL=600`      |
-| `SUBSCRIPTION_PLAN_INFO_CACHE_TTL`| サブスクリプションプラン詳細キャッシュTTL（秒） | `120`    | `SUBSCRIPTION_PLAN_INFO_CACHE_TTL=300` |
-| `SUBSCRIPTION_PLAN_CACHE_CAP`     | サブスクリプションプランキャッシュ最大容量 | `5000`   | `SUBSCRIPTION_PLAN_CACHE_CAP=10000`    |
-| `SUBSCRIPTION_PLAN_INFO_CACHE_CAP`| サブスクリプションプラン詳細キャッシュ最大容量 | `10000`  | `SUBSCRIPTION_PLAN_INFO_CACHE_CAP=20000` |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `SUBSCRIPTION_PLAN_CACHE_TTL` | サブスクリプションプランのキャッシュ TTL（秒） | `300` | `SUBSCRIPTION_PLAN_CACHE_TTL=600` |
+| `SUBSCRIPTION_PLAN_INFO_CACHE_TTL` | サブスクリプションプラン詳細のキャッシュ TTL（秒） | `120` | `SUBSCRIPTION_PLAN_INFO_CACHE_TTL=300` |
+| `SUBSCRIPTION_PLAN_CACHE_CAP` | サブスクリプションプランのキャッシュの最大容量 | `5000` | `SUBSCRIPTION_PLAN_CACHE_CAP=10000` |
+| `SUBSCRIPTION_PLAN_INFO_CACHE_CAP` | サブスクリプションプラン詳細のキャッシュの最大容量 | `10000` | `SUBSCRIPTION_PLAN_INFO_CACHE_CAP=20000` |
 
 ## その他の設定
 
-| 環境変数            | 説明                               | デフォルト値 | 例                               |
-| ------------------- | ---------------------------------- | -------- | ---------------------------------- |
-| `ERROR_LOG_ENABLED` | エラーログを記録し、フロントエンドに表示するか | `false`  | `ERROR_LOG_ENABLED=true`           |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+| -------- | ---- | ------------ | -- |
+| `ERROR_LOG_ENABLED` | エラーログを記録し、フロントエンドで表示するかどうか | `false` | `ERROR_LOG_ENABLED=true` |
+| `SMTP_STARTTLS_ENABLE` | メール送信時の「SMTP 暗号化方式」の初期値を STARTTLS にするかどうか（旧名の `SMTP_STARTTLS_ENABLED` も引き続き使用可能） | `false` | `SMTP_STARTTLS_ENABLE=true` |
+| `SMTP_INSECURE_SKIP_VERIFY` | メール送信時の「SMTP の TLS 証明書検証をスキップ」の初期値（旧名の `SMTP_TLS_INSECURE_SKIP_VERIFY` も引き続き使用可能） | `false` | `SMTP_INSECURE_SKIP_VERIFY=true` |
 
-## 分析統計
+## アクセス解析
 
-| 環境変数 | 説明                     | デフォルト値                     | 例                           |
-|---------|--------------------------|----------------------------------|------------------------------|
-| `UMAMI_WEBSITE_ID` | UmamiサイトID            | -                                | `UMAMI_WEBSITE_ID=xxxx-xxxx` |
-| `UMAMI_SCRIPT_URL` | Umamiスクリプトアドレス  | `https://analytics.umami.is/script.js` | `UMAMI_SCRIPT_URL=https://umami.example.com/script.js` |
-| `GOOGLE_ANALYTICS_ID` | Google Analytics 4サイトID | -                                | `GOOGLE_ANALYTICS_ID=G-XXXXXXX` |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+|---------|------|-------|------|
+| `UMAMI_WEBSITE_ID` | Umami のサイト ID | - | `UMAMI_WEBSITE_ID=xxxx-xxxx` |
+| `UMAMI_SCRIPT_URL` | Umami スクリプトの URL | `https://analytics.umami.is/script.js` | `UMAMI_SCRIPT_URL=https://umami.example.com/script.js` |
+| `GOOGLE_ANALYTICS_ID` | Google Analytics 4 のサイト ID | - | `GOOGLE_ANALYTICS_ID=G-XXXXXXX` |
 
-## メタデータ同期
+## メタデータの同期
 
-| 環境変数 | 説明                         | デフォルト値                     | 例                               |
-|---------|------------------------------|----------------------------------|----------------------------------|
-| `SYNC_UPSTREAM_BASE` | モデル/ベンダーメタデータアップストリームアドレス | `https://basellm.github.io/llm-metadata` | `SYNC_UPSTREAM_BASE=https://mirror.example.com/llm-metadata` |
-| `SYNC_HTTP_TIMEOUT_SECONDS` | 同期HTTPタイムアウト（秒）   | `10`                             | `SYNC_HTTP_TIMEOUT_SECONDS=15`   |
-| `SYNC_HTTP_RETRY` | 同期リトライ回数             | `3`                              | `SYNC_HTTP_RETRY=5`              |
-| `SYNC_HTTP_MAX_MB` | 応答ボディ最大サイズ（MB）   | `10`                             | `SYNC_HTTP_MAX_MB=20`            |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+|---------|------|-------|------|
+| `SYNC_UPSTREAM_BASE` | モデルやプロバイダーのメタデータの取得元 URL | `https://basellm.github.io/llm-metadata` | `SYNC_UPSTREAM_BASE=https://mirror.example.com/llm-metadata` |
+| `SYNC_HTTP_TIMEOUT_SECONDS` | 同期時の HTTP タイムアウト（秒） | `10` | `SYNC_HTTP_TIMEOUT_SECONDS=15` |
+| `SYNC_HTTP_RETRY` | 同期のリトライ回数 | `3` | `SYNC_HTTP_RETRY=5` |
+| `SYNC_HTTP_MAX_MB` | レスポンスボディの最大サイズ（MB） | `10` | `SYNC_HTTP_MAX_MB=20` |
 
-## フロントエンド設定
+## フロントエンドの設定
 
-| 環境変数 | 説明                                     | デフォルト値 | 例                               |
-|---------|------------------------------------------|--------------|----------------------------------|
-| `VITE_REACT_APP_SERVER_URL` | フロントエンドがバックエンドにリクエストするベースアドレス（コンパイル時に有効） | -            | `VITE_REACT_APP_SERVER_URL=https://api.example.com` |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+|---------|------|-------|------|
+| `VITE_REACT_APP_SERVER_URL` | フロントエンドからバックエンドにリクエストを送る際のベース URL（ビルド時に適用） | - | `VITE_REACT_APP_SERVER_URL=https://api.example.com` |
 
-<Callout type="info" title="コンパイル時変数">
-  `VITE_REACT_APP_SERVER_URL` は Vite のコンパイル時に注入されるフロントエンド変数であり、フロントエンドのビルド時にのみ有効で、実行時には変更できません。
+<Callout type="info" title="ビルド時の変数">
+  `VITE_REACT_APP_SERVER_URL` は、Vite がフロントエンドのビルド時にのみ埋め込む変数です。実行時には変更できません。
 </Callout>
 
-## Pyroscope 継続的パフォーマンス分析
+## Pyroscope による継続的プロファイリング
 
-| 環境変数 | 説明                                 | デフォルト値 | 例                           |
-|---------|--------------------------------------|--------------|------------------------------|
-| `PYROSCOPE_URL` | Pyroscopeサーバーアドレス、空欄で無効 | -            | `PYROSCOPE_URL=http://pyroscope:4040` |
-| `PYROSCOPE_APP_NAME` | レポートするアプリケーション名     | `new-api`    | `PYROSCOPE_APP_NAME=my-api`  |
-| `PYROSCOPE_BASIC_AUTH_USER` | Pyroscope Basic Authユーザー名 | -            | `PYROSCOPE_BASIC_AUTH_USER=admin` |
-| `PYROSCOPE_BASIC_AUTH_PASSWORD` | Pyroscope Basic Authパスワード | -            | `PYROSCOPE_BASIC_AUTH_PASSWORD=secret` |
-| `HOSTNAME` | レポートするホスト名ラベル           | `new-api`    | `HOSTNAME=node-1`            |
-| `PYROSCOPE_MUTEX_RATE` | ミューテックス分析サンプリングレート | `5`          | `PYROSCOPE_MUTEX_RATE=10`    |
-| `PYROSCOPE_BLOCK_RATE` | ブロッキング分析サンプリングレート | `5`          | `PYROSCOPE_BLOCK_RATE=10`    |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+|---------|------|-------|------|
+| `PYROSCOPE_URL` | Pyroscope サーバーの URL。空欄の場合は無効 | - | `PYROSCOPE_URL=http://pyroscope:4040` |
+| `PYROSCOPE_APP_NAME` | 送信するアプリケーション名 | `new-api` | `PYROSCOPE_APP_NAME=my-api` |
+| `PYROSCOPE_BASIC_AUTH_USER` | Pyroscope の Basic 認証用ユーザー名 | - | `PYROSCOPE_BASIC_AUTH_USER=admin` |
+| `PYROSCOPE_BASIC_AUTH_PASSWORD` | Pyroscope の Basic 認証用パスワード | - | `PYROSCOPE_BASIC_AUTH_PASSWORD=secret` |
+| `HOSTNAME` | 送信するホスト名ラベル | `new-api` | `HOSTNAME=node-1` |
+| `PYROSCOPE_MUTEX_RATE` | ミューテックスプロファイリングのサンプリングレート | `5` | `PYROSCOPE_MUTEX_RATE=10` |
+| `PYROSCOPE_BLOCK_RATE` | ブロックプロファイリングのサンプリングレート | `5` | `PYROSCOPE_BLOCK_RATE=10` |
 
 ## LinuxDo OAuth
 
-通常、変更は不要です。
+通常は変更する必要はありません。
 
-| 環境変数 | 説明               | デフォルト値                           | 例                                     |
-|---------|--------------------|----------------------------------------|----------------------------------------|
-| `LINUX_DO_TOKEN_ENDPOINT` | LinuxDo トークンエンドポイント | `https://connect.linux.do/oauth2/token` | `LINUX_DO_TOKEN_ENDPOINT=https://connect.linux.do/oauth2/token` |
-| `LINUX_DO_USER_ENDPOINT` | LinuxDo ユーザーエンドポイント | `https://connect.linux.do/api/user`    | `LINUX_DO_USER_ENDPOINT=https://connect.linux.do/api/user`    |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+|---------|------|-------|------|
+| `LINUX_DO_TOKEN_ENDPOINT` | LinuxDo のトークンエンドポイント | `https://connect.linux.do/oauth2/token` | `LINUX_DO_TOKEN_ENDPOINT=https://connect.linux.do/oauth2/token` |
+| `LINUX_DO_USER_ENDPOINT` | LinuxDo のユーザーエンドポイント | `https://connect.linux.do/api/user` | `LINUX_DO_USER_ENDPOINT=https://connect.linux.do/api/user` |
 
 ## デバッグ関連
 
-| 環境変数 | 説明                                 | デフォルト値 | 例           |
-|---------|--------------------------------------|--------------|--------------|
-| `DEBUG` | デバッグモードを有効にする（GORMデバッグ出力を含む） | `false`      | `DEBUG=true` |
-| `GIN_MODE` | Gin実行モード                        | `release`    | `GIN_MODE=debug` |
-| `ENABLE_PPROF` | pprofパフォーマンス分析を有効にする（ポート8005） | `false`      | `ENABLE_PPROF=true` |
+| 環境変数 | 説明 | デフォルト値 | 例 |
+|---------|------|-------|------|
+| `DEBUG` | デバッグモードを有効化（GORM のデバッグ出力を含む） | `false` | `DEBUG=true` |
+| `GIN_MODE` | Gin の実行モード | `release` | `GIN_MODE=debug` |
+| `ENABLE_PPROF` | pprof によるプロファイリングを有効化（ポート 8005） | `false` | `ENABLE_PPROF=true` |
 
-## 非推奨の環境変数
+## 廃止された環境変数
 
-以下の環境変数は非推奨になりました。システム設定画面の対応するオプションを使用してください：
+以下の環境変数は廃止されました。システム設定画面の該当する項目を使用してください。
 
-| 環境変数                  | 代替方法                               |
-| ------------------------- | -------------------------------------- |
-| `GEMINI_MODEL_MAP`        | システム設定 - モデル関連設定で設定してください |
-| `GEMINI_SAFETY_SETTING`   | システム設定 - モデル関連設定で設定してください |
-| `GEMINI_VISION_MAX_IMAGE_NUM` | システム設定 - モデル関連設定で設定してください |
+| 環境変数 | 代替の設定方法 |
+| -------- | -------------- |
+| `GEMINI_MODEL_MAP` | システム設定の「モデル関連設定」で設定してください |
+| `GEMINI_SAFETY_SETTING` | システム設定の「モデル関連設定」で設定してください |
+| `GEMINI_VISION_MAX_IMAGE_NUM` | システム設定の「モデル関連設定」で設定してください |
 
-## マルチマシンデプロイの例
+## 複数マシンへのデプロイ例
 
-マルチマシンデプロイでは、すべてのノードが同じリモートデータベースと同じ `SESSION_SECRET` を使用する必要があります。Redis は全ノードで共有するか、ノードごとに独立して配置するか、設定せずに運用できます：
+複数マシンにデプロイする場合は、同じリモートデータベースと同じ `SESSION_SECRET` を使用する必要があります。Redis は全ノードで共有することも、ノードごとに配置することも、設定を省略することもできます。3 つの構成での動作の違いについては、[クラスターデプロイガイド](/ja/docs/installation/deployment-methods/cluster-deployment)を参照してください。
 
-### マスターノード設定
+### プライマリノードの設定
 
 ```bash
-# データベース設定 - リモートデータベースを使用
+# 数据库配置 - 使用远程数据库
 SQL_DSN=postgresql://newapi:password@db-server:5432/oneapi
 
-# セキュリティ設定
+# 安全配置
 SESSION_SECRET=your_unique_session_secret
 CRYPTO_SECRET=your_unique_crypto_secret
 
-# Redisキャッシュ設定（ノード専用 Redis を使用するか、この行を省略して Redis を無効化することも可能）
+# Redis缓存配置（也可使用本节点 Redis，或省略以禁用 Redis）
 REDIS_CONN_STRING=redis://default:password@redis-server:6379
 ```
 
-### スレーブノード設定
+### セカンダリノードの設定
 
 ```bash
-# データベース設定 - 同じリモートデータベースを使用
+# 数据库配置 - 使用相同的远程数据库
 SQL_DSN=postgresql://newapi:password@db-server:5432/oneapi
 
-# セキュリティ設定 - SESSION_SECRET はマスターノードと同じ値を使用
+# 安全配置 - SESSION_SECRET 与主节点相同；共享 Redis 时 CRYPTO_SECRET 也相同
 SESSION_SECRET=your_unique_session_secret
-CRYPTO_SECRET=your_unique_crypto_secret # Redis を共有する場合はマスターと同じ値を使用
+CRYPTO_SECRET=your_unique_crypto_secret
 
-# Redisキャッシュ設定 - マスターと同じ Redis、またはこのノード専用 Redis を指定可能
+# Redis缓存配置 - 可与主节点相同，也可指向本节点独立 Redis
 REDIS_CONN_STRING=redis://default:password@redis-slave-node:6379
 
-# ノードタイプ設定
+# 节点类型设置
 NODE_TYPE=slave
 
-# オプション：フロントエンドベースURL
+# 可选：前端基础URL
 # FRONTEND_BASE_URL=https://<your-newapi-domain>
 
-# オプション：同期頻度
+# 可选：同步频率
 SYNC_FREQUENCY=60
 ```
 
-<Callout type="info" title="完全なクラスター設定">
-  この例ではノードごとに独立した Redis を使用しています。Redis を共有する場合は両方のノードで同じ `REDIS_CONN_STRING` を使用し、Redis を使用しない場合は設定を省略してください。どの構成でもデータベースは共有します。完全な設定と整合性の違いについては、[クラスターデプロイガイド](/ja/docs/installation/deployment-methods/cluster-deployment)を参照してください。
+<Callout type="info" title="クラスター全体の設定">
+  この例では、ノードごとに Redis を配置しています。Redis を共有する場合は、両方のノードに同じ `REDIS_CONN_STRING` を設定してください。Redis を設定しない場合は、セッションの検証時に共有データベースを直接照会します。クラスター全体の設定とデータの整合性に関する動作については、[クラスターデプロイガイド](/ja/docs/installation/deployment-methods/cluster-deployment)を参照してください。
 </Callout>
 
-## Docker Composeにおける環境変数の例
+## Docker Compose での環境変数の設定例
 
-以下は、Docker Compose設定ファイルで環境変数を設定する簡単な例です:
+以下は、Docker Compose の設定ファイルで環境変数を指定する簡単な例です。
 
 ```yaml
 services:
@@ -303,4 +313,4 @@ services:
       - CHANNEL_UPDATE_FREQUENCY=1440
 ```
 
-より多くの環境変数設定オプションを含む完全なDocker Compose設定については、[Docker Compose設定説明](/ja/docs/installation/config-maintenance/docker-compose-yml)ドキュメントを参照してください。
+Docker Compose の設定全体と、その他の環境変数の設定オプションについては、[Docker Compose の設定ガイド](/ja/docs/installation/config-maintenance/docker-compose-yml)を参照してください。
