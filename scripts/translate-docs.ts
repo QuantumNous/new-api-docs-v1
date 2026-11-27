@@ -20,14 +20,38 @@ const MAX_RETRIES = parseInt(process.env.MAX_RETRIES || '3', 10);
 const RETRY_DELAY = parseInt(process.env.RETRY_DELAY || '2', 10);
 const RETRY_BACKOFF = parseFloat(process.env.RETRY_BACKOFF || '2.0');
 const MAX_WORKERS = parseInt(process.env.MAX_WORKERS || '3', 10);
+// Optional: reasoning effort for reasoning models (e.g. low / medium / high). Omitted when empty.
+const REASONING_EFFORT = (process.env.REASONING_EFFORT || '').trim();
+// Per-request timeout in seconds (reasoning models on long docs can be slow).
+const REQUEST_TIMEOUT = parseInt(process.env.REQUEST_TIMEOUT || '600', 10);
+// Stream responses (SSE). Keeps proxies (e.g. Cloudflare, 100s idle limit) from returning 524.
+const STREAM = process.env.STREAM?.toLowerCase() === 'true';
+// Documents longer than this (chars) are split at headings and translated chunk by chunk. 0 disables.
+const CHUNK_SIZE = parseInt(process.env.CHUNK_SIZE || '12000', 10);
+// Retry when the translation drops headings/table rows/list items/components/code fences.
+const STRICT_STRUCTURE =
+  process.env.STRICT_STRUCTURE?.toLowerCase() !== 'false';
 const FORCE_TRANSLATE = process.env.FORCE_TRANSLATE?.toLowerCase() === 'true';
 const INCREMENTAL_TRANSLATE =
   process.env.INCREMENTAL_TRANSLATE?.toLowerCase() !== 'false';
 
-const LANGUAGES = {
+const ALL_LANGUAGES = {
   en: { name: 'English', nativeName: '英文', dir: 'en' },
   ja: { name: 'Japanese', nativeName: '日文', dir: 'ja' },
 } as const;
+
+// Optional: TARGET_LANGS=en or TARGET_LANGS=ja to translate into a subset of languages.
+const TARGET_LANG_CODES = (process.env.TARGET_LANGS || '')
+  .split(',')
+  .map((l) => l.trim())
+  .filter(Boolean);
+const TARGET_LANGUAGES = Object.fromEntries(
+  Object.entries(ALL_LANGUAGES).filter(
+    ([code]) =>
+      TARGET_LANG_CODES.length === 0 || TARGET_LANG_CODES.includes(code)
+  )
+) as Partial<typeof ALL_LANGUAGES>;
+const LANGUAGES = ALL_LANGUAGES;
 
 const GLOSSARY = `
 | 中文 | English | 说明 | Description |
@@ -193,34 +217,194 @@ async function callOpenAI(
   prompt: string,
   targetLang: LanguageCode
 ): Promise<string> {
+  const body: Record<string, unknown> = {
+    model: OPENAI_MODEL,
+    messages: [
+      {
+        role: 'system',
+        content:
+          'You are a professional technical documentation translator. Translate accurately while preserving Markdown formatting, code blocks, and technical terms.',
+      },
+      { role: 'user', content: prompt },
+    ],
+  };
+  if (STREAM) {
+    body.stream = true;
+  }
+  if (REASONING_EFFORT) {
+    // Reasoning models generally reject custom temperature; use reasoning_effort instead.
+    body.reasoning_effort = REASONING_EFFORT;
+  } else {
+    body.temperature = 0.3;
+  }
+
   const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${OPENAI_API_KEY}`,
     },
-    body: JSON.stringify({
-      model: OPENAI_MODEL,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are a professional technical documentation translator. Translate accurately while preserving Markdown formatting, code blocks, and technical terms.',
-        },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.3,
-    }),
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT * 1000),
   });
 
   if (!response.ok) {
+    const detail = (await response.text().catch(() => '')).slice(0, 300);
     throw new Error(
-      `API request failed: ${response.status} ${response.statusText}`
+      `API request failed: ${response.status} ${response.statusText}${detail ? ` - ${detail}` : ''}`
     );
   }
 
-  const data = (await response.json()) as OpenAIResponse;
-  return data.choices[0].message.content.trim();
+  let content: string | undefined;
+  let finishReason: string | undefined;
+  if (STREAM) {
+    ({ content, finishReason } = await readStream(response));
+    content = content.trim();
+  } else {
+    const data = (await response.json()) as {
+      choices?: Array<{
+        message?: { content?: string };
+        finish_reason?: string;
+      }>;
+    };
+    const choice = data.choices?.[0];
+    content = choice?.message?.content?.trim();
+    finishReason = choice?.finish_reason;
+  }
+  if (!content) {
+    throw new Error('API returned empty content');
+  }
+  if (finishReason === 'length') {
+    throw new Error(
+      'API output was truncated (finish_reason=length); refusing to write partial translation'
+    );
+  }
+  return stripCodeFenceWrapper(content);
+}
+
+/** Collect an OpenAI-compatible SSE stream into the final text. */
+async function readStream(
+  response: Response
+): Promise<{ content: string; finishReason?: string }> {
+  if (!response.body) throw new Error('API returned no response body');
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let content = '';
+  let finishReason: string | undefined;
+
+  const handleLine = (line: string) => {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith('data:')) return;
+    const payload = trimmed.slice(5).trim();
+    if (!payload || payload === '[DONE]') return;
+    let chunk: {
+      error?: { message?: string };
+      choices?: Array<{
+        delta?: { content?: string };
+        finish_reason?: string | null;
+      }>;
+    };
+    try {
+      chunk = JSON.parse(payload);
+    } catch {
+      return;
+    }
+    if (chunk.error) {
+      throw new Error(
+        `API stream error: ${chunk.error.message ?? JSON.stringify(chunk.error)}`
+      );
+    }
+    const choice = chunk.choices?.[0];
+    if (choice?.delta?.content) content += choice.delta.content;
+    if (choice?.finish_reason) finishReason = choice.finish_reason;
+  };
+
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let idx: number;
+    while ((idx = buffer.indexOf('\n')) >= 0) {
+      handleLine(buffer.slice(0, idx));
+      buffer = buffer.slice(idx + 1);
+    }
+  }
+  buffer += decoder.decode();
+  if (buffer) handleLine(buffer);
+  if (!finishReason) {
+    throw new Error(
+      'API stream ended without finish_reason (connection dropped?)'
+    );
+  }
+  return { content, finishReason };
+}
+
+/**
+ * Split a long Markdown/MDX document at headings (outside code fences) into
+ * chunks of roughly CHUNK_SIZE chars. Frontmatter stays in the first chunk.
+ */
+function splitIntoChunks(text: string): string[] {
+  if (CHUNK_SIZE <= 0 || text.length <= CHUNK_SIZE) return [text];
+
+  const lines = text.split('\n');
+  const sections: string[][] = [[]];
+  let inFence = false;
+  let fenceMarker = '';
+  let inFrontmatter = lines[0]?.trim() === '---';
+
+  lines.forEach((line, i) => {
+    if (inFrontmatter) {
+      sections[sections.length - 1].push(line);
+      if (i > 0 && line.trim() === '---') inFrontmatter = false;
+      return;
+    }
+    const fence = line.match(/^\s*(`{3,}|~{3,})/);
+    if (fence) {
+      if (!inFence) {
+        inFence = true;
+        fenceMarker = fence[1][0];
+      } else if (fence[1][0] === fenceMarker) {
+        inFence = false;
+      }
+    }
+    if (
+      !inFence &&
+      /^#{1,3}\s/.test(line) &&
+      sections[sections.length - 1].length > 0
+    ) {
+      sections.push([]);
+    }
+    sections[sections.length - 1].push(line);
+  });
+
+  const chunks: string[] = [];
+  let current = '';
+  for (const sec of sections) {
+    const part = sec.join('\n');
+    if (current && current.length + part.length + 1 > CHUNK_SIZE) {
+      chunks.push(current);
+      current = part;
+    } else {
+      current = current ? `${current}\n${part}` : part;
+    }
+  }
+  if (current) chunks.push(current);
+  return chunks;
+}
+
+/**
+ * Some models wrap the whole answer in ```markdown ... ``` despite instructions.
+ * Remove a single wrapping fence only when it encloses the entire output.
+ */
+function stripCodeFenceWrapper(text: string): string {
+  const m = text.match(
+    /^```(?:markdown|md|mdx|yaml)?[ \t]*\n([\s\S]*)\n```\s*$/
+  );
+  if (m && !m[1].includes('\n```')) {
+    return m[1];
+  }
+  return text;
 }
 
 async function translateContent(
@@ -228,23 +412,83 @@ async function translateContent(
   targetLang: LanguageCode
 ): Promise<string> {
   const { nativeName } = LANGUAGES[targetLang];
+
+  // Protect critical MDX segments (e.g. <APIPage document={...} />) so AI won't translate paths.
+  const { protectedText, restore } = protectMdxSegments(content);
+  const chunks = splitIntoChunks(protectedText);
+  if (chunks.length > 1) {
+    console.log(`   ✂ Split into ${chunks.length} chunks for ${nativeName}`);
+  }
+
+  const results: string[] = [];
+  for (let i = 0; i < chunks.length; i++) {
+    const label =
+      chunks.length > 1
+        ? `${nativeName} chunk ${i + 1}/${chunks.length}`
+        : nativeName;
+    const translated = await translateChunkWithRetry(
+      chunks[i],
+      targetLang,
+      label
+    );
+    // Output is trimmed; keep the chunk's original trailing blank lines so joins stay intact.
+    const trailing =
+      chunks.length > 1 ? (chunks[i].match(/\s*$/)?.[0] ?? '') : '';
+    results.push(
+      chunks.length > 1 ? translated.replace(/\s+$/, '') + trailing : translated
+    );
+  }
+
+  // restore() verifies every protected token survived; it throws otherwise.
+  return restore(results.join('\n'));
+}
+
+/** Count structural elements outside fenced code blocks. */
+function structureCounts(text: string): Record<string, number> {
+  const body = text.replace(/```[\s\S]*?```/g, '');
+  return {
+    headings: (body.match(/^#{1,6}\s/gm) ?? []).length,
+    'table rows': (body.match(/^\|/gm) ?? []).length,
+    'list items': (body.match(/^\s*(?:[-*]|\d+\.)\s/gm) ?? []).length,
+    components: (body.match(/<[A-Z][A-Za-z]*\b/g) ?? []).length,
+    'code fences': (text.match(/```/g) ?? []).length,
+  };
+}
+
+/** Returns a description of the first structural difference, or null if none. */
+function structureMismatch(source: string, translated: string): string | null {
+  if (!STRICT_STRUCTURE) return null;
+  const a = structureCounts(source);
+  const b = structureCounts(translated);
+  const diffs = Object.keys(a)
+    .filter((k) => a[k] !== b[k])
+    .map((k) => `${k} ${a[k]}→${b[k]}`);
+  return diffs.length ? diffs.join(', ') : null;
+}
+
+async function translateChunkWithRetry(
+  chunk: string,
+  targetLang: LanguageCode,
+  label: string
+): Promise<string> {
   let retryCount = 0;
   let lastError: Error | null = null;
 
   while (retryCount <= MAX_RETRIES) {
     try {
       if (retryCount > 0) {
-        console.log(
-          `   ⟳ Retry ${retryCount}/${MAX_RETRIES} for ${nativeName}...`
+        console.log(`   ⟳ Retry ${retryCount}/${MAX_RETRIES} for ${label}...`);
+      }
+      const prompt = getTranslationPrompt(targetLang, chunk);
+      const translated = await callOpenAI(prompt, targetLang);
+      // Reject outputs that silently drop content (e.g. a whole <Accordion> or table row).
+      const mismatch = structureMismatch(chunk, translated);
+      if (mismatch) {
+        throw new Error(
+          `Translation output structure differs from source (${mismatch})`
         );
       }
-
-      // Protect critical MDX segments (e.g. <APIPage document={...} />) so AI won't translate paths.
-      const { protectedText, restore } = protectMdxSegments(content);
-
-      const prompt = getTranslationPrompt(targetLang, protectedText);
-      const translated = await callOpenAI(prompt, targetLang);
-      return restore(translated);
+      return translated;
     } catch (error) {
       lastError = error as Error;
       retryCount++;
@@ -252,12 +496,12 @@ async function translateContent(
       if (retryCount <= MAX_RETRIES) {
         const delay = RETRY_DELAY * Math.pow(RETRY_BACKOFF, retryCount - 1);
         console.log(
-          `   ⚠ Translation failed: ${lastError.message}, retrying in ${delay.toFixed(1)}s...`
+          `   ⚠ Translation failed (${label}): ${lastError.message}, retrying in ${delay.toFixed(1)}s...`
         );
         await new Promise((resolve) => setTimeout(resolve, delay * 1000));
       } else {
         console.error(
-          `   ✗ Translation failed after ${MAX_RETRIES} retries: ${lastError.message}`
+          `   ✗ Translation failed after ${MAX_RETRIES} retries (${label}): ${lastError.message}`
         );
         throw lastError;
       }
@@ -414,7 +658,13 @@ async function translateToLanguage(
     );
 
     ensureDirectoryExists(targetFile);
-    fs.writeFileSync(targetFile, translatedContent, 'utf-8');
+    fs.writeFileSync(
+      targetFile,
+      translatedContent.endsWith('\n')
+        ? translatedContent
+        : `${translatedContent}\n`,
+      'utf-8'
+    );
 
     const status = isIncremental ? 'Updated' : 'Saved';
     console.log(`${prefix} ✓ ${status} ${langInfo.nativeName} translation`);
@@ -502,7 +752,9 @@ async function translateFile(
   }
 
   // Translate to each target language
-  for (const [langCode, langInfo] of Object.entries(LANGUAGES)) {
+  for (const [langCode, langInfo] of Object.entries(TARGET_LANGUAGES) as Array<
+    [string, (typeof LANGUAGES)[LanguageCode]]
+  >) {
     const targetFile = path.join(DOCS_DIR, langInfo.dir, relPath);
 
     // Check manual translation
@@ -554,6 +806,24 @@ async function translateFile(
           if (typeof v === 'string' && v.trim().length > 0) {
             out[key] = await translatePlainText(v, langCode as LanguageCode);
           }
+        }
+
+        // Translate sidebar separators like "---功能指南---"; keep page slugs untouched.
+        if (Array.isArray(out.pages)) {
+          const pages: unknown[] = [];
+          for (const p of out.pages as unknown[]) {
+            const sep = typeof p === 'string' ? p.match(/^---(.+)---$/) : null;
+            if (sep && /[\u4e00-\u9fff]/.test(sep[1])) {
+              const label = await translatePlainText(
+                sep[1],
+                langCode as LanguageCode
+              );
+              pages.push(`---${label.trim()}---`);
+            } else {
+              pages.push(p);
+            }
+          }
+          out.pages = pages;
         }
 
         ensureDirectoryExists(targetFile);
@@ -722,7 +992,7 @@ async function translateDocs(specificPaths?: string[]) {
   console.log(`   Model: ${OPENAI_MODEL}`);
   console.log(`   API: ${OPENAI_BASE_URL}`);
   console.log(
-    `   Languages: ${Object.values(LANGUAGES)
+    `   Languages: ${Object.values(TARGET_LANGUAGES)
       .map((l) => l.nativeName)
       .join(', ')}`
   );
@@ -730,6 +1000,13 @@ async function translateDocs(specificPaths?: string[]) {
     `   Retry: Max ${MAX_RETRIES} times, delay ${RETRY_DELAY}s, backoff ${RETRY_BACKOFF}x`
   );
   console.log(`   Concurrency: ${MAX_WORKERS} worker(s)`);
+  console.log(`   Reasoning effort: ${REASONING_EFFORT || '(not set)'}`);
+  console.log(`   Request timeout: ${REQUEST_TIMEOUT}s`);
+  console.log(`   Stream: ${STREAM}`);
+  console.log(`   Strict structure check: ${STRICT_STRUCTURE}`);
+  console.log(
+    `   Chunk size: ${CHUNK_SIZE > 0 ? `${CHUNK_SIZE} chars` : 'disabled'}`
+  );
   console.log(
     `   Incremental translate: ${INCREMENTAL_TRANSLATE ? 'Yes' : 'No'}`
   );
@@ -752,7 +1029,15 @@ async function translateDocs(specificPaths?: string[]) {
   }
   console.log(`   Duration: ${duration}s`);
   console.log('═══════════════════════════════════════════════');
-  console.log('✅ Translation completed!\n');
+  if (stats.failed > 0) {
+    // Non-zero exit so CI marks the run as failed instead of silently succeeding.
+    console.error(
+      `❌ ${stats.failed} translation(s) failed. See errors above.\n`
+    );
+    process.exitCode = 1;
+  } else {
+    console.log('✅ Translation completed!\n');
+  }
 }
 
 // ============================================================================
