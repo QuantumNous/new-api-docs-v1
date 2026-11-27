@@ -32,6 +32,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `upstreams` | `("vendor" \| "new_api")[]` | 可选上游类型；默认支持厂商，声明 `new_api` 才能绑定类型 60 New API 渠道 |
 | `auth`                          | string / object      | `none`、`api_key`、`vertex_oauth` 或规范定义的认证对象              |
 | `channelTypes`                  | number[]             | 可适配的旧渠道类型；第三方插件通常使用类型 61 的 key 绑定           |
+| `scope` | 对象 | 请求处理插件申请处理的模型和渠道类型 |
 | `routes`                        | NativeRoute[]        | 插件自有原生路由                                                    |
 | `protocols`                     | ProtocolClaim[]      | 宿主协议声明                                                        |
 | `usageSchema` / `usageExamples` | object / array       | 默认用量字段与示例                                                  |
@@ -40,6 +41,16 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `submitResponseTypes`           | array                | 上游提交响应类型，默认 `["json"]`，可声明 `"sse"`                   |
 
 `baseUrl` 不得包含凭据、查询串或片段，必须使用 ASCII 主机名；允许自托管的 HTTP 或私有地址。`allowedHosts` 使用 `host` / `host:port`，不包含协议或路径，端口会参与匹配。默认地址不会隐式扩大允许访问的主机集合。
+
+### 请求处理插件
+
+`meta.scope.models` 最多包含 100 个不同的模型名，每个名称长 1 到 128 个字符。`channelTypes` 最多包含 64 个不同的正整数，表示 new-api 渠道类型。至少填写一个模型名或渠道类型。某个列表省略或为空时，该项不限。
+
+其他宿主可以通过 `ctx.client` 传入识别到的客户端名称，通过 `ctx.session` 传入会话的 `id` 和轮次 `turn`。New API 不设置这两个字段。
+
+### 提供商插件路由
+
+要将 OpenAI Responses 请求转给 Anthropic Messages 上游，请在 `incoming_path` 为 `/v1/responses` 的路由上使用 `openai_responses_to_claude_messages` 转换器。上游使用标准 Messages 接口时，`upstream_path` 填 `/v1/messages`。
 
 ## 本地化文本
 
@@ -76,7 +87,7 @@ description: {
 | `buildBatchQueryRequest` | 批量上下文、任务数组                    | 批量查询描述符，`batch` 必需                |
 | `parseBatchResult`       | 批量上下文、body、HTTP 信息             | 每项含 `taskId` 的结果数组，`batch` 必需    |
 
-所有插件必须导出 `meta`、`buildSubmitRequest`、`parseSubmitResponse` 和 `parseTaskResult`，包括批量插件。
+所有插件都导出 `meta`。任务插件（包括批量任务插件）还需导出 `buildSubmitRequest`、`parseSubmitResponse` 和 `parseTaskResult`。
 
 提交时，宿主接受上游所有 2xx 状态码，包括 `200`、`201 Created` 和 `202 Accepted`，随后将 `{ statusCode, headers, body }` 传给 `parseSubmitResponse`。其他状态码会在钩子执行前使提交失败，错误携带上游状态码和响应体。
 
@@ -114,7 +125,7 @@ description: {
 
 ### 上游类型与网关互联
 
-`meta.upstreams` 只允许不重复的 `vendor` 和 `new_api`。所有插件默认支持 `vendor`；声明 `new_api` 表示驱动也能访问安装了同一插件的上游 New API 网关。类型 60 渠道可通过 `setting.task_plugin_key` / `setting.task_extend_plugin_keys` 绑定插件；`channelTypes` 不能声明 60 或 61，同一旧渠道类型仍只能由一个插件拥有。
+`meta.upstreams` 可填写 `vendor` 和 `new_api`，每个值只能出现一次。插件默认支持 `vendor`。声明 `new_api` 后，可使用安装了本插件的 New API 网关作为上游。类型 60 的渠道通过 `setting.task_plugin_key` 或 `setting.task_extend_plugin_keys` 绑定插件。60 和 61 是保留类型。多个插件可在 `channelTypes` 中声明同一旧渠道类型。
 
 宿主在 `DriverContext`、`TaskQueryContext`、`BatchQueryContext` 和 `buildContentRequest` 上下文中提供 `ctx.upstream`，值为 `{ kind: "vendor" }` 或 `{ kind: "new_api" }`；字段缺失时按 `vendor` 处理。对于 `new_api`，驱动使用插件自己的原生路由，例如 `/doubao/api/v3/...`、`/ali/api/v1/...`，不能直接照搬厂商路径。已有路径与原生路由相同或只使用宿主协议时，无需添加前缀。
 
@@ -194,6 +205,8 @@ routes: [
 
 若声明 `false` 的路由实际返回异步任务，宿主仍保留结果并记录警告。Responses 和 Video 协议始终保留结果；Image 协议的即时终态结果直接随创建响应返回，不保留结果数据，通过请求内轮询完成的结果则保留轮询快照。引用已丢弃结果的任务时，`originTasks[].data` 为 `null`。旧宿主会拒绝 `retainResult` 字段。
 
+在 `openai_image` 和声明 `retainResult: false` 的原生路由上，提交响应、单个 SSE 事件和即时终态的 `taskData` 均可达到 `MAX_FILE_DOWNLOAD_MB`（默认 64 MiB）。需要保存的提交数据和插件累积状态各限 1 MiB。
+
 ### 宿主协议
 
 `meta.protocols` 声明使用宿主统一管理的协议路径，不应复制这些路径到 `meta.routes`：
@@ -218,6 +231,8 @@ Video render 必须返回 JSON 对象；宿主覆盖标准 ID、模型、状态�
 
 成功时 `render(ctx, task)` 返回含 `data` 数组的对象，每项为 `{ url }` 或 `{ b64_json }`，可带 `revised_prompt`。宿主在缺失时补充 `created`。请求 `response_format: "b64_json"` 时，宿主下载图片 URL 并补充 Base64，保留原 URL；下载失败时记录警告并保留 URL。此钩子不接收 `ctx.artifacts`，图片地址来自上游结果。
 
+使用 `openai_image` 时，所选渠道先覆盖 JSON 参数或 multipart 文本字段，再由最终的 `decodeRequest` 校验请求。上传文件的引用会保留。每次重试都从原始请求开始。要修改上游模型，请使用渠道模型映射。`render` 和宿主使用最后一次尝试实际生效的 `response_format`。
+
 ## 用量钩子
 
 可选导出 `extractUsage`、`extractUsageOnSubmit` 和 `extractUsageOnComplete`，分别从请求、提交结果或完成结果中提取用量。返回用量事实，不返回价格或额度；所选 schema 声明的字段必须符合对应校验规则。
@@ -236,6 +251,8 @@ Video render 必须返回 JSON 对象；宿主覆盖标准 ID、模型、状态�
 - `buildContentRequest(ctx)`：根据所选 artifact key、数据、生产版本、上游任务 ID、渠道信息及安全的 Range/条件请求头构造本次读取描述符。
 
 带渠道凭据的内容请求只能访问渠道主机或 `allowedHosts`。公共动态 CDN 可使用 `credentialless: true`；这时只允许 GET/HEAD，不能附带插件 headers 或 body，宿主会检查初始地址和重定向。
+
+带凭据的 `buildContentRequest` 地址与任务渠道的基础地址同源时（协议、主机名和有效端口相同），网关使用该渠道的 HTTP 客户端及其私有上游设置。重定向也必须同源。其他来源（包括 `allowedHosts`）和不带凭据的请求都使用全局网络访问限制。
 
 宿主产物链接使用 `TaskPublicAddress`，缺省回退到 `ServerAddress`。多节点需要共享有效 `CRYPTO_SECRET`；轮换它会使已签发地址失效。
 
@@ -257,6 +274,8 @@ Video render 必须返回 JSON 对象；宿主覆盖标准 ID、模型、状态�
 SSE 模式不会直接透传上游事件给客户端。插件解释事件语义和结束条件，宿主管理连接、帧解析、大小限制及超时；成功接受上游 SSE 后的读取失败不会自动重试提交，避免重复创建计费任务。
 
 `json-clone@1` 提供同步的 `utils.json.clone(value)`，用于创建可修改的独立 JSON 快照。其他工具包括时间、UUID、Base64、HMAC、JWT 和 Volc 签名工具；完整签名见类型声明。`requiredCapabilities` 必须声明准确版本，未知或不支持的能力会在加载时拒绝。
+
+`utils.json.clone` 接受编码后不超过 4 MiB 的 JSON，根节点以下最多 32 层，节点总数最多 32,768 个。允许使用 `utils.fetch` 的钩子每次执行最多发起 4 次请求，单次限时 15 秒，总计 30 秒。单个响应体最多 4 MiB，合计最多 8 MiB。失败或中断前已读取的字节也计入总量。
 
 ## 管理与诊断接口
 

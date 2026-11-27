@@ -117,7 +117,7 @@ curl 'https://your-newapi.example/v1/images/edits' \
 
 Replace the model, key, and local image paths. Use repeated `image[]` fields only if the plugin and model support editing multiple images. Let curl generate the multipart Content-Type and boundary.
 
-A successful response contains `created` and `data`; image entries may include `url`, `b64_json`, and optional `revised_prompt`. For `response_format: "b64_json"`, the host attempts to download images and add Base64. A failed download may leave only the URL, which clients should handle.
+A successful response contains `created` and `data`; image entries may include `url`, `b64_json`, and optional `revised_prompt`. For `response_format: "b64_json"`, the host attempts to download images and add Base64. A failed download may leave only the URL, which clients should handle. A channel may override `response_format`. The gateway uses the selected channel’s effective format for the final response.
 
 For asynchronous upstream tasks, the host polls within the request. Waiting beyond `TASK_PLUGIN_PROTOCOL_TIMEOUT_SECONDS` (600 seconds by default) returns 504 `task_timeout`; a failed task returns 400 with its failure reason. Disconnecting or timing out does not cancel a submitted task: background processing and settlement continue. Check task logs before retrying.
 

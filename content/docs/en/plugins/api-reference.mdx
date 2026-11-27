@@ -31,6 +31,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `upstreams` | `("vendor" \| "new_api")[]` | Optional upstream kinds; vendor support is implied, while `new_api` enables binding to type-60 New API channels |
 | `auth`                          | string / object      | `none`, `api_key`, `vertex_oauth` or authentication object defined by specification |
 | `channelTypes`                  | number[]             | Adaptable legacy channel types; third-party plugins typically use key binding for type 61 |
+| `scope` | object | Models and channel types a request processing plugin asks to handle |
 | `routes`                        | NativeRoute[]        | Plugin's own native routes                                                  |
 | `protocols`                     | ProtocolClaim[]      | Host protocol declarations                                                  |
 | `usageSchema` / `usageExamples` | object / array       | Default usage fields and examples                                           |
@@ -39,6 +40,16 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `submitResponseTypes`           | array                | Upstream submission response types, default `["json"]`, can declare `"sse"` |
 
 `baseUrl` must not contain credentials, query strings, or fragments, and must use an ASCII hostname; self-hosted HTTP or private addresses are allowed. `allowedHosts` uses `host` / `host:port`, without protocol or path, and the port will be part of the matching. The default address does not implicitly expand the set of allowed hosts.
+
+### Request processing
+
+In `meta.scope`, `models` accepts up to 100 distinct names of 1 to 128 characters and `channelTypes` up to 64 distinct positive new-api channel type numbers. Supply at least one model or channel type. An empty or omitted list leaves that dimension unrestricted.
+
+A hook on another host may receive `ctx.client` (the recognized application) and `ctx.session` (an object with `id` and `turn`). New API leaves both fields unset.
+
+### Provider routes
+
+On a provider route with `incoming_path` set to `/v1/responses`, set `converter` to `openai_responses_to_claude_messages` to send an OpenAI Responses request to an Anthropic Messages upstream. For a standard Messages endpoint, set `upstream_path` to `/v1/messages`.
 
 ## Localized Text
 
@@ -75,7 +86,7 @@ The plugin site's marketplace list shows `meta.description` on a single line und
 | `buildBatchQueryRequest`   | Batch context, task array               | Batch query descriptor, `batch` is required       |
 | `parseBatchResult`         | Batch context, body, HTTP info          | Array of results, each containing `taskId`, `batch` is required |
 
-All plugins must export `meta`, `buildSubmitRequest`, `parseSubmitResponse`, and `parseTaskResult`, including batch plugins.
+Every plugin exports `meta`. Task plugins, including batch plugins, also export `buildSubmitRequest`, `parseSubmitResponse` and `parseTaskResult`.
 
 For submission, the host accepts every upstream 2xx status, including `200`, `201 Created`, and `202 Accepted`, then calls `parseSubmitResponse` with `{ statusCode, headers, body }`. Any other status fails submission with the upstream status and body before the hook runs.
 
@@ -113,7 +124,7 @@ Optional usage and artifact hooks are detected once when the plugin loads. An ex
 
 ### Upstream kinds and gateway connections
 
-`meta.upstreams` accepts unique `vendor` and `new_api` values. Every plugin implicitly supports `vendor`; `new_api` means the driver also addresses an upstream New API gateway with the same plugin installed. Type-60 channels bind plugins through `setting.task_plugin_key` / `setting.task_extend_plugin_keys`. Neither 60 nor 61 may appear in `channelTypes`, and each legacy channel type still belongs to only one plugin.
+`meta.upstreams` accepts the distinct values `vendor` and `new_api`. Vendor support is implicit. Declare `new_api` to use a New API gateway with this plugin installed as the upstream. Type 60 binds plugins through `setting.task_plugin_key` or `setting.task_extend_plugin_keys`. Types 60 and 61 are reserved. Multiple plugins may list the same legacy channel type in `channelTypes`.
 
 The host supplies `ctx.upstream` on `DriverContext`, `TaskQueryContext`, `BatchQueryContext`, and the `buildContentRequest` context as `{ kind: "vendor" }` or `{ kind: "new_api" }`. Treat a missing field as `vendor`. For `new_api`, construct the plugin's own native paths, such as `/doubao/api/v3/...` or `/ali/api/v1/...`, instead of copying vendor paths. No prefix change is needed when the paths already match native routes or the plugin uses only host protocols.
 
@@ -193,6 +204,8 @@ Routes intersecting `/v1/tasks`, `/assets`, or reserved console paths fail compi
 
 If a route declaring `false` returns an asynchronous task, the host retains the result and logs a warning. Responses and Video always retain results. Image returns immediate terminal results inline without retaining result data; results completed by in-request polling retain the poller's snapshot. When a discarded result is referenced, `originTasks[].data` is `null`. Older hosts reject the `retainResult` field.
 
+For `openai_image` and native routes with `retainResult: false`, the submit reply, each SSE event and immediate terminal `taskData` may reach `MAX_FILE_DOWNLOAD_MB` (64 MiB by default). Retained submit data and accumulated plugin state each have a 1 MiB limit.
+
 ### Host Protocols
 
 `meta.protocols` declares protocol paths uniformly managed by the host and should not duplicate these paths in `meta.routes`:
@@ -217,6 +230,8 @@ Export `decodeRequest` and `render`. A synchronous upstream returns a terminal `
 
 On success, `render(ctx, task)` returns an object with a `data` array of `{ url }` or `{ b64_json }` entries, optionally including `revised_prompt`. The host adds `created` when absent. For `response_format: "b64_json"`, it downloads image URLs and adds Base64 while preserving the URLs; failed downloads produce a warning and leave the URLs. This hook receives no `ctx.artifacts`; image URLs come from the upstream result.
 
+For `openai_image`, the selected channel applies parameter overrides to JSON or multipart text fields before the final `decodeRequest`. The hook validates this request. Uploaded files keep their references. Each retry starts from the original request. Use channel model mapping to change the upstream model. `render` and the host use the effective `response_format` of the final attempt.
+
 ## Usage Hooks
 
 Optional exports `extractUsage`, `extractUsageOnSubmit`, and `extractUsageOnComplete` extract usage from requests, submission results, or completion results, respectively. Return usage facts, never prices or quotas. Facts declared by the selected schema must satisfy its validation rules.
@@ -235,6 +250,8 @@ Artifact hooks must be exported in pairs:
 - `buildContentRequest(ctx)`: Constructs the read descriptor for this request based on the selected artifact key, data, production version, upstream task ID, channel information, and secure Range/conditional request headers.
 
 Content requests with channel credentials can only access channel hosts or `allowedHosts`. Public dynamic CDNs can use `credentialless: true`; in this case, only GET/HEAD is allowed, no plugin headers or body can be attached, and the host will check the initial address and redirects.
+
+When a credentialed `buildContentRequest` URL has the same scheme, hostname and effective port as the task channel’s base URL, the gateway uses that channel’s HTTP client, including its private upstream settings. Redirects must stay on that origin. Other origins, including `allowedHosts`, and credentialless requests use the global fetch restrictions.
 
 Host artifact links use `TaskPublicAddress`, falling back to `ServerAddress` by default. Multi-node setups require a shared valid `CRYPTO_SECRET`; rotating it will invalidate issued addresses.
 
@@ -256,6 +273,8 @@ Cancellation callbacks finish before a runtime returns to the pool, and the engi
 SSE mode does not directly pass upstream events to the client. The plugin interprets event semantics and termination conditions, while the host manages connections, frame parsing, size limits, and timeouts; read failures after successfully accepting upstream SSE will not automatically retry submission, to avoid creating duplicate billing tasks.
 
 `json-clone@1` provides a synchronous `utils.json.clone(value)` for creating mutable, independent JSON snapshots. Other utilities include time, UUID, Base64, HMAC, JWT, and Volc signature tools; see type declarations for full signatures. `requiredCapabilities` must declare the exact version; unknown or unsupported capabilities will be rejected at load time.
+
+`utils.json.clone` accepts up to 4 MiB of encoded JSON, 32 levels below the root and 32,768 nodes. Where a hook permits `utils.fetch`, each call to the hook allows up to four fetches, 15 seconds per fetch and 30 seconds in total. Response bodies may use up to 4 MiB each and 8 MiB in total. Bytes read from failed or interrupted responses count toward the total.
 
 ## Management and Diagnostic Interfaces
 

@@ -66,9 +66,13 @@ Usage profile selection first checks `ctx.upstreamModel`, falls back to `ctx.mod
 
 Some official plugins support existing channel types via `meta.channelTypes`, such as OpenAI, Gemini, or vendor-specific types. Their supported scope is based on marketplace details, and existing channels do not all need to be changed to Type 61.
 
-The same old channel type can only be owned by one plugin; conflicts are checked upon activation. Multiple plugins can declare the same model on the same host protocol, and the choice of which plugin to use is ultimately determined by the selected channel: old channels by channel type, and Type 61 channels by plugin key.
+A legacy channel can serve several plugins. The requested model determines which plugins qualify. If several serve the same model on that channel, the gateway runs the first in ascending plugin-key order. A type-61 channel uses its bound plugin key.
 
 Shared models do not imply identical usage fields or prices. You should check the [billing configuration](/en/docs/plugins/billing) corresponding to each plugin.
+
+## Following a request plugin's scope
+
+If a request processing plugin declares `meta.scope`, add an instance in the request plugin settings and confirm its scope. The instance runs where both the approved scope and the plugin's current scope match. New matching models and channels are included automatically. A narrower scope applies on the next request. Confirm a wider scope to include the additional requests. Removing the declaration stops that instance. If the scope names channel types, `ingress` runs after channel selection. Task completion reports use the instances recorded at submission, provided they are still enabled and export `report`.
 
 ## Post-Configuration Verification
 

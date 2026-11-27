@@ -35,7 +35,7 @@ First, read the release notes, then upgrade to a host that supports these capabi
 
 ## What if there's a channel type or routing conflict during installation?
 
-Check the other plugin indicated in the error, and verify both parties' `channelTypes` and native routes. Ownership of old channel types must be unique, and native routes cannot register conflicting HTTP methods and path patterns.
+Compare the models and routes of the plugins named in the error. Plugins may share a legacy channel type or a native route. Two model names that differ only in case, or different host protocols on the same path and model, conflict. A catch-all route can also collide with a literal segment at the same position.
 
 Sharing models under the same host protocol is allowed, and there's no need to remove a plugin just because the model names are the same. First, confirm the actual type of conflict, then adjust the version or plugin configuration.
 

@@ -78,6 +78,8 @@ tier("standard", u("seconds") * 0.02)
 
 `openai_image` 使用普通任务计费契约：`extractUsage` 报告请求数量；即时结果在旧计费路径通过 `extractUsageOnSubmit` 报告实际数量，任务表达式路径通过 `extractUsageOnComplete` 处理即时或轮询完成的实际用量。用量包含 `image_count` 时，消费日志的 `other.image_count` 记录计费数量。
 
+图片用量以渠道参数覆盖后的请求为准。例如，渠道覆盖 `n` 后，驱动和 `extractUsage` 收到的都是更新后的图片张数。
+
 仅统计实际图片，不把只有文字、提示词或空载荷的条目当作生成图片。等待图片结果超时或客户端断开不会取消已提交的上游任务，后台完成后仍会结算。不要仅因未收到创建响应就认定任务免费或立即重复提交。
 
 ## 升级时的检查

@@ -31,6 +31,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `upstreams` | `("vendor" \| "new_api")[]` | 任意の上流種別。vendor は暗黙に対応し、`new_api` の宣言によりタイプ 60 の New API チャネルに紐付け可能 |
 | `auth`                          | string / object      | `none`、`api_key`、`vertex_oauth` または仕様で定義された認証オブジェクト              |
 | `channelTypes`                  | number[]             | 適応可能な古いチャネルタイプ；サードパーティプラグインは通常、タイプ61のキーバインディングを使用           |
+| `scope` | オブジェクト | リクエスト処理プラグインが対象とするモデルとチャネルタイプ |
 | `routes`                        | NativeRoute[]        | プラグイン独自のネイティブルート                                                    |
 | `protocols`                     | ProtocolClaim[]      | ホストプロトコル宣言                                                              |
 | `usageSchema` / `usageExamples` | object / array       | デフォルトの使用量フィールドと例                                                  |
@@ -39,6 +40,16 @@ import { Callout } from 'fumadocs-ui/components/callout';
 | `submitResponseTypes`           | array                | アップストリーム送信応答タイプ、デフォルトは `["json"]`、`"sse"` も宣言可能                   |
 
 `baseUrl`には資格情報、クエリ文字列、フラグメントを含めることはできません。ASCIIホスト名を使用する必要があります。自己ホスト型HTTPまたはプライベートアドレスも許可されます。`allowedHosts`は `host` / `host:port` を使用し、プロトコルやパスは含みません。ポートもマッチングに参加します。デフォルトアドレスは、アクセスを許可するホストの集合を暗黙的に拡大することはありません。
+
+### リクエスト処理プラグイン
+
+`meta.scope.models` には長さ 1～128 文字の異なるモデル名を最大 100 件、`channelTypes` には new-api のチャネルタイプを表す正の整数を重複なく最大 64 件指定できます。少なくともモデルかチャネルタイプを 1 件指定してください。省略したリストや空のリストは、その項目に制限を設けません。
+
+他のホストでは、`ctx.client` に識別したクライアント名、`ctx.session` にセッションの `id` とターン番号 `turn` が入ることがあります。New API ではどちらも未設定です。
+
+### プロバイダープラグインのルート
+
+OpenAI Responses のリクエストを Anthropic Messages の上流に送るには、`incoming_path` が `/v1/responses` のルートで `converter` に `openai_responses_to_claude_messages` を指定します。上流が標準の Messages API を使う場合、`upstream_path` は `/v1/messages` です。
 
 ## ローカライズされたテキスト
 
@@ -75,7 +86,7 @@ description: {
 | `buildBatchQueryRequest` | バッチコンテキスト、タスク配列                    | バッチクエリ記述子、`batch` の場合は必須                |
 | `parseBatchResult`       | バッチコンテキスト、ボディ、HTTP情報             | 各項目に `taskId` を含む結果配列、`batch` の場合は必須    |
 
-すべてのプラグインは、バッチプラグインを含め、`meta`、`buildSubmitRequest`、`parseSubmitResponse`、および `parseTaskResult` をエクスポートする必要があります。
+すべてのプラグインが `meta` をエクスポートします。バッチ処理を含むタスクプラグインは、`buildSubmitRequest`、`parseSubmitResponse`、`parseTaskResult` もエクスポートします。
 
 送信時、ホストは `200`、`201 Created`、`202 Accepted` を含む上流のすべての 2xx ステータスを受け入れ、`{ statusCode, headers, body }` を `parseSubmitResponse` に渡します。それ以外のステータスではフックを実行せず、上流のステータスとレスポンスボディを含むエラーとして送信を失敗させます。
 
@@ -113,7 +124,7 @@ description: {
 
 ### 上流種別とゲートウェイ間接続
 
-`meta.upstreams` には重複しない `vendor` と `new_api` を指定できます。すべてのプラグインは暗黙に `vendor` に対応し、`new_api` は同じプラグインを導入した上流 New API ゲートウェイへの対応を示します。タイプ 60 は `setting.task_plugin_key` / `setting.task_extend_plugin_keys` でプラグインを紐付けます。`channelTypes` に 60 と 61 は指定できず、各従来型チャネルの所有権は引き続き単一プラグインに限られます。
+`meta.upstreams` には `vendor` と `new_api` を重複なく指定できます。`vendor` は既定で有効です。同じプラグインを導入した上流の New API ゲートウェイを使う場合は `new_api` を宣言します。タイプ 60 のチャネルは `setting.task_plugin_key` または `setting.task_extend_plugin_keys` でプラグインを指定します。60 と 61 は予約済みです。複数のプラグインが `channelTypes` に同じ従来型チャネルを指定できます。
 
 ホストは `DriverContext`、`TaskQueryContext`、`BatchQueryContext`、`buildContentRequest` のコンテキストに `{ kind: "vendor" }` または `{ kind: "new_api" }` の `ctx.upstream` を渡します。フィールドがない場合は `vendor` として扱います。`new_api` ではベンダーのパスをそのまま使わず、`/doubao/api/v3/...` や `/ali/api/v1/...` など、プラグイン自身のネイティブパスを構築します。既にパスが一致する場合やホストプロトコルのみを使う場合、プレフィックスの変更は不要です。
 
@@ -193,6 +204,8 @@ routes: [
 
 `false` を宣言したルートが非同期タスクを返した場合、ホストは結果を保持して警告を記録します。Responses と Video は常に結果を保持します。Image の即時終端結果は作成応答に直接含まれ、結果データは保持されませんが、リクエスト内のポーリングで完了した結果は保存済みスナップショットを保持します。破棄済み結果を参照する場合、`originTasks[].data` は `null` です。古いホストは `retainResult` を拒否します。
 
+`openai_image` と `retainResult: false` のネイティブルートでは、送信時の応答、個々の SSE イベント、即時完了した `taskData` の上限は `MAX_FILE_DOWNLOAD_MB`（既定 64 MiB）です。保存する送信データとプラグインが蓄積する状態はそれぞれ 1 MiB までです。
+
 ### ホストプロトコル
 
 `meta.protocols`はホストによって一元管理されるプロトコルパスを宣言します。これらのパスを `meta.routes` にコピーすべきではありません。
@@ -217,6 +230,8 @@ Responsesは、オブジェクト形式で `supports` を明示的に宣言す�
 
 成功時の `render(ctx, task)` は `data` 配列を持つオブジェクトを返します。各要素は `{ url }` または `{ b64_json }` で、`revised_prompt` を追加できます。ホストは未指定の `created` を補います。`response_format: "b64_json"` では画像 URL を取得して Base64 を追加し、元の URL も保持します。取得に失敗した場合は警告を記録し、URL を残します。このフックに `ctx.artifacts` は渡されず、画像 URL は上流結果から取得します。
 
+`openai_image` では、選択したチャネルが JSON または multipart のテキストフィールドにパラメーターの上書きを適用してから、最後の `decodeRequest` がリクエストを検証します。アップロードしたファイルの参照は保持されます。再試行ごとに元のリクエストを使います。上流モデルの変更にはチャネルのモデルマッピングを使ってください。`render` とホストは最後の試行で適用された `response_format` を使います。
+
 ## 使用量フック
 
 オプションで `extractUsage`、`extractUsageOnSubmit`、および `extractUsageOnComplete` をエクスポートできます。これらはそれぞれ、リクエスト、送信結果、または完了結果から使用量を抽出します。使用量の事実を返し、価格やクォータは返しません。選択されたスキーマで宣言されたフィールドは、その検証規則を満たす必要があります。
@@ -235,6 +250,8 @@ Responsesは、オブジェクト形式で `supports` を明示的に宣言す�
 - `buildContentRequest(ctx)`：選択された成果物キー、データ、プロダクションバージョン、アップストリームタスクID、チャネル情報、および安全なRange/条件付きリクエストヘッダーに基づいて、今回の読み取り記述子を構築します。
 
 チャネル資格情報付きのコンテンツリクエストは、チャネルホストまたは `allowedHosts` にのみアクセスできます。公開動的CDNは `credentialless: true` を使用できます。この場合、GET/HEADのみが許可され、プラグインヘッダーやボディを添付することはできません。ホストは初期アドレスとリダイレクトをチェックします。
+
+資格情報を使う `buildContentRequest` の URL がタスクのチャネルのベース URL と同一オリジン（スキーム、ホスト名、実効ポートが同じ）の場合、ゲートウェイはそのチャネルの HTTP クライアントとプライベート上流の設定を使います。リダイレクト先も同一オリジンに限ります。`allowedHosts` を含む他のオリジンと、資格情報を使わないリクエストには、ホスト全体のネットワーク制限が適用されます。
 
 ホストの成果物リンクは `TaskPublicAddress` を使用し、デフォルトでは `ServerAddress` にフォールバックします。マルチノードは有効な `CRYPTO_SECRET` を共有する必要があります。これをローテーションすると、発行済みのすべてのアドレスが無効になります。
 
@@ -256,6 +273,8 @@ Responsesは、オブジェクト形式で `supports` を明示的に宣言す�
 SSEモードは、アップストリームイベントをクライアントに直接透過的に渡しません。プラグインはイベントのセマンティクスと終了条件を解釈し、ホストは接続、フレーム解析、サイズ制限、タイムアウトを管理します。アップストリームSSEの受け入れに成功した後の読み取り失敗は、自動的に送信を再試行せず、重複する課金タスクの作成を回避します。
 
 `json-clone@1` は、変更可能な独立したJSONスナップショットを作成するための同期的な `utils.json.clone(value)` を提供します。その他のツールには、時間、UUID、Base64、HMAC、JWT、およびVolc署名ツールが含まれます。完全なシグネチャは型宣言を参照してください。`requiredCapabilities` は正確なバージョンを宣言する必要があります。不明またはサポートされていない機能は、ロード時に拒否されます。
+
+`utils.json.clone` が受け取れる JSON はエンコード後 4 MiB まで、ルートからの深さは 32、ノード数は 32,768 までです。`utils.fetch` を利用できるフックでは、1 回の実行につき最大 4 回リクエストできます。制限時間は 1 回 15 秒、合計 30 秒です。応答本文は 1 件 4 MiB、合計 8 MiB までで、失敗や中断までに読み取ったバイトも合計に含みます。
 
 ## 管理および診断インターフェース
 

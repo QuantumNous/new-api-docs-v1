@@ -24,7 +24,7 @@ Regular API keys are used for model calls and cannot be used to install plugins.
 4. Wait for the plugin source code download and SHA-256 verification to complete, then confirm and select "Install and Enable".
 5. Return to the installed list, check the actually effective version; then [configure channels](/en/docs/plugins/configuration) and [billing](/en/docs/plugins/billing).
 
-Marketplace installation uses the hash declared in the index to verify the source code, and the server then recompiles, verifies metadata, and checks for conflicts. If channel type or routing conflicts occur, the installation will be rejected; resolve the conflicts before retrying.
+The gateway checks the source hash against the marketplace index, recompiles the plugin and validates its metadata. When enabling a version, it checks for conflicts with active plugins and names the other plugin in the error.
 
 ## Copy Official Installation URL from Documentation Site
 

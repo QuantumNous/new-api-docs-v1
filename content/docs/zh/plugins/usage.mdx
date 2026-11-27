@@ -118,7 +118,7 @@ curl 'https://your-newapi.example/v1/images/edits' \
 
 替换模型名、密钥和本地图片路径；只有插件和模型支持多图编辑时，才使用重复的 `image[]`。不要手动设置 multipart 的 Content-Type，curl 会生成正确的 boundary。
 
-成功响应包含 `created` 和 `data`，图片条目可含 `url`、`b64_json` 和可选 `revised_prompt`。请求 `response_format: "b64_json"` 时，宿主会尝试下载并补充 Base64；下载失败时可能只保留 URL，调用方应处理这种情况。
+成功响应包含 `created` 和 `data`，图片条目可含 `url`、`b64_json` 和可选 `revised_prompt`。请求 `response_format: "b64_json"` 时，宿主会尝试下载并补充 Base64；下载失败时可能只保留 URL，调用方应处理这种情况。渠道可以覆盖 `response_format`。网关按最终选中渠道实际生效的格式返回图片。
 
 上游是异步任务时，宿主在请求内轮询。等待超过 `TASK_PLUGIN_PROTOCOL_TIMEOUT_SECONDS`（默认 600 秒）返回 504 `task_timeout`；任务失败返回 400 和失败原因。客户端断开或等待超时不会取消已提交任务，后台仍继续处理和结算，重试前应先核对任务日志。
 

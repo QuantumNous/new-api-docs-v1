@@ -7,7 +7,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 開発前に知っておくべきこと
 
-プラグインは単一ファイルで同期的なECMAScriptモジュールです。`import`、`require`、`async`、`await`、`fetch`、ファイルシステム、または環境変数を使用することはできません。ネットワークリクエスト、認証の解析、タスクの保存、および決済はホストによって行われます。
+プラグインは単一ファイルの同期 ECMAScript モジュールです。ホストがドライバーフックの返す記述子に従ってリクエストを送信します。追加の同期リクエストが必要なら、対応するフックで `utils.fetch` を使用できます。グローバルの `fetch`、モジュールのインポート、ファイルシステム、環境変数は使用できません。
 
 現在のプラグイン API v1 はまだ進化中です。[型宣言](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.d.ts)と [JSON Schema](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.schema.json)を契約の根拠とし、対象のホストバージョンで検証されます。
 

@@ -25,7 +25,7 @@ import { OfficialPluginLinks } from '@/components/plugins/official-links';
 4. 等待插件源码下载与 SHA-256 校验完成，确认后选择「安装并启用」。
 5. 返回已安装列表，检查实际生效版本；随后[配置渠道](/zh/docs/plugins/configuration)和[计费](/zh/docs/plugins/billing)。
 
-市场安装使用索引声明的哈希校验源码，并由服务端再次编译、校验元数据和检查冲突。发生渠道类型或路由冲突时，安装会被拒绝；先解决冲突再重试。
+网关用市场索引中的哈希校验源码，重新编译插件并验证元数据。启用版本时，网关会检查与运行中插件的冲突，并在报错中指出另一个插件。
 
 ## 从文档站复制官网安装地址
 

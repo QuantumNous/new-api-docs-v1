@@ -117,7 +117,7 @@ curl 'https://your-newapi.example/v1/images/edits' \
 
 モデル名、キー、ローカル画像のパスを置き換えてください。繰り返しの `image[]` はプラグインとモデルが複数画像の編集に対応する場合にのみ使用します。multipart の Content-Type と boundary は curl に生成させます。
 
-成功応答には `created` と `data` が含まれ、画像要素は `url`、`b64_json`、任意の `revised_prompt` を持ちます。`response_format: "b64_json"` ではホストが画像を取得して Base64 を追加します。取得失敗時には URL のみが残る場合もあるため、クライアント側で対応してください。
+成功応答には `created` と `data` が含まれ、画像要素は `url`、`b64_json`、任意の `revised_prompt` を持ちます。`response_format: "b64_json"` ではホストが画像を取得して Base64 を追加します。取得失敗時には URL のみが残る場合もあるため、クライアント側で対応してください。チャネルは `response_format` を上書きできます。ゲートウェイは最後に選択したチャネルで適用された形式で画像を返します。
 
 上流が非同期の場合、ホストがリクエスト内でポーリングします。`TASK_PLUGIN_PROTOCOL_TIMEOUT_SECONDS`（既定 600 秒）を超えると 504 `task_timeout`、タスク失敗時は理由とともに 400 を返します。切断やタイムアウトで送信済みタスクは取り消されず、バックグラウンド処理と精算が続きます。再送前にタスクログを確認してください。
 

@@ -7,7 +7,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## 开发前了解
 
-插件是单文件、同步的 ECMAScript 模块。不能使用 `import`、`require`、`async`、`await`、`fetch`、文件系统或环境变量。请求网络、解析认证、保存任务和结算由宿主完成。
+插件是单文件、同步执行的 ECMAScript 模块。宿主根据驱动钩子返回的描述符发送请求。需要额外发起同步请求时，可在允许的钩子中调用 `utils.fetch`。运行时不提供全局 `fetch`、模块导入、文件系统或环境变量。
 
 当前插件 API v1 仍在演进。以[类型声明](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.d.ts)和 [JSON Schema](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.schema.json)为契约依据，并在目标宿主版本中验证。
 

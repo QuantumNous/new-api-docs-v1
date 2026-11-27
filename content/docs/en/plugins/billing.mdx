@@ -78,6 +78,8 @@ Missing usage or parsing anomalies do not equate to free usage. Do not write unk
 
 `openai_image` follows the ordinary task billing contract: `extractUsage` reports the requested count. Immediate results report actual counts through `extractUsageOnSubmit` for legacy pricing; task expressions use `extractUsageOnComplete` for immediate and polled results. When facts contain `image_count`, the consume log records the billed count in `other.image_count`.
 
+Image usage reflects the request after channel parameter overrides. For example, if the channel overrides `n`, the driver and `extractUsage` receive the updated count.
+
 Count actual images, not entries containing only text, prompts, or empty payloads. A timeout while waiting for images or a client disconnect does not cancel a submitted upstream task; it still settles on background completion. A missing create response does not mean the task was free and is not a reason to immediately resubmit it.
 
 ## Checks During Upgrade

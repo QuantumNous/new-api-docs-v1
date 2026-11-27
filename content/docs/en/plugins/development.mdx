@@ -7,7 +7,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 ## Before You Start Developing
 
-Plugins are single-file, synchronous ECMAScript modules. You cannot use `import`, `require`, `async`, `await`, `fetch`, file system, or environment variables. Network requests, authentication parsing, task saving, and billing are handled by the host.
+Plugins are single-file, synchronous ECMAScript modules. The host sends the requests described by driver hooks. Where the hook permits it, use `utils.fetch` for an additional synchronous request. The runtime provides no global `fetch`, module imports, file system or environment variables.
 
 The current Plugin API v1 is still evolving. The [type declarations](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.d.ts) and [JSON Schema](https://github.com/QuantumNous/new-api-plugins/blob/main/docs/plugin-api/v1.schema.json) serve as the contract basis and are validated against the target host version.
 
