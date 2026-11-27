@@ -445,3 +445,29 @@ Codex CLIはNode.js環境で動作します。
   sudo dnf groupinstall "Development Tools"
   ```
 </Callout>
+
+## プロジェクトを検証し、同じ会話に戻る
+
+上記の New API 設定を終えたら、自分のプロジェクトのディレクトリでターミナルを開きます。Windows では、設定手順で使った WSL ターミナルを使用します。
+
+```bash
+cd "/path/to/your/project"
+codex --sandbox read-only --ask-for-approval on-request
+```
+
+Codex に具体的なタスクを一つ依頼します。
+
+> このプロジェクトの検証コマンドを見つけ、ソースファイルを変更せずに実行してください。完全なコマンド、終了ステータス、失敗や実行できなかった理由を報告してください。
+
+Codex でコマンドの結果を読み、New API の使用ログで今回のリクエストのモデルとトークン使用量を確認します。API リクエストの成功と、プロジェクトの検証の成功は別々の結果です。
+
+`/status` を実行して **Session** に表示された UUID をコピーし、`/exit` で終了します。後で同じプロジェクトのディレクトリに戻り、`YOUR_SESSION_UUID` を保存した UUID に置き換えます。
+
+```bash
+cd "/path/to/your/project"
+codex resume YOUR_SESSION_UUID --sandbox read-only --ask-for-approval on-request
+```
+
+初めて戻るときは、同じ Codex home、New API の接続先、モデル設定、キーの環境変数を使います。`/status` で UUID が同じことを確認し、前の検証結果を読んでから次のタスクを送ります。これで保存済みの会話を再開できます。
+
+UUID を保存していない場合は、`codex resume` で現在の作業ディレクトリのローカル会話を選べます。サブディレクトリで始めた会話には、そのディレクトリに移動するか `codex resume --all` を使います。インストール済みのバージョンのオプションは `codex resume --help` で確認できます。

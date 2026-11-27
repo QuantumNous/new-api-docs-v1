@@ -445,3 +445,29 @@ Codex CLI 需要 Node.js 环境才能运行。
   sudo dnf groupinstall "Development Tools"
   ```
 </Callout>
+
+## 验证项目并返回同一个会话
+
+完成上面的 New API 配置后，在你自己的项目目录中打开终端。Windows 用户使用前面配置步骤中的 WSL 终端。
+
+```bash
+cd "/path/to/your/project"
+codex --sandbox read-only --ask-for-approval on-request
+```
+
+给 Codex 一个具体任务：
+
+> 找到这个项目的验证命令，在不修改源文件的前提下运行。报告完整命令、退出状态，以及失败或无法执行的原因。
+
+在 Codex 中阅读命令结果，并在 New API 的使用日志中检查这次请求的模型和 token 用量。API 请求成功与项目验证通过是两个独立结果。
+
+运行 `/status`，复制 **Session** 一栏中的 UUID，然后使用 `/exit` 退出。之后从同一个项目目录返回，将 `YOUR_SESSION_UUID` 替换为保存的 UUID：
+
+```bash
+cd "/path/to/your/project"
+codex resume YOUR_SESSION_UUID --sandbox read-only --ask-for-approval on-request
+```
+
+第一次返回时，保留相同的 Codex home、New API 接口地址、模型配置和密钥环境变量。在 `/status` 中核对 UUID 未变，先阅读之前的验证结果，再发送下一个任务。这样恢复的是已保存的会话。
+
+如果没有保存 UUID，`codex resume` 会打开当前工作目录的本地会话选择器。在子目录中开始的会话需要进入那个子目录，或使用 `codex resume --all` 查找。运行 `codex resume --help` 可查看已安装版本的选项。

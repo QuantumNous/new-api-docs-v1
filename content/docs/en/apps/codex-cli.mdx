@@ -464,3 +464,29 @@ Now you can start using Codex CLI!
   sudo dnf groupinstall "Development Tools"
   ```
 </Callout>
+
+## Verify a project and return to the same conversation
+
+After configuring New API above, open a terminal in one of your own projects. On Windows, use the WSL terminal from the setup steps.
+
+```bash
+cd "/path/to/your/project"
+codex --sandbox read-only --ask-for-approval on-request
+```
+
+Give Codex one concrete task:
+
+> Find this project's verification command and run it without changing source files. Report the exact command, exit status, and any failures or execution blockers.
+
+Read the command result in Codex and check the request's model and token usage in New API's usage logs. A successful API response and a passing project check are separate results.
+
+Run `/status` and copy the UUID shown under **Session**. Exit with `/exit`. Later, return from the same project folder, replacing `YOUR_SESSION_UUID` with that saved UUID:
+
+```bash
+cd "/path/to/your/project"
+codex resume YOUR_SESSION_UUID --sandbox read-only --ask-for-approval on-request
+```
+
+Keep the same Codex home, New API endpoint, model configuration, and key environment for this first return. Check `/status` for the same UUID and read the earlier verification result before sending the next task. This resumes the saved conversation.
+
+If you did not save its UUID, `codex resume` opens the local session picker for the current working directory. A conversation started in a subfolder needs that subfolder or `codex resume --all`. Use `codex resume --help` to check the options in your installed version.
