@@ -1,6 +1,6 @@
 {
   "title": "利用ガイド",
-  "description": "クイックスタートと基本チュートリアル",
+  "description": "クイックスタートと基本的な使い方のチュートリアル",
   "icon": "BookOpen",
   "root": true,
   "pages": [
@@ -15,6 +15,7 @@
     "---機能ガイド---",
     "feature-guide/index",
     "feature-guide/user",
-    "feature-guide/admin"
+    "feature-guide/admin",
+    "feature-guide/system-settings"
   ]
 }

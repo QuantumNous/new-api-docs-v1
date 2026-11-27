@@ -1,0 +1,461 @@
+---
+title: System Information
+description: Root users can monitor deployment instances, resource usage, node sync status, and cross-instance system tasks, and remove records for offline instances.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- Only Root users can access this page. In the sidebar, go to “Admin” → “System Information.”
+- View each instance’s operational status, resource usage, and sync status, monitor system tasks, remove records for offline instances, and clean up task history.
+- This page is for monitoring and cleanup only. System tasks are created automatically or triggered by actions in Channel Management or Operations Settings.
+
+<Callout type="info" title="Note">
+
+- Each instance is a New API process identified by `NODE_NAME`.
+- Only Master instances run scheduled background tasks. Worker instances continue to report instance information and leave system tasks for Master instances to claim.
+- A system task represents a batch of background maintenance, checks, or polling. User-submitted image, music, and video tasks are tracked separately. For example, `Async Task Polling` represents one background pass that checks the status of application tasks.
+
+</Callout>
+
+## System Information Overview
+
+- System Information – Instances and System Tasks
+
+![System Information page showing instances and system tasks](/assets/guide/feature-guide/system-information.png)
+
+The page has two panels, “Instances” and “System Tasks.”
+
+- [View Instances and Sync Status](#view-instances-and-sync-status)
+- [Remove Offline Instance Records](#remove-offline-instance-records)
+- [Filter and Clean Up Task History](#filter-and-clean-up-task-history)
+
+<Callout type="info" title="Note">
+If an instance shows “Offline,” the “Sync” column shows “Update Failed,” or a system task remains “Pending,” see [Frequently Asked Questions](#faq).
+</Callout>
+
+**Panel Overview**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Panel | Purpose | Auto-Refresh Behavior | Available Actions |
+| --- | --- | --- | --- |
+| Instances | Shows operational status, resource usage, and heartbeat reports for the current deployment. Administrators can check instance health and see whether each node has loaded the latest settings and data. | Refreshes every 30 seconds. When any node is out of sync, the “Sync” column refreshes every 3 seconds. | Refresh manually. Delete one or all offline instance records. |
+| System Tasks | Shows system maintenance tasks that run across instances and their execution status. Administrators can track current progress and review past runs. | Refreshes every 8 seconds while tasks are pending or running. Auto-refresh pauses when idle. Click “Refresh” to check for new tasks. Task history refreshes each time as well. | Refresh manually. Filter and clean up task history. |
+
+</div>
+
+**Instance Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Field | Definition | Source and Constraints | Notes |
+| --- | --- | --- | --- |
+| Instance | The node identity used in instance reports and database records. The second line shows the actual hostname. | Set by `NODE_NAME`. If unset, it falls back to the operating system hostname. | Instances that share a node name write to the same record and overwrite each other’s status. If `NODE_NAME` is unset, a yellow warning icon appears next to the name. Click it to view a configuration example. |
+| Status | “Online” means the last report was 90 seconds ago or less. “Offline” means more than 90 seconds have elapsed since the last report. | Determined by the time of the most recent report. | This status tracks the application heartbeat only. Upstream services, the database, and Redis have separate health signals. See [Instance Status](#instance-status). |
+| Role | `master` or `worker`. | Set by `NODE_TYPE`. A value of `NODE_TYPE=slave` assigns the `worker` role. An unset value or any other value assigns the `master` role. | Hover to see “The master instance runs scheduled background tasks.” or “Worker instances do not run master-only background tasks.” |
+| Sync | Whether the node has loaded the latest settings and data. | Reported by each node. | Shows “Synced,” “Updating,” or “Update Failed.” Hover to see the status and errors for each sync item on the node. This column only indicates whether the node’s in-memory data is current. Request health is tracked separately. See [Sync Status](#sync-status). |
+| CPU | The instance’s CPU usage percentage. | The most recent CPU sample from the performance monitor. | Samples can lag behind current usage. With performance monitoring disabled, the column displays 0% regardless of actual usage. |
+| Memory | The instance’s memory usage percentage. | The most recent memory sample from the performance monitor. | In a container, the monitor uses the container’s memory limit when available and falls back to host memory usage otherwise. Both measurements cover more than the memory used by the individual New API process. |
+| Storage | Usage of the file system that contains the disk cache path. | If no disk cache path is configured, the monitor uses the file system that contains the system temporary directory. | Hover to see “Used,” “Available,” and “Total.” The figures cover only that file system. |
+| Version | The New API version running on this instance. | The build or runtime version of the instance process. | Use this field to identify version mismatches during multi-instance upgrades. |
+| Runtime Environment | A platform such as `linux/amd64`. | The Go runtime’s `GOOS/GOARCH` values. | Identifies the operating system and CPU architecture only. |
+| Start Time | When the current run of the instance began. | The instance process’s start time. | Updates when the instance restarts. |
+| Last Report | The time of the last successful write of the instance heartbeat. | Recorded automatically by the system. | The page shows a relative time. Hover to see the full timestamp. |
+
+</div>
+
+<Callout type="info" title="Note">
+
+- The rings next to CPU, memory, and storage usage use fixed colors for quick scanning. Green indicates usage below 70%, yellow indicates usage from 70% to below 90%, and red indicates usage of 90% or higher.
+- When performance monitoring is enabled, the monitor samples CPU and memory about every 5 seconds and uses container cgroup limits when available. Each instance reports its latest sample every 30 seconds. When performance monitoring is disabled, CPU and memory display 0%, and storage usage continues to be measured. Check the last report time and external monitoring when investigating an issue. For the toggle and thresholds, see <a href="/en/docs/guide/feature-guide/system-settings/settings-operations#performance" target="_blank" rel="noopener noreferrer">Operations Settings › Performance</a>.
+
+</Callout>
+
+**System Task Fields**
+
+“Active Tasks” lists pending or running tasks. “Task History” lists succeeded and failed tasks, newest first, with 20 entries per page. Both tables use the same columns.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Source and Constraints | Notes |
+| --- | --- | --- | --- |
+| Type | Shows the Chinese name with the task identifier below it. | Recorded by the system according to the task type. | Unrecognized task types display the raw identifier. |
+| Status | Pending, Running, Succeeded, or Failed. | Recorded by the system. | The status tracks the lifecycle of the system task batch. Individual items can have separate outcomes. See [System Task Status](#system-task-status). |
+| Progress | Shows `0–100%` when a valid numeric value is available. | Written by the node executing the task. | Tasks without numeric progress show `-`. The page omits processed and total counts. |
+| Executing Instance | The identifier of the Master executor that claimed the task. “... Sync” tasks show `-` because they are handled without an executor claim. | Recorded by the system. | The identifier usually consists of the node name and a random suffix. Use the node name alone when you need `NODE_NAME`. |
+| Updated At | The latest time the task was claimed, its progress was recorded, or its final status was set. | Recorded by the system. | This is a single timestamp for the most recent of those events. The page shows a relative time. Hover to see the full timestamp. |
+| Details | Shows error text for failed tasks. For pending “... Sync” tasks, it shows the nodes that failed to load the change and their errors. | Recorded by the system. | Successful tasks usually show `-`. This field is limited to the details described here. Long text is truncated. Hover to see the full text. |
+
+</div>
+
+## Common Operations
+
+This section covers checking instances and sync status, removing offline instance records, and filtering and cleaning up task history.
+
+### View Instances and Sync Status
+
+- System Information – Instance Monitoring
+
+![System Information page showing instance monitoring](/assets/guide/feature-guide/system-information-instance-monitoring.png)
+
+Each New API process attempts to report its instance information immediately after startup and then reports every 30 seconds.
+
+**Steps**
+
+1. In the “Instances” panel, check each instance’s status, role, and resource usage.
+2. Hover over the status in the “Sync” column to view each sync item and any errors for that node.
+3. If a yellow warning icon appears next to the instance name, click it to view the “Configure NODE_NAME” example.
+
+<Callout type="info" title="Note">
+
+- The sync items shown on hover vary by deployment. See [Node Sync](#node-sync).
+- The “Sync” column shows `-` for offline instances and older nodes that do not report sync information.
+
+</Callout>
+
+### Remove Offline Instance Records
+
+- System Information – Remove Offline Instances
+
+![System Information page showing offline instance removal](/assets/guide/feature-guide/system-information-delete-instance.png)
+
+Deleting an offline instance removes only its status record from the database. The instance’s runtime state and any requests it is handling are unaffected. If the instance is still running and resumes reporting, the system recreates the record automatically.
+
+**Delete One Offline Instance Record**
+
+1. Find an instance marked “Offline” in the instance list.
+2. Confirm the instance has been taken offline or that you no longer need its old record.
+3. Click the delete button at the end of the row.
+4. Click “Delete” in the confirmation dialog.
+
+**Delete All Offline Instance Records**
+
+1. Review all offline instances in the current list and confirm you no longer need their records.
+2. Click “Delete All Offline Instances” in the upper-right corner of the panel.
+3. Click “Delete” in the confirmation dialog.
+
+<Callout type="info" title="Note">
+
+- “Delete All Offline Instances” appears only when the list contains offline records.
+- Both confirmation dialogs are titled “Delete Offline Instance.” When deleting all offline records, the dialog asks “Delete … offline instance records? Online instances will be kept.”
+- After bulk deletion, the success message shows the number of records actually deleted.
+
+</Callout>
+
+### Filter and Clean Up Task History
+
+**Steps**
+
+1. Use the “All Types” and “All Statuses” dropdowns below “Task History” to filter the list. The available status filters are “Succeeded” and “Failed.” Click “Reset” to clear the filters.
+2. Click “Clean Up Task History” on the right.
+3. Click “Delete” in the confirmation dialog.
+
+<Callout type="warn" title="Caution">
+
+- Cleanup applies to all historical tasks that match the current filters across all pages.
+- The system always keeps active tasks and the latest record of each task type. It uses the latest record to determine when the next scheduled run is due.
+- Cleanup is permanent. The success message shows the number of records actually removed.
+
+</Callout>
+
+## Rules and Behavior
+
+This section covers system task types, how nodes sync changes, and how the system runs tasks and retains records.
+
+### System Task Types
+
+Saving settings, Channels, administrator permissions, plugins, custom OAuth configurations, models, or subscription plans creates a corresponding “... Sync” task to track the rollout of the change across nodes.
+
+Instances read the environment variables in the following tables only at startup. Restart the instances after changing these variables. For the full list, see <a href="/en/docs/installation/config-maintenance/environment-variables" target="_blank" rel="noopener noreferrer">Environment Variables</a>.
+
+**Log Cleanup and Channel Testing**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| UI Label | Task Identifier | Source and Trigger | Conditions and Behavior |
+| --- | --- | --- | --- |
+| Log Cleanup | `log_cleanup` | A Root user selects a cutoff time under “Log Maintenance” and starts cleanup manually in <a href="/en/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">Operations Settings</a>. | Deletes database logs older than the selected time in batches of 100 records. With a ClickHouse log database, a single synchronous mutation performs the cleanup. If a task of the same type is already active, the page continues to track the existing task. |
+| Batch Channel Testing | `channel_test` | Trigger it manually with “Test All Channels” in <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>. To run it automatically at the configured “Test Interval (Minutes),” enable “Periodic Channel Testing” in <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#channel-health" target="_blank" rel="noopener noreferrer">Request Policy Settings</a>. | Automatic runs require periodic Channel testing to be enabled. The system rejects a manual trigger while a task of the same type is active, preventing parallel batches.<br/>Setting `CHANNEL_TEST_FREQUENCY` to a positive integer forces periodic testing of all Channels at that interval in minutes. `CHANNEL_TEST_ENABLED` controls whether periodic testing is enabled. Both variables override the page settings. If both are set, `CHANNEL_TEST_ENABLED` takes precedence. See <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#channel-health" target="_blank" rel="noopener noreferrer">Request Policy Settings</a>. |
+
+</div>
+
+**Upstream Model and Balance Updates**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap [&_td_code]:wrap-anywhere [&_td:nth-child(2)]:whitespace-nowrap">
+
+| UI Label | Task Identifier | Source and Trigger | Conditions and Behavior |
+| --- | --- | --- | --- |
+| Batch Upstream Model Update | `model_update` | Run “Check All Upstream Updates” in Channel Management or let the periodic background task trigger it. | Processes only enabled Channels with upstream model checks turned on. The system rejects a manual trigger while a task of the same type is active.<br/>`CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_INTERVAL_MINUTES` sets the automatic schedule in minutes. It defaults to 30, and values below 1 fall back to 30. `CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_ENABLED` defaults to `true`. Set it to `false` to stop periodic runs. `CHANNEL_UPSTREAM_MODEL_UPDATE_MIN_CHECK_INTERVAL_SECONDS` specifies the minimum number of seconds between automatic checks of the same Channel. It defaults to 300, and negative values fall back to 300. Manual runs of “Check All Upstream Updates” are exempt from this minimum interval. All three settings are configured through environment variables. |
+| Batch Balance Update | `channel_balance` | Click “Update All Balances” in <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>. Set `CHANNEL_UPDATE_FREQUENCY` to run it automatically at that interval in minutes as well. | Queries only enabled Channels. If a balance update is already active, the page displays “A balance update is already in progress.” and tracks the existing task. A Channel with “Auto-Disable on Error” enabled is automatically disabled if its reported balance is zero or negative.<br/>`CHANNEL_UPDATE_FREQUENCY` is unset by default, so updates are manual by default. A non-integer value prevents the instance from starting. The interval is configured through the environment variable. |
+
+</div>
+
+**Polling, Cleanup, and Sync**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| UI Label | Task Identifier | Source and Trigger | Conditions and Behavior |
+| --- | --- | --- | --- |
+| Image Generation Task Polling | `midjourney_poll` | Scheduled automatically by the system. The page shows `drawing_task_poll` as the secondary identifier. | Eligible to run at 15-second intervals when `UPDATE_TASK` is enabled and at least one Midjourney task is unfinished. The system creates records only when there is work to poll.<br/>`UPDATE_TASK` defaults to `true`. Set it to `false` to stop this task. This setting is configured through the environment variable. |
+| Async Task Polling | `async_task_poll` | Scheduled automatically by the system. | Eligible to run at 15-second intervals when `UPDATE_TASK` is enabled and at least one Suno or video task is unfinished. The system creates records only when there is work to poll.<br/>`UPDATE_TASK` defaults to `true`. Set it to `false` to stop this task. This setting is configured through the environment variable. |
+| Task Record Cleanup | `system_task_cleanup` | Scheduled automatically by the system once a day. | Deletes completed tasks older than the configured “Completed Task Retention (Days)” and keeps the latest record of each type. See <a href="/en/docs/guide/feature-guide/system-settings/settings-operations#log-maintenance" target="_blank" rel="noopener noreferrer">Operations Settings</a>. |
+| Settings Sync, Channel Sync, Permissions Sync, Plugin Sync, Login Method Sync, Model Sync, Subscription Plan Sync | `sync_*` | Created automatically when the corresponding data is saved. | Changes to “Succeeded” once all online nodes have loaded the change. Remains “Pending” if any online node has failed to load it or has yet to load it. See [Node Sync](#node-sync). |
+
+</div>
+
+### Node Sync
+
+After settings, Channels, or other data are saved, nodes use sync tasks to load the changes. The “Sync” column in the instance table and the “... Sync” tasks both reflect this process.
+
+**Sync Items**
+
+- All nodes sync settings, permissions, plugins, login methods, and models.
+- Only nodes with in-memory caching enabled and Master instances sync Channels. Set `MEMORY_CACHE_ENABLED=true` or enable Redis to enable in-memory caching.
+- Nodes sync subscription plans only when Redis is disabled. The `REDIS_CONN_STRING` environment variable determines whether Redis is enabled.
+- The “Sync” tooltip lists all sync items used by any node in the deployment. If a node skips an item, such as Channels on a Worker instance without in-memory caching, it reads that data directly from the database or shared cache, and the item shows “Synced.”
+
+**Loading Rules**
+
+- Each node checks for sync tasks every 3 seconds. When it detects a new change, it reloads the data and reports immediately. The “Sync” column updates ahead of the next 30-second instance report.
+- If loading fails, the node shows “Update Failed,” records the error, and retries on the next check. The error clears automatically once loading succeeds.
+- If the system fails to write a sync task or the cluster contains older nodes, settings, permissions, and the Channel cache reload at the regular sync interval as a fallback. `SYNC_FREQUENCY` controls the interval in seconds and defaults to 60. Fallback intervals vary for other sync items. See <a href="/en/docs/guide/feature-guide/system-settings/system-setting#scope-and-multi-instance-synchronization" target="_blank" rel="noopener noreferrer">Scope and Multi-Instance Sync</a>.
+
+**How “... Sync” Tasks Complete**
+
+- The Master instance checks about every 15 seconds. Once every online node that syncs the item has loaded the change, the task changes to “Succeeded” and progress reaches 100%.
+- While the task is pending, “Progress” shows the percentage of nodes that have loaded the change, and “Details” shows the nodes that failed to load it and their errors.
+- The check excludes nodes that have gone more than 90 seconds without reporting.
+- If no Master instance is running, “... Sync” tasks remain “Pending.” Nodes continue to check every 3 seconds and apply the changes when they load them.
+
+### Task Execution and Retention
+
+Only Master instances execute system tasks. The system retains records according to the rules below.
+
+**Execution Rules**
+
+- The Master instance checks about every 15 seconds, claims pending tasks, and creates new tasks for scheduled runs that are due.
+- A manual trigger immediately wakes the Master instance handling the request. If a Worker instance handles the request, a Master instance claims the task within about 15 seconds.
+- The system creates a task only if there is no active task of the same type.
+- The executing instance renews the 60-second task lock every 20 seconds. If the lock expires before renewal, the system marks the task “Failed” and shows `task lease expired` in “Details.”
+- If no Master instance is running, tasks remain “Pending.” Only Master instances claim system tasks.
+
+**Retention Rules**
+
+- Manual cleanup always keeps active tasks and the latest record of each task type.
+- Each day, the system automatically deletes completed tasks older than the configured “Completed Task Retention (Days),” which defaults to 30 days. It keeps the latest record of each type. See <a href="/en/docs/guide/feature-guide/system-settings/settings-operations#log-maintenance" target="_blank" rel="noopener noreferrer">Operations Settings</a>.
+
+## Controls and Actions
+
+### Page Buttons and Filters
+
+<div className="[&_table]:min-w-[36rem] [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Control | Location | Description |
+| --- | --- | --- |
+| “Auto-refresh every 30 seconds” | Upper-right corner of the “Instances” panel | Informational text with no click action. |
+| “Delete All Offline Instances” | Upper-right corner of the “Instances” panel | Appears only when the list contains offline records. See [Remove Offline Instance Records](#remove-offline-instance-records). |
+| “Refresh” | Upper-right corner of the “Instances” panel | Reloads the instance list and the “Sync” column. |
+| “Auto-refresh every 8 seconds” and “Auto-refresh paused when no tasks are active” | Upper-right corner of the “System Tasks” panel | Shows the first message when tasks are pending or running and the second when the panel is idle. |
+| “Refresh” | Upper-right corner of the “System Tasks” panel | Reloads active tasks and refreshes task history. |
+| “All Types” and “All Statuses” | Below the “Task History” heading | Filter by any of 14 task types or by “Succeeded” or “Failed.” Changing a filter returns the list to page 1. Filters reset when you reload the page. |
+| “Reset” | To the right of the filters | Appears when a filter is active. Clears both filters. |
+| “Clean Up Task History” | To the right of “Task History” | Available when the list has loaded successfully, at least one historical task matches the current filters, and no cleanup is in progress. See [Filter and Clean Up Task History](#filter-and-clean-up-task-history). |
+| “Previous” and “Next” | Bottom of “Task History” | “Total: …” appears on the left. Each page shows 20 records. |
+
+</div>
+
+### Row Actions
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Delete icon | “Actions” column at the end of an offline instance row | Hover to see “Delete Offline Instance.” Online instances show `-` because deletion from this page is available only for offline instances. See [Remove Offline Instance Records](#remove-offline-instance-records). |
+
+</div>
+
+## Status Reference
+
+### Instance Status
+
+The “Status” column in the instance table shows the following states.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Online | The last report was 90 seconds ago or less. | Green. This status tracks the application heartbeat only. Upstream services, the database, and Redis have separate health signals. |
+| Offline | More than 90 seconds have elapsed since the last report. | Yellow. Brief database outages or network interruptions can also cause this state. You can delete the record after confirming the instance has been taken offline. See [Remove Offline Instance Records](#remove-offline-instance-records). |
+
+</div>
+
+### Sync Status
+
+The “Sync” column in the instance table shows the following states.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Synced | The node has loaded the latest changes for every item listed in its sync tooltip. | Green. |
+| Updating | One or more sync items have yet to load the latest changes. | Shows a spinner. Each node checks for sync tasks every 3 seconds. |
+| Update Failed | The node failed to load one or more sync items. | Red. Hover to see the affected sync items and the original error text. The node retries automatically on the next check. See [Frequently Asked Questions](#faq). |
+| `-` | The instance is offline or has supplied no sync information, as may be the case for an older node awaiting an upgrade. | — |
+
+</div>
+
+### System Task Status
+
+The “Status” column in “Active Tasks” and “Task History” shows the following states.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Pending | The task has been created and is waiting to be claimed. For “... Sync” tasks, one or more online nodes still need to load the change. | Amber. If the task remains pending, see [Frequently Asked Questions](#faq). |
+| Running | A Master instance has claimed the task and is executing it. | Blue. Appears under “Active Tasks.” |
+| Succeeded | The batch completed normally. For “... Sync” tasks, all online nodes have loaded the change. | Green. |
+| Failed | An error occurred during execution, or the task lock expired before renewal. | Red. See “Details” for the error. |
+
+</div>
+
+<Callout type="info" title="Note">
+**Succeeded** means the system task batch completed normally. Individual Channels or application tasks in that batch can still fail. Channel tests, model checks, and asynchronous polling record individual failures in the result summary or server logs.
+</Callout>
+
+## Saving Changes and When They Take Effect
+
+This page has no Save button. Deletion and cleanup take effect as soon as you click “Delete” in the confirmation dialog and cannot be undone. The Master instance claims and runs system tasks.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Operation | How to Apply | When It Takes Effect |
+| --- | --- | --- |
+| Delete a single stale instance | Click the delete button at the end of the row, then click “Delete” in the confirmation dialog. | Immediately deletes the instance record from the database if the instance has gone more than 90 seconds without reporting a heartbeat. An instance that resumes reporting before you confirm is retained. |
+| Delete all stale instances | Click “Delete All Stale Instances,” then click “Delete” in the confirmation dialog. | Immediately deletes all records for instances that have gone more than 90 seconds without reporting a heartbeat. The success message shows how many records were actually deleted. |
+| Clean up historical tasks | Click “Clean Up Historical Tasks,” then click “Delete” in the confirmation dialog. | Immediately deletes succeeded and failed tasks matching the current filters across all pages. In-progress tasks and the latest record of each task type are always retained. |
+| Instance status | No action required. | Instances report a heartbeat every 30 seconds. An instance shows as “Stale” after more than 90 seconds without a heartbeat. After a refresh, the displayed status can be up to one reporting interval behind. |
+| Manually triggered system tasks | Start a task in <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a> or <a href="/en/docs/guide/feature-guide/system-settings/settings-operations#log-maintenance" target="_blank" rel="noopener noreferrer">Operations Settings</a>. | The task initially shows as “Pending.” If the Master instance handles the request, the task starts immediately. Otherwise, the Master instance claims it within about 15 seconds. If a task of the same type is already in progress, the system skips creating another one. |
+| Scheduled system tasks | The system schedules these tasks automatically. | The Master instance checks for due tasks about every 15 seconds and creates a new task when one is due. |
+| “… Sync” tasks | The system creates these tasks automatically when the corresponding data is saved. | Each node checks for and loads the changes within about 3 seconds. Once all online nodes that sync that item have loaded the changes, the Master instance marks the task as “Succeeded” on its next check. See [Node Synchronization](#node-sync). |
+| Task record cleanup | The system schedules cleanup automatically. | Runs once a day. After you change “Completed Task Retention (Days)” in Operations Settings, the next cleanup uses the new value. |
+
+</div>
+
+**Additional note**
+
+- **Instance records can be recreated.** Deleting a stale instance only removes its record from the database. If the instance is still running, its next heartbeat recreates the record.
+
+## Important Notes
+
+- **An instance can show as “Stale” while still running.** The status means that more than 90 seconds have passed without a heartbeat. A brief database outage or network interruption can also cause this status. Before deleting all stale records, confirm that the affected nodes are offline.
+- **Only the Master instance runs system tasks.** Worker instances do not claim system tasks. If no Master instance is running, tasks remain “Pending.” See [Task Execution and Retention](#task-execution-and-retention).
+- **Node names must be unique.** When multiple instances use the same `NODE_NAME`, they write to the same record and overwrite each other’s status.
+
+## FAQ
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="An instance shows as “Stale”">
+“Stale” means the instance has gone more than 90 seconds without reporting a heartbeat.
+
+**Possible causes**
+
+- The instance process has stopped.
+- The instance cannot write to the database, so its heartbeat fails.
+
+**Resolution**
+
+1. Check the instance process, its database connection, and its server logs.
+2. Confirm that the instance is offline before deleting its record. See [Cleaning Up Stale Instance Records](#remove-offline-instance-records).
+</Accordion>
+
+<Accordion title="The instance list shows fewer instances than are deployed">
+**Possible cause**
+
+Multiple instances use the same `NODE_NAME` and write to the same record. If `NODE_NAME` is unset, the instance uses its hostname and displays a yellow warning icon next to the name.
+
+**Resolution**
+
+1. Set a unique `NODE_NAME` for each instance, then restart those instances.
+</Accordion>
+
+<Accordion title="Deleting a stale instance returns instance is not stale or no longer exists">
+**Original message**
+
+`instance is not stale or no longer exists` (English only)
+
+**Possible causes**
+
+- The instance resumed reporting after you opened the confirmation dialog.
+- Another administrator already deleted the record.
+
+**Resolution**
+
+1. Click “Refresh” and check the instance status again.
+2. If the instance is still running and you no longer need it, stop it first.
+</Accordion>
+
+<Accordion title="A system task stays “Pending”">
+The Master instance checks for pending tasks to claim about every 15 seconds.
+
+**Possible causes**
+
+- No Master instance is currently running. Instances with `NODE_TYPE=slave` are Workers and do not claim system tasks. In this case, “… Sync” tasks also stay pending, and individual nodes still load the changes.
+- A “… Sync” task stays “Pending” while an online node has yet to load the changes or has encountered an error loading them.
+
+**Resolution**
+
+1. Confirm that at least one Master instance is running. See [Task Execution and Retention](#task-execution-and-retention).
+2. If a sync task is pending, check the tooltip in the instance table’s “Sync” column and the error under the task’s “Details.” Then check the affected node’s server logs. The system stops counting that node after more than 90 seconds without a heartbeat.
+</Accordion>
+
+<Accordion title="A system task shows as “Failed” with task lease expired in its details">
+**Original message**
+
+`task lease expired` (English only)
+
+**Possible cause**
+
+The instance running the task failed to renew its 60-second lease before it expired. This can happen if the process exits or the instance cannot write to the database.
+
+**Resolution**
+
+1. Use “Executing Instance” to identify the instance and check its server logs.
+2. Scheduled tasks run again at their next scheduled time. Trigger manual tasks again yourself.
+</Accordion>
+
+<Accordion title="Records remain after historical task cleanup, or cleanup reports 0 deletions">
+**Message**
+
+“Deleted 0 historical system tasks”
+
+The system always retains the latest record for each task type and all in-progress tasks. It uses these records to determine when scheduled tasks should run next. If only these records remain, cleanup reports 0 deletions.
+</Accordion>
+
+<Accordion title="The “Sync” column shows “Update Failed”">
+The node failed to load a sync item. The changes have yet to take effect on that node.
+
+**Possible cause**
+
+An error occurred while the node was loading a sync item. The node may have failed to read from the database. Check the original error message in the tooltip for the specific cause.
+
+**Resolution**
+
+1. Hover over “Update Failed” to see which sync item failed and read the original error message.
+2. Check the node’s server logs and database connection.
+3. The node automatically retries every 3 seconds. Once it loads the item successfully, the status returns to “Synced.”
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a> — Run batch Channel tests, update balances, detect upstream models, and review individual results.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#channel-health" target="_blank" rel="noopener noreferrer">Request Policy Settings</a> — Configure scheduled Channel testing, automatic disabling, and automatic recovery.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">Operations Settings</a> — Configure system behavior, email and notifications, Worker proxy settings, performance monitoring, log maintenance (including the retention period for system task records), and version checks.
+- <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> — View request logs and charge details.
+- <a href="/en/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">Task Logs</a> — View users’ image, music, and video generation tasks.
+- <a href="/en/docs/installation/config-maintenance/environment-variables" target="_blank" rel="noopener noreferrer">Environment Variables</a> — Configure node roles and control which background tasks are enabled.
+- <a href="/en/docs/installation/deployment-methods/cluster-deployment" target="_blank" rel="noopener noreferrer">Cluster Deployment</a> — Learn how to deploy Master and Worker instances and their shared infrastructure.

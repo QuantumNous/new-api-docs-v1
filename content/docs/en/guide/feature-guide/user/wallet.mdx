@@ -1,168 +1,612 @@
 ---
-title: Wallet and Subscriptions
-description: View and manage balance, top-ups, redemption codes, invitation rewards, and subscription plans.
+title: Wallet
+description: View your balance and usage, add funds online or redeem quota, purchase subscription plans and choose a billing preference, transfer referral rewards, and view your order history.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-After logging in, click 'Wallet' in the left navigation bar, or directly visit `/wallet` to access the wallet page. The wallet page centrally provides functionalities such as balance statistics, online top-ups, redemption codes, order history, subscription plans, my subscriptions, and invitation rewards. The specific displayed areas, amounts, payment methods, and plan contents are determined by platform configuration.
+- In the sidebar, go to **Personal** → **Wallet**.
+- View your balance, add funds online or redeem quota, purchase subscription plans, and transfer referral rewards.
+- Model requests are charged to your wallet balance or subscription quota according to your **Billing Preference**.
 
-![钱包与订阅页](/assets/guide/feature-guide/wallet-subscriptions.png)
+<Callout type="info" title="Tip">
 
-## View Balance and Usage
-
-The wallet statistics area includes the following information:
-
-- **Current Balance**: Internal quota available for model calls or other billing operations, not a cash balance.
-- **Accumulated Consumption**: The quota historically used by the account.
-- **API Requests**: The number of API requests initiated by the account.
-
-<Callout type="warn">
-  1. The display units for balance and usage are determined by the currency and quota display rules configured by Root in 'System Settings' → 'Billing and Payments'.
-  2. Do not infer fixed exchange rates based on symbols or values on the page; actual deductions are also affected by model, group, channel, and instance billing rules.
+- The site determines the quota unit and how currency amounts are displayed. You can use your wallet balance only on the site. Withdrawals are unavailable.
+- Online top-ups, redemption codes, subscription plans, and referral rewards are available only after the administrator configures them. Unconfigured features are hidden or display a notice. See <a href="/en/docs/guide/feature-guide/system-settings/settings-billing#payment-gateway" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a>.
+- If **Wallet** is missing from the left sidebar, go to the **Personal Left Sidebar Settings** section of **Profile**, enable **Personal Center** and **Wallet Management**, and save your changes.
 </Callout>
 
-## Online Top-up
+## Wallet Overview
 
-If the platform has enabled online payments, the top-up area of the wallet will display available top-up options. Top-up amounts, preset amounts, minimum top-up amounts, discounts, and exchange rates are all determined by platform configuration.
+- Wallet – Overview
 
-1. In the 'Top-up' area, select a preset amount provided on the page, or enter a custom amount.
-2. View the top-up quota and payable amount calculated by the system.
-3. Select the payment method provided by the current platform.
-4. In the confirmation window, verify the top-up quota, payable amount, discount, and payment method.
-5. After confirmation, you will be redirected to the third-party payment page to complete the payment.
-6. After payment is complete, return to the wallet and wait for the order status and balance to update.
+![Wallet overview page](/assets/guide/feature-guide/personal-wallet.png)
 
-<Callout type="warn">
-  1. The project code supports payment gateways such as EPay, Stripe, Creem, Waffo, and Waffo Pancake, but only enabled, fully configured, and currently available payment methods will be displayed. Different gateways may also have additional amount or payment restrictions; please refer to the page prompts. If no payment methods are available, please contact the platform administrator.
-  2. Successful payment requires a third-party payment callback to confirm the order; the balance may not update immediately after payment. If payment is successful but the balance has not changed, please keep the order number and contact the administrator; do not make duplicate payments.
-  3. Payment methods, minimum top-up amounts, discounts, exchange rates, and preset amounts are not fixed values for New API; you cannot infer the rules of the current instance based on other instances or example pages.
+Balance statistics appear at the top. **Add Funds** and **Subscription Plans** appear in the middle, side by side on wide screens. The **Referral Program** appears at the bottom. From this page, you can do the following.
+
+- [Add funds online](#add-funds-online)
+- [Use a redemption code](#redemption-codes)
+- [View order history](#view-order-history)
+- [Purchase a subscription plan](#subscription-plans)
+- [Choose a billing preference](#choose-a-billing-preference)
+- [Transfer referral rewards](#transfer-referral-rewards)
+
+<Callout type="info" title="Tip">
+If your balance does not increase after payment, a redemption fails, or a subscription does not become active, see [Frequently Asked Questions](#frequently-asked-questions).
 </Callout>
+
+**Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and Limits | Notes |
+| --- | --- | --- | --- |
+| Current Balance | The account's remaining wallet quota, which can be used for model requests and subscription purchases. | The system calculates this value, and it cannot be edited directly. Online top-ups, redemption codes, referral reward transfers, and daily check-ins increase the balance. Model requests and subscription purchases paid from the balance decrease it. | The label “Remaining Quota” appears below. This value excludes subscription quota and referral rewards that have yet to be transferred. |
+| Total Usage | The total quota the account has consumed. | The system calculates this value automatically, and it cannot be edited. | The label “Total Quota Consumed” appears below. |
+| API Requests | The total number of requests the account has made. | The system calculates this value automatically, and it cannot be edited. | The label “Total Requests” appears below. |
+</div>
+
+## Add Funds Online
+
+- Wallet – Confirm Payment
+
+![Wallet payment confirmation page](/assets/guide/feature-guide/personal-wallet-add-funds-payment.png)
+
+**Steps**
+
+1. Under **Add Funds**, select a preset **Amount** or enter a **Custom Amount**.
+2. Under **Payment Method**, select the method you want to use.
+3. In the **Confirm Payment** dialog, review **Top-up Amount**, **You Pay**, and **Payment Method**, then click **Confirm Payment**.
+4. Complete the payment on the payment page that opens.
+5. Return to the site, click **Order History** in the upper-right corner of **Add Funds**, and verify that the order status is **Success**.
+
+**Steps for paying with Creem**
+
+1. In the **Creem Payment** section, select the product you want to purchase.
+2. In the **Confirm Creem Purchase** dialog, review the product, price, and quota, then click the confirmation button.
+3. Complete the payment on the payment page that opens.
+
+<Callout type="info" title="Tip">
+
+- The payment page usually opens in a new tab. If your browser blocks the pop-up, allow pop-ups for this site and try again. Waffo Pancake redirects you in the current tab.
+- After payment, the page you return to depends on the payment method. You may be taken to the Wallet or Usage Logs page.
+- Your balance increases once the payment provider confirms the payment, which may take some time. The page does not refresh automatically. Refresh it later or check **Order History**.
+- Too many attempts in a short period can temporarily limit further attempts. Try again later.
+</Callout>
+
+<Callout type="warn" title="Caution">
+If your balance still has not increased after an extended period, do not pay again. Keep the order number, proof of payment, and payment time, and contact the administrator to verify the payment.
+</Callout>
+
+**Payment methods**
+
+Only payment methods configured by the administrator are displayed.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Payment Method | Location | When Displayed | Amount | Payment Page |
+| --- | --- | --- | --- | --- |
+| EPay methods such as Alipay and WeChat Pay | **Payment Method** | Appears only if the administrator has configured EPay. The administrator sets the names and icons. | Uses **Amount** or **Custom Amount**. Each method can have its own minimum. Below that minimum, the button is disabled and displays “Minimum: …”. | New tab |
+| Stripe | **Payment Method** | Appears only if the administrator has configured Stripe. | Same as EPay methods, with a maximum of 10000 per transaction. | New tab |
+| Waffo Pancake | **Payment Method** | Appears only if the administrator has configured Waffo Pancake. | Same as EPay methods. | Redirects in the current tab |
+| Waffo Payment | Separate **Waffo Payment** section in **Add Funds** | Appears only if the administrator has configured Waffo. The administrator configures the buttons. | Uses **Amount** or **Custom Amount**. The minimum is set separately. | Opens in a new tab. After payment, returns to Wallet and opens the **Billing History** dialog. |
+| Creem Payment | Separate **Creem Payment** section in **Add Funds** | Appears only if the administrator has configured Creem products. | Purchases are based on the selected product. **Amount**, **Custom Amount**, and discounts do not apply. The product card shows the name, “Quota: …”, and the price. | Opens in a new tab after you confirm in the **Confirm Creem Purchase** dialog. |
+</div>
+
+**Confirm Payment dialog**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Notes |
+| --- | --- | --- |
+| Top-up Amount | The quota credited by this top-up. | Displayed using the site's currency format. |
+| You Pay | The amount you actually pay. | Calculated using the site's pricing and displayed without a currency symbol. If a discount applies, the original price is struck through and a **You Save** line appears. |
+| Payment Method | The selected payment method. | — |
+</div>
+
+**Top-up settings**
+
+The following settings appear in the **Add Funds** card in the order shown.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Amount | Preset top-up amounts. | Click an amount to select it. Amounts use the site's currency format. “Pay …” appears below each button. If a discount applies, the upper-right corner displays “Save …%” and the amount saved. A discount applies only if the amount exactly matches an amount for which the administrator has configured a discount. “Save …%” appears only on preset amount buttons. “Pay …” is an estimate. The actual amount due is shown under **You Pay** in the **Confirm Payment** dialog. | Set by the administrator. The defaults are 10, 20, 50, 100, 200, and 500. |
+| Custom Amount | A top-up amount you enter yourself. | Enter a whole number. Any fractional part is ignored. The amount must be at least the value shown in the “Minimum …” placeholder. **Amount Due:** on the right shows the amount payable based on the site's pricing. | The site's minimum top-up amount |
+| Payment Method | The payment method for this top-up. | Clicking a method opens the **Confirm Payment** dialog. If the current amount is below the method's minimum, the button is disabled and displays “Minimum: …”. Hover over it to see “Minimum top-up amount: …”. | — |
+</div>
 
 ## Redemption Codes
 
-When redemption codes are available, the top-up area will display a redemption code input field; if the administrator has configured a redemption code acquisition address, the page will also display a corresponding external link.
+Use the **Have a redemption code?** section at the bottom of the **Add Funds** card to redeem codes issued by the administrator. The button is labeled **Redeem Quota**.
 
-1. Locate the 'Redemption Code' input field in the top-up area.
-2. Enter the redemption code provided by the administrator.
-3. Click 'Redeem', wait for the result prompt, and refresh your balance.
+**Steps**
 
-<Callout type="info">
-  1. Redemption codes must meet the validity period and usage rules configured by the platform, and be enabled and unused. Each redemption code can only be successfully used once.
-  2. If redemption fails, the page may not display specific reasons such as 'already used', 'expired', or 'does not exist'. Please check if the redemption code is complete and confirm its status with the administrator.
-  3. If the platform has not completed the relevant payment compliance configuration, redemption code input and redemption operations will be disabled, and the page will display a corresponding prompt.
+1. Paste the code into **Enter your redemption code**.
+2. Click **Redeem Quota**.
+3. When “Redemption successful! Added: …” appears, check the added quota under **Current Balance**.
+
+<Callout type="info" title="Tip">
+
+- Paste the entire code without leading or trailing spaces or line breaks. After you click **Redeem Quota**, redemption may take a few seconds.
+- Each redemption code can be redeemed successfully only once. Invalid, used, expired, and disabled codes all display “Redemption failed. Please try again later.” For troubleshooting, see [Frequently Asked Questions](#frequently-asked-questions).
+- If the administrator has configured a URL for obtaining codes, “Need a redemption code? Get one here” appears below the input field. The link opens in a new tab.
+- Successful redemptions create a **Top-up** entry in the usage logs and are excluded from **Billing History**. See <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
 </Callout>
+
+## View Order History
+
+- Wallet – Billing History
+
+![Wallet billing history page](/assets/guide/feature-guide/personal-wallet-add-funds-order-history.png)
+
+**Steps**
+
+1. Click **Order History** in the upper-right corner of **Add Funds** to open the **Billing History** dialog.
+2. Enter an order number in **Search by order number...**, or browse through the pages.
+3. If you need to contact the administrator to verify an order, click the copy button to the right of the order number.
+
+<Callout type="info" title="Tip">
+
+- Regular users can view only orders created for their own account in the past 30 days. Search matches order numbers only. Administrators can view orders for all users without a time limit. Each order also displays “User ID: …” in the administrator view.
+- The list includes online top-up orders and subscriptions purchased through third-party payment providers. It excludes subscriptions paid from the wallet balance, code redemptions, and referral reward transfers.
+</Callout>
+
+**Fields**
+
+Each order appears as a card in the dialog. The table follows the order of the fields from top to bottom and left to right.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and Limits | Notes |
+| --- | --- | --- | --- |
+| Order Number | The order's identifier. | The system generates it when the order is placed, and it cannot be edited. | A copy button appears to the right. The administrator view also displays “User ID: …”. |
+| Created At | The time the order was placed. | The system records it automatically. | — |
+| Status | The order's current processing status. | The system updates it based on notifications from the payment provider. | Displayed in the upper-right corner of the card. See [Order Status](#order-status). |
+| Payment Method | The payment method selected when placing the order. | — | Alipay, WeChat Pay, Stripe, and Waffo appear by name. Other methods appear as identifiers such as `creem` or `waffo_pancake`. |
+| Amount | The quota credited by the order. | — | Uses the site's currency format. Subscription orders paid through third-party payment providers show $0. |
+| Paid | The amount actually paid for the order. | — | Displayed in red without a currency symbol. |
+</div>
 
 ## Subscription Plans
 
-Subscription plans are located in the subscription area of the wallet page. Only plans that are enabled and have passed payment compliance checks on the current platform will be returned and displayed by the API; if no plans are available, the subscription area will not be displayed.
+- Wallet – Purchase a Subscription Plan
 
-The plan card includes the following information:
+![Wallet subscription purchase page](/assets/guide/feature-guide/personal-wallet-subscription-plans-subscribe-now.png)
 
+The **Subscription Plans** card lists the plans published by the administrator. Purchasing a plan grants subscription quota. **My Subscriptions** above the card shows the subscriptions you have purchased. The card is hidden if the administrator has published no plans and the account has no subscription history.
+
+**Pay with your balance**
+
+1. Click **Subscribe Now** at the bottom of a plan card to open the **Purchase Subscription Plan** dialog.
+2. Review the plan name, validity period, plan quota, and **Amount Due**.
+3. Verify that **Required** is no higher than **Available**, then click **Pay with Balance**.
+
+**Pay with another payment method**
+
+1. Click **Subscribe Now** at the bottom of a plan card to open the **Purchase Subscription Plan** dialog.
+2. Under **Select Payment Method**, click **Stripe**, **Creem**, or **Waffo Pancake**. To pay with EPay, select a payment method from the drop-down list, then click **Pay**.
+3. Complete the payment on the payment page that opens.
+4. Return to **Wallet**, click the refresh icon to the right of **My Subscriptions**, and verify that the new subscription has an **Active** status.
+
+**View subscriptions**
+
+1. Under **My Subscriptions** above the **Subscription Plans** card, check each subscription's status, remaining days, and quota.
+2. Click the refresh icon to the right of **My Subscriptions** to update the list.
+
+<Callout type="info" title="Tip">
+
+- Paying with your balance creates the subscription immediately, deducts the quota shown under **Required** from **Current Balance**, and creates a **Top-up** entry in the usage logs.
+- With other payment methods, the subscription is created after the payment provider confirms the payment. The order appears in **Billing History**.
+- **Pay with Balance** is disabled if your balance is insufficient (“Insufficient Balance”), the plan does not allow balance payments (“This plan cannot be purchased with your balance”), or you have reached the purchase limit (“Purchase limit reached (…)”).
+- **Select Payment Method** shows only the payment methods the administrator has configured for the plan. If none are available, the section is hidden and you can pay only with your balance.
+</Callout>
+
+<Callout type="warn" title="Caution">
+
+- Subscriptions do not renew automatically when they expire. Purchase the plan again to continue using it.
+- For plans purchased through Stripe, Stripe continues to charge you at each billing interval until the subscription is canceled. These charges do not create or extend a subscription in New API. The subscription expires at the end of the plan's validity period. Contact the administrator to stop future charges.
+</Callout>
+
+<Callout type="info" title="Tip">
+
+- If the plan has an **Upgrade Group**, the account switches to that Group as soon as the purchase succeeds.
+- When a subscription expires or the administrator invalidates it, the account stays in its current Group if it has another active subscription with an Upgrade Group. Otherwise, the account switches to the plan's Downgrade Group if one is configured. If none is configured, the account returns to its pre-purchase Group only if it is still in the Upgrade Group.
+- Status and Group changes may take about one minute after expiration.
+</Callout>
+
+**Plan cards**
+
+Fields appear on plan cards in the order shown below. Unconfigured fields are hidden.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and Limits | Notes |
+| --- | --- | --- | --- |
+| Title and Subtitle | The plan's name and description. | Set by the administrator. | If no title is set, “Subscription Plan” is displayed. |
+| Recommended | A badge for the first plan in the list. | Appears on the first plan card when there are two or more plans. | Indicates the plan's position in the list only. |
+| Price | The cost to purchase the plan. | Set by the administrator. | Displayed in US dollars with two decimal places, regardless of the site's currency format. |
+| Validity Period | How long the subscription remains valid from the date of purchase. | Set by the administrator. | Example display “Validity Period: 1 month”. |
+| Quota Reset | How often the subscription's used quota is reset to zero. | Appears only if a reset interval is configured. | Daily, weekly, monthly, or custom. Daily, weekly, and monthly resets occur at midnight server time on the next day, the next Monday, and the first day of the next month, respectively. |
+| Total Quota | The maximum quota available under the subscription. | If a quota reset is configured, the quota is recalculated each period. | “Unlimited” means the subscription has no total quota cap. Model requests remain subject to model, Group, and billing rules. |
+| Purchase Limit | The number of times each account can purchase the plan. | Appears only if a purchase limit is configured. Expired and canceled subscriptions count toward the limit. | Once you reach the limit, the button changes to **Limit Reached**. Hover over it to see “Purchase limit reached (…)”. |
+| Upgrade Group | The Group the account switches to after purchase. | Appears only if configured. | See the tip above on subscriptions and Groups. |
+</div>
+
+**Purchase Subscription Plan dialog**
+
+The table follows the order of the items in the dialog from top to bottom.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
 | Item | Description |
 | --- | --- |
-| Title and Subtitle | The name and description set by the administrator for the plan. |
-| Price | The amount required to purchase the plan; the specific value is determined by instance configuration. |
-| Validity Period | Can be configured by year, month, day, hour, or custom duration (seconds). |
-| Total Quota | The subscription quota included in the plan; configured as 0 means unlimited total quota. |
-| Quota Reset | Can be configured as no reset, daily, weekly, monthly, or custom cycle. |
-| Purchase Limit | Limits the number of times the same user can purchase; configured as 0 means no limit. |
-| Upgrade Group | May switch to the administrator-configured group after a successful purchase. |
-| Downgrade Group | May switch to the administrator-configured group after the subscription expires; if not set, only if switched via an upgrade group during purchase and still in that group upon expiration, will it usually revert to the pre-purchase group. |
+| Plan Name, Validity Period, Reset Interval, Plan Quota, Upgrade Group | Details of the selected plan. If no reset interval or Upgrade Group is configured, the corresponding row is hidden. If the plan quota is 0, “Unlimited” is displayed. |
+| Amount Due | The price of the plan. |
+| Required, Available | **Required** is the quota deducted when you pay with your balance. **Available** is your **Current Balance**. Both use the site's currency format. |
+| Pay with Balance | Deducts the quota shown under **Required** from **Current Balance** and creates the subscription immediately. |
+| Select Payment Method | The **Stripe**, **Creem**, and **Waffo Pancake** buttons appear only when the administrator has configured the corresponding methods for the plan. For EPay, select a method from the drop-down list, then click **Pay**. |
+</div>
 
-<Callout type="warn">
-  'Unlimited Total Quota' only means that the subscription itself does not set a total quota limit, and does not imply unlimited calls. Requests are still subject to model, routing, group, and billing rules.
+**My Subscriptions**
+
+“... Active” or “None Active” appears next to the **My Subscriptions** heading. If you have expired or canceled subscriptions, “… Expired” also appears. This count includes canceled subscriptions. Each subscription displays the following information.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and Limits | Notes |
+| --- | --- | --- | --- |
+| Subscription Title | The plan name and subscription number, such as “vip · Subscription #3”. | Generated by the system. | If the plan has been disabled, only “Subscription #…” appears. |
+| Status | The subscription's current status. | The system updates it based on the validity period and administrator actions. | Possible values are **Active**, **Expired**, and **Canceled**. See [Subscription Status](#subscription-status). |
+| Remaining Days, End Time | The number of days remaining and when the subscription expires. | Calculated from the validity period. | Active subscriptions show “… days remaining” and “Until …”. Expired subscriptions show “Expired on …”, and canceled subscriptions show “Invalidated on …”. |
+| Next Reset | The next time used quota will be reset to zero. | Appears only for active subscriptions with a quota reset configured. | — |
+| Total Quota | Subscription quota usage. | Calculated by the system. | Displays “Total Quota: used/total · … remaining”. Hover to see the raw quota. If there is a quota cap, a progress bar and “…% used” also appear. |
+</div>
+
+## Choose a Billing Preference
+
+- Wallet – Choose a Billing Preference
+
+![Wallet billing preference selection page](/assets/guide/feature-guide/personal-wallet-subscription-plans-select-subscription-billing-strategy.png)
+
+**Steps**
+
+1. Click the billing preference drop-down to the right of **My Subscriptions**.
+2. Select **Subscription First**, **Wallet First**, **Subscription Only**, or **Wallet Only**.
+
+<Callout type="info" title="Tip">
+
+- Your selection is saved immediately without confirmation. It applies to all subsequent requests regardless of which plan you have.
+- When you have no active subscriptions, **Subscription First** and **Subscription Only** are disabled and labeled “(None Active)”. If either is your saved preference, the card explains that you have no active subscriptions and that requests will automatically use the wallet or be rejected, depending on your preference.
+- A plan can specify whether to allow charges to the wallet balance after the subscription quota is exhausted. This setting is hidden on the Wallet page.
 </Callout>
 
-## Purchasing a Subscription Plan
+**Billing options**
 
-1. Open the subscription area of the wallet page.
-2. Select a plan and view its validity period, quota, reset cycle, and purchase limits.
-3. Select the purchase method displayed on the page.
-4. After verifying the order information, complete the balance deduction or third-party payment.
-5. When using third-party payment, return to the wallet and wait for the payment callback; confirm whether the subscription is active after the status updates.
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Option | Billing Rule | Notes |
+| --- | --- | --- |
+| Subscription First | If you have an active subscription, requests use subscription quota first. If that quota is insufficient, the request uses the wallet balance only if every active subscription's plan allows it. Otherwise, the request fails. If you have no active subscriptions, requests use the wallet balance. | Default option. Disabled when there are no active subscriptions. |
+| Wallet First | Requests use the wallet balance first. If the balance is insufficient, they use subscription quota. | — |
+| Subscription Only | Requests use subscription quota only. A request fails if there is no active subscription or the quota is insufficient. | Disabled when there are no active subscriptions. |
+| Wallet Only | Requests use the wallet balance only. A request fails if the balance is insufficient. | — |
+</div>
 
-Available purchase methods depend on the global payment gateway and the plan's own configuration, and may include:
+## Transfer Referral Rewards
 
-- **Wallet Balance**: Available when the plan allows balance payment and the account balance is sufficient. The deducted quota is calculated as 'Plan Price × `QuotaPerUnit`' and rounded up; the specific unit is determined by platform configuration.
-- **EPay**: Requires the platform to enable EPay payment, and the current payment configuration must be available.
-- **Stripe, Creem, or Waffo Pancake**: In addition to the global gateway being available, the plan must also be configured with the corresponding payment product.
+- Wallet – Transfer Rewards
 
-<Callout type="warn">
-  When the regular Waffo payment method is used for online top-ups, it does not mean it supports subscription purchases. The purchase button may be disabled or the operation may fail if the user purchase limit is reached, the plan is deactivated, the payment method is unavailable, or the balance is insufficient.
+![Wallet reward transfer page](/assets/guide/feature-guide/personal-wallet-referral-program-transfer-to-balance.png)
+
+The **Referral Program** at the bottom of the page shows your referral link and rewards. Rewards earned by the referrer appear under **Pending** and become usable after they are transferred to the wallet balance.
+
+**Invite someone**
+
+1. Click the copy button to the right of the referral link in **Referral Program**.
+2. Send the link to the person you want to invite so they can use it to open the registration page and sign up.
+
+**Transfer rewards**
+
+1. Click **Transfer to Balance** in **Referral Program**.
+2. In the **Transfer Rewards** dialog, enter the amount you want to transfer in **Transfer Amount**.
+3. Click **Transfer**.
+
+<Callout type="info" title="Tip">
+
+- Referral rewards are issued only if the administrator sets a reward quota. By default, no rewards are issued. See <a href="/en/docs/guide/feature-guide/system-settings/settings-billing#quota-settings" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a>.
+- After an invitee opens the registration page using the referral link, signing up with a username and password or a third-party account counts as a referral. Accounts created through WeChat login are excluded. Any reward for the invitee is credited directly to their balance.
+- **Transfer to Balance** appears only when **Pending** is greater than 0. Each transfer must be at least 1 quota unit, shown in the dialog as “Minimum: …” (for example, $1), and cannot exceed **Available Rewards**. If **Pending** is below the minimum, **Transfer** is disabled until enough rewards accumulate.
+- Transferred quota goes directly to **Current Balance**. It can only be used on the site, and withdrawals are unavailable.
 </Callout>
 
-## Viewing Subscription Status
+**Fields**
 
-The 'My Subscriptions' area displays current and historical subscription statuses, common statuses include:
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and Limits | Notes |
+| --- | --- | --- | --- |
+| Pending | Referral rewards that have yet to be transferred to your balance. | Increases when an invitee signs up and decreases when rewards are transferred. | Shares its label with the **Pending** order status, which refers to payment confirmation. |
+| Total Earnings | The total referral rewards earned. | Calculated automatically by the system. | — |
+| Referrals | The number of people who signed up through your referral link. | Calculated automatically by the system. | — |
+| Referral Link | The registration link unique to this account. | Generated by the system and cannot be edited. | A copy button appears to the right. |
+</div>
 
-- **Active**: The subscription is active. The page will display remaining days and end time; if the next reset time is configured, it will also be displayed; for limited quota subscriptions, total quota, used quota, remaining quota, and usage progress will also be shown.
-- **Expired**: The subscription has expired and the subscription quota can no longer be used.
-- **Cancelled**: The subscription has been canceled or invalidated prematurely. There is no self-service cancellation entry on the user side; this status is usually generated by administrator operations.
-<Callout type="info">
-  1. After the quota reset time is reached, the used quota for limited quota subscriptions will be cleared, and a new quota cycle will begin. If the next reset time has already passed the subscription end time, that reset will not be set.
-  2. The group after subscription expiration is determined by the plan configuration: if a downgrade group is set, it will usually switch to that group; if not set, only if switched via an upgrade group during purchase and still in that upgrade group upon expiration, will it usually revert to the pre-purchase group. If no upgrade occurred, or if there are other active upgrade subscriptions in the account, the current group may be maintained; the final group will be processed in conjunction with other subscription statuses.
-  3. There is currently no auto-renewal feature for subscription plans. If you wish to continue using a subscription after it expires, please repurchase the plan.
-</Callout>
+**Transfer settings**
 
-## Selecting Billing Preference
+The **Transfer Rewards** dialog contains the following setting.
 
-The wallet page allows selecting the quota deduction order for requests. After saving preferences, the backend will process according to the following rules:
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Transfer Amount | The amount to transfer to the wallet balance. | Must be at least 1 quota unit and must not exceed **Available Rewards** at the top of the dialog. Otherwise, **Transfer** is disabled. If submission fails, the dialog displays “The minimum transfer amount is …!” or “Insufficient referral quota!” | 1 quota unit |
+</div>
 
-| Billing Preference | Deduction Rule |
-| --- | --- |
-| **Prioritize Subscription** | Deduct from active subscriptions first; if subscription quota is insufficient, the wallet will only be used if all active subscriptions allow fallback to the wallet.<br/>Use the wallet if there are no active subscriptions. |
-| **Prioritize Wallet** | Deduct from the wallet first; if wallet balance is insufficient, then attempt to use subscriptions. |
-| **Subscription Only** | Use subscriptions only. If there are no active subscriptions or subscription quota is insufficient, the request fails and will not switch to the wallet. |
-| **Wallet Only** | Use the wallet only. If the balance is insufficient, the request fails and will not use subscriptions. |
+## Actions
 
-<Callout type="info">
-  The plan's 'Wallet Overflow Fallback' rule affects the 'Prioritize Subscription' result: if even one active subscription prohibits fallback, the wallet cannot be used when subscription quota is insufficient. When there are no active subscriptions, the 'Prioritize Subscription' and 'Subscription Only' options will be disabled on the page.
-</Callout>
+### Page Buttons and Filters
 
-## Invitation Rewards
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Order History | Upper-right corner of **Add Funds** | Opens the **Billing History** dialog. See [View Order History](#view-order-history). |
+| Amount, Custom Amount | **Add Funds** card | Select or enter a top-up amount. See [Add Funds Online](#add-funds-online). |
+| Payment Method | **Payment Method** under **Add Funds** | Opens the **Confirm Payment** dialog. See [Add Funds Online](#add-funds-online). |
+| Waffo Payment, Creem Payment | Separate sections under **Add Funds** | Appear only if configured by the administrator. See [Add Funds Online](#add-funds-online). |
+| Redeem Quota | Bottom of **Add Funds** | Redeems the code in the input field. See [Redemption Codes](#redemption-codes). |
+| Need a redemption code? Get one here | Below the redemption code field | Appears only if the administrator has configured a URL. The link opens in a new tab. |
+| Billing Preference | Drop-down to the right of **My Subscriptions** | See [Choose a Billing Preference](#choose-a-billing-preference). |
+| Refresh | Refresh icon to the right of **My Subscriptions** | Reloads the subscription list. |
+| Subscribe Now | Bottom of a plan card | Opens the **Purchase Subscription Plan** dialog. Once the purchase limit is reached, the button displays **Limit Reached** and is disabled. See [Subscription Plans](#subscription-plans). |
+| Copy Referral Link | Copy icon to the right of the link in **Referral Program** | Copies the referral link. |
+| Transfer to Balance | **Referral Program** card | Opens the **Transfer Rewards** dialog. See [Transfer Referral Rewards](#transfer-referral-rewards). |
+| Search by order number... | Top of the **Billing History** dialog | Searches by order number. Entering a value automatically refreshes the list and returns it to page 1. |
+| Items per Page | Top of the **Billing History** dialog | Defaults to 10 items per page. Options are 10, 20, 50, and 100. |
+| Pagination | Bottom of the **Billing History** dialog | “Showing …–… of …” appears on the left. |
+</div>
 
-The invitation rewards area of the wallet page displays the invitation link, pending rewards, historical accumulated rewards, and number of invitees. The invitation code is embedded in the `aff` parameter of the invitation link; the link format is:
+### Row Actions
 
-```text
-当前站点地址/sign-up?aff=<邀请码>
-```
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Copy Order Number | Copy icon to the right of the order number in **Billing History** | Copies the order number. |
+| Complete Order (administrators only) | Bottom of a **Pending** order in **Billing History** | In the **Complete Order** dialog, confirm the prompt “Are you sure you want to complete this order manually? The user will receive the corresponding quota.” This marks the order as **Success** and credits the user with the quota. The action appears only for **Pending** orders. |
+</div>
 
-Usage process:
+## Statuses
 
-1. Copy the invitation link in the invitation rewards area.
-2. Send the link to new users, who can register an account through the link; some new user registrations via account password registration and OAuth state processes will read this parameter, while independent login processes like WeChat and Telegram are not applicable.
-3. After meeting the invitation conditions configured by the platform, rewards will be distributed according to the rules.
-4. The inviter's rewards usually first enter pending rewards; once the rewards meet the transfer conditions, click 'Transfer to Balance' to add them to the main balance.
+### Order Status
 
-<Callout type="warn">
-  - The invited user's rewards (if enabled by the platform) will be directly added to their account quota; the inviter's rewards usually first enter pending rewards.
-  - The amount, distribution conditions, and minimum transfer amount for invitation rewards are determined by platform configuration.
-  - Transferring to balance supports partial transfers, but cannot exceed the current pending rewards, and cannot be less than the platform's quota unit requirements; this is not a cash withdrawal, refund, or withdrawal application.
-  - If payment compliance status requirements are not met, rewards may not be issued, and the 'Transfer to Balance' operation may also be unavailable.
-  - Invalid invitation codes will not prevent registration, and registered users will not receive rewards again for repeatedly using invitation codes.
-</Callout>
+The order status appears in the upper-right corner of each order in the **Billing History** dialog.
 
-## Order History
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Pending | The order has been created and is awaiting payment confirmation from the payment provider. | Yellow. Unpaid orders, incomplete payments, and failed payments also show **Pending**. If you have paid and the order remains **Pending** for an extended period, keep the order number and contact the administrator. |
+| Success | The order has been paid and the quota has been credited. | Green. |
+| Expired | The payment page has expired, and the order will not be credited. | Red. Currently, only Stripe orders can enter this state. Place a new order if you still need to add funds. |
+</div>
 
-- Click 'Order History' in the top right corner of the top-up card to view top-up and payment order records.
-- The page supports searching by order number and pagination, and displays order number, creation time, payment method, top-up quota or amount, payment amount, and order status.
+### Subscription Status
 
-<Callout type="info">
-  1. Regular users can only query their records from the last 30 days; search criteria only match order numbers.
-  2. This list is primarily for viewing top-up and payment orders and does not guarantee coverage of all subscription orders.
-</Callout>
+Each subscription in “My Subscriptions” has one of the following statuses.
 
-## Common Restrictions
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Active | The subscription is within its validity period and its quota is available. | Shown in green, with the days remaining, end time, next reset, and quota. |
+| Expired | The subscription has passed its end time. | Shown in gray as “Expired on …”. The subscription quota is no longer available. Purchase a new subscription to continue using subscription quota. |
+| Canceled | An administrator voided the subscription. | Shown in gray as “Voided on …”. The Wallet page has no option to cancel a subscription. |
+</div>
 
-The following situations may lead to wallet or subscription-related features being unavailable:
+## Frequently Asked Questions
 
-1. The platform has not configured payment gateways or payment products, resulting in no available payment methods or subscription plans.
-2. Payment compliance status requirements have not yet been met, leading to unavailable payment methods or subscription plans, and redemption code operations being displayed as disabled.
-3. The top-up amount is below the minimum amount required by the platform or gateway.
-4. Insufficient balance, deactivated plan, or reached personal purchase limit.
-5. Third-party payment callback has not yet completed, and the order is still being processed.
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
 
-<Callout type="warn">
-If payment is successful but the order or balance has not been updated for a long time, please keep the order number, payment proof, and time of occurrence, contact the platform administrator for verification, and do not make duplicate payments.
-</Callout>
+<Accordion title="Balance does not increase after payment">
+**Explanation**
+
+Your balance increases and the order status changes to “Success” once the payment platform notifies the site that the payment succeeded.
+
+**Possible causes**
+
+- The notification from the payment platform has not arrived or has been delayed.
+- The payment was incomplete or failed, and the order still shows “Pending Confirmation”.
+- The site's payment configuration is incorrect, so the notification cannot reach the site.
+
+**What to do**
+
+1. Do not pay again.
+2. Refresh the page after a short wait, then click “Order History” to check the order status.
+3. If the order remains “Pending Confirmation” for an extended period, copy the order number and send it to the administrator along with your proof of payment and the time of payment.
+</Accordion>
+
+<Accordion title="Selecting a payment method shows “Payment request failed” or does not open the payment page">
+**Explanation**
+
+Use the exact message to identify the cause.
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| “Payment request failed” | The network connection was interrupted, a server error occurred, or the browser blocked the new tab. | Allow pop-ups from this site and try again. If the problem persists, contact the administrator. |
+| “Payment information has not been configured by administrator” | This payment method is not fully configured. | Use another payment method or contact the administrator. |
+| “Payment method does not exist” | The administrator removed the selected payment method, or it is unavailable for this operation. | Refresh the page and select a payment method again. |
+| “Failed to start payment”<br/>“Failed to create order” | An error occurred on the payment platform or server. | Try again later. If the problem persists, contact the administrator. |
+</Accordion>
+
+<Accordion title="A payment method is grayed out or shows “Top-up amount cannot be less than …”">
+**Explanation**
+
+Use the exact message to identify the cause.
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| The payment method button is grayed out, with “Minimum: …” displayed below it | The current amount is below the minimum for this payment method. | Increase the amount and select the payment method again. |
+| “Top-up amount cannot be less than …” | The amount is below the minimum top-up amount. | Increase the amount. |
+| “Top-up amount cannot exceed …” | The amount exceeds the per-transaction limit, which is 10,000 for Stripe, for example. | Reduce the amount and split the top-up into multiple transactions. |
+| “Payment amount is too low” | The amount due after conversion is below 0.01. | Increase the amount. |
+</Accordion>
+
+<Accordion title="“Add Funds” shows “Online topup is not enabled…” or “No payment methods available…”">
+**Explanation**
+
+Use the exact message to identify the cause.
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| “Online topup is not enabled. Please use redemption code or contact administrator.” | The administrator has not configured an online payment method or has yet to confirm the payment compliance terms. | Use a redemption code or contact the administrator. |
+| “No payment methods available. Please contact administrator.” | Online top-ups are enabled, but no payment methods are available. | Contact the administrator. If you have a redemption code, you can redeem it in the meantime. |
+</Accordion>
+
+<Accordion title="Redeeming a code shows “Redemption failed, please try again later”">
+**Exact message**
+
+“Redemption failed, please try again later”
+
+**Possible causes**
+
+- The redemption code does not exist, has already been used, has expired, or has been disabled. The same message appears in all four cases.
+- The pasted code contains spaces or line breaks.
+
+**What to do**
+
+1. Copy the full redemption code again. Make sure it has no leading or trailing spaces or line breaks, then try again.
+2. If redemption still fails, ask the administrator who issued the code to check its status. Avoid repeated attempts, as too many attempts can temporarily restrict access to redemption.
+</Accordion>
+
+<Accordion title="Redeeming a code shows “Top-up is processing, please try again later”">
+**Exact message**
+
+“Top-up is processing, please try again later”
+
+**Possible cause**
+
+The account's previous redemption is still being processed.
+
+**What to do**
+
+1. Wait a few seconds and check whether “Current Balance” has increased.
+2. If the balance has not increased, click “Redeem Quota” once more. Avoid clicking it repeatedly.
+</Accordion>
+
+<Accordion title="Redemption codes or referral reward transfers are unavailable and the message asks the administrator to confirm the compliance terms">
+**Explanation**
+
+Online top-ups, redemption codes, subscription plans, and referral rewards are unavailable until the administrator confirms the payment compliance terms. The interface shows the following messages.
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| “Redemption codes are disabled until the administrator confirms compliance terms.” | The administrator has yet to confirm the payment compliance terms. | Contact the administrator. |
+| “Referral reward transfer is disabled until the administrator confirms compliance terms.” | Same as above. | Contact the administrator. |
+| “Payment, redemption, subscription, and invitation reward features are disabled. The administrator must confirm compliance terms before enabling them.” | Same as above. | Contact the administrator. |
+</Accordion>
+
+<Accordion title="“Pay with Balance” or “Subscribe Now” is disabled">
+**Explanation**
+
+Check the message in the dialog or on the button to identify the cause.
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| “Insufficient balance” | The “Available” amount is below the “Required” amount. | Top up your balance, redeem a code, or use another payment method. |
+| “This plan does not allow balance redemption” | This plan does not accept payment from your balance. | Use another payment method in “Select Payment Method”. |
+| “Purchase limit reached (…)”<br/>“Subscribe Now” shows “Limit Reached” | You have reached the purchase limit for this plan. Expired and canceled subscriptions count toward the limit. | You cannot purchase this plan again. Choose another plan or contact the administrator. |
+</Accordion>
+
+<Accordion title="Purchasing a subscription shows “StripePriceId is not configured for this plan” or another error">
+**Explanation**
+
+Use the exact message to identify the cause.
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| “StripePriceId is not configured for this plan”<br/>“CreemProductId is not configured for this plan” | The payment method is not fully configured for this plan. | Use another payment method or contact the administrator. |
+| “Subscription plan is not enabled” | The administrator has disabled the plan. | Refresh the page and select another plan. |
+| “Plan amount is too low” | The plan price is below EPay's minimum payment amount. | Use another payment method or contact the administrator. |
+| “Purchase limit for this plan has been reached” | You have reached the purchase limit. | You cannot purchase this plan again. |
+| Selecting “Waffo Pancake” from the drop-down list shows “Payment method does not exist” | The drop-down list is for EPay payment methods. Waffo Pancake payments use the separate “Waffo Pancake” button in the dialog. | Click “Waffo Pancake” in the dialog. If the button is unavailable, select another payment method from the drop-down list. |
+</Accordion>
+
+<Accordion title="Your group does not change after purchasing a subscription or revert after it expires">
+**Possible causes**
+
+- The plan has no “Upgrade Group” configured, or your account was already in that group before the purchase.
+- If you used another payment method, the payment platform may still be waiting to confirm the payment, so the subscription has yet to be created.
+- After the subscription expires, your account still has another active subscription with an upgrade group. Alternatively, the plan has no downgrade group and your account's group has been changed.
+- Processing a subscription expiration takes about one minute.
+
+**What to do**
+
+1. Check the subscription status in “My Subscriptions”.
+2. Wait a few minutes, then refresh the page.
+3. If the group still differs from what you expect, contact the administrator.
+</Accordion>
+
+<Accordion title="API requests fail after the subscription quota runs out">
+**Explanation**
+
+When your billing preference is set to “Subscription Only” and you have no active subscription, “My Subscriptions” displays “Preference saved as …, but no active subscription. Requests will be rejected.” This message does not appear if the subscription is still active but has insufficient quota.
+
+**Possible causes**
+
+- Your billing preference is set to “Subscription Only”, and the subscription has expired or its quota has run out.
+- Your billing preference is set to “Subscription First”, but one of your active subscription plans does not allow requests to use the wallet balance once the subscription quota runs out.
+
+**What to do**
+
+1. Change your billing preference to “Wallet First” or “Wallet Only”.
+2. Purchase a new subscription plan if you want to continue using subscription quota.
+</Accordion>
+
+<Accordion title="Stripe continues to charge you after the plan you purchased expires">
+**Explanation**
+
+Stripe automatically charges you at each renewal until the subscription is canceled. Renewal charges do not create or extend a subscription in New API.
+
+**What to do**
+
+1. Keep a record of the charges and contact the administrator to stop future charges and confirm how existing charges will be handled.
+</Accordion>
+
+<Accordion title="Referral rewards are unavailable or “Transfer” is disabled">
+**Explanation**
+
+Use the behavior you see or the exact message to identify the cause.
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| “Pending Confirmation” shows an amount, but API requests report insufficient quota | You must transfer referral rewards to your balance before you can use them. | Click “Transfer to Balance”. |
+| “Transfer” is grayed out, with “Minimum: …” displayed below the input field | “Available Rewards” is less than one unit of quota, or the “Transfer Amount” is out of range. | Adjust the “Transfer Amount”. If the reward balance is too low, wait until more rewards accumulate. |
+| “Minimum transfer quota is …!” | The transfer amount is below one unit of quota. | Increase the “Transfer Amount”. |
+| “Invitation quota is insufficient!” | The transfer amount exceeds the amount shown under “Pending Confirmation”. | Decrease the “Transfer Amount”. |
+</Accordion>
+
+<Accordion title="No reward is credited after an invited user signs up">
+**Possible causes**
+
+- The administrator has not configured a referral reward amount or has yet to confirm the payment compliance terms. By default, the site does not issue referral rewards.
+- The invited user did not open the registration page through the referral link, or they created their account by signing in with WeChat.
+- The invited user already had an account before signing up.
+- The referrer's reward appears under “Pending Confirmation” and has yet to be transferred to their balance.
+
+**What to do**
+
+1. In “Referral Program”, check the “Invitations” count and the amount under “Pending Confirmation”.
+2. If the “Invitations” count has not increased, ask the administrator to check the referral reward settings.
+</Accordion>
+
+<Accordion title="A record is missing from “Billing History”">
+**Possible causes**
+
+- Regular users can only view orders created in the last 30 days.
+- Subscription purchases made with your balance, code redemptions, and referral reward transfers do not create orders.
+- Search matches only order numbers.
+
+**What to do**
+
+1. Clear the search field and browse the results page by page.
+2. To find code redemptions and subscription purchases made with your balance, select “Top-up” as the record type in <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>.
+3. Refer to “My Subscriptions” for your subscription details.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> shows quota changes from top-ups, redemptions, subscription purchases, and check-ins, as well as the charge for each API request.
+- <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a> explains how to create keys to call models using your account quota.
+- <a href="/en/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">Profile</a> explains how to earn quota through daily check-ins and set up low-balance alerts.
+- <a href="/en/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">Model Gallery and Leaderboard</a> lists available models and their prices.

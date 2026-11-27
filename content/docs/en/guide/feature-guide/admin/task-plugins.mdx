@@ -1,0 +1,1231 @@
+---
+title: Plugin Management
+description: Manage task, channel, and request processing plugins. View built-in plugins, upload plugins or install them from the marketplace, create plugin channels, and manage plugin enablement, versions, and channel bindings.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- Only Root can access this page. In the sidebar, go to “Admin” → “Plugins”.
+- Upload plugins or install them from the Plugin Marketplace, manage their versions, and enable or disable them.
+- Uploading a plugin or installing it from the marketplace does not automatically create a channel or a request processing instance.
+
+<Callout type="info" title="Tip">
+
+- Plugins are JavaScript scripts that run in the sandbox built into New API.
+- A plugin can include up to three components. The task component connects platforms for asynchronous tasks such as image, video, and audio processing to a unified task API. The channel component forwards standard API requests like an advanced custom channel. The request processing component inspects or modifies requests before they go upstream. A single plugin can include multiple components.
+- Task and channel components must be bound to a channel of type “Task Plugin”. Plugins can also be bound to New API channels as extensions. See [Create a Plugin Channel](#create-a-plugin-channel).
+- To use a request processing component, add an instance on the <a href="/en/docs/guide/feature-guide/admin/request-processing" target="_blank" rel="noopener noreferrer">Request Processing</a> page in the sidebar. You can also add the instance to a specific channel.
+- “Enable Plugins” in the upper-right corner is a global switch. Turning it off takes plugin tasks and plugin channels out of service. Request processing continues to run. See [Enable or Disable Plugins](#enable-or-disable-plugins).
+
+</Callout>
+
+## Plugin Management Overview
+
+- Plugin Management – Card View
+
+![Plugin Management in card view](/assets/guide/feature-guide/plugins-card-view.png)
+
+- Plugin Management – Table View
+
+![Plugin Management in table view](/assets/guide/feature-guide/plugins-table-view.png)
+
+The “Installed” tab lists all plugins on this site. Use the “Plugin Marketplace” tab to browse and install official and community plugins.
+
+- [Upload a Plugin](#upload-a-plugin)
+- [Install from the Plugin Marketplace](#install-from-the-plugin-marketplace)
+- [Create a Plugin Channel](#create-a-plugin-channel)
+- [View Plugin Details](#view-plugin-details)
+- [Enable or Disable Plugins](#enable-or-disable-plugins)
+- [Delete the Current Custom Version](#delete-the-current-custom-version)
+- [Manage Marketplace Sources](#manage-marketplace-sources)
+
+<Callout type="info" title="Tip">
+If an upload fails, a plugin shows “Compilation Failed”, or a channel cannot use a plugin, see [Frequently Asked Questions](#frequently-asked-questions).
+</Callout>
+
+**Field reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and limits | Notes |
+| --- | --- | --- | --- |
+| Plugin | The plugin name and its unique identifier (Key). The Key identifies the plugin when binding it to a channel or looking it up in the marketplace. | The plugin declares both values. They are read-only on this page. The Key can contain only lowercase letters, digits, `-`, and `_`, up to 30 characters. See [Plugin Metadata](#plugin-metadata). | The name appears in the interface language, with the Key below it in monospace. Hover to see the description. If the plugin declares a website, a “Plugin Website” link appears below. If an installed community plugin version has been delisted, the message “This version has been removed from Community Plugins.” appears below. You can sort by or hide this column. |
+| Active Version | The plugin version currently in effect. | The plugin declares the version number. To switch versions, use “Version History” under [View Plugin Details](#view-plugin-details). | Appears as “v…” in card view. You can sort by or hide this column. |
+| Source | Whether the plugin is built in, is a custom version that replaces a built-in plugin, or is a third-party plugin. | The system determines the source. | See [Source Badges](#source-badges). |
+| Channel Type | The channel types to which the plugin can bind. | The plugin declares the supported types. | Displays the name of the first channel type and the IDs of all types, for example, “Doubao #54 #45”. If no types are declared, plugins with a channel component show “Plugin”, task-only plugins show “Task Plugin”, and request-processing-only plugins leave this field blank. Plugins with a request processing component also show a “Request Processing” badge. |
+| Models | The models the plugin supports. | The plugin declares its models. | Table view shows the model count. Card view lists the first four model names. Hover over “+…” to see the rest. Cards in the “Request Processing” category omit models. |
+| Enabled | Enables or disables an individual plugin. | A confirmation dialog opens before the change takes effect. See [Enable or Disable Plugins](#enable-or-disable-plugins). | Appears at the bottom of the card in card view. |
+| Runtime Status | Whether the plugin has compiled and registered for routing. | The system determines the status. | Hover over “Compilation Failed” to see the error. See [Runtime Status](#runtime-status). |
+| Component Badges | Additional components included in the plugin, shown in card view. | The plugin declares its components. | Possible badges are “Task”, “Channel”, “Account Login”, and “Request Processing”. The current category is omitted. “Account Login” means channels using the plugin require an upstream account login. This field appears only in card view. |
+| Execution Stage | The stage at which a plugin in the “Request Processing” category runs, shown in card view. | The plugin declares its execution stage. | Possible values are “Before Reading the Request”, “Before Format Conversion”, “Before Sending”, “Final Check”, “Inspect Response”, and “After Request Completion”. If the plugin omits the stage, the card shows “Undeclared”. For stage details, see <a href="/en/docs/guide/feature-guide/admin/request-processing#execution-stages-and-order" target="_blank" rel="noopener noreferrer">Request Processing</a>. |
+
+</div>
+
+## Common Operations
+
+This section covers uploading and installing plugins, creating channels, viewing plugin details, enabling or disabling plugins, deleting versions, and managing marketplace sources.
+
+### Upload a Plugin
+
+- Plugin Management – Upload Plugin
+
+![Upload Plugin dialog in Plugin Management](/assets/guide/feature-guide/plugins-upload-plugin.png)
+
+- Plugin Management – Upload New Version
+
+![Upload New Version dialog in Plugin Management](/assets/guide/feature-guide/plugins-upload-new-version.png)
+
+**Upload a plugin**
+
+1. On the “Installed” tab, click “Upload Plugin” in the upper-right corner.
+2. Provide the source code. Drag and drop a `.js` file or click “Select File” to choose one. Alternatively, enter an address under “Import from URL” and click “Fetch”, or paste the code directly into “Plugin Source Code”.
+3. Review the preview below “Plugin Source Code”. Check the applicable channels, upstream authentication method, default API address, additional domains the plugin can access, and supported models.
+4. Optionally, select a “Plugin Icon” and enter “Notes”.
+5. Click “Upload”.
+
+**Upload a new version**
+
+1. Click ⋯ at the end of the plugin row, or in the upper-right corner of the card in card view, and select “Upload New Version”.
+2. Follow steps 2–4 above. Confirm that the `key` in the source code matches the plugin’s Key.
+3. Click “Upload”.
+
+<Callout type="warn" title="Caution">
+
+- The “Third-Party Plugin Risks” notice at the top of the dialog reads “Plugins can read channel keys and modify content sent upstream. Review the code and changes before activation.” Review the source code before uploading.
+- The server compiles the source code, validates the metadata, and checks for conflicts with the models, channel types, and routes of existing plugins. It saves the plugin only after all checks pass. If a check fails, the dialog shows “The gateway rejected this plugin” and the reason. If there is a conflict, the message names the conflicting plugin. See [Plugin Metadata](#plugin-metadata) and [Version, Enablement, and Conflict Rules](#version-enablement-and-conflict-rules).
+
+</Callout>
+
+**Upload results**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Scenario | Dialog message | Next step |
+| --- | --- | --- |
+| First version for this Key | The title reads “Plugin Uploaded Successfully”, followed by the plugin name, Key, and version. The status box reads “Plugin version activated”. | Click “Close”. |
+| This Key already has an active version | The title reads “Plugin Uploaded Successfully”. The status box reads “Plugin saved, pending activation”. The existing version stays active. | Click “Activate Now” to replace the active version, or click “Later” and activate the new version from “Version History” in [Plugin Details](#view-plugin-details). |
+| Activation fails | A red box shows “Plugin Activation Failed” and the reason. | Resolve the issue, then activate the version from “Version History” in [Plugin Details](#view-plugin-details). |
+| Some task models cannot be billed | The dialog shows “Pricing requires attention for the following models:” and lists the model names. | Resolve the pricing issues in <a href="/en/docs/guide/feature-guide/system-settings/settings-billing#pricing-pending-review" target="_blank" rel="noopener noreferrer">Billing and Payment Settings</a>. |
+
+</div>
+
+**Configuration fields**
+
+The dialog displays the fields in a single section, in the order shown below.
+
+<div id="上传配置项说明" className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Plugin File | A local file containing the plugin source code. | Drag a single `.js` file into the “Drop a JavaScript plugin file here” area, or click “Select File”. The maximum file size is 8 MiB. After selection, the code appears in “Plugin Source Code” and the button changes to “Select Another File”.<br/>Message: “The plugin source code exceeds the 8 MiB limit.” | Empty |
+| Import from URL | The URL of the plugin source code. | Enter a complete HTTP or HTTPS URL, then click “Fetch” or press Enter. The browser downloads the code into “Plugin Source Code” for review before upload. GitHub and Gist page links are automatically converted to raw source URLs.<br/>Messages: “Enter a complete http(s) URL.” “The URL returned HTTP …. Check the address, or download the file and paste the source code below.” “Unable to download from this address. Download the file yourself and paste the code below.” “The plugin source code exceeds the 8 MiB limit.” | Empty |
+| Plugin Source Code | The JavaScript source code to upload. | Required. “Upload” is disabled while this field is empty. The upper-right corner shows “… bytes”. The limit is 8 MiB. If pasted code exceeds the limit, the upload is rejected with `plugin source exceeds 8 MiB` (English only). | Empty |
+| Plugin Icon | The plugin’s icon. | Optional. Select an `.svg` or `.png` file up to 512 KiB. The icon has a separate size limit from the source code. Click “Remove” to clear the selection.<br/>Messages: “The plugin icon exceeds the 512 KiB limit.” “The plugin icon must be an .svg or .png file.” | Empty |
+| Notes | Notes for this version. | Optional. Appears in the “Notes” column of “Version History” in Plugin Details. | Empty |
+
+</div>
+
+**“Upload New Plugin Version” dialog**
+
+The “Upload New Plugin Version” dialog uses the same [configuration fields as “Upload Plugin”](#上传配置项说明). The two dialogs differ as follows.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Item | “Upload Plugin” dialog | “Upload New Plugin Version” dialog |
+| --- | --- | --- |
+| Where to open it | Click “Upload Plugin” in the upper-right corner. The button appears only on the “Installed” tab. | Select “Upload New Version” from the ⋯ menu at the end of the row or in the upper-right corner of the card. This action is also available for built-in plugins. |
+| Title and description | “Upload Plugin”, with the description “Upload a JavaScript plugin.” | “Upload New Plugin Version”, with the description “Plugin key: …” showing the plugin’s Key. |
+
+</div>
+
+### Install from the Plugin Marketplace
+
+- Plugin Management – Official Plugins – Tasks
+
+![Official task plugins in the Plugin Marketplace](/assets/guide/feature-guide/plugins-plugin-marketplace-task.png)
+
+- Plugin Management – Install Plugin – Plugin Details
+
+![Plugin Details tab in the Install Plugin dialog](/assets/guide/feature-guide/plugins-plugin-marketplace-install-plugin-details.png)
+
+- Plugin Management – Install Plugin – Version Diff
+
+![Version Diff tab in the Install Plugin dialog](/assets/guide/feature-guide/plugins-plugin-marketplace-install-version-diff.png)
+
+- Plugin Management – Install Plugin – Full Source Code
+
+![Full Source Code tab in the Install Plugin dialog](/assets/guide/feature-guide/plugins-plugin-marketplace-install-full-source-code.png)
+
+- Plugin Management – Install Plugin – Changelog
+
+![Changelog tab in the Install Plugin dialog](/assets/guide/feature-guide/plugins-plugin-marketplace-install-changelog.png)
+
+**Procedure**
+
+1. Open the “Plugin Marketplace” tab.
+2. Select “Official Plugins” or “Community Plugins”, then choose “Task”, “Channel”, or “Request Processing”.
+3. Click “Install” on the plugin card. If you know the eight-digit plugin code, enter it in “Plugin Code” on the right, click “Find”, then click “Install” on the result card.
+4. Use the version selector to choose the version to install.
+5. Review the “Plugin Details”, “Version Diff”, “Full Source Code”, and “Changelog” tabs as available.
+6. Click “Install and Enable”.
+
+<Callout type="warn" title="Caution">
+
+- Installation and upload both require compilation, metadata validation, and conflict checks. These checks are mandatory for both methods.
+- If installation fails, the dialog shows “Plugin Installation Failed”, the reason, and “Resolve conflicts on the ‘Installed’ page before reinstalling.” For a conflict, delete or disable the conflicting plugin on the “Installed” tab, then retry the installation.
+- The plugin’s marketplace source must still be in the source list. Otherwise, the dialog shows “This plugin’s marketplace source is missing from the source list”.
+- “Integrity Check Failed” blocks installation. “No Integrity Hash” allows installation, but you cannot verify that the source code matches the version published by the source.
+- The browser downloads both the index and the hash. The server recalculates the hash of the source code it receives but does not validate the marketplace index. A compromised browser can replace both the source code and the hash. The integrity check cannot detect that change.
+
+</Callout>
+
+**Marketplace card fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and limits | Notes |
+| --- | --- | --- | --- |
+| Plugin | The plugin name and identifier (Key). | Provided by the marketplace index. | Appears in the upper-left corner of the card, with an icon if available. A “Plugin Website” link and an author row may appear below. See [Row Actions](#row-actions). |
+| Installation Status | Whether the plugin is installed on this site and whether the installed version is up to date. | The system uses the Key to match the plugin against installed plugins. | Appears in the upper-right corner of the card. See [Installation Status](#installation-status). |
+| Component Badges | Additional components included in the plugin. | Provided by the marketplace index. | Omits the current category. |
+| Description | A description of the plugin. | Provided by the marketplace index. | Displays up to two lines. |
+| Latest Version | The latest version number available from this source. | Provided by the marketplace index. | — |
+| Channel Type | The channel types to which the plugin can bind. | Provided by the marketplace index. Hidden for request-processing-only plugins. | Shows the name of the first channel type and omits type IDs. If no type is declared, shows “Plugin” or “Task Plugin”. |
+| Models | The number of models the plugin supports. | Provided by the marketplace index. Hidden in the “Request Processing” category. | — |
+| Version | The site’s built-in version and the latest marketplace version. | Appears when the site has a built-in plugin with the same name. | Displays “Built-in v… / Marketplace v…”. |
+| No Integrity Hash | The source does not provide an integrity hash for the latest version. | Determined by the marketplace index. | Appears in red. For installation checks, see [File Verification Status](#file-verification-status). |
+
+</div>
+
+**Installation dialog sections**
+
+The dialog displays the following sections from top to bottom when their display conditions are met.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Section | Display condition | Description |
+| --- | --- | --- |
+| Title | — | Shows “Install …”, followed by “… · From …” with the plugin Key and source name. |
+| Author row | The marketplace index provides an author, repository, or installation count | Shows the same information as the author row on the card. |
+| Version selector | — | Options include “1.5.0 · Latest Version” and “1.4.1 · Active Version”. The latest version is selected by default. The selector is disabled when only one version is available. If the plugin is installed, choosing a different version automatically opens “Version Diff” unless you are viewing “Changelog”. |
+| Current version v… → Version to install v… | The plugin is installed | Shows the installed version and the version selected for installation. |
+| What this plugin can access | The source is community or third-party | Depending on the plugin’s components, lists “Keys and API addresses of channels that use this plugin”, “Request and response content processed by this plugin”, and “Other addresses: …”. Other addresses include the host in the plugin’s default API address and any additional domains it can access. If these cannot be determined, the dialog shows “Other addresses: Unable to determine from the code”. |
+| Plugin Details | Open by default | Shows the plugin’s usage instructions (README), “Supported Models”, “Supported Endpoints”, and “Connection Settings”. The settings cover applicable channels, the upstream authentication method, the default API address, and additional domains the plugin can access. |
+| Version Diff | The plugin is installed | Compares the source code of the installed and selected versions. |
+| Full Source Code | — | Shows all source code for the selected version. |
+| Changelog | — | Shows the release notes for the selected version. Usage instructions and release notes fall back to English when unavailable in the current language. |
+
+</div>
+
+**Installation checks and messages**
+
+The following items appear inside a tab, below the tabs, or at the bottom of the dialog when their display conditions are met.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Item | Display condition | Description |
+| --- | --- | --- |
+| Source code download | After the dialog opens | The browser downloads the source code for the selected version from the marketplace source and displays “Fetching plugin source code…” during the download.<br/>Messages: “Unable to download the plugin code. Try again later.” “The plugin source code exceeds the 8 MiB limit.” “The plugin URL provided by this source is invalid.” |
+| Official source notice | The source is official | “Plugins can access channel credentials. Review the source code and diff before installation.” |
+| File verification | — | The browser computes the source code hash and compares it with the hash in the index. When a hash is available, expand “Integrity Hash” to view and copy it. See [File Verification Status](#file-verification-status). |
+| Installation statistics notice | The source is Community | “Installation sends the plugin identifier, version number, and a random identifier for this gateway to newapi.ai to count installations.” After successful installation, the server sends the data in the background. If newapi.ai does not respond, the server tries `www.newapi.pro`. A delivery failure does not affect installation. The server sends these statistics only for the Community source. |
+| The source does not list the installed version | The installed version is absent from the source | “Version v… is currently installed, but this source does not list it. Installation will replace it with v….” |
+| “Cancel” and “Install and Enable” | — | “Install and Enable” is disabled until the source code is available, while a download is in progress, after a download failure, or if the hashes differ. During installation, it shows “Installing…”. On success, the dialog shows “Installed … v…” and closes. If the plugin was already installed, the newly installed version becomes active automatically. The version notes are populated with the source name and version number, for example, “Official v1.4.2”. |
+
+</div>
+
+### Create a Plugin Channel
+
+- Plugin Management – Create Task Plugin Channel
+
+![Create a task plugin channel in Plugin Management](/assets/guide/feature-guide/plugins-create-plugin-channel.png)
+
+**Prerequisites**
+
+- The target plugin must be enabled and its “Runtime Status” must be “Registered”. Built-in plugins are available without an upload. For other plugins, upload the plugin or install it from the marketplace first. The selection list excludes disabled plugins. For request-processing-only plugins, add an instance on the <a href="/en/docs/guide/feature-guide/admin/request-processing" target="_blank" rel="noopener noreferrer">Request Processing</a> page. These plugins do not appear in the “Plugins” category.
+- Root can create plugin channels by default. For an Admin to see the “Plugins” category, Root must grant both channel operation permissions and the “Bind Task Plugins” permission in the administrator permission settings.
+- Have the upstream service address and credentials ready.
+
+**Procedure**
+
+1. Open “Channels” in the sidebar and click “Create Channel”.
+2. In the selection dialog, switch to the “Plugins” category.
+3. Click the target plugin’s card.
+4. Review the plugin models prefilled under “Models”. Add or remove models as needed.
+5. Fill in “API Address” and “API Key”.
+6. If the plugin declares settings, fill in “Plugin Settings” according to the plugin’s requirements.
+7. Adjust the group, priority, and weight as needed.
+8. Click “Create Channel”. For plugins that require an upstream account login, click “Save and Log In”, then complete the login in the “Credentials” section.
+
+<Callout type="warn" title="Caution">
+
+- For a channel with a task-only plugin, “Test Connection” displays a message that this channel type does not support testing. Channels whose plugins include a channel component support connection testing. The detailed test lists only the endpoints the plugin supports.
+- Before deleting or disabling a plugin, switch its bound channels to another plugin. If you are disabling the plugin, you can also use the cascade option to disable its bound channels. Requests on channels still using an unavailable plugin will fail.
+
+</Callout>
+
+**Configuration fields**
+
+The table covers the plugin-specific fields that appear after you select a plugin. For the remaining fields, see <a href="/en/docs/guide/feature-guide/admin/channel#standalone-plugin-channels" target="_blank" rel="noopener noreferrer">Channel Management</a>. You can also bind a plugin to a New API channel as an extension. See <a href="/en/docs/guide/feature-guide/admin/channel#gateway-channels-new-api-and-sub2api" target="_blank" rel="noopener noreferrer">Gateway Channels</a>.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Plugin | The plugin bound to the channel. | Required. Select a registered plugin from the “Plugins” category in the selection dialog. Its Key must be at most 30 characters. Selecting a plugin automatically sets the channel type to “Task Plugin” (#61). | — |
+| Name | The channel name. | Required. | If empty, populated with the plugin name. |
+| API Address | The upstream address to which the plugin sends requests. | Required. If the plugin declares no default address, the field shows “Required. The upstream address to which this plugin sends requests.” | Prefilled if the plugin declares a default address, with “Plugin default” shown below the field. |
+| API Key | The credential for the upstream service. | Required when creating the channel. Passed to the plugin as `apiKey` at runtime. | Empty |
+| Plugin Settings | Channel-level settings declared by the plugin. | Appears if the plugin declares settings. Fill them in according to the plugin’s requirements. | Declared by the plugin. |
+| Models | The models the channel can call. | Required. Add or remove models as needed. | All models declared by the plugin. |
+| Group | The user groups that can use the channel. | Required. | default |
+| Priority, Weight | Parameters used to rank channels during selection. | Optional. | 0 |
+
+</div>
+
+### View Plugin Details
+
+**Steps**
+
+1. Click ⋯ at the end of the plugin row (or in the upper-right corner of the card in card view) and select “Details.”
+2. Switch between tabs in the right-hand panel.
+
+<Callout type="info" title="Tip">
+
+- The top of the panel shows the plugin name, Key, current version, and description. Click the copy icon next to the Key to copy it. Badges below the name indicate whether the plugin includes Channel, account login, or request processing components.
+- The “Billing Parameters” and “Plugin Sandbox” tabs appear only for plugins with a task component.
+</Callout>
+
+**Overview**
+
+- Plugin Management → Plugin Details → Overview
+
+![Plugin Management – Plugin Details – Overview page](/assets/guide/feature-guide/plugins-plugin-details-overview.png)
+
+**Sections**
+
+The table lists the sections in the order they appear on the tab. Each section appears only when its display condition is met.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Section | Display Condition | Description |
+| --- | --- | --- |
+| Plugin Metadata | — | Shows “Sort Priority” and “Plugin Website.” If the plugin includes a task component, it also shows “Fetch Mode.” If the plugin includes a task or Channel component, it shows “Channel Type” and “Default Base URL,” with a “Copy Base URL” action. |
+| Request Processing | Includes a request processing component | Shows “Execution Timing” and “Settings.” If there are no settings, it shows “This plugin has no settings.” |
+| Models | Includes a task or Channel component | Shows the models declared by the plugin, with a “Copy All Models” action. |
+| Relay Routes | Includes a Channel component | Shows the “Ingress Path,” “Upstream Path,” converter, and “Model Scope.” |
+| Endpoints | Includes a task component | Each endpoint appears once and has a “Copy Endpoint Path” action. If the plugin declares vendor paths, you can switch the “Address Format” between “Vendor Path” and `/{插件 Key}`. Legacy addresses are collapsed under “Legacy Addresses (…).” Endpoints whose official paths are already in use are labeled “Available only under `/{key}`.” |
+
+</div>
+
+**Billing Parameters**
+
+- Plugin Management → Plugin Details → Billing Parameters
+
+![Plugin Management – Plugin Details – Billing Parameters page](/assets/guide/feature-guide/plugins-plugin-details-billing-parameters.png)
+
+Lists the billing parameters declared in the plugin’s `usageSchema`, grouped by the models they apply to. If the plugin declares none, the tab shows “No billing parameters declared.”
+
+**Parameter Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Notes |
+| --- | --- | --- |
+| Name | The parameter name. | — |
+| Type | Number, Boolean, or enum. | — |
+| Unit | Seconds, count, Token, or credit. | Plugins can define custom unit names such as “image.” |
+| Enum Values | The available values for an enum parameter. | — |
+| Description | A description of the parameter. | — |
+
+</div>
+
+<Callout type="warn" title="Caution">
+
+- Task model billing expressions use these parameters to calculate charges. See <a href="/en/docs/guide/feature-guide/admin/billing-expression#task-models" target="_blank" rel="noopener noreferrer">Billing Expressions</a>.
+- Billing a task result using the plugin’s `usageSchema` requires the request to match the plugin’s model and Channel type and the billing expression to be configured.
+</Callout>
+
+**Plugin Source**
+
+- Plugin Management → Plugin Details → Plugin Source
+
+![Plugin Management – Plugin Details – Plugin Source page](/assets/guide/feature-guide/plugins-plugin-details-plugin-source.png)
+
+<Callout type="info" title="Tip">
+
+- Shows the JavaScript source code for the active version. Built-in plugins show their embedded source code. If no source code is available, the tab shows “No source code available.”
+- When reviewing the source, check which hosts the plugin accesses, which credentials it reads, and how it constructs upstream requests.
+</Callout>
+
+**Version History**
+
+- Plugin Management → Plugin Details → Version History
+
+![Plugin Management – Plugin Details – Version History page](/assets/guide/feature-guide/plugins-plugin-details-version-history.png)
+
+Lists all versions uploaded for this Key, newest uploads first. If only the built-in version exists, the tab shows “No version history.”
+
+**Activate a Version**
+
+1. Click “Activate / Roll Back” in the row for the target version.
+
+<Callout type="info" title="Tip">
+
+- The server compiles the version’s source code before switching to it. If compilation fails, the active version stays the same. Successful activation also enables the plugin and displays “Plugin version activated.”
+- “Activate / Roll Back” is unavailable for the currently active version.
+</Callout>
+
+**Version History Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Definition | Notes |
+| --- | --- | --- |
+| Version | The uploaded version number. | — |
+| Notes | Notes entered during upload. | For versions installed from the Plugin Marketplace, this field is automatically set to the source name and version number, such as “Official v1.4.2.” If there are no notes, the field shows “—.” |
+| Status | The currently active version shows “Active.” | Other versions show “—.” |
+| Action | “Activate / Roll Back.” | — |
+
+</div>
+
+**Source Diff**
+
+- Plugin Management → Plugin Details → Source Diff
+
+![Plugin Management – Plugin Details – Source Diff page](/assets/guide/feature-guide/plugins-plugin-details-source-diff.png)
+
+Compares the selected historical version with the active version line by line. If the source code is identical, the tab shows “No source changes.”
+
+**Compare Versions**
+
+1. Select a historical version from “Select a version to compare.”
+
+**Plugin Sandbox**
+
+- Plugin Management → Plugin Details → Plugin Sandbox
+
+![Plugin Management – Plugin Details – Plugin Sandbox page](/assets/guide/feature-guide/plugins-plugin-details-plugin-sandbox.png)
+
+Runs a hook from the active version without sending an upstream request.
+
+**Run a Dry Run**
+
+1. Select a hook from the dropdown. The default is `buildSubmitRequest`. Other options include `parseSubmitResponse`, `extractUsage`, `buildQueryRequest`, `parseTaskResult`, `buildBatchQueryRequest`, `parseBatchResult`, `buildContentRequest`, and `renderers.openai_video`.
+2. Enter a JSON array in “Arguments JSON.” The default is `[{}]`.
+3. Click “Run Dry Run.”
+4. View the returned JSON in “Dry Run Result.”
+
+<Callout type="info" title="Tip">
+
+- If the arguments are not a JSON array, the sandbox displays “Arguments must be a JSON array.” If the hook fails, the error appears in “Dry Run Result.”
+- A dry run uses a temporary copy of the plugin and leaves the active registry unchanged. Use it to troubleshoot hook logic, field values, and usage extraction.
+</Callout>
+
+### Enable or Disable Plugins
+
+**Enable or Disable an Individual Plugin**
+
+1. Click the toggle in the “Enabled” column of the plugin row (or at the bottom of the card in card view).
+2. Click “Enable” or “Disable” in the confirmation dialog.
+3. If the “Plugin is still in use” dialog appears when disabling the plugin, click “Cascade Disable Channels” or “Force Action.”
+
+**Turn Off the Global Toggle**
+
+1. Turn off the “Enable Plugins” toggle in the upper-right corner of the page.
+2. Review the listed plugins in the “Turn off plugin tasks and Channels?” dialog, then click “Disable.”
+
+<Callout type="warn" title="Caution">
+
+- Disabling a built-in plugin or a custom version with the same Key stops the built-in plugin for that Key and sets its runtime status to “Disabled.” The system does not fall back to the built-in version. Re-enabling the plugin restores both versions. To switch back to the built-in plugin, delete all custom versions for that Key. See [Delete the Current Custom Version](#delete-the-current-custom-version).
+- Disabling a plugin or turning off the global toggle leaves in-flight tasks to timeout cleanup. See [Task Timeouts and Cleanup](#task-timeouts-and-cleanup).
+- If enabled Channels still use the plugin, disabling it requires a cascading update to those Channels. To keep those Channels active, switch them to another plugin first.
+</Callout>
+
+**Confirmation Dialogs**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Dialog | When It Appears | Message and Buttons |
+| --- | --- | --- |
+| “Enable plugin?” | When you turn on an individual plugin’s toggle | The dialog asks “Are you sure you want to enable plugin … (…)?”<br/>Buttons are “Cancel” and “Enable.” If any task models cannot be billed after enabling, the system displays “Plugin enabled” and lists the models that need pricing configuration. |
+| “Disable plugin?” | When you turn off an individual plugin’s toggle | The dialog asks “Disable plugin … (…)? Requests using this plugin may be affected.”<br/>Buttons are “Cancel” and “Disable.” |
+| “Plugin is still in use” | When disabling a plugin that an enabled Channel or in-flight task still uses. The same check applies when deleting a plugin with no built-in plugin of the same name. | The dialog shows “This plugin is still used by … enabled Channels and … in-flight tasks.” The IDs and names of those Channels appear below the message.<br/>“Cascade Disable Channels” appears only when disabling a plugin with enabled Channels. It marks the enabled Channels that use the plugin as manually disabled, records `task plugin disabled` as the reason, and then disables the plugin. New API Channels stay enabled and are unbound from the plugin. If tasks are still in flight, click “Force Action” to finish disabling the plugin.<br/>“Force Action” applies the same cascading Channel changes when disabling the plugin and disables it immediately without waiting for in-flight tasks. When deleting the plugin, it deletes it immediately. |
+| “Turn off plugin tasks and Channels?” | When you turn off “Enable Plugins” | The dialog shows “Plugin tasks and Channels stop immediately. Unfinished tasks end when they time out. Request processing continues as usual.” Each third-party plugin is listed below as “… (…): … Channels, … in-flight tasks.”<br/>Buttons are “Cancel” and “Disable.” |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- Turning on “Enable Plugins” saves the setting immediately and displays “Plugin settings updated” without a confirmation dialog.
+- Turning off the global toggle immediately stops task and Channel operations for built-in and custom plugins. The system rejects new plugin tasks and requests to plugin Channels. Request processing continues as usual.
+- The `TASK_PLUGIN_ENABLED` environment variable defaults to `true` and determines the initial state of the “Enable Plugins” global toggle. Once you save the toggle on the page, the saved setting takes precedence.
+</Callout>
+
+### Delete the Current Custom Version
+
+- Plugin Management → Delete Plugin Version
+
+![Plugin Management – Delete Plugin Version page](/assets/guide/feature-guide/plugins-delete-current-custom-version.png)
+
+**Steps**
+
+1. Click ⋯ at the end of the plugin row (or in the upper-right corner of the card in card view) and select “Delete Current Custom Version.”
+2. Review the message in the “Delete plugin version?” dialog and click “Delete.”
+3. If the “Plugin is still in use” dialog appears, click “Force Action” to continue deleting the version.
+
+<Callout type="info" title="Tip">
+
+- This action is unavailable when the plugin’s “Source” is “Built-in.” Built-in plugins cannot be deleted.
+- For details on which version takes over after deletion and what conflicts are checked before deletion, see [Version, Enablement, and Conflict Rules](#version-enablement-and-conflict-rules).
+</Callout>
+
+**“Delete plugin version?” Dialog**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Scenario | Message |
+| --- | --- |
+| A built-in plugin has the same name | The dialog shows “After deletion, the built-in plugin with the same name takes over.” |
+| No built-in plugin has the same name | The dialog shows “Deleting or disabling this plugin causes the Channels that use it to stop working.” |
+| Deletion succeeds | The system displays “Plugin version deleted.” |
+
+</div>
+
+### Manage Marketplace Sources
+
+- Plugin Management → Marketplace Sources
+
+![Plugin Management – Marketplace Sources page](/assets/guide/feature-guide/plugins-plugin-marketplace-manage-sources.png)
+
+**Steps**
+
+1. In the “Plugin Marketplace” tab, click the download site button in the upper-right corner of the source list and select “Manage Sources” at the bottom of the menu.
+2. In the “Marketplace Sources” dialog, edit the “Source Name” and “Source URL.” Click “Add Source” to add a source, or click the delete icon in the upper-right corner of a source card to remove it.
+3. Click “Save.”
+
+<Callout type="info" title="Tip">
+
+- Saving applies changes to the entire list immediately and displays “Marketplace sources updated.” Click “Cancel” to discard your changes.
+- If you delete all sources, you can restore them manually using the default URLs in the table below.
+- The browser downloads the index, so the source host must allow cross-origin requests and be reachable from the browser’s network. If the browser cannot reach the host, download the plugin source code and paste it into “Upload Plugin.”
+</Callout>
+
+**Configuration Fields**
+
+Each source has its own card. The table lists the fields in the order they appear on the card.
+
+<div className="[&_table]:min-w-[36rem] [&_td_code]:wrap-anywhere [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Source Name | The source’s display name. | Required. “Save” is unavailable if the field is empty. | The three default sources are Official, GitHub, and Community. |
+| Source URL | The URL of the source’s `index.json`. | Required. Must be an absolute HTTP(S) URL. Otherwise, saving displays `marketplace source index_url must be an absolute http(s) URL` (English only). The card’s upper-right corner shows “Official,” “Community,” or “Third-Party — Use at Your Own Risk,” depending on the URL. See [Official and Community Plugins](#official-and-community-plugins). | Official `https://www.newapi.ai/api/v1/plugins/index.json`<br/>GitHub `https://raw.githubusercontent.com/QuantumNous/new-api-plugins/main/index.json`<br/>Community `https://www.newapi.ai/api/v1/community/index.json` |
+
+</div>
+
+## Rules and Behavior
+
+This section covers plugin components and sources, metadata, the differences between official and community plugins, and the rules for versioning, enabling and disabling plugins, resolving conflicts, and cleaning up tasks.
+
+### Plugin Components and Sources
+
+A plugin declares the models it supports, the Channel types it can bind to, its billing parameters, and the endpoints it exposes. Uploading or installing a plugin registers these capabilities. Create any Channels you need separately. The table below describes the three plugin sources. For the labels used in the plugin list, see [Source Badges](#source-badges).
+
+**Plugin Sources**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Source | Description |
+| --- | --- |
+| Built-in Plugin | Ships with New API. Its source is embedded using `//go:embed` (`plugins/tasks/<key>/plugin.js`), and it registers automatically at startup. You can disable it individually, but you cannot delete it. |
+| Custom Plugin | A version uploaded or installed from the Plugin Marketplace that shares a Key with a built-in plugin and replaces it. |
+| Third-Party Plugin | A plugin uploaded or installed from the Plugin Marketplace whose Key does not match any built-in plugin. This classification applies regardless of the marketplace source. |
+
+</div>
+
+**Built-in Task Plugins**
+
+The following task plugins are currently built into New API. The list may change between releases, so check the plugin list in your installation. New API also includes six built-in request processing plugins. See <a href="/en/docs/guide/feature-guide/admin/request-processing#built-in-request-processing-plugins" target="_blank" rel="noopener noreferrer">Request Processing</a>.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Name | Purpose | Example Supported Models | Billing Parameters | Endpoints |
+| --- | --- | --- | --- | --- |
+| Alibaba Bailian (`alibaba`) | Alibaba Cloud Bailian image and video generation (Wan, Qwen Image, and Z-Image). | `wan3.0-video`, `wan2.7-i2v`, `wan2.7-image-pro`, `z-image-turbo`, and others | Video duration (seconds), output resolution, image count, output image tier | Responses (streaming/synchronous/background), Video, Images |
+| Doubao (`doubao`) | Volcengine Doubao Seedance video generation and Seedream image generation. | `doubao-seedance-1-0-lite-t2v`, `doubao-seedance-2-0-260128`, `doubao-seedream-5-0-260128`, and others | Token count, resolution, reference video input, image count | Responses (streaming/synchronous/background), Video, Images |
+| Google Veo (Gemini API) (`google`) | Google Veo video generation (text-to-video and image-to-video) through the Gemini API. | `veo-3.0-generate-001`, `veo-3.1-generate-preview`, and others | Video duration (seconds), output resolution | Responses (streaming/synchronous/background), Video |
+| Hailuo Video (`hailuo`) | MiniMax Hailuo video generation (text-to-video, image-to-video, and MiniMax-H3 multimodal references). | `MiniMax-H3`, `T2V-01`, `I2V-01`, and others | Video duration, resolution, image input, input video duration | Responses (streaming/synchronous/background), Video |
+| Jimeng (`jimeng`) | Volcengine Jimeng video generation (text-to-video, image-to-video, and first- and last-frame generation). | `jimeng_vgfm_t2v_l20` | Video duration, product tier | Responses (streaming/synchronous/background), Video, official Volcengine paths |
+| Kling (`kling`) | Kuaishou Kling video generation (text-to-video and image-to-video). | `kling-v2-5-turbo`, `kling-v2-6`, `kling-v3`, `kling-4.0` | Units consumed (estimated/actual) | Responses (streaming/synchronous/background), Video |
+| Sora (`sora`) | OpenAI Sora video generation (text-to-video, image-to-video, and remix). | `sora-2`, `sora-2-pro` | Video duration, output dimensions | Responses (streaming/synchronous/background), Video |
+| SunoAPI (`sunoapi`) | Music and lyrics generation through the third-party SunoAPI project. | `suno_music`, `suno_lyrics` | Clip count, action (music/lyrics) | Responses (streaming/synchronous/background) |
+| Google Veo & Gemini Omni (Vertex AI) (`vertex-ai`) | Google Veo video generation (text-to-video and image-to-video) and Gemini Omni through Vertex AI, using OAuth2 JWT authentication. | `veo-3.0-generate-001`, `veo-3.1-generate-preview`, `gemini-omni-flash-preview`, and others | Video duration, resolution, and audio generation. Gemini Omni has separate rates for input Tokens, text output Tokens, and video output Tokens. | Responses (streaming/synchronous/background), Video |
+| Vidu (`vidu`) | ShengShu Vidu video generation (text-to-video, image-to-video, first- and last-frame generation, and reference-to-video). | `viduq3-pro`, `viduq2`, and others | Estimated/actual credits, video duration, resolution | Responses (streaming/synchronous/background), Video |
+| xAI (`xai`) | xAI Grok Imagine video generation (text-to-video, image-to-video, reference-to-video, video editing, and video extension). | `grok-imagine-video`, `grok-imagine-video-1.5`, and others | Video duration (seconds), input images, input video duration, output resolution, content moderation blocks | Responses (streaming/synchronous/background), Video |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- The “Endpoints” column lists the protocol endpoints the plugin exposes. `Responses` maps to `openai_responses` (streaming, synchronous, and background modes), `Video` maps to `openai_video`, and `Images` maps to `openai_image` (`/v1/images/generations` and `/v1/images/edits`).
+- Plugins also accept requests on official vendor paths such as Doubao’s `/api/v3/…` and Kling’s `/v1/videos/…`. They expose the same paths under `/{插件 Key}`, where that plugin always handles the requests.
+- If another route already uses the official path, use the address under `/{插件 Key}`. Legacy prefixed addresses remain available.
+- The “Billing Parameters” column lists the parameters the plugin declares in `usageSchema` for task model billing expressions. See <a href="/en/docs/guide/feature-guide/admin/billing-expression#task-models" target="_blank" rel="noopener noreferrer">Billing Expressions</a>.
+</Callout>
+
+### Plugin Metadata
+
+**Compilation and Validation**
+
+- `apiVersion` must be `1`.
+- `name` and `author.name` are required.
+- `key` can contain only lowercase letters, digits, `-`, and `_`, and can be at most 30 characters long. It cannot match an existing gateway path segment such as `api`. If it does, the system displays `plugin meta key … is a reserved path segment` (English only).
+- `version` must follow Semantic Versioning.
+- `models` must be nonempty and contain no case-insensitive duplicates.
+- `channelTypes` must contain unique positive integers and cannot include `60` (New API) or `61` (task plugins).
+- `allowedHosts` must contain hostnames, optionally with ports. Schemes, paths, and credentials are prohibited.
+- `fetchMode` must be `per_task` or `batch`.
+- Uploads containing legacy fields such as `channelType`, `submitPaths`, or `actions` are rejected. Use `channelTypes` and `routes` instead.
+
+**Metadata Fields**
+
+Plugins declare the following fields in `meta` in their source code. For the full declaration rules for each component, see the <a href="/en/docs/plugins" target="_blank" rel="noopener noreferrer">plugin documentation</a>.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td_code]:wrap-anywhere [&_th]:whitespace-nowrap">
+
+| Field | Type / Rules | Description |
+| --- | --- | --- |
+| `apiVersion` | Integer, currently must be `1` | The plugin API version. |
+| `key` | String of at most 30 characters matching `^[a-z0-9][a-z0-9_-]*$` | The unique plugin identifier used for Channel binding and identification in the marketplace. |
+| `name` | String or localized text, required | The plugin’s display name. Localized text must include `en`. The interface displays the name in the selected language. |
+| `icon` | Optional | The plugin icon. |
+| `description` | Localized text | The multilingual plugin description. |
+| `version` | Semantic version string | The plugin version number. |
+| `author` | `{ name, url }`, with `name` required | Author information. |
+| `channelTypes` | Array of positive integers | IDs of the Channel types the plugin can bind to. Cannot include `60` or `61`. |
+| `models` | Nonempty array of unique strings | Identifiers of the models the plugin supports. |
+| `fetchMode` | `per_task` / `batch` | The fetch mode. Per-task mode requires `buildQueryRequest`. Batch mode requires `buildBatchQueryRequest` and `parseBatchResult`. |
+| `routes` | Array | The plugin’s native route declarations, used to generate routes. |
+| `protocols` | Array | The host protocols the plugin declares, such as `openai_responses`, `openai_video`, and `openai_image`. For `openai_responses`, `supports` specifies streaming, synchronous, and background modes. |
+| `allowedHosts` | Array of hostnames | Upstream hosts the plugin can send requests to, optionally including ports. |
+| `auth` | Object | The authentication method the plugin uses, such as OAuth2 JWT. |
+| `usageSchema` | Object | Billing parameter declarations used by task model billing expressions. |
+| `baseUrl` | String, optional | The default upstream URL. It prepopulates “API URL” when you create a task plugin Channel. |
+| `relay` | Array, optional | Relay routes for the Channel component. When this array is nonempty, the plugin can relay standard API requests like an advanced custom Channel. |
+| `channelConfig` | Object, optional | Channel-level setting declarations. The form for a Channel bound to this plugin shows “Plugin Settings.” |
+| `configSchema` | Object, optional | Setting declarations for request processing instances. See <a href="/en/docs/guide/feature-guide/admin/request-processing#add-and-edit-instances" target="_blank" rel="noopener noreferrer">Request Processing</a>. |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- `routes` and `protocols` determine how the plugin accepts requests. `usageSchema` determines how task results are billed. See the “Billing Parameters” tab in Plugin Details.
+- Requests are routed to the plugin only if they match a model and Channel type declared by the plugin.
+</Callout>
+
+### Official and Community Plugins
+
+The **Plugin Marketplace** has two groups, “Official Plugins” and “Community Plugins.” A source’s address alone determines which group it belongs to.
+
+**Differences in listings and grouping**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Item | Official sources | Community source | Sources at other addresses (third-party) |
+| --- | --- | --- | --- |
+| Address | The two default addresses, Official and GitHub | The default Community address | Other addresses added by an administrator |
+| Group | “Official Plugins” | “Community Plugins” | “Community Plugins” |
+| Badge in the “Marketplace Sources” dialog | “Official” | “Community” | “Third-Party — Use at Your Own Risk.” The bottom of the dialog always displays the “Third-Party Source Risks” notice: “Third-party sources are maintained by others. Review the plugin code before installing.” |
+| List header | The source name, such as “New API Official Plugins” | “New API Community,” with the note “Community plugins are published and maintained by their authors. We recommend reviewing the source code before installing.” | The source name and “Third-Party — Use at Your Own Risk,” followed by the same note as for the Community source |
+| Recommended sections | If some but not all plugins are recommended, the list is divided into “Recommended” and “More Plugins.” | Same as for official sources | No separate sections |
+| Author line on the card | Appears when the index provides an author, repository, or install count | “@author,” a “Repository” link, and “… installs in the last 30 days” | Same as for official sources |
+
+</div>
+
+**Differences in installation and restrictions**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Item | Official sources | Community source | Sources at other addresses (third-party) |
+| --- | --- | --- | --- |
+| Installation dialog | The bottom of the dialog displays “Plugins can access channel credentials. Review the source code and diffs before installing.” | Displays “What this plugin can access” and omits the notice shown for official sources | Same as for the Community source |
+| Installation statistics | Not sent | Sent to newapi.ai | Not sent |
+| Plugin identifier (Key) | No additional requirements. A plugin with the same Key as a built-in plugin replaces it as a custom version. | The Key must differ from any built-in plugin’s Key and start with the author’s GitHub username followed by an underscore, as in `alice_foo`. Otherwise, installation is rejected. See [FAQ](#frequently-asked-questions). | Same as for the Community source |
+| Delisting notice | — | When an installed version is delisted, the plugin using it displays “This version has been delisted from Community Plugins” under “Installed.” If a reason is available, it also displays “Reason: …”. This check runs only when the source list includes the Community address. | — |
+
+</div>
+
+<Callout type="info" title="Note">
+
+- If no official sources are configured and other sources are available, the “Plugin Marketplace” opens to “Community Plugins” by default.
+- After the Community source is removed, plugin codes are looked up only in the official index. If there are no third-party sources, the “Community Plugins” group displays “No marketplace sources have been configured” and “Add this address in ‘Manage Sources’:” followed by `https://www.newapi.ai/api/v1/community/index.json`.
+
+</Callout>
+
+**Official Plugins**
+
+- Plugin Management → Official Plugins → Request Processing
+
+![Plugin Management – Official Plugins – Request Processing page](/assets/guide/feature-guide/plugins-plugin-marketplace-request-processing.png)
+
+“Official Plugins” lists plugins officially published by New API. The “Request Processing” type includes six request processing plugins built into the gateway. For instructions, see the <a href="/en/docs/guide/feature-guide/admin/request-processing#built-in-request-processing-plugins" target="_blank" rel="noopener noreferrer">Request Processing</a> page in the sidebar.
+
+**Community Plugins**
+
+- Plugin Management → Community Plugins → Tasks
+
+![Plugin Management – Community Plugins – Tasks page](/assets/guide/feature-guide/plugins-plugin-marketplace-community-plugins-tasks.png)
+
+- Plugin Management → Community Plugins → Channels
+
+![Plugin Management – Community Plugins – Channels page](/assets/guide/feature-guide/plugins-plugin-marketplace-community-plugins-channels.png)
+
+- Plugin Management → Community Plugins → Request Processing
+
+![Plugin Management – Community Plugins – Request Processing page](/assets/guide/feature-guide/plugins-plugin-marketplace-community-plugins-request-processing.png)
+
+“Community Plugins” lists plugins that their authors publish and maintain on the official New API website (`www.newapi.ai`).
+
+- Plugin Management → Community Plugins → Install Plugin → Plugin Details
+
+![Plugin Management – Community Plugins – Install Plugin – Plugin Details page](/assets/guide/feature-guide/plugins-plugin-marketplace-community-plugins-install-plugin-details.png)
+
+- Plugin Management → Community Plugins → Install Plugin → Full Source Code
+
+![Plugin Management – Community Plugins – Install Plugin – Full Source Code page](/assets/guide/feature-guide/plugins-plugin-marketplace-community-plugins-install-full-source-code.png)
+
+- Plugin Management → Community Plugins → Install Plugin → Changelog
+
+![Plugin Management – Community Plugins – Install Plugin – Changelog page](/assets/guide/feature-guide/plugins-plugin-marketplace-community-plugins-install-changelog.png)
+
+- Plugin Management → newapi.ai Plugin Marketplace
+
+![Plugin Management – newapi.ai Plugin Marketplace page](/assets/guide/feature-guide/newapi-plugin-marketplace.png)
+
+The “Plugins” page on the official New API website (`www.newapi.ai`) lists both official and community plugins. Use the filters on the left to narrow the list by “Source” (Recommended, All, Official Plugins, Community Plugins) and “Type” (Tasks, Channels, Request Processing). In the upper-right corner, use “Search by name, model, author, or plugin code.”
+
+<Callout type="info" title="Note">
+
+Each plugin on the website has an eight-digit plugin code. Enter it in the “Plugin Code” field in the upper-right corner of this page’s “Plugin Marketplace” tab to find and install the plugin. See [Install from the Plugin Marketplace](#install-from-the-plugin-marketplace).
+
+</Callout>
+
+**Publishing a Community Plugin**
+
+- Plugin Management → newapi.ai Community Account
+
+![Plugin Management – newapi.ai Community Account page](/assets/guide/feature-guide/newapi-publish-plugin.png)
+
+On the “Plugins” page of the official New API website, click “Publish Plugin” and link your GitHub account. The “Community Account” page opens, where you can publish a plugin from a release tag in your public GitHub repository. Under “Submit Plugin,” enter the “Repository Path” and click “Submit.”
+
+**Publishing rules**
+
+1. Enter `owner/repo` if plugin.js is at the root of the repository, or `owner/repo/path` if it is in a subdirectory.
+2. Create one tag per version using `v1.2.0` or `1.2.0`. For plugins in subdirectories, use `path/v1.2.0` or `path/1.2.0`. The version in the plugin metadata must match the tag version.
+3. The plugin’s `meta.key` must consist of the lowercase GitHub username, an underscore, and a name, as in `raymondxox_myplugin`.
+4. Each tagged version must include README.md and CHANGELOG.md alongside plugin.js. In README.md, explain how to configure the channel, which models and endpoints the plugin supports, and how billing works. Include a sample request. In CHANGELOG.md, describe what changed in that version using the required format. See the links on the page for instructions on writing both files.
+5. A tag cannot be published if either file is missing or incorrectly formatted. The plugin page lists what to fix.
+
+<Callout type="info" title="Note">
+
+- The “Build with an AI Agent” section provides instructions. Click “Copy for Agent,” give the instructions to an agent such as Claude Code, Codex, or Cursor, and append a description of the plugin you want to build. The agent uses the `newapi-plugin-dev` skill to write plugin.js, README.md, and CHANGELOG.md according to the rules above. Confirm the result before publishing. Submitted plugins appear under “My Plugins.”
+- Once the plugin is published, gateway administrators can browse for it under “Community Plugins” or use its plugin code to find and install it. Installation applies the same plugin identifier rule as rule 3. See [Official and Community Plugins](#official-and-community-plugins). For instructions on developing a plugin, see the <a href="/en/docs/plugins" target="_blank" rel="noopener noreferrer">plugin documentation</a>.
+
+</Callout>
+
+### Version, Enablement, and Conflict Rules
+
+Multiple versions can be saved under the same Key, with only one active at a time. Plugins can be enabled or disabled both globally and individually.
+
+**Version rules**
+
+- The first version for a Key is activated automatically after upload or installation. If a version is already active, the new version is saved and remains inactive.
+- If the same Key and version already exist with different source code, the upload is rejected with the English-only message `plugin key and version already exist with different source`. Version contents are immutable. Increment `version` to change the source code.
+- The source code limit is 8 MiB. The plugin icon has a separate limit of 512 KiB.
+
+**Enablement and deletion rules**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Action | Built-in plugins and their custom versions | Third-party plugins |
+| --- | --- | --- |
+| Disable | The built-in plugin for that Key also stops serving requests. The runtime status is “Disabled,” with no fallback to the built-in version. | The platform becomes unavailable. The runtime status is “Disabled (Platform Unavailable).” |
+| Re-enable | The custom version and the built-in plugin resume service together. | The plugin resumes service. |
+| Delete the current custom version | If other uploaded versions exist, the most recently uploaded one is activated and retains its own enabled status. Otherwise, the built-in plugin resumes service unless the Key has been disabled. | If other versions exist, the same rule applies. Otherwise, the platform becomes unavailable. |
+| Turn off the global toggle | All plugin tasks and plugin channels stop running. Request processing continues as usual. | Same as for built-in plugins and their custom versions. |
+
+</div>
+
+**Conflict checks**
+
+- Uploading, installing, enabling, activating a version, and deleting the current version all trigger checks for model, channel type, and route conflicts with existing plugins. Deleting the current version triggers the check because it activates another version or falls back to a built-in version. Conflicting operations are rejected, and the checks cannot be bypassed.
+
+<Callout type="info" title="Note">
+
+- Versions uploaded through the API can include `enabled` (enabled by default), `remark` (a note), and `sourceSha256`. If provided, `sourceSha256` must match the SHA-256 hash of the source code, ignoring case. A mismatch causes the upload to be rejected. Uploads through the UI and installations from the marketplace are always enabled. Marketplace installations provide `sourceSha256` automatically.
+- If a custom version is disabled while the built-in plugin with the same name is still serving requests, the runtime status is “Disabled, Using Built-In Version.” Disabling a plugin in the UI never produces this status.
+
+</Callout>
+
+### Task Timeouts and Cleanup
+
+When a plugin is disabled or the global toggle is turned off, in-flight tasks continue and are cleaned up by global polling when they time out.
+
+**Cleanup rules**
+
+- An in-flight task has its `platform` set to the plugin Key and has yet to succeed or fail.
+- The global poller scans for timed-out tasks and marks them as failed once `TASK_TIMEOUT_MINUTES` has elapsed since submission. The default is 4,320 minutes (72 hours). Set it to 0 to disable time-based timeouts. Quota is refunded for non-legacy tasks.
+- Cleanup runs only when `UPDATE_TASK` is enabled. When it is disabled, timed-out tasks are neither marked as failed nor refunded.
+- `TASK_POLL_MAX_FAILURES` controls the maximum number of consecutive polling failures and defaults to 20.
+
+<Callout type="info" title="Note">
+
+Timeout cleanup uses a global poller shared by all plugins. When a plugin is disabled, its remaining tasks are still cleaned up under the same timeout and retry policy, so they do not fail immediately.
+
+</Callout>
+
+## Controls Reference
+
+### Page Buttons and Filters
+
+**Page header**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Control | Location | Description |
+| --- | --- | --- |
+| Node Sync Status | Upper-right corner of the page, to the left of “Enable Plugins” | Appears in multi-instance deployments with at least two online nodes. Click to see whether each node has loaded the latest plugins and settings. See [Node Sync Status](#node-sync-status). |
+| Enable Plugins | Upper-right corner of the page | Global toggle. On narrow screens, only the toggle is shown. See [Enable or Disable Plugins](#enable-or-disable-plugins). |
+| Help icon | To the right of “Enable Plugins” | Displays two sections, “Enable Plugins” and “Built-In and Custom Plugins.” The first reads “Turning this off stops plugin tasks and channels. Request processing continues as usual.” |
+| Upload Plugin | Upper-right corner of the page | Appears only on the “Installed” tab. See [Upload a Plugin](#upload-a-plugin). |
+| Installed, Plugin Marketplace | Below the page title | Switches between tabs. The page defaults to “Installed” and returns to it on refresh. |
+
+</div>
+
+**“Installed” tab**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Control | Location | Description |
+| --- | --- | --- |
+| Filter plugins... | Left side of the toolbar above the list | Searches by name or Key within the current plugin type. The list refreshes automatically as you type. |
+| Reset | To the right of the search box | Appears when a search term is present. Clears the search. |
+| Tasks, Channels, Request Processing | Toolbar above the list | Switches between plugin types. Each number counts installed plugins on this deployment that include the corresponding component. A plugin with multiple components appears under each applicable type. If no type is selected, the first one with plugins opens. The selection is shared with “Plugin Marketplace” and stored in the page URL. |
+| Card View, Table View | Right side of the toolbar above the list | Switches between the two views. Card View is the default. The selection is saved in the current browser. |
+| View | Right side of the toolbar above the list | Under “Toggle Columns,” show or hide the “Plugin” and “Active Version” columns. Refreshing restores the default column visibility. |
+| Column sorting | “Plugin” and “Active Version” column headers | Click a header and select “Ascending,” “Descending,” or “Hide.” Other columns cannot be sorted. By default, plugins are sorted by their declared sort priority in descending order, then by Key in ascending order. |
+| Rows per Page, pagination | Lower-right corner of the list | To the left of “Rows per Page,” “Total: …” shows the number of plugins of the current type. “Rows per Page” defaults to 20. Available options are 10, 20, 30, 40, 50, and 100. The selection is not saved. Both views use pagination. |
+
+</div>
+
+**“Plugin Marketplace” tab**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Control | Location | Description |
+| --- | --- | --- |
+| Official Plugins, Community Plugins | Left side below the tab bar | Switches between groups. The default is “Official Plugins.” See [Official and Community Plugins](#official-and-community-plugins) for the grouping rules. |
+| Tasks, Channels, Request Processing | To the right of the groups | Switches between plugin types. Each number shows how many plugins of that type are available from the current source. The selection is shared with “Installed.” |
+| Plugin Code, Find | Right side below the tab bar | Enter eight digits and click “Find” or press Enter. The search checks the official index first, then community plugins. If a match is found, “Search results for plugin code …” appears above the list with an “Official” or “Community” badge and an installable plugin card. If there is no match, the message reads “No plugin found for this code.” If the lookup is temporarily unavailable, the message reads “This plugin code cannot be looked up right now. Please try again later.” This control is hidden if neither an official source nor the Community source is configured. |
+| Clear | Search results area | Collapses the search results. |
+| Download Site | Upper-right corner of the source list | Lists the sources in the current group. For sources hosted on `www.newapi.ai`, choose “Primary Site (`www.newapi.ai`)” or “Backup Site (`www.newapi.pro`).” This changes only the download address. The saved source address and integrity checks stay the same. The site preference is saved in the current browser, while the source selection is not saved. |
+| Manage Sources | Bottom of the Download Site menu | Opens the “Marketplace Sources” dialog. See [Manage Marketplace Sources](#manage-marketplace-sources). |
+| Refresh | To the right of Download Site | Downloads the current source’s index again. |
+
+</div>
+
+### Row Actions
+
+**“Installed” tab**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Enabled | Toggle in the “Enabled” column (at the bottom of the card) | Enables or disables an individual plugin. A confirmation dialog appears before the change. See [Enable or Disable Plugins](#enable-or-disable-plugins). |
+| Plugin Website | Below the plugin name | Appears if the plugin declares an official website and opens it in a new tab. |
+| Details | ⋯ menu at the end of the row (upper-right corner of the card) | Opens the plugin details panel. See [View Plugin Details](#view-plugin-details). |
+| Upload New Version | ⋯ menu at the end of the row (upper-right corner of the card) | Opens the “Upload New Plugin Version” dialog. This action is also available for built-in plugins. See [Upload a Plugin](#upload-a-plugin). |
+| Delete Current Custom Version | ⋯ menu at the end of the row (upper-right corner of the card) | Unavailable when “Source” is “Built-In.” See [Delete the Current Custom Version](#delete-the-current-custom-version). |
+
+</div>
+
+**“Plugin Marketplace” tab**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Install | Bottom of the card | Opens the installation dialog. The button remains available when the status is “Up to Date,” so you can reinstall the plugin or select another version. See [Install from the Plugin Marketplace](#install-from-the-plugin-marketplace). |
+| Plugin Website | Below the plugin name | Appears if the plugin declares an official website and opens it in a new tab. |
+| @author, Repository | Author line below “Plugin Website” | Appear when the marketplace index provides an author link or repository. Links open in a new tab. |
+
+</div>
+
+## Status Reference
+
+### Runtime Status
+
+The “Runtime Status” column in the “Installed” list has six possible values. In Card View, this status is the badge to the right of the source.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Registered | The plugin has been compiled and registered for routing. It can handle requests. | Only “Registered” plugins can be bound to channels. |
+| Compilation Failed | The source code could not be compiled, metadata validation failed, required hooks are missing, or a model, channel type, or route conflict with another plugin excluded this plugin from routing. | Shown in red. Hover to see the error. Review the source code in the plugin details, fix the issue, and upload a new version. See [FAQ](#frequently-asked-questions). |
+| Disabled | A built-in plugin was disabled individually, or its custom version with the same name was disabled. | The built-in plugin stops serving requests as well. Turn on “Enabled” to restore service. See [Version, Enablement, and Conflict Rules](#version-enablement-and-conflict-rules). |
+| Disabled, Using Built-In Version | The custom version is disabled, and the built-in plugin with the same name is still serving requests. | Appears only when a disabled version is uploaded through the API. Disabling a plugin in the UI never produces this status. |
+| Disabled (Platform Unavailable) | A third-party plugin is disabled, and no built-in version is available to take over. | Channels using the plugin cannot handle requests. Turn on “Enabled” to restore service. |
+| Not Registered | The version is enabled, but the node handling the request has yet to load it. | Refresh the list in a moment. See [FAQ](#frequently-asked-questions). |
+
+</div>
+
+### Source Badges
+
+The “Source” column in the “Installed” list has three possible badges. In Card View, the source is the first badge.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Badge | Meaning | Notes |
+| --- | --- | --- |
+| Built-In | No version has been uploaded for this Key. The built-in plugin is serving requests. | Gray. Cannot be deleted. |
+| Custom (Replaces Built-In …) | A version has been uploaded, and a built-in plugin with the same name exists. The version number in parentheses is the built-in version. | If the current version differs from the built-in version, the notice below reads “The built-in version is v…. Delete the custom version to restore it.” |
+| Third-Party | A version has been uploaded, and there is no built-in plugin with the same name. | This badge applies regardless of the marketplace source. |
+
+</div>
+
+### Installation Status
+
+Cards in the “Plugin Marketplace” show one of four statuses in the upper-right corner. The status is determined by comparing the Key with plugins installed on this deployment, including built-in plugins.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Not Installed | This deployment has no plugin with this Key. | “Install” is shown as a filled button. |
+| Up to Date | The installed version is the latest version from this source. | “Install” is shown as an outlined button. You can still click it to reinstall or select another version. |
+| v… → v… | The installed version is listed in this source, and a newer version is available. | Filled badge. The first value is the installed version and the second is the latest version. |
+| v… Installed, Not Listed by This Source | The installed version is absent from this source’s version list. This includes cases where the installed version is newer than the latest version from the source. | Shown in red. The installation dialog displays “This source does not list the installed version.” |
+
+</div>
+
+### File Verification Status
+
+The “File Verification” section at the bottom of the installation dialog shows one of five results.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Verifying File… | The browser is downloading the source code and calculating its hash. | “Install and Enable” is disabled. |
+| File Verification Passed | “This file matches the file published by the source.” | Installation is available. |
+| No Integrity Hash | The source did not provide a hash for this version, so the browser cannot compare it. The message reads “Review the plugin code before installing.” | Installation is available. The source list header also shows “No Integrity Verification,” and the card displays “No Integrity Hash” in red. |
+| Integrity Verification Failed | “This file does not match the file published by the source. Do not install it.” | Shown in red. “Install and Enable” is disabled. |
+| File Not Yet Verified | A hash is available, but the source code could not be retrieved, for example because the download failed. The message reads “This file will be verified again during installation.” | “Install and Enable” is disabled. |
+
+</div>
+
+### Node Sync Status
+
+In multi-instance deployments with at least two online nodes, the upper-right corner of the page shows one of the following summaries.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Applied on … Nodes | All online nodes have loaded the latest plugins and settings. | Click to see “Applied” for each node under “Nodes.” |
+| …/… Nodes Updated | Some nodes are still loading. | Nodes that have yet to finish show “Updating.” See [Saving and Applying Changes](#saving-and-applying-changes) for sync timing by change type. |
+| … Nodes Failed to Update | One or more nodes failed to load the update. | Affected nodes show “Update Failed.” The affected plugins and original error messages are listed below. |
+
+</div>
+
+## Saving and Applying Changes
+
+The server executes each action on this page as soon as it is submitted. There is no page-wide Save button. Changes take effect immediately on the node handling the request. Other nodes sync according to the two groups below. In a multi-instance deployment, the upper-right corner of the page shows whether each node has loaded the changes. See [Node Sync Status](#node-sync-status).
+
+**Plugin versions**
+
+The node handling the request updates its plugin registry immediately. Other nodes load the changes in about 3 seconds, with a maximum of 30 seconds.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Action | How it is saved | When it takes effect |
+| --- | --- | --- |
+| Upload, or “Install and Enable” from the marketplace | The server compiles the plugin, validates its metadata, and checks for conflicts before saving it. | The first version for a Key is activated as soon as it is saved. If a version is already active, the message reads “Plugin saved, pending activation.” The current version stays active until you click “Activate Now” or activate the new version in “Version History.” |
+| Activate or roll back a version | Use “Version History.” On success, the message reads “Plugin version activated.” | The version is compiled before activation. If compilation fails, the current version stays active. |
+| Enable or disable a custom plugin | Use the toggle and confirm the change. If the plugin is still in use, follow the “Plugin Still in Use” flow. | Disabling removes the Key from routing. Re-enabling restores it. In-flight tasks continue. |
+| Delete the current custom version | Confirm the action. On success, the message reads “Plugin version deleted.” | If other versions exist for the Key, the most recently uploaded one is activated. Otherwise, the gateway falls back to the built-in plugin. If no built-in plugin exists, the platform becomes unavailable. Conflicts are checked before fallback. If a conflict is found, deletion is rejected. |
+| Pricing check after uploading, installing, activating, enabling, or deleting the current version | The result is returned with the operation. | If any task models cannot be billed, the message reads “Pricing needs attention for the following models:”. Address these models in the billing and payment settings. See [Upload a Plugin](#upload-a-plugin). |
+
+</div>
+
+**Global toggle, built-in plugins, and marketplace sources**
+
+These changes are stored as system settings. They take effect immediately on the node handling the request. Other nodes pick them up through system settings sync in about 3 seconds, or within one sync cycle at most (60 seconds by default).
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Action | How it is saved | When it takes effect |
+| --- | --- | --- |
+| Global “Enable Plugins” toggle | Use the toggle. Before turning it off, confirm “Turn off plugin tasks and channels?” On success, the message reads “Plugin settings updated.” | Turning it off rejects new plugin tasks and plugin channel requests. Request processing and in-flight tasks continue. |
+| Enable or disable a built-in plugin | Use the toggle and confirm the change. | When disabled, the built-in plugin for that Key stops serving requests without falling back to another version. Re-enabling restores service. |
+| Change marketplace sources | Save the full list at once in the “Marketplace Sources” dialog. On success, the message reads “Marketplace sources updated.” | This affects only which sources are available to browse in the “Plugin Marketplace.” |
+
+</div>
+
+**Additional notes**
+
+- **Enabling or disabling built-in and custom plugins with the same name together**. Each plugin syncs according to its group. Both changes take effect on other nodes in about 3 seconds, or within about 60 seconds under the default configuration.
+- **Compilation failure**. If a node fails to compile a new version while loading it, that node continues to use the previously loaded version and shows “Compilation Failed” as its runtime status.
+- **Plugin sandbox “Dry Run”**. The sandbox runs a temporary copy without saving it or affecting the current registry.
+- **Plugin channels**. For details on saving and applying changes, see <a href="/en/docs/guide/feature-guide/admin/channel#saving-and-applying-changes" target="_blank" rel="noopener noreferrer">Channel Management</a>.
+
+## Important Notes
+
+**Installation and sources**
+
+- **Uploading and installing plugins are administrator-level trust decisions.** Plugins can read channel credentials and construct upstream requests. Plugins from community and third-party sources are published by others. Review the source code before installing. See [Upload a Plugin](#upload-a-plugin) and [Official and Community Plugins](#official-and-community-plugins).
+- **The Community source reports installation statistics.** When you install from the Community source, the server sends the plugin identifier, version number, and a randomly generated ID for this gateway to newapi.ai. See [Official and Community Plugins](#official-and-community-plugins).
+
+**Enabling, disabling, and deleting plugins**
+
+- **Disabling a plugin also disables the built-in plugin with the same Key.** If you disable a built-in plugin or a custom version with the same Key as a built-in plugin, the built-in plugin stops serving requests for that Key. No fallback occurs. See [Version, Enablement, and Conflict Rules](#version-enablement-and-conflict-rules).
+- **In-flight tasks continue until timeout cleanup.** Turning off the global switch or disabling a plugin leaves in-flight tasks for timeout cleanup. Cleanup runs only when `UPDATE_TASK` is enabled. See [Task Timeouts and Cleanup](#task-timeouts-and-cleanup).
+- **Update bound channels before deleting or disabling a plugin.** Requests on those channels will otherwise fail because the plugin is unavailable. See [Enable or Disable a Plugin](#enable-or-disable-plugins).
+- **Another version takes over after deletion.** When you delete the current custom version, the most recently uploaded version for that Key becomes active if another version is available. See [Delete the Current Custom Version](#delete-the-current-custom-version).
+
+**Versions and conflicts**
+
+- **Bump the version when you change the source code.** The system rejects different source code submitted under an existing Key and version. See [Version, Enablement, and Conflict Rules](#version-enablement-and-conflict-rules).
+- **Conflict checks are mandatory.** Uploading, installing, enabling, or activating a plugin, or deleting the current version, always triggers a conflict check. See [Version, Enablement, and Conflict Rules](#version-enablement-and-conflict-rules).
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="The Plugin category is missing when creating a channel">
+
+**Message**
+
+When you copy or submit a task plugin channel, you may see `task plugin channels require the task_plugin.bind permission` (English only).
+
+**Possible cause**
+
+Your account lacks the “Bind Task Plugin” permission. The selection dialog hides the “Plugin” category from accounts without this permission.
+
+**Resolution**
+
+1. Ask Root to grant “Bind Task Plugin” under “Administrator Permissions” in <a href="/en/docs/guide/feature-guide/admin/user#administrator-permissions" target="_blank" rel="noopener noreferrer">User Management</a>.
+
+</Accordion>
+
+<Accordion title="A task plugin channel cannot be saved">
+
+**Messages**
+
+Examples include `task plugin "…" is not registered`, `task plugin key must not exceed 30 characters`, `base URL is required for task plugin channels`, and `channel cannot be empty` (English only). You may also see “Base URL is required for this channel type”.
+
+**Possible causes**
+
+- The bound plugin is unregistered.
+- The Key of the plugin bound to the channel exceeds 30 characters.
+- The “API Address” or “API Key” field is empty.
+
+**Resolution**
+
+1. Fix each issue indicated by the messages.
+2. Confirm that the plugin's runtime status is “Registered”.
+
+</Accordion>
+
+<Accordion title="A request does not reach the expected plugin">
+
+**Messages**
+
+You may see `selected channel does not match the pinned task plugin`. If the plugin system or the plugin itself is disabled, the client receives HTTP 400 with `the task plugin system is disabled on this gateway` or `task plugin "…" is disabled on this gateway` (English only).
+
+**Possible causes**
+
+- The plugin Key bound to the channel differs from the Key pinned to the request.
+- IDs for other channel types are missing from the plugin's `channelTypes`.
+- The channel has a different type than “Task Plugin”, the bound Key is incorrect, the Group does not match, or the model is missing from the plugin's `models`.
+- The global “Enable Plugins” switch or the plugin itself is off.
+
+**Resolution**
+
+1. Check the channel and plugin against each possible cause above.
+2. Re-enable the plugin if it is disabled.
+
+</Accordion>
+
+<Accordion title="Plugin upload fails">
+
+**Messages**
+
+Examples include “Plugin source exceeds the 8 MiB limit.”, `plugin source sha256 mismatch`, and `plugin key and version already exist with different source` (English only for the two code-formatted messages).
+
+**Possible causes**
+
+- The source code exceeds 8 MiB.
+- One or more of `apiVersion`, `key`, `version`, `name`, or `models` fail validation.
+- The plugin has a model, channel type, or route conflict with an existing plugin.
+- The same Key and version already exist with different source code.
+
+**Resolution**
+
+1. If there is a conflict, delete or disable the conflicting plugin on the “Installed” tab, then upload again.
+2. After changing the source code, increment `version` before uploading again.
+
+</Accordion>
+
+<Accordion title="The plugin shows a compilation failure">
+
+**Message**
+
+Hover over the runtime status to see the error, such as `plugin … is missing required export "buildSubmitRequest"` (English only).
+
+**Possible causes**
+
+The source code contains errors, metadata is missing, or required exports such as `buildSubmitRequest`, `parseSubmitResponse`, or `parseTaskResult` are missing. `batch` mode also requires batch exports.
+
+**Resolution**
+
+1. Review the source code and error in the plugin details, then fix the issue.
+
+</Accordion>
+
+<Accordion title="The plugin shows as unregistered">
+
+**Explanation**
+
+This version is enabled, but the node handling the request has yet to load it into its registry. Other nodes load the new version within about 3 seconds. Each node also syncs with the database every 30 seconds.
+
+**Resolution**
+
+1. Refresh the list after a short wait.
+2. If the plugin still shows as unregistered, check the server logs for task plugin sync errors.
+
+</Accordion>
+
+<Accordion title="Disabling a plugin shows “Plugin is still in use”">
+
+**Explanation**
+
+Enabled channels or in-flight tasks still use the plugin.
+
+**Resolution**
+
+1. In the confirmation dialog, click “Cascade Disable Channels”. If tasks are still in flight, click “Force Operation”. See [Enable or Disable a Plugin](#enable-or-disable-plugins).
+2. If you need to keep these channels, switch them to another plugin first.
+
+</Accordion>
+
+<Accordion title="Disabling a custom version also stops the built-in plugin with the same Key">
+
+**Explanation**
+
+Disabling a custom version that shares a Key with a built-in plugin also disables the built-in plugin.
+
+**Resolution**
+
+1. Re-enable the plugin to restore the current custom version.
+2. To use the built-in plugin, use “Delete Current Custom Version” to remove all custom versions for that Key. Once “Source” shows “Built-in”, turn on the “Enabled” switch for that row.
+
+</Accordion>
+
+<Accordion title="Task billing does not take effect">
+
+**Possible causes**
+
+- The plugin does not declare `usageSchema`.
+- The request was not routed to this plugin.
+- No task expression is configured for this task model in <a href="/en/docs/guide/feature-guide/admin/billing-expression#task-models" target="_blank" rel="noopener noreferrer">Billing Expressions</a>.
+
+</Accordion>
+
+<Accordion title="Marketplace installation fails">
+
+**Messages**
+
+You may see “Integrity check failed” or “Resolve the conflict on the Installed tab, then install again.”
+
+**Possible causes**
+
+- The index is unreachable.
+- The source code hash differs from the hash in the index.
+- There is a route conflict.
+- A plugin from a community or third-party source uses the same identifier as a built-in plugin or lacks the required prefix of the author's GitHub username followed by an underscore.
+- The plugin's source has been removed from the source list.
+
+**Resolution**
+
+1. Follow the instructions in the message and try installing again. If there is a conflict, resolve it on the “Installed” tab first.
+2. If the identifier fails validation, contact the plugin author.
+
+</Accordion>
+
+<Accordion title="A marketplace source cannot be fetched">
+
+**Messages**
+
+You may see “Could not load this source” or “Could not download the plugin code. Try again later.”
+
+**Possible causes**
+
+- The index's `indexVersion` is greater than 1, which prevents plugins from this source from appearing in the list.
+- The browser cannot reach the host, or the host blocks cross-origin requests.
+
+**Resolution**
+
+1. Correct the “Source URL”.
+2. If the host blocks cross-origin requests or is unreachable from the browser, download the source code and paste it into “Upload Plugin”.
+
+</Accordion>
+
+<Accordion title="“Test Connection” does not work for a task plugin channel">
+
+**Message**
+
+`Task Plugin channel test is not supported` (English only)
+
+**Explanation**
+
+Connection testing requires a plugin with a channel component. Task-only plugins lack this component.
+
+**Resolution**
+
+1. Submit a task using an actual model and check the result in the task log.
+
+</Accordion>
+
+<Accordion title="Community plugin installation reports an invalid identifier">
+
+**Messages**
+
+You may see “Community plugins cannot use the identifier of the built-in plugin …” or “Community plugin identifiers must start with the author's GitHub username followed by an underscore, for example alice_foo”.
+
+**Explanation**
+
+Plugins installed from community or other third-party sources must use an identifier distinct from built-in plugin identifiers and include the author's prefix.
+
+**Resolution**
+
+1. Ask the plugin author to update the identifier to meet the requirements and publish a new version.
+2. For the identifier rules that apply when publishing a plugin, see “Publish a Community Plugin” in [Official and Community Plugins](#official-and-community-plugins).
+
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- Create “Task Plugin” channels, bind plugin extensions to New API channels, sign in to plugin channels, manage plugin settings, and configure Groups and route mappings. See <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>.
+- Add request processing instances and set their scope and execution order. See <a href="/en/docs/guide/feature-guide/admin/request-processing" target="_blank" rel="noopener noreferrer">Request Processing</a>.
+- Develop and debug plugins, and review the publishing requirements for the official plugin repository. See <a href="/en/docs/plugins" target="_blank" rel="noopener noreferrer">Plugin Documentation</a>.
+- View task status and background processing. See <a href="/en/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">Task Logs</a>.
+- Configure global model behavior and model deployments. See <a href="/en/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">Model Configuration</a>.
+- Configure Quota units and pricing by model and Group. See <a href="/en/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a>.
+- Configure task expressions that use plugin billing parameters for task models. See <a href="/en/docs/guide/feature-guide/admin/billing-expression#task-models" target="_blank" rel="noopener noreferrer">Billing Expressions</a>.

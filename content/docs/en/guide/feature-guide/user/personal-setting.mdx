@@ -1,143 +1,330 @@
 ---
-title: Profile and Security
-description: View or manage account information, binding details, notification and behavior preferences, security settings, 2FA management, Passkey management, login session management, and other personal settings.
+title: Personal Profile
+description: View account information and usage, configure notification methods and preferences, set the interface language, choose which pages appear in the left sidebar, and check in daily to earn quota.
 ---
 
-- After logging in, click the "Profile" button in the left navigation bar to access the profile page `/profile`.
-Here you can view or manage account information, account bindings, notification and behavior preferences, interface language, personal sidebar, check-in, 2FA, Passkey, access tokens, and login sessions.
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-## View Account Information
+- In the sidebar, go to “Personal” → “Personal Profile.”
+- View account information, configure notification methods and preferences, set the interface language, choose which pages appear in the left sidebar, and check in daily to earn quota.
+- Manage your password, account linking, two-step verification, Passkeys, login sessions, and access tokens on the <a href="/en/docs/guide/feature-guide/user/security" target="_blank" rel="noopener noreferrer">Security & Access</a> page.
 
-View account information, including name, user ID, remaining balance, total quota consumed, number of API requests, and other details.
+<Callout type="info" title="Tip">
 
-![Personal Account Information Page](/assets/guide/feature-guide/personal.png)
-
-## Manage Account Binding Information
-
-Manage account binding information, including email and third-party OAuth accounts.
-
-- Bind Email
-1. In the settings area, find "Account Binding" → "Email" → click "Bind".
-2. Enter the email address you want to bind.
-3. Click "Send" to get the verification code.
-4. Enter the verification code and click "Bind Email".
-![Bind Email Page](/assets/guide/feature-guide/personal-link-email.png)
-
-- Bind Third-party OAuth Account
-
-1. In the settings area, find "Account Binding" → "Third-party OAuth Accounts".
-2. Click the "Bind" button corresponding to the third-party OAuth platform you want to bind.
-3. The page will redirect to the platform's authorization page; log in and click "Authorize".
-4. After authorization is complete, it will automatically redirect back, and the binding status will change to "Bound".
-
-![Bind Third-party OAuth Account Page](/assets/guide/feature-guide/personal-link-OAuth.png)
-
-## Set Notification and Behavior Preferences
-
-This page is used to configure account notification methods and system usage preferences.
-
-- Notification Settings
-1. **Notification Method**: Supports selecting Email, Webhook, Bark, or Gotify to receive system notifications.
-2. **Balance Warning Threshold**: Set the balance alert amount; when the account balance falls below this value, a notification will be sent.
-3. **Notification Email**: Specify the email address to receive notifications; if left blank, the account's bound email will be used by default.
-4. Enter the corresponding information, and after completing the configuration, click "Save Settings" for the changes to take effect.
-
-- Behavior Preference Settings
-1. **Receive Upstream Model Update Notifications**: When enabled, if scheduled model checks detect changes in upstream models or check failures, a summary notification will be sent via the selected notification method; this feature is only available to administrators.
-2. **Accept Unpriced Models**: When enabled, allows the use of models for which prices have not yet been configured. (Not recommended)
-3. **Record IP Addresses**: When enabled, records the IP addresses of users calling models and when requests encounter errors.
-4. Enter the corresponding information, and after completing the configuration, click "Save Settings" for the changes to take effect.
-
-![Notification and Behavior Preferences Page](/assets/guide/feature-guide/personal-notification-behavior-preferences.png)
-
-<Callout type="warn">
-  Enabling "Accept Unpriced Models" may lead to unexpectedly high consumption. It is recommended to keep the default setting of "Accept Unpriced Models" disabled.
+- Your account display name appears in large text at the top of the page. If you haven’t set a display name, your username appears instead.
+- The site determines the quota unit.
+- “Daily Check-in” appears only when an administrator enables the check-in feature.
+- If “Personal Profile” is missing from the left sidebar, click your avatar in the upper-right corner and select “Personal Profile.”<br/>In “Left Sidebar Personal Settings,” turn on “Personal Center Section” and “Personal Settings,” then save. If these two toggles aren’t available, an administrator has hidden the page. Contact your administrator.
 </Callout>
 
-## Set Interface Language Preference
+## Personal Profile Overview
 
-You can set your interface language preference, which will be synchronized across all devices logged in with this account and will affect the API error message language.
+- Personal Profile – Overview
 
-![Interface Language Preference Settings Page](/assets/guide/feature-guide/personal-language-preferences.png)
+![Personal Profile overview page](/assets/guide/feature-guide/personal-profile.png)
 
-## Personal Left Sidebar Settings for Personalized Display
+The top of the page shows account information and usage. Below it are the “Settings,” “Language Preferences,” “Daily Check-in,” and “Left Sidebar Personal Settings” sections, where you can do the following.
 
-- This page is used to customize the functional modules displayed in the left sidebar. Users can enable or hide corresponding entries based on their personal usage habits.
+- [Configure notification and behavior preferences](#configure-notification-and-behavior-preferences)
+- [Set the interface language](#set-the-interface-language)
+- [Check in daily to earn quota](#check-in-daily-to-earn-quota)
+- [Choose which pages appear in the left sidebar](#choose-which-pages-appear-in-the-left-sidebar)
 
-![Personal Left Sidebar Settings Page](/assets/guide/feature-guide/personal-sidebar-settings.png)
-
-<Callout type="info">
-  This only changes the personal navigation display and does not grant new permissions or deactivate corresponding interfaces.
+<Callout type="info" title="Tip">
+If you aren’t receiving notifications, can’t see Daily Check-in, or are missing a page from the sidebar, see the [FAQ](#faq).
 </Callout>
 
-## Daily Check-in
+**Field descriptions**
 
-- Used to complete daily check-ins and view check-in records and rewards.
+The account information at the top of the page is read-only. The table lists the fields from top to bottom and left to right.
 
-1. Click "Check in now" to receive the day's random quota reward. (The random quota range is set by the platform system administrator) [View settings documentation →](/en/docs/guide/feature-guide/admin/settings-billing)
-2. The page displays cumulative check-in days, quota obtained this month, and cumulative quota obtained.
-3. You can only check in once per day. Rewards will be issued to your account balance, and there may be a slight delay in crediting.
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and limitations | Notes |
+| --- | --- | --- | --- |
+| Display Name | The name shown to others for the account. | Read-only on this page. | Appears in large text at the top of the page. If no display name is set, the username appears. |
+| Role | The account’s role. | Set by an administrator. | Shows “User,” “Administrator,” or “Super Administrator.” |
+| User ID | The account’s numeric identifier. | Generated during registration and cannot be changed. | Click to copy. |
+| Username | The username used to sign in. | Read-only on this page. | Displayed as “@username.” |
+| Email | The email address linked to the account. | Link or change it under “Account Linking” on the “Security & Access” page. | Hidden if no email address is linked. |
+| Group | The account’s group, which determines the available models and billing ratios. | Set by an administrator. | Hidden if no group is assigned. |
+| Current Balance | The account’s remaining wallet quota. | Calculated by the system. It increases when you top up or redeem quota on the “Wallet” page or complete a daily check-in. | “Remaining Quota” appears below the balance. This label is hidden on narrow screens. |
+| Total Usage | The total quota the account has consumed. | Tracked automatically. | “Total Quota Consumed” appears below the value. |
+| API Requests | The total number of requests the account has made. | Tracked automatically. | “Total Requests” appears below the value. |
+</div>
 
-![Daily Check-in Page](/assets/guide/feature-guide/personal-check-in.png)
+## Configure Notification and Behavior Preferences
 
-## Security Settings
+- Personal Profile – Notification Method
 
-- This page is used to manage account security configurations and account access permissions.
-1. **Change Password**: Used to update the account login password to enhance account security.
-2. **Access Tokens**: Used to generate and manage API access tokens, supporting external applications or services to access relevant interfaces via tokens.
-3. **Delete Account**: Used to permanently delete the current account and all its associated data. This operation is irreversible and should be carefully confirmed before execution.
+![Personal Profile notification method page](/assets/guide/feature-guide/personal-profile-settings-notification-method.png)
 
-![Security Settings Page](/assets/guide/feature-guide/personal-security.png)
+**Steps**
 
-<Callout type="info">
-    - If you suspect an API access token has been compromised, you can reset it:
-    1. On the profile page, find the "Security Settings" area.
-    2. Click "Access Tokens" → "Regenerate".
-    3. After confirming the operation, the system will generate a new API access token.
-    4. The old API access token will become invalid immediately, and all services using the old API access token will need to be reconfigured with a new one.
+1. Under “Notification Method” in the “Settings” section, select “Email,” “Webhook,” “Bark,” or “Gotify.”
+2. Fill in the fields displayed below the selected method.
+3. Under “Which Notifications to Receive,” turn “Low Balance Alert” on or off and enter a “Reminder Threshold (…)” as needed.
+4. Under “Preferences,” turn “Accept Unpriced Models” on or off as needed.
+5. Click “Save Settings.”
+
+<Callout type="info" title="Tip">
+
+- “Notification Method,” “Which Notifications to Receive,” and “Preferences” share the “Save Settings” button at the bottom. If a required field for the selected method is empty or invalid, the entire save fails, including any changes to other toggles.
+- Only the fields for the selected notification method are saved. If you switch methods and save, any values entered for other methods are cleared.
+- If an administrator disables low balance alerts for the site, regular users only see “No notifications are available to you right now” and “Preferences” in the “Settings” section.
+- The site server must be able to reach the notification address. The site’s security policy may block addresses pointing to a private network or localhost. The page does not show an error if delivery fails. If the same type of notification is triggered several times in a short period, some notifications may be skipped.
 </Callout>
 
-<Callout type="warn">
-  - Access tokens are used for account management interfaces and are different from API keys used for calling models; they should not be entered into third-party AI clients.
-  - After resetting an API access token, all existing API access tokens will become invalid, and new API access tokens will need to be recreated.
+<Callout type="warn" title="Caution">
+Turning on “Accept Unpriced Models” lets you call models that an administrator hasn’t priced yet, which may result in unexpectedly high charges. This setting is off by default. We recommend leaving it off.
 </Callout>
 
-## Enable or Disable Two-Factor Authentication (2FA)
+**Notification methods**
 
-- This page is used to enable or disable Two-Factor Authentication (2FA) for your account, adding an extra layer of security beyond your password.
+The screenshots show the fields for “Email,” “Bark,” “Gotify,” and “Webhook,” in that order from top left to top right, then bottom left to bottom right.
 
-1. **Enable Two-Factor Authentication**: On the profile page, click the "Enable" button next to "Two-Factor Authentication".
-2. **Scan QR Code**: Use an authenticator app such as Google Authenticator or Microsoft Authenticator to scan the QR code on the page, or manually enter the key to bind.
-3. **Save Backup Codes**: Save the system-generated backup codes. Each code can typically be used only once to recover account access if the authenticator is unavailable.
-4. **Enter Verification Code**: Open your authenticator app and enter the currently generated 6-digit verification code.
-5. **Complete Enablement**: Click the "Enable 2FA" button. Once verified, the Two-Factor Authentication setup will be complete.
-6. **Regenerate Backup Codes or Disable 2FA**: Click the "Regenerate Backup Codes" button or the "Disable 2FA" button and follow the prompts to complete the corresponding action.
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Notification method | Fields | Requirements and limitations |
+| --- | --- | --- |
+| Email | Notification Email | Optional. The placeholder reads “Leave blank to use your account email.” If left blank, notifications go to the email address linked to the account. If no address is linked, no notifications are sent. An incorrectly formatted address triggers “Invalid email address.” |
+| Webhook | Webhook URL, Webhook Secret | “Webhook URL” is required and must be a valid URL such as `https://example.com/webhook`. An empty field triggers “Webhook URL cannot be empty.” An incorrectly formatted URL triggers “Invalid Webhook URL.” “Webhook Secret” is optional. If set, each notification includes a signature that the recipient can use to verify its origin. Notifications use JSON format. |
+| Bark | Bark Push URL | Required. The URL must start with http:// or https://. You can use the template variables `{{title}}` and `{{content}}`, which are replaced with the notification title and body when the notification is sent. An empty field triggers “Bark push URL cannot be empty.” An incorrectly formatted URL triggers “Invalid Bark push URL.” |
+| Gotify | Gotify Server URL, Gotify App Token, Message Priority | “Gotify Server URL” is required and must start with http:// or https://. An empty field triggers “Gotify server URL cannot be empty.” “Gotify App Token” is required. Create an app on the Gotify server and copy its token. An empty field triggers “Gotify token cannot be empty.” “Message Priority” ranges from 0 (lowest) to 10 (highest). Out-of-range values are saved as 5. Enter the priority you want notifications to use. The “Setup Instructions” below list three steps and link to the “Gotify Documentation.” |
+</div>
 
-![2FA Settings Page](/assets/guide/feature-guide/personal-2fa.png)
+**Configuration options**
 
-<Callout type="warn">
-  Backup codes are displayed only once and cannot be viewed again after closing the pop-up. If backup codes are lost and the authenticator cannot be used, you need to contact an administrator for a reset.
+The “Settings” section has three parts, “Notification Method,” “Which Notifications to Receive,” and “Preferences.” The fields for each notification method are listed above. The following table lists the options in the order they appear on the page.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Option | Section | Definition | Requirements and limitations | Default |
+| --- | --- | --- | --- | --- |
+| Notification Method | Notification Method | How you receive notifications. | Select one of “Email,” “Webhook,” “Bark,” or “Gotify.” This option is hidden from regular users if an administrator disables low balance alerts for the site. | “Email” |
+| Low Balance Alert | Which Notifications to Receive | Whether to send an alert when the balance falls below the threshold. | Described as “Notify me once when my balance falls below the threshold.” The wallet balance and remaining subscription quota are checked separately. An alert is sent once when a charge takes the balance from above the threshold to below it. The balance must be topped up above the threshold before another alert can be sent. This option is hidden if an administrator disables low balance alerts for the site. | On |
+| Reminder Threshold (…) | Which Notifications to Receive | The balance at which a low balance alert is triggered. The unit in parentheses is the site’s quota unit, as in “Reminder Threshold (USD).” | Appears when “Low Balance Alert” is on. Negative values trigger “Reminder threshold cannot be negative.” Leave it blank or enter 0 to use the site default. The text below the field reads “Leave blank to use the system default (…).” | Blank, which uses the site default ($0.002 by default) |
+| Channel Notifications (administrators only) | Which Notifications to Receive | Whether to send a notification when a channel is automatically disabled or re-enabled, or when testing finishes for all channels. | Still appears if an administrator disables low balance alerts for the site. | On for Root, off for other administrators |
+| Upstream Model Updates (administrators only) | Which Notifications to Receive | Whether to send a summary notification when a scheduled model check detects upstream model changes or fails. | Still appears if an administrator disables low balance alerts for the site. | Off |
+| Accept Unpriced Models | Preferences | Whether to allow calls to models that an administrator hasn’t priced yet. | Described as “Allow the use of models without configured prices.” When this option is off, calling one of these models returns “Model … has not been priced by the administrator yet…” | Off |
+</div>
+
+## Set the Interface Language
+
+**Steps**
+
+1. Open the “Interface Language” dropdown in the “Language Preferences” section.
+2. Select the language you want to use.
+
+<Callout type="info" title="Tip">
+
+- Your selection is saved immediately, the interface switches languages, and “Language preference saved” appears. The setting syncs across all devices signed in to the account.
+- Available languages are 简体中文, English, Français, Русский, 日本語, Tiếng Việt, and 繁體中文.
+- API error messages are available only in Simplified Chinese, Traditional Chinese, and English. If you choose another interface language, API error messages appear in English.
 </Callout>
 
-## Enable or Disable Passkey Passwordless Login
+## Check In Daily to Earn Quota
 
-- You can enable or disable the Passkey login feature for this account. Once enabled, you can log in using your device's biometric, screen lock, or security key, without needing to enter a password.
+**Steps**
 
-1. **Enable Passkey**: In the "Passkey Login" area, click "Enable Passkey".
-2. **Complete Security Verification**: As prompted, enter the 6-digit dynamic verification code generated by your authenticator app, or enter the 8-digit backup code and click "Verify".
-3. **Register Passkey**: The browser will display a system verification prompt. Follow the instructions to complete Passkey registration using your device's fingerprint, facial recognition, PIN, or other system verification methods.
-4. **View Status**: After successful registration, the page will display "Passkey Authentication · Enabled" and record the last used time.
-5. **Unbind Passkey**: To disable this feature, click "Unbind Passkey". After completing identity verification, the Passkey login for the current account will be removed.
+1. In the “Daily Check-in” section, click “Check In Now.”
+2. If the site has human verification enabled, complete it in the “Security Verification” dialog.
+3. Use the calendar to see the dates you checked in and the quota you earned.
 
-![Passkey Settings Page](/assets/guide/feature-guide/personal-passkey.png)
+<Callout type="info" title="Tip">
 
-## Login Session Management
+- This section appears only when an administrator enables check-in. See <a href="/en/docs/guide/feature-guide/system-settings/settings-billing#check-in-rewards" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a>.
+- You can check in once per day, based on the server’s date. The reward is chosen at random within the range set by the administrator, added directly to “Current Balance,” and recorded as a “System” entry in the usage log.
+- If you’ve already checked in today, the button is disabled and reads “Checked In.” “Checked In” and “Today +…” appear next to the heading. The section is collapsed by default. Click the heading to expand it.
+</Callout>
 
-- Used to view and manage login sessions for the current account across different devices and browsers, helping users promptly detect and remove abnormal login states.
+**Field descriptions**
 
-1. **View Session Information**: View logged-in devices, operating systems, browsers, IP addresses, login methods, last active time, and session expiration time.
-2. **Log Out of Specific Session**: Click "Log Out" or "Revoke" on the right side of the corresponding login session to log that device out of the current account.
-3. **Log Out of Other Sessions**: Click "Log Out of Other Sessions" in the top right corner of the page to log out of all other logged-in devices except the current one.
-4. **Manage Login Status**: If you discover unfamiliar devices or unusual login records, immediately revoke the corresponding session and promptly change your account password.
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Field | Definition | Requirements and limitations | Notes |
+| --- | --- | --- | --- |
+| Total Check-ins | The total number of check-ins to date. | Tracked automatically. | — |
+| Earned This Month | The total rewards earned in the month currently displayed in the calendar. | Tracked automatically. | Updates when you switch months. |
+| Total Earned | The total rewards earned to date. | Tracked automatically. | — |
+| Calendar | Check-in status for each day. | Click the left and right arrows to switch months. | Today is highlighted. A green dot appears below each date you checked in. Hover over the date to see “Checked In” and the quota earned. |
+</div>
 
-![Login Session Management Page](/assets/guide/feature-guide/personal-login-sessions.png)
+## Choose Which Pages Appear in the Left Sidebar
+
+**Steps**
+
+1. In “Left Sidebar Personal Settings,” turn section and module toggles on or off.
+2. Click “Save Changes.”
+
+<Callout type="info" title="Tip">
+
+- Two levels of settings determine what appears in the sidebar. This section lists only the sections and pages that the administrator has enabled. You can hide any of the listed items. See <a href="/en/docs/guide/feature-guide/system-settings/settings-site#sidebar-modules" target="_blank" rel="noopener noreferrer">Site and Branding Configuration</a>.
+- Turning off a section toggle disables its module toggles. Once you save, all pages in that section are hidden.
+- “Reset to Default” turns all toggles back on. Click “Save Changes” to apply the reset.
+- These settings only hide sidebar entries. Access permissions stay the same. “Personal Profile” always appears in the avatar menu in the upper-right corner.
+- This section is hidden for the Root account. System settings determine the Root account’s sidebar.
+</Callout>
+
+**Configuration options**
+
+The table lists the options in the order they appear in the section. Sections and pages disabled by an administrator are hidden here.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section toggle | Module toggle | Entries controlled | Default |
+| --- | --- | --- | --- |
+| Chat Section | Playground | “Playground” in the sidebar’s “Chat” group | On |
+| Chat Section | Chat | “Chat” in the sidebar’s “Chat” group | On |
+| Console Section | Dashboard | “Overview” and “Dashboard” in the sidebar’s “General” group | On |
+| Console Section | Token Management | “API Keys” | On |
+| Console Section | Usage Logs | “Usage Logs” | On |
+| Console Section | Audit Logs | “Audit Logs” | On |
+| Console Section | Drawing Logs, Task Logs | The “Task Logs” page and its “Drawing Logs” and “Task Logs” tabs. Turning off both toggles hides “Task Logs” from the sidebar. | On |
+| Personal Center Section | Wallet Management | “Wallet” in the sidebar’s “Personal” group and in the avatar menu | On |
+| Personal Center Section | Personal Settings | “Personal Profile” in the sidebar. “Personal Profile” in the avatar menu stays visible. | On |
+| Personal Center Section | Security & Access | “Security & Access” in the sidebar and in the avatar menu | On |
+</div>
+
+## Control Reference
+
+### Page Buttons and Filters
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Control | Location | Description |
+| --- | --- | --- |
+| User ID | Top of the page | Click to copy the user ID. |
+| Notification Method | “Settings” section | See [Configure notification and behavior preferences](#configure-notification-and-behavior-preferences). |
+| Save Settings | Bottom of the “Settings” section | Saves the notification method, which notifications to receive, and preferences. Shows “Saving...” while the save is in progress. |
+| Interface Language | “Language Preferences” section | Saves immediately after you select a language. See [Set the interface language](#set-the-interface-language). |
+| Check In Now | “Daily Check-in” section | See [Check in daily to earn quota](#check-in-daily-to-earn-quota). |
+| Collapse / Expand | “Daily Check-in” heading | Collapses or expands the calendar. Refreshing the page restores the default state. |
+| Previous Month, Next Month | Left and right arrows above the calendar | Changes the month shown in the calendar. |
+| Section toggles, module toggles | “Left Sidebar Personal Settings” section | See [Choose which pages appear in the left sidebar](#choose-which-pages-appear-in-the-left-sidebar). |
+| Reset to Default | Bottom of “Left Sidebar Personal Settings” | Turns all toggles back on and displays “Reset to default configuration.” Click “Save Changes” to apply the reset. |
+| Save Changes | Bottom of “Left Sidebar Personal Settings” | Saves the settings and refreshes the sidebar immediately. |
+</div>
+
+## FAQ
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="I’m not receiving low balance alerts">
+**Possible causes**
+
+- An administrator disabled low balance alerts for the site, or “Low Balance Alert” is off for the account.
+- The balance was already below the threshold. Each drop below the threshold triggers only one alert. The balance must be topped up above the threshold before another alert can be sent.
+- “Email” is selected, “Notification Email” is blank, and the account has no linked email address.
+- The notification address is unreachable from the site server or is blocked by the site’s security policy.
+- The same type of notification was triggered several times in a short period, so some notifications were skipped, or the email went to spam.
+
+**Steps to resolve**
+
+1. Confirm that “Low Balance Alert” is on and check the “Reminder Threshold (…).”
+2. If “Email” is selected, fill in “Notification Email” or link an email address on the <a href="/en/docs/guide/feature-guide/user/security" target="_blank" rel="noopener noreferrer">Security & Access</a> page.
+3. Confirm that the Webhook, Bark, or Gotify address is reachable from the public internet, or switch to another notification method and save.
+4. If you still aren’t receiving alerts, ask your administrator to check the site’s notification settings.
+</Accordion>
+
+<Accordion title="The Settings section only shows “No notifications are available to you right now”">
+**Message** “No notifications are available to you right now”
+
+**Possible cause** An administrator disabled low balance alerts for the site.
+
+**Steps to resolve**
+
+1. If you need low balance alerts, contact your administrator.
+</Accordion>
+
+<Accordion title="Saving settings returns “Webhook URL cannot be empty” or another error">
+Use the exact message to identify the cause.
+
+| Message | Possible cause | Steps to resolve |
+| --- | --- | --- |
+| “Webhook URL cannot be empty”<br/>“Invalid Webhook URL” | Webhook is selected and the URL is missing or incorrectly formatted. | Enter the full URL. |
+| “Bark push URL cannot be empty”<br/>“Invalid Bark push URL” | The Bark push URL is missing or incorrectly formatted. | Enter the full URL starting with http:// or https://. |
+| “Gotify server URL cannot be empty”<br/>“Invalid Gotify server URL”<br/>“Gotify token cannot be empty” | The Gotify server URL or app token is missing or incorrectly formatted. | Enter the complete server URL and app token. |
+| “URL must start with http:// or https://” | The URL is missing http:// or https://. | Add https:// to the beginning of the URL. |
+| “Invalid email address” | The “Notification Email” format is invalid. | Correct the email address or leave it blank to use the account email. |
+| “Reminder threshold cannot be negative” | The threshold is negative. | Enter 0 or a positive number, or leave it blank. |
+| “Failed to update settings” | The network connection was interrupted or the login session expired. | Refresh the page and try again. |
+</Accordion>
+
+<Accordion title="I can’t see Daily Check-in">
+**Possible cause** An administrator hasn’t enabled the check-in feature, which is off by default.
+
+**Steps to resolve**
+
+1. If you need to check in, contact your administrator.
+</Accordion>
+
+<Accordion title="Checking in returns “Already checked in today” or another error">
+Use the exact message to identify the cause.
+
+| Message | Possible cause | Steps to resolve |
+| --- | --- | --- |
+| “Already checked in today” | You already checked in today, based on the server’s date. | Check in again the following day. |
+| “Check-in feature is not enabled” | An administrator disabled check-in. | Refresh the page. If you need to check in, contact your administrator. |
+| “Turnstile token is empty” | The site’s human verification is configured incorrectly. | Contact your administrator. |
+| “Turnstile verification failed, please refresh and try again!” | Human verification failed. | Refresh the page and try checking in again. |
+| “Check-in failed, please try again later”<br/>“Check-in failed” | The network connection was interrupted or a server error occurred. | Try again later. |
+</Accordion>
+
+<Accordion title="My balance didn’t update immediately after a successful check-in">
+The reward has been added to your balance. The displayed balance may take a moment to update.
+
+**Steps to resolve**
+
+1. Refresh the page and check “Current Balance.”
+2. In <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a>, select “System” as the log type to see the check-in entry.
+</Accordion>
+
+<Accordion title="A page is missing from the sidebar">
+**Possible causes**
+
+- The corresponding module or section was turned off in “Left Sidebar Personal Settings,” and the change was saved.
+- An administrator hid the page in system settings.
+- Turning off both “Drawing Logs” and “Task Logs” hides “Task Logs” from the sidebar. Turning off just one hides only its tab on the page.
+
+**Steps to resolve**
+
+1. In “Left Sidebar Personal Settings,” turn on the corresponding section and module, then click “Save Changes.” You can also click “Reset to Default” and then “Save Changes.”
+2. If “Personal Profile” is missing from the sidebar, click your avatar in the upper-right corner and select “Personal Profile.”
+3. If the corresponding toggle is missing or the page is still hidden after you turn the toggle on, an administrator has hidden the page. Contact your administrator.
+</Accordion>
+
+<Accordion title="API error messages are still in English after I change the interface language">
+API error messages are available only in Simplified Chinese, Traditional Chinese, and English. If you choose another interface language, API error messages appear in English.
+
+**Steps to resolve**
+
+1. To receive API error messages in Chinese, select “简体中文” or “繁體中文” under “Interface Language.”
+</Accordion>
+
+<Accordion title="Calling a model returns “Model … has not been priced by the administrator yet…”">
+**Message** “Model … has not been priced by the administrator yet. Please contact the site administrator to enable this model.”
+
+**Possible cause** An administrator hasn’t configured a price for the model, and “Accept Unpriced Models” is off for the account.
+
+**Steps to resolve**
+
+1. Ask your administrator to configure a price for the model.
+2. If you need to use the model immediately, turn on “Accept Unpriced Models” under “Preferences” and click “Save Settings.” This may result in unexpectedly high charges.
+</Accordion>
+
+<Accordion title="How do I change my display name, username, email address, or group?">
+The display name, username, and group are read-only on this page. You can link or change your email address on the “Security & Access” page.
+
+**Steps to resolve**
+
+1. To link or change your email address, open <a href="/en/docs/guide/feature-guide/user/security" target="_blank" rel="noopener noreferrer">Security & Access</a> and go to “Account Linking.”
+2. To change your display name, username, or group, contact your administrator.
+</Accordion>
+
+<Accordion title="Left Sidebar Personal Settings is missing from the page">
+This section is hidden for the Root account, whose sidebar is determined by system settings. The section appears for all other accounts.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/user/security" target="_blank" rel="noopener noreferrer">Security & Access</a> — Change your password, link accounts, set up two-step verification and Passkeys, and manage login sessions and access tokens.
+- <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a> — Top up, redeem quota, purchase subscription plans, and transfer referral rewards.
+- <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> — Review quota changes, including check-in rewards.

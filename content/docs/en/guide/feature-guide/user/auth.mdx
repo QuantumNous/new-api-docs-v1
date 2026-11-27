@@ -1,64 +1,412 @@
 ---
 title: Registration and Login
-description: Supports account registration, forgotten password reset, account password login, and one-click login with Passkey and various third-party OAuth providers.
+description: Create an account, log in with a username and password, a third-party account, or a Passkey, complete login verification, and reset a forgotten password by email.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-Supports account registration, forgotten password reset, account password login, and one-click login with Passkey and various third-party OAuth providers. Please complete registration before your first use.
+- Click “Log in” in the upper-right corner of the site to get started.
+- Create an account, log in with a username and password, a third-party account, or a Passkey, and reset a forgotten password by email.
+- The available login methods, registration availability, and requirements for email verification and human verification vary by site and are configured by the administrator.
 
-## Login
+<Callout type="info" title="Tip">
 
-### Account Password Login
-
-1. Open the platform homepage, click the "Login" button in the top right corner, or directly visit `/sign-in`.
-2. Enter your username or email and password.
-3. If Cloudflare Turnstile is displayed on the page, you need to complete the human verification.
-4. First, click to confirm you have read and agree to the user agreement and privacy policy, then click "Login".
-5. When 2FA is enabled for the account, login will additionally require entering a one-time verification code or backup code.
-
-![Login Page](/assets/guide/feature-guide/login.png)
-
-### Passkey and Third-Party OAuth Login
-
-The login page will display icons for third-party platforms such as GitHub, Discord, LinuxDO, or Passkey, which are enabled by the platform. To log in using a third-party account or Passkey:
-1. Click to confirm you have read and agree to the user agreement and privacy policy.
-2. Click the icon of the corresponding platform (GitHub, Discord, LinuxDO, etc.) or the Passkey icon at the bottom of the page.
-3. When using a third-party account, you will be redirected to the third-party authorization page to complete authorization; when using Passkey, complete verification as prompted by your browser or device.
-
-![OAuth Login Page](/assets/guide/feature-guide/login.png)
-
-<Callout type="info">
-  Passkey and third-party OAuth login methods, as well as whether human verification is enabled, are configured by the platform's super administrator (Root) in "System Settings" → "Authentication". Disabled methods will not appear on the login page.
+- A Passkey lets you log in using your device’s fingerprint recognition, facial recognition, PIN, or security key without entering a password. Log in first, then enable Passkey on the “Security & Access” page.
+- If you open the login or registration page while already logged in, you go directly to the console.
+- If a login method is missing from the login page, the administrator must enable it before it appears. See <a href="/en/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">Authentication Settings</a>.
+- If “Don’t have an account? Sign up” is missing from the login page, registration is closed or the administrator has enabled personal use mode. Contact the administrator to create an account.
 </Callout>
 
-## Registration
+## Registration and Login Overview
 
-### Registration Process
+- Registration and Login – Login
 
-1. On the login page, click "Register", or directly visit `/sign-up`.
-2. Fill in your username, password, and confirm password.
-3. If platform settings require email verification, enter your email, send the verification code, and input the received code.
-4. If Cloudflare Turnstile is enabled on the platform, you need to complete the human verification.
-5. First, click to confirm you have read and agree to the user agreement and privacy policy, then click "Create Account" to complete registration.
+![Registration and Login – Login page](/assets/guide/feature-guide/login.png)
 
-![Registration Page](/assets/guide/feature-guide/register.png)
+From top to bottom, the login page shows other login methods, username and password login, and agreement confirmation. The following sections cover the available actions.
 
-<Callout type="info">
-  Whether password registration, OAuth registration, email verification, and email domain/alias restrictions are allowed is determined by the Root's authentication settings.
+- [Log In with a Username and Password](#log-in-with-a-username-and-password)
+- [Log In with a Third-Party Account or Passkey](#log-in-with-a-third-party-account-or-passkey)
+- [Complete Login Verification](#complete-login-verification)
+- [Create an Account](#create-an-account)
+- [Reset a Forgotten Password](#reset-a-forgotten-password)
+- [View and End Login Sessions](#view-and-end-login-sessions)
+
+<Callout type="info" title="Tip">
+If login fails or you do not receive a verification code or reset email, see the [FAQ](#frequently-asked-questions).
 </Callout>
 
-### Login Session Management
+**Page sections**
 
-Upon successful login, an independent session will be established. Logged-in users can click "Profile" → "Login Sessions" in the left sidebar to view current login sessions with other devices, revoke individual sessions, or log out of all other sessions at once; revoking the current session will return you to the login page.
+The following table lists the sections in the order they appear on the login page. In the screenshot, the administrator has enabled Passkey, LinuxDO, a custom GitHub Enterprise login method, and human verification, and has configured a User Agreement and a Privacy Policy.
 
-![Login Session Page](/assets/guide/feature-guide/login-session.png)
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section | Definition | When it appears | Notes |
+| --- | --- | --- | --- |
+| Header | “Log in” and the “Don’t have an account? Sign up” link below it. | “Don’t have an account? Sign up” appears only when registration is open and the administrator has not enabled personal use mode. | Click “Sign up” to open the registration page. Click the site name in the upper-left corner to return to the home page. |
+| Log in with Passkey | Log in using your device’s fingerprint recognition, facial recognition, PIN, or security key. | Appears only when the administrator enables Passkey. | If the device or browser does not support Passkey, the button is disabled and “This device does not support passkeys.” appears below it. If multiple passkey domains are available, “Use a passkey from another website” appears below the button. Click it to select a domain. |
+| Third-party account buttons | “Continue with …” buttons below the “Or continue with” divider, such as “Continue with GitHub” and “Continue with WeChat”. | Each button appears only when the administrator enables the corresponding login method. The screenshot shows “Continue with LinuxDO” and “Continue with GitHub Enterprise”. The administrator added GitHub Enterprise as a custom method. | For differences between methods, see [Log In with a Third-Party Account or Passkey](#log-in-with-a-third-party-account-or-passkey). |
+| Username or email | The account username or the email address linked to the account. | Appears with “Password” and “Log in” when the administrator has not disabled password login. | The placeholder is “Enter your username or email”. |
+| Password | The account’s login password. | Same as above. | The placeholder is “Enter password”. The eye icon on the right shows or hides the password. “Forgot password?” appears above the field on the right. |
+| Log in | Submits the username and password. | Same as above. | See [Log In with a Username and Password](#log-in-with-a-username-and-password). |
+| Human verification | Cloudflare Turnstile human verification. Once you pass the check, it displays “Success!”. | Appears below “Log in” only when the administrator enables human verification. | Applies only to username and password login. Third-party account and Passkey login do not require it. |
+| Agreement confirmation | The “I have read and agree to the User Agreement and Privacy Policy.” checkbox and the “By clicking Log in, you agree to our User Agreement and Privacy Policy.” notice at the bottom of the page. | Appears only when the administrator has configured a User Agreement or Privacy Policy. If only one is configured, only that document is shown. | Click a document name in the checkbox label to open it in a new tab. |
+</div>
 
-## Forgot Password Reset
+## Log In with a Username and Password
 
-1. On the login page, click "Forgot Password".
-2. Enter the email associated with your account and submit.
-3. Open the reset link sent by the system.
-4. Set a new password on the reset page, then log in again.
+**Steps**
 
-![Forgot Password Page](/assets/guide/feature-guide/forgot-password.png)
+1. Click “Log in” in the upper-right corner of the site to open the login page.
+2. Enter your username or the email address linked to your account in “Username or email”.
+3. Enter your password in “Password”.
+4. If the page shows a human verification check, follow the prompts until it displays “Success!”.
+5. If the page shows an agreement checkbox, select “I have read and agree to …”.
+6. Click “Log in”.
+7. If your account has two-step verification enabled or a registered Passkey, follow the steps in [Complete Login Verification](#complete-login-verification).
+
+<Callout type="info" title="Tip">
+
+- After a successful login, the site displays “Welcome back!” and opens the console. If you were redirected from a page that requires login, you return to that page.
+- The login page has no “Remember me” option. The system keeps you logged in for a fixed period of 30 days from the time you log in. When that period ends, log in again.
+- Complete human verification again each time you click “Log in”.
+- If the administrator disables password login, the login page hides “Username or email”, “Password”, and “Forgot password?”. Use another login method.
+</Callout>
+
+## Log In with a Third-Party Account or Passkey
+
+**Steps**
+
+1. If the page shows an agreement checkbox, select “I have read and agree to …” first.
+2. Click “Log in with Passkey” or one of the “Continue with …” buttons below “Or continue with”.
+3. Complete verification or authorization as described in the table below.
+4. If you used a third-party account and your account has two-step verification enabled or a registered Passkey, follow the steps in [Complete Login Verification](#complete-login-verification).
+
+**Login methods**
+
+The following table lists the methods in the order they appear on the login page.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+| Login method | When it appears | Verification or authorization | First-time use |
+| --- | --- | --- | --- |
+| Passkey | The administrator enables Passkey. | Follow the browser or system prompts to confirm using your fingerprint, face, PIN, or security key. | Passkey is available for login only. To enable it, first log in using another method, then go to <a href="/en/docs/guide/feature-guide/user/security#enable-passkey" target="_blank" rel="noopener noreferrer">Security &amp; Access</a>. Logging in with Passkey requires no additional login verification. |
+| WeChat | The administrator enables WeChat login. | In the “WeChat Login” window, scan the QR code and follow the prompt “Scan the QR code to follow the official account, then reply ‘verification code’ to receive your code.” Enter the code and click “Confirm”. | The site automatically creates an account if registration is open. |
+| GitHub, Discord, OIDC, LinuxDO, and other methods added by the administrator | The administrator enables the corresponding method. The administrator sets the button labels for OIDC and other methods. | The current page redirects to the third-party site. After you log in and grant authorization, you return to this site, which displays “Logging in with …”. | If registration is open, the site automatically creates an account. It uses the username and display name from the third-party account when available and generates them otherwise. It uses the email address from the third-party account. If another account already uses that address, login fails. |
+| Telegram | The administrator enables Telegram login. | The current page redirects to Telegram. After you grant authorization, you return to this site. | Telegram is available for login only. To link Telegram, first log in using another method, then go to <a href="/en/docs/guide/feature-guide/user/security#link-your-email-address-and-third-party-accounts" target="_blank" rel="noopener noreferrer">Security &amp; Access</a>. |
+</div>
+
+<Callout type="info" title="Tip">
+
+- If you already have an account, log in using your original method and link the third-party account on the “Security & Access” page before using it to log in. Logging in with an unlinked third-party account creates a new account or fails if the email address is already in use.
+- Automatically created accounts have no password. If you need one, set it on the “Security & Access” page. See <a href="/en/docs/guide/feature-guide/user/security#change-or-set-your-password" target="_blank" rel="noopener noreferrer">Change or Set a Password</a>.
+- Complete third-party authorization within 10 minutes. If it expires or you reuse the authorization page, return to the login page and click the login button for that method again.
+</Callout>
+
+## Complete Login Verification
+
+If your account has two-step verification enabled or a registered Passkey, logging in with a username and password, WeChat, or another third-party account opens the “Security Verification” page and displays the “Complete Login” dialog with the message “Please verify your identity to complete login.”
+
+**Steps**
+
+1. At the top of the dialog, select “Authenticator Code” or “Passkey”. Only methods enabled for your account are shown.
+2. If you select “Authenticator Code”, enter the 6-digit code from your authenticator app or an unused backup code in “Authenticator code or backup code”.
+3. Click “Verify”. If you selected “Passkey”, follow the browser or system prompts to confirm.
+
+<Callout type="info" title="Tip">
+
+- Complete verification within 5 minutes. If the time limit expires, the page displays “The login process has expired. Please log in again.” Refreshing the page returns you to the login page, where you must log in again.
+- After 5 consecutive incorrect attempts, verification is locked for 5 minutes and the page displays “Two-step verification is temporarily locked.”
+- Each backup code can be used only once. For instructions on enabling two-step verification and saving backup codes, see <a href="/en/docs/guide/feature-guide/user/security#enable-two-step-verification" target="_blank" rel="noopener noreferrer">Security &amp; Access</a>.
+</Callout>
+
+## Create an Account
+
+- Registration and Login – Registration
+
+![Registration and Login – Registration page](/assets/guide/feature-guide/registration-and-login-register.png)
+
+**Steps**
+
+1. Click “Sign up” below the login page heading or “Get started” on the home page to open the “Create an account” page.
+2. Fill in “Username”, “Password”, and “Confirm password”.
+3. If the page shows “Email (verification required)”, enter your email address, click “Send verification code”, then enter the code from the email.
+4. If the page shows a human verification check, follow the prompts to complete it.
+5. If the page shows an agreement checkbox, select “I have read and agree to …”.
+6. Click “Create account”.
+7. When you are redirected to the login page, log in with the username and password you just registered.
+
+<Callout type="info" title="Tip">
+
+- Below “Password”, the page shows a strength rating (“Weak”, “Fair”, “Good”, or “Strong”) and suggestions. Under “Password requirements”, the allowed length is 8–128 characters. If the password is too short or too long, the page displays “… more characters needed” or “… characters over the limit”. Under “Make your password stronger”, the page lists “At least 15 characters”, “Includes both uppercase and lowercase letters”, “Includes a number”, and “Includes a symbol”. Each suggestion is checked when met. You can register without meeting these suggestions. If the entire password is a common password (optionally followed by numbers or symbols), a single repeated character, or a sequence of consecutive characters such as `12345678`, the page also displays “Easy to guess” and rates the password as “Weak”. You can still register, but choosing a different password is recommended.
+- The email and verification code fields appear below “Confirm password” only if the administrator enables email verification. Email verification is disabled in the screenshot, so neither field appears.
+- After successful registration, the page displays “Account created! Please log in.” Log in manually to continue. Accounts created through registration have the standard user role.
+- The registration page has no invitation code field. If you open the registration page through someone’s invitation link and register, the site automatically records the referral. See <a href="/en/docs/guide/feature-guide/user/wallet#transfer-referral-rewards" target="_blank" rel="noopener noreferrer">Wallet</a>.
+- You can also click a third-party account button below “Create account” to create an account on your first login. See [Log In with a Third-Party Account or Passkey](#log-in-with-a-third-party-account-or-passkey).
+- If the site does not require email verification, registration leaves your account without a linked email address, so you cannot reset a forgotten password by email. After logging in, link an email address in <a href="/en/docs/guide/feature-guide/user/security#link-your-email-address-and-third-party-accounts" target="_blank" rel="noopener noreferrer">Security &amp; Access</a>.
+</Callout>
+
+**Registration fields and controls**
+
+The page uses a single form. The following table lists items in the order they appear.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Item | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Username | The name used to log in. It also serves as the initial display name. | Required. The placeholder is “Enter your username”. The maximum length is 20 characters, and leading and trailing spaces are trimmed automatically. If the username matches one from an existing or deleted account, the page displays “Username already exists or has been deleted”. If it exceeds the limit, the page displays “Invalid input …”. | Empty |
+| Password | The password used to log in. | Required. Enter 8–128 characters. The placeholder is “Enter password (8–128 characters)”. The field shows password strength and suggestions below it. Of these password checks, only the length requirement can block registration. If it fails, the page displays “Password must be 8–128 characters long.” | Empty |
+| Confirm password | Enter the password again. | Required. After you enter the password again, the field displays “Passwords match” or “Passwords do not match”. If the passwords differ when you click “Create account”, the page displays “The passwords you entered do not match.” | Empty |
+| Email (verification required) | The email address linked to the account, used to receive verification codes and reset the password. | Appears and is required only when the administrator enables email verification. The placeholder is “name@example.com”. The maximum length is 50 characters. The administrator can restrict email domains or disallow “+” and “.” before the @ sign. If the address fails these rules, the page displays “This email address does not meet the rules set by the administrator.” If another account already uses the address, the page displays “Email address is already in use”. | Empty |
+| Verification code | A 6-character code from the email. It may contain letters. | Appears with the email field and is required. Click “Send verification code” on the right to get a code. The code is valid for 10 minutes. Sending another code invalidates the previous one. After sending, the button displays “Resend (…s)”. You can send another code after 30 seconds. | Empty |
+| Human verification | Cloudflare Turnstile human verification. | Appears above agreement confirmation only when the administrator enables human verification. Pass the check before clicking “Send verification code” or “Create account”. After clicking “Send verification code”, pass the check again. | — |
+| Agreement confirmation | The “I have read and agree to …” checkbox and a notice at the bottom of the page. | Appears only when the administrator has configured a User Agreement or Privacy Policy. Select the checkbox before creating an account or using a third-party account. “Create account” is disabled while the checkbox is clear. | Unchecked |
+</div>
+
+## Reset a Forgotten Password
+
+- Registration and Login – Forgot Password
+
+![Registration and Login – Forgot Password page](/assets/guide/feature-guide/registration-and-login-forgot-password-reset.png)
+
+**Steps**
+
+1. Click “Forgot password?” above and to the right of “Password” on the login page to open the “Forgot Password” page.
+2. In “Email”, enter the email address linked to your account.
+3. If the page shows a human verification check, follow the prompts to complete it.
+4. Click “Send reset email”.
+5. Open the email with the subject “… Password Reset” and click “here” in the email.
+6. On the “Reset Password” page, verify the email address shown in “Email” and click “Confirm password reset”.
+7. Click the copy button to the right of “New password” and save the password generated by the system.
+8. Click “Back to login” and log in with the new password.
+9. After logging in, set a password of your choice in <a href="/en/docs/guide/feature-guide/user/security#change-or-set-your-password" target="_blank" rel="noopener noreferrer">Security &amp; Access</a>.
+
+<Callout type="warn" title="Caution">
+
+- The system generates a 12-character password made up of letters and numbers. You can set your own password after logging in. The old password stops working as soon as you click “Confirm password reset”.
+- The new password appears only on the “Reset Password” page. The system tries to copy it to the clipboard automatically. Make sure you have saved it before leaving the page.
+- Resetting the password ends all login sessions for the account across all devices. Two-step verification and Passkey settings remain in effect, and you still need to complete any required login verification.
+</Callout>
+
+<Callout type="info" title="Tip">
+
+- The reset link is valid for 10 minutes and can be used only once. Sending another reset email invalidates the previous link.
+- The page displays “Reset email sent. Please check your inbox.” whether or not the address is linked to an account. The site sends an email only if the address is linked to an account.
+- “Forgot password?” appears only when the administrator has not disabled password login. The site can send email only after the administrator configures the email service.
+</Callout>
+
+## View and End Login Sessions
+
+- Registration and Login – Login Sessions
+
+![Registration and Login – Login Sessions page](/assets/guide/feature-guide/registration-and-login-login-session-management.png)
+
+Each login creates a session for the current device. After logging in, go to “Personal” → “Security & Access” in the sidebar and open “Login Sessions” to see which devices are currently logged in to your account. Click “Revoke” next to another device, “Log out” next to your current device, or “Log out of other sessions”. For instructions and column descriptions, see <a href="/en/docs/guide/feature-guide/user/security#manage-login-sessions" target="_blank" rel="noopener noreferrer">Security &amp; Access</a>.
+
+<Callout type="info" title="Tip">
+
+- If you see a device you do not recognize, revoke its session and change your password.
+- Resetting your password ends all login sessions across all devices.
+- If too many devices are logged in at the same time, you cannot start another session. See the [FAQ](#frequently-asked-questions) for steps to resolve this.
+</Callout>
+
+## Available Actions
+
+### Login and Registration Pages
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Site name | Upper-left corner of the page | Returns to the home page. |
+| Sign up | Below the login page heading | Opens the registration page. Appears only when registration is open and the administrator has not enabled personal use mode. |
+| Log in | Below the registration page heading | Returns to the login page. |
+| Log in with Passkey, Continue with … | Above the username and password fields on the login page and below “Create account” on the registration page | See [Log In with a Third-Party Account or Passkey](#log-in-with-a-third-party-account-or-passkey). |
+| Show or hide password | Eye icon to the right of the password field | Toggles password visibility. |
+| Forgot password? | Above “Password” on the right side of the login page | Opens the Forgot Password page. See [Reset a Forgotten Password](#reset-a-forgotten-password). |
+| Send verification code | To the right of the verification code field on the registration page | Sends a verification code to the email address you entered. You can send another code after 30 seconds. |
+| User Agreement, Privacy Policy | In the agreement checkbox label | Opens the selected document in a new tab. |
+| Log in, Create account | Below the form | Submits the login or registration form. |
+</div>
+
+### Forgot Password and Reset Password Pages
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Send reset email | Below “Email” on the Forgot Password page | Sends a reset email. The button displays “Resend (…s)” for 30 seconds. |
+| Sign up | Below the Forgot Password page heading | Opens the registration page. |
+| Confirm password reset | Reset Password page | Generates a new password and replaces the old one. After you click it, the button displays “Retry (…s)” for 30 seconds. If the link is incomplete, the button is disabled and the page displays “Invalid reset link. Please request a new password reset.” |
+| Copy | To the right of “New password” | Copies the new password. After it is copied, the page displays “Password copied to clipboard: …”. |
+| Back to login | Button shown after a successful reset | Returns to the login page. |
+</div>
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="Sign-in shows ‘Username or password is incorrect, or user has been banned’">
+**Message** — “Username or password is incorrect, or user has been banned”
+
+**Possible Causes**
+
+- You entered an incorrect username, email address, or password. The same message appears in all three cases.
+- An administrator disabled the account, or the account was deleted.
+- The account has no password. For example, you may have registered with a third-party account and never set a password.
+- Your email address contains uppercase letters, and some sites treat email addresses as case-sensitive.
+
+**What to Do**
+
+1. Check your username and password, then try again. If you sign in with an email address, enter it in all lowercase or sign in with your username.
+2. If you registered with a third-party account, sign in with that same account.
+3. If you forgot your password, follow the steps in [Reset a Forgotten Password](#reset-a-forgotten-password).
+4. If the issue persists, contact the administrator to check your account status.
+</Accordion>
+
+<Accordion title="Sign-in shows another error">
+Use the exact message to identify the cause.
+
+| Message | Possible Cause | What to Do |
+| --- | --- | --- |
+| “Password login has been disabled by administrator” | The site only allows other sign-in methods. | Sign in with a third-party account or a Passkey from the sign-in page. |
+| “Please agree to the legal terms first” | You haven’t selected the checkbox to accept the terms. | Select the checkbox and try signing in again. |
+| “Please wait a moment, human check is initializing...” | Human verification hasn’t finished. | Wait until “Success!” appears, then try again. If it keeps loading, refresh the page. |
+| “Turnstile verification failed, please refresh and try again!” | Human verification expired or failed. | Refresh the page and complete human verification again. |
+| “Too many requests” | You performed too many actions in a short period. | Wait and try again. |
+| “Too many active login sessions. …” | Your account is signed in on too many devices at once. | On a device where you’re already signed in, open “Security and Access” and click “Sign Out of Other Sessions” under “Login Sessions”. If you can’t access a device where you’re signed in, reset your password to sign out of all sessions. |
+| “Too many login sessions were created recently. Please wait for the rolling window to pass, then try again.” | You signed in too many times in a short period. | Wait a while and try again. |
+</Accordion>
+
+<Accordion title="Sign-in with a third-party account fails">
+Use the exact message to identify the cause.
+
+| Message | Possible Cause | What to Do |
+| --- | --- | --- |
+| “… login and registration has not been enabled by administrator” | The administrator disabled this sign-in method. | Use another sign-in method or contact the administrator. |
+| “State parameter is empty or mismatched” | Authorization took longer than 10 minutes, or you opened the authorization page more than once. | Return to the sign-in page and click the corresponding button again. |
+| “Request timed out, please refresh and restart GitHub login” | The redirect to GitHub took too long after you clicked the button. | Refresh the page and click the button again. |
+| “Unable to connect to … server, please try again later” | The site can’t connect to the third-party service. | Try again later. If the issue persists, contact the administrator. |
+| “New user registration has been disabled by administrator” | This is your first time using this third-party account, and registration is closed. | Sign in with an existing account and link the third-party account on the “Security and Access” page, or contact the administrator. |
+| “Email address is already in use” | Another account already uses the email address associated with the third-party account. | Sign in to the account that uses this email address and link the third-party account on the “Security and Access” page. |
+| “This Telegram account is not linked. Sign in using another method and link it first.” | You can’t register using Telegram. | Sign in using another method, then link Telegram on the “Security and Access” page. |
+| “Linux DO trust level does not meet the minimum required by administrator” | The Linux DO account’s trust level is below the site’s minimum requirement. | Use another sign-in method or contact the administrator. |
+| “User has been banned”<br/>“User has been deleted” | The associated account was disabled or deleted. | Contact the administrator. |
+</Accordion>
+
+<Accordion title="Sign-in verification shows ‘Verification failed. Please try again.’ or is locked">
+Use the exact message to identify the cause.
+
+| Message | Possible Cause | What to Do |
+| --- | --- | --- |
+| “Verification failed. Please try again.” | You entered an incorrect verification or backup code, or your phone’s clock is out of sync. | Enter the current six-digit code from your authenticator. If your phone’s clock is out of sync, correct it and try again. |
+| “Two-factor authentication is temporarily locked.” | Verification failed five times in a row. | Wait 5 minutes and try again, or use a Passkey. |
+| “Login flow expired. Please sign in again.” | You didn’t complete verification within 5 minutes. | Click “Sign In Again” and sign in. |
+</Accordion>
+
+<Accordion title="You lost your authenticator device and can’t complete sign-in verification">
+**Note** — Two-factor authentication stays enabled when you reset your password.
+
+**What to Do**
+
+1. Enter an unused backup code in the “Authenticator Code or Backup Code” field.
+2. After signing in, follow the “Lost Authenticator Device” instructions in the <a href="/en/docs/guide/feature-guide/user/security#frequently-asked-questions" target="_blank" rel="noopener noreferrer">Security and Access</a> FAQ to set up two-factor authentication again.
+3. If you’ve used all your backup codes or lost them, contact the administrator to reset two-factor authentication.
+</Accordion>
+
+<Accordion title="Sign-in with a Passkey fails">
+Use the exact message to identify the cause.
+
+| Message | Possible Cause | What to Do |
+| --- | --- | --- |
+| “Passkey is not supported on this device.” | Your browser or device doesn’t support Passkeys. | Use a supported browser and device, or use another sign-in method. |
+| “Passkey login was cancelled or timed out” | You canceled the browser or system prompt or didn’t complete it in time. | Click “Sign In with Passkey” again. |
+| “Passkey authentication is disabled.” | The administrator disabled Passkey authentication. | Use another sign-in method. |
+| “This user account is disabled.” | The administrator disabled your account. | Contact the administrator. |
+| Your Passkey stops working after the site URL changes | Your Passkey is tied to the site’s domain at the time of registration. | Use the URL where you registered your Passkey, or use another sign-in method. |
+</Accordion>
+
+<Accordion title="‘Register’ is missing from the sign-in page, or registration is disabled">
+**Message** — “New user registration has been disabled by administrator” or “Password registration has been disabled by administrator, please use third-party account verification”
+
+**Possible Causes**
+
+- Registration is closed. You can still open the registration page from “Get Started” on the homepage or from other entry points, but the site shows a message that registration is disabled when you submit the form.
+- The site only allows registration with a third-party account.
+- The administrator enabled personal-use mode. This hides “Register” on the sign-in page, but you can still open the registration page from “Get Started” on the homepage.
+
+**What to Do**
+
+1. If only password registration is disabled, click a third-party account button on the registration or sign-in page to register.
+2. If you need an account, ask the administrator to create one.
+</Accordion>
+
+<Accordion title="Registration shows a username, email address, or verification code error">
+Use the exact message to identify the cause.
+
+| Message | Possible Cause | What to Do |
+| --- | --- | --- |
+| “Username already exists or has been deleted” | The username is already in use or was previously used by a deleted account. | Choose a different username. |
+| “Invalid input …” | The username is longer than 20 characters. | Shorten the username and try again. |
+| “Email address is already in use” | The email address is already linked to another account. | Use a different email address or sign in to the account linked to that address. |
+| “Email verification is enabled, please enter email address and verification code” | You left the email address or verification code field blank. | Enter your email address, click “Send Verification Code”, and enter the code you receive. |
+| “Verification code is incorrect or has expired” | You entered the wrong code, the code is more than 10 minutes old, or you used an old code after requesting a new one. | Request a new code and enter the code from the latest email. |
+</Accordion>
+
+<Accordion title="You don’t receive a registration verification code, or requesting one shows an error">
+Use the exact message to identify the cause.
+
+| Message | Possible Cause | What to Do |
+| --- | --- | --- |
+| “This email address is not allowed by the administrator's email policy.” | The site restricts which email domains you can use, or it disallows `+` or `.` before the `@` sign. | Use an email address that meets the requirements or contact the administrator. |
+| “Please enter a valid email address” | The email address has an invalid format or is longer than 50 characters. | Check the address and enter it again. |
+| “Please wait … seconds before requesting another verification code.”<br/>“Please wait before requesting another verification code.” | You requested too many codes in a short period. | Wait before requesting another code. |
+| “SMTP server is not configured” | The site’s email service hasn’t been configured. | Contact the administrator. |
+| The site shows “Verification email sent”, but you haven’t received it | The email went to your spam folder, or the email service encountered an error. | Check your spam folder. If you still haven’t received the email, contact the administrator. |
+</Accordion>
+
+<Accordion title="The site says ‘Reset email sent’, but you don’t receive the email">
+**Message** — “Reset email sent, please check your inbox”
+
+**Note** — To protect account information, the page displays this message whether or not the email address is linked to an account.
+
+**Possible Causes**
+
+- The email address isn’t linked to any account. For example, email verification may have been off when you registered, and you never linked an email address afterward.
+- The email went to your spam folder.
+- The site’s email service hasn’t been configured, or it failed to send the message.
+
+**What to Do**
+
+1. Make sure you entered the email address linked to your account, then check your spam folder.
+2. Wait for the countdown to finish before requesting another email. If you see “Turnstile verification failed, please refresh and try again!”, refresh the page and request the email again.
+3. If you can sign in with a third-party account or a Passkey, sign in and use the “Security and Access” page to set a password and link your email address.
+4. If the issue persists, contact the administrator.
+</Accordion>
+
+<Accordion title="The password reset link is invalid or won’t open">
+Use the message or symptom to identify the cause.
+
+| Message or Symptom | Possible Cause | What to Do |
+| --- | --- | --- |
+| “Password reset link is invalid or has expired” | The link is more than 10 minutes old, has already been used, or a newer reset email was sent. | Return to the “Forgot Password” page, request another reset email, and use the link in the latest email. |
+| “Invalid reset link, please request a new password reset.” | The link is incomplete. For example, it may have been cut off when you copied it. | Click “here” in the email or copy the full link from the email. |
+| The link starts with an address such as `http://localhost:3000` that doesn’t match the current site, and it won’t open | The administrator hasn’t configured the site’s server address. | Replace the address at the start of the link with the current site’s URL and open the resulting link, or contact the administrator. |
+</Accordion>
+
+<Accordion title="You didn’t save the new password after resetting it">
+**Note** — The new password appears only on the “Reset Password” page. You can use the reset link only once, and your old password is no longer valid.
+
+**What to Do**
+
+1. Return to the “Forgot Password” page and request another reset email.
+2. Follow the steps in [Reset a Forgotten Password](#reset-a-forgotten-password) to reset your password again, and copy the new password before leaving the page.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- Change your password, link your email address and third-party accounts, enable two-factor authentication and Passkeys, and manage login sessions. <a href="/en/docs/guide/feature-guide/user/security" target="_blank" rel="noopener noreferrer">Security and Access</a>
+- Copy your invitation link and view referral rewards. <a href="/en/docs/guide/feature-guide/user/wallet#transfer-referral-rewards" target="_blank" rel="noopener noreferrer">Wallet</a>
+- Administrators can create accounts and reset two-factor authentication for users. <a href="/en/docs/guide/feature-guide/admin/user#reset-2fa" target="_blank" rel="noopener noreferrer">User Management</a>
+- Root users can enable registration, password sign-in, email verification, third-party sign-in, Passkeys, and human verification. <a href="/en/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">Authentication Settings</a>
+- Root users can configure the User Agreement and Privacy Policy. <a href="/en/docs/guide/feature-guide/system-settings/settings-site#system-information" target="_blank" rel="noopener noreferrer">Site and Branding Settings</a>
+- Root users can configure the email service that sends verification codes and password reset emails. <a href="/en/docs/guide/feature-guide/system-settings/settings-operations#email-and-notifications" target="_blank" rel="noopener noreferrer">Operations Settings</a>

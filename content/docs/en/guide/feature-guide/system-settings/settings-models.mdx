@@ -1,0 +1,377 @@
+---
+title: Model Configuration
+description: Root configures global model behavior, provider protocol adapters, and io.net model deployment.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- Only Root can access these settings. In the sidebar, go to “Admin” → “System Settings”, then select a section under “Model” in the left navigation.
+- Use these settings to configure global model behavior, protocol adapters for Gemini, Claude, and Grok, and io.net model deployment.
+- These settings apply site-wide. Configure individual Channels in Channel Management.
+
+<Callout type="info" title="Tip">
+
+- The former “Routing Reliability” and “Channel Affinity” sections have moved to Request Policies under “Sessions and Retries”. See <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#session-and-retry" target="_blank" rel="noopener noreferrer">Sessions and Retries</a>.
+
+</Callout>
+
+## Model Configuration Overview
+
+There are five sections under “Model” in the left navigation. “Global Model Configuration” opens by default.
+
+**Sections at a Glance**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Section | Purpose | Tabs |
+| --- | --- | --- |
+| [Global Model Configuration](#global-model-configuration) | Request passthrough, thinking suffix exemptions, ChatCompletions conversion, and streaming heartbeats. | — |
+| [Gemini](#gemini) | Gemini and Vertex conversion defaults and thinking adaptation. | — |
+| [Claude](#claude) | Claude request header overrides, default output limits, and thinking adaptation. | — |
+| [Grok](#grok) | Additional fees for usage policy violations. | — |
+| [Model Deployment](#model-deployment) | Enablement and credentials for io.net managed deployments. | — |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- If a field stays unchanged after saving, a save is rejected, or the deployment page reports that the service is disabled, see the [FAQ](#faq).
+
+</Callout>
+
+## Configuration Sections
+
+The sections below follow the order in the left navigation. For the save button and effective timing of each setting, see [Saving and Applying Changes](#saving-and-applying-changes).
+
+### Global Model Configuration
+
+- Model → Global Model Configuration
+
+![Global Model Configuration section](/assets/guide/feature-guide/system-settings-model-global-model-configuration.png)
+
+Dividers separate the fields into three groups covering request passthrough and thinking suffixes, “ChatCompletions → Responses Compatibility” (marked “Preview”), and keep-alive heartbeats.
+
+**Configuration Steps**
+
+1. Turn on “Enable Request Passthrough” as needed.
+2. In “Models Exempt from Automatic Thinking Suffix Handling”, enter the models you want to exempt.
+3. Enter the conversion policy in “Policy JSON”. To populate an example, click “Fill Example (Specific Channels)” or “Fill Example (All Channels)”.
+4. Turn on “Keep-Alive Heartbeat” as needed and set “Ping Interval (Seconds)”.
+5. Click “Save Changes” at the top of the page.
+
+<Callout type="warn" title="Caution">
+
+- “ChatCompletions → Responses Compatibility” is experimental. The interface displays the following warning. “This feature is experimental. The configuration format and behavior may change.”
+- Requests bypass this conversion when global request passthrough or request body passthrough on the target Channel is enabled.
+- When request passthrough is enabled, instances configured for the “Before Format Conversion” and “Before Sending” stages are skipped. See <a href="/en/docs/guide/feature-guide/admin/request-processing" target="_blank" rel="noopener noreferrer">Request Processing</a>.
+
+</Callout>
+
+**Policy JSON Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Purpose |
+| --- | --- |
+| `enabled` | Master switch. When disabled, the other fields have no effect. |
+| `all_channels` | When `true`, all Channels are eligible for matching. |
+| `channel_ids` | When `all_channels` is `false`, matches by Channel ID. Any matching ID is sufficient. |
+| `channel_types` | When `all_channels` is `false`, matches by numeric Channel type. Any matching type is sufficient. |
+| `model_patterns` | Array of regular expressions. Conversion runs only if the requested model matches at least one pattern. |
+
+</div>
+
+**Configuration Fields**
+
+The table lists the fields in the order they appear in the section.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap [&_td_code]:wrap-anywhere">
+
+| Setting | Definition | Requirements and Constraints | Default |
+| --- | --- | --- | --- |
+| Enable Request Passthrough | Forwards requests directly to the upstream provider without post-processing. The system sends the original client request body upstream and skips steps such as request body conversion, field removal, system prompt merging, and parameter overrides. | Toggle. | Off |
+| Models Exempt from Automatic Thinking Suffix Handling | The system leaves the `-thinking` and `-nothinking` suffixes unchanged for listed models. Matching models also bypass `@` modifier parsing and the validation that can return a 400 error. | JSON string array. Entries beginning with `re:` use Go regular expressions to match against the full model name, as in `re:.*@sha256:.*`. Invalid input displays “Invalid JSON format”. Saving a blank field stores an empty array. | `moonshotai/kimi-k2-thinking`, `kimi-k2-thinking` |
+| Policy JSON | Conversion policy for “ChatCompletions → Responses Compatibility”. The request must match both the Channel criteria and a model regular expression. See “Policy JSON Fields” above. | JSON object. Saving a blank field stores `{}`. | `{"enabled":false,"all_channels":true}` |
+| Keep-Alive Heartbeat | Sends periodic ping frames to keep streaming connections active. | Toggle. | Off |
+| Ping Interval (Seconds) | Interval between heartbeats. | Minimum `1`. Use a longer interval to avoid upstream rate limits. This field is editable only when “Keep-Alive Heartbeat” is on. | `60` |
+
+</div>
+
+### Gemini
+
+- Model → Gemini
+
+![Gemini section](/assets/guide/feature-guide/system-settings-model-gemini.png)
+
+The Gemini section controls instance-level defaults for Gemini and some Vertex conversion paths.
+
+**Configuration Steps**
+
+1. Configure the safety settings, version overrides, and supported Imagine models as needed.
+2. Turn on the thinking suffix adapter as needed and set the budget token ratio.
+3. Turn the two FunctionCall toggles on or off as needed.
+4. Click “Save Changes” at the top of the page.
+
+<Callout type="info" title="Tip">
+
+- “Supported Imagine Models” changes only the output modality during conversion. It leaves the model list, pricing, and Channel capabilities unchanged. Enter the upstream model names produced by model mapping.
+- When the thinking suffix adapter is off, the following message appears below “Budget Token Ratio”. “Gemini continues to detect thinking mode automatically even when the adapter is disabled. Enable this option only if you need finer control over pricing and budgets.”
+
+</Callout>
+
+**Conversion Defaults**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Constraints | Default |
+| --- | --- | --- | --- |
+| Safety Settings | Provides per-category safety overrides in JSON. Use `default` as the fallback. | JSON string-to-string map. The server validates thresholds. See the [FAQ](#faq) for allowed values. | `{"default":"OFF"}` |
+| Version Overrides | Maps model identifiers to Gemini API versions. The `default` entry applies when there is no specific match. | JSON string-to-string map. | `{"default":"v1beta","gemini-1.0-pro":"v1"}` |
+| Supported Imagine Models | Accepts a JSON array of model identifiers that support the Imagine API. | JSON string array. | 7 built-in models |
+
+</div>
+
+**Thinking Adaptation and FunctionCall Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Constraints | Default |
+| --- | --- | --- | --- |
+| Thinking Suffix Adapter | Supports `-thinking`, `-thinking-{{budget}}`, `-nothinking`, and reasoning effort suffixes such as `-high`. Routes requests to the appropriate Gemini variant. When disabled, it sends the model name upstream unchanged. | Toggle. | Off |
+| Budget Token Ratio | Budget tokens = maximum tokens × ratio. Use a ratio consistent with upstream billing. | Accepts decimal values from 0.002 to 1. | `0.6` |
+| Enable FunctionCall Thought Signature Filling | Populates `thoughtSignature` only for Gemini and Vertex Channels using the OpenAI format. | Toggle. | On |
+| Remove the functionResponse.id Field | Automatically removes `functionResponse.id`, which Vertex AI does not support. | Toggle. | On |
+
+</div>
+
+### Claude
+
+- Model → Claude
+
+![Claude section](/assets/guide/feature-guide/system-settings-model-claude.png)
+
+**Configuration Steps**
+
+1. Configure request header overrides and the default maximum token count as needed.
+2. Turn on the thinking suffix adapter as needed and set the budget token ratio.
+3. Click “Save Changes” at the top of the page.
+
+**Configuration Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Constraints | Default |
+| --- | --- | --- | --- |
+| Request Header Overrides | Provides per-model header overrides in JSON. Use these overrides to enable beta features such as extended context windows. For matching models, the system merges the overrides with existing outbound headers of the same name and removes duplicate values. | JSON object mapping model names to header names and their arrays of values. | `{}` |
+| Default Maximum Tokens | Applies when `max_tokens` is missing or set to `0`. | JSON object with non-negative integer values. If `default` is missing, the fallback is 8192. Example ` { "default": 8192, "claude-3-haiku-20240307": 4096, "claude-3-opus-20240229": 4096, "claude-3-7-sonnet-20250219-thinking": 8192 }` | `{"default":8192}` |
+| Thinking Suffix Adapter | Converts requests with `-thinking`, `-nothinking`, or reasoning effort suffixes such as `-high` to Anthropic’s native thinking request format and keeps billing predictable. When disabled, it sends the model name upstream unchanged. | Toggle. | On |
+| Budget Token Ratio | Budget tokens = maximum tokens × ratio. Used to estimate the thinking budget. | Accepts decimal values from 0.1 to 1. | `0.8` |
+
+</div>
+
+### Grok
+
+- Model → Grok
+
+![Grok section](/assets/guide/feature-guide/system-settings-model-grok.png)
+
+**Configuration Steps**
+
+1. Turn “Enable Violation Fees” on or off.
+2. If enabled, enter the “Violation Fee Amount”.
+3. Click “Save Changes” at the top of the page.
+
+<Callout type="warn" title="Caution">
+
+- A fee is triggered only when the upstream error includes a supported violation marker, such as a notice that the content violates the usage policy.
+- Ordinary upstream errors, content moderation failures, and other Grok requests incur no additional fee under this setting. Errors that trigger a violation fee are excluded from retries.
+- The actual fee is calculated as base amount × system Group ratio. The system records a separate usage log entry with the message “Violation fee charged”. When troubleshooting, check both the original request error and this log entry.
+- This setting deducts fees directly from user balances. Before enabling it or adjusting the amount, check the latest upstream violation fee rules, Group ratios, and user-facing pricing information.
+
+</Callout>
+
+**Configuration Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Constraints | Default |
+| --- | --- | --- | --- |
+| Enable Violation Fees | Charges an additional fee for requests that violate the usage policy. The “Official Documentation” link after the description opens x.ai’s violation fee documentation. | Toggle. | On |
+| Violation Fee Amount | Base amount. Actual fee = base amount × system Group ratio. | Minimum `0`, in increments of `0.01`. This field is editable only when “Enable Violation Fees” is on. | `0.05` |
+
+</div>
+
+### Model Deployment
+
+- Model → Model Deployment
+
+![Model Deployment section](/assets/guide/feature-guide/system-settings-model-model-deployment.png)
+
+The current model deployment integration supports io.net and appears under “io.net Deployment”. Use this section to enable the integration and configure credentials. Deployment resources are created separately. The screenshot shows the section with “Enable io.net Deployment” turned on.
+
+**Configuration Steps**
+
+1. Turn on “Enable io.net Deployment” to reveal the API key settings.
+2. Click “Go to io.net API Keys” to open the <a href="https://ai.io.net/ai/api-keys" target="_blank" rel="noopener noreferrer">io.net API Keys page</a>.
+3. When creating or selecting a key, set Project to `io.cloud`.
+4. Copy the key and paste it into “io.net API Key”. If you already have a saved key that you want to keep, leave the field blank.
+5. Click “Test Connection”.
+6. Click “Save io.net Settings” at the top of the page.
+
+<Callout type="warn" title="Caution">
+
+- Existing io.net deployments stay active when you turn off the integration, and third-party charges may continue.
+- With the integration off, New API rejects attempts to view, extend, or terminate existing deployments.
+- Creating, extending, and terminating deployments affect third-party resources and charges. Check your io.net account, resource configuration, and billing before performing these operations.
+- New API does not guarantee third-party capacity, billing, or deployment success rates.
+
+</Callout>
+
+**Connection Test**
+
+- The test uses the API key in the input field or the saved key if the field is blank. Settings are saved separately.
+- On success, the interface displays “Connection successful” and “Connected to the io.net service.”
+- On failure, the interface displays “Connection failed” and an error message. Check the API key, Project, and network connection.
+- The API key field appears blank even after a key has been saved.
+
+**Configuration Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Constraints | Default |
+| --- | --- | --- | --- |
+| Enable io.net Deployment | Enables the io.net model deployment service in the console. | Turning on this toggle reveals the API key field, “Test Connection”, and the “How to Get an io.net API Key” instructions. To use the deployment service, save this setting with the toggle on and save a valid API key. | Off |
+| io.net API Key | Authenticates requests to the io.net deployment API. | Required during initial setup. Saved keys are hidden. | Blank |
+
+</div>
+
+## Saving and Applying Changes
+
+For the save procedure, see the <a href="/en/docs/guide/feature-guide/system-settings/system-setting#save-methods" target="_blank" rel="noopener noreferrer">System Settings Overview</a>. For rules on when changes take effect and how they sync across instances, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#scope-and-multi-instance-synchronization" target="_blank" rel="noopener noreferrer">Effective Scope and Multi-Instance Synchronization</a>. Unless otherwise specified, the node that processes the save request uses the new values immediately. Other nodes pick up the changes through system settings synchronization within about 3 seconds, or within one sync interval at the latest. The default sync interval is 60 seconds. Set the interval in seconds with the `SYNC_FREQUENCY` environment variable and restart New API after changing it. The table shows when each setting reads the new value.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| Global Model Configuration › Enable Request Passthrough, Models Exempt from Automatic Thinking Suffix Handling, and Policy JSON | “Save Changes” at the top of the page | Starting with the next request. |
+| Gemini and Claude › All fields | “Save Changes” at the top of the page | Starting with the next request. |
+| Global Model Configuration › Keep-Alive Heartbeat and Ping Interval (Seconds) | “Save Changes” at the top of the page | The system reads these settings at the start of each streaming response. New streams use the updated settings. Streams already in progress keep their original settings. |
+| Grok › Violation fee toggle and amount | “Save Changes” at the top of the page | The next violation that triggers a fee is evaluated using the updated settings. |
+| Model Deployment › Enable io.net Deployment and io.net API Key | “Save io.net Settings” | The next attempt to view, create, extend, or terminate a deployment uses the updated values. Turning off the integration blocks these operations and leaves existing deployments running. |
+| Model Deployment › Test Connection | No settings saved | Uses the API key in the input field or the saved key if the field is blank. |
+
+</div>
+
+**Additional Details**
+
+- **Settings are saved individually.** “Save Changes” and “Save io.net Settings” submit only changed settings. Each successful update displays “Setting updated successfully”. If there are no changes, the interface displays “No changes to save”.
+- **Validation.** The page validates JSON syntax. The server also checks that Gemini “Safety Settings” thresholds use allowed values and that Claude “Default Maximum Tokens” values are non-negative. If validation fails, the system skips the field and all subsequent fields. See the [FAQ](#faq) for the error messages.
+
+## Important Notes
+
+- **Grok violation fees are deducted directly from user balances.** See [Grok](#grok).
+- **Existing io.net deployments and third-party charges can continue after the integration is disabled.** See [Model Deployment](#model-deployment).
+- **Upstream providers evaluate saved settings when they receive a request.** Apart from the two server-side value checks described above, the provider’s acceptance of the settings can only be confirmed when a request is sent.
+- **Request passthrough bypasses conversion.** Enabling global or Channel-level request body passthrough skips ChatCompletions conversion, parameter overrides, and related processing. See [Global Model Configuration](#global-model-configuration).
+
+## FAQ
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="A field stays unchanged after saving">
+
+**Possible Causes**
+
+- You clicked the save button for a different section.
+- An error message appeared during the save. The system saves settings one at a time and skips automatic retries for failed settings.
+
+</Accordion>
+
+<Accordion title="A regular expression does not match">
+
+In “Models Exempt from Automatic Thinking Suffix Handling”, regular expression entries must begin with `re:` and are matched against the full model name. Invalid expressions are logged as system errors only at runtime.
+
+</Accordion>
+
+<Accordion title="The conversion policy stops working after passthrough is enabled">
+
+Global or Channel-level request passthrough bypasses conversion.
+
+</Accordion>
+
+<Accordion title="Upstream rejects a Claude request that omits max_tokens">
+
+The value in “Default Maximum Tokens” may exceed the upstream output limit.
+
+</Accordion>
+
+<Accordion title="Grok charged an additional fee">
+
+**Possible Cause**
+
+The original request error contained a violation marker.
+
+**Resolution**
+
+1. Find the “Violation fee charged” entry in the usage log and verify the Group ratio.
+
+</Accordion>
+
+<Accordion title="The deployment page reports that the service is disabled or the connection failed">
+
+**Error Messages**
+
+“Model deployment service is disabled” or “Connection failed”.
+
+**Possible Causes**
+
+- “Model deployment service is disabled” appears when “Enable io.net Deployment” has yet to be turned on and saved.
+- “Connection failed” appears when the toggle is on but the connection test fails, for example because no valid API key has been saved.
+
+**Resolution**
+
+1. Turn on “Enable io.net Deployment” and save a valid API key. Both are required.
+
+</Accordion>
+
+<Accordion title="Model requests do not use an existing deployment">
+
+Deployments require manual Channel creation or binding.
+
+**Resolution**
+
+1. Configure the endpoint manually.
+
+</Accordion>
+
+<Accordion title="Saving Safety Settings or Default Maximum Tokens is rejected">
+
+**Error Messages**
+
+Examples include `invalid Gemini safety threshold "…" for "…"`, `negative Claude default max_tokens … for "…"`, and `Claude default max tokens must be a JSON map of model to integer: …`. These messages appear in English only.
+
+**Possible Causes**
+
+- A category in Gemini “Safety Settings” uses a threshold other than `OFF`, `BLOCK_NONE`, `BLOCK_ONLY_HIGH`, `BLOCK_MEDIUM_AND_ABOVE`, `BLOCK_LOW_AND_ABOVE`, or `HARM_BLOCK_THRESHOLD_UNSPECIFIED`. Validation skips categories with empty thresholds.
+- A model in Claude “Default Maximum Tokens” has a negative value.
+- Claude “Default Maximum Tokens” is incorrectly formatted. It must be a map from model names to integers.
+
+**Resolution**
+
+1. Correct the value for the category or model named in the error message.
+2. Click “Save Changes” again.
+
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- When changes take effect, how instances sync, and how to verify changes. <a href="/en/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">System Settings Overview</a>
+- Channel model lists, mapping, priority, weight, and the auto-disable toggle. <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>
+- The model catalog, providers, missing models, and access to deployment operations. <a href="/en/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">Model Management</a>
+- Group ratios, per-request pricing, and dynamic billing expressions. <a href="/en/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a>
+- Retries, session persistence, and Channel health. <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">Request Policy Configuration</a>
+- Rate limiting, SSRF, and Token restrictions. <a href="/en/docs/guide/feature-guide/system-settings/settings-security" target="_blank" rel="noopener noreferrer">Security and Limits Configuration</a>
+- System behavior and performance settings. <a href="/en/docs/guide/feature-guide/system-settings/settings-operations" target="_blank" rel="noopener noreferrer">Operations Configuration</a>

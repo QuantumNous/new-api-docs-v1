@@ -1,274 +1,332 @@
 ---
 title: Feature Guide Overview
-description: New API feature guide, organized into User Guide and Admin Guide.
+description: The New API Feature Guide is organized into three sections covering user features, administration, and system settings.
 ---
 
-New API is a unified AI model interface management and distribution system. It supports converting various large models into a unified calling format, compatible with formats like OpenAI and Claude. It can be used by individuals or enterprises for internal management and channel distribution, offering capabilities such as a playground, OpenAI-compatible interfaces, model and channel routing, usage logs, billing, subscriptions, and system operations.
+New API is a unified system for managing and distributing access to AI model APIs. It lets you call different large models through a common interface and supports formats such as OpenAI and Claude. Individuals and organizations can use it to manage channels and distribute access internally. Features include a playground, an OpenAI-compatible API, model and channel routing, usage logs, billing, subscriptions, and system operations.
 
-- This guide is divided into two parts based on roles: User Guide and Admin Guide.
+- This guide is organized by role and function into three sections: the User Guide, the Administrator Guide, and the System Settings Guide.
 
-### System Homepage
+### Site Homepage
 
-![系统首页](/assets/guide/home.png)
+The homepage is the first page you see when you open the site. Use the top navigation or the buttons on the page to open the console, model marketplace, leaderboards, or documentation.
 
-### Role Description
+- Feature Guide Overview — Site Homepage
 
-The platform controls menu access and operation permissions based on account roles, which are divided into three types:
+![Feature Guide Overview — Site Homepage](/assets/guide/feature-guide/homepage.png)
 
-- **Regular User** <br/>The default role after registration, with access to personal features open on the platform, such as Playground, Chat Presets, Overview, Data Dashboard, API Keys, Logs, Wallet, and Profile. <br/>Entries like top navigation, sidebar modules, and check-in are controlled by the Super Administrator (Root) configuration. [“Site & Branding Settings” →](/en/docs/guide/feature-guide/system-settings/settings-site)
+The super administrator (Root) can replace the homepage content by entering a URL, HTML, or Markdown in “Homepage Content” under “System Settings” → “Site and Branding” → “System Information”. Clear the field to restore the built-in homepage. [Site and Branding Configuration →](/en/docs/guide/feature-guide/system-settings/settings-site#system-information)
 
-- **Administrator (Admin)** <br/>Building upon regular user permissions, Admin can by default access management resources such as Channels, Models, Users, Redemption Codes, and Subscriptions. <br/>Resources like Channels also distinguish actions such as read, operate, normal write, sensitive write, and view key. The Super Administrator (Root) can set permission overrides for Admin accounts to manage available permissions. [“Site & Branding Settings” →](/en/docs/guide/feature-guide/system-settings/settings-site)
+- Feature Guide Overview — Homepage Content Settings
 
-- **Super Administrator (Root)** <br/>Root has all permissions, with additional access to **System Info** `/system-info` and **System Settings** `/system-settings/site`. <br/>System settings are divided into seven configuration domains: Site & Branding, Authentication, Billing & Payments, Models & Routing, Security & Restrictions, Console Content, and Operations.
+![Feature Guide Overview — Homepage Content Settings](/assets/guide/feature-guide/homepage-content-settings.png)
+
+### Account Roles
+
+The platform controls menu access and permitted actions based on the account role. There are three roles:
+
+- **Standard User** <br/>
+This is the default role after registration. Standard users can access the personal features enabled on the platform, such as the playground, chat, overview, dashboard, API keys, usage logs, audit logs, task logs, wallet, profile, and security and access settings.<br/>The super administrator (Root) controls which entries appear in the top navigation and sidebar and whether features such as daily check-in are available. [Site and Branding Configuration →](/en/docs/guide/feature-guide/system-settings/settings-site)
+
+- **Administrator (Admin)** <br/>
+In addition to standard user permissions, Admin accounts have default access to resources for managing channels, models, users, redemption codes, and subscriptions.<br/>For resources such as channels, permissions distinguish between reading, running operations, making standard or sensitive changes, and viewing keys. The super administrator (Root) can override the defaults for an Admin account under “Administrator Permissions” in User Management. [Administrator Permissions →](/en/docs/guide/feature-guide/admin/user#administrator-permissions)
+
+- **Super Administrator (Root)** <br/>
+Root has all permissions, including access to **System Information**, **Plugins**, **Request Processing**, and **System Settings**, and can modify model prices.<br/>System settings are divided into eight areas: Site and Branding, Authentication, Billing and Payments, Models, Request Policies, Security and Limits, Console Content, and Operations. [System Settings Overview →](/en/docs/guide/feature-guide/system-settings/system-setting)
 
 ## User Guide
 
-Applicable to Regular Users, Admin, and Root, covering common processes such as registration, creating API keys, calling models, viewing logs, and managing personal accounts.
+This guide is for standard users, Admin, and Root. It covers common workflows, from registering, signing in, and creating API keys to calling models, reviewing logs, and managing your account. If you are new to the platform, start with the [Quick Start](/en/docs/guide/feature-guide/user/quick-start).
 
-### Registration and Login
+### Quick Start
 
-Learn about registration, account password login, forgotten password reset, Passkey, third-party OAuth, and login session management.
+Follow six steps to register, sign in, and make your first model call. Get familiar with the console’s top bar and sidebar.
 
-- Account Password Login
-- Passkey and Third-Party OAuth Login
-- Registration Process
-- Login Session Management
-- Forgotten Password Reset
+- Understand the basic concepts
+- Make your first model call
+- Find your way around the console
+
+[View detailed documentation →](/en/docs/guide/feature-guide/user/quick-start)
+
+### Registration and Sign-In
+
+Register an account, sign in with a username and password, a third-party account, or a passkey, and complete sign-in verification. If you forget your password, reset it by email.
+
+- Sign in with a username and password
+- Sign in with a third-party account or passkey
+- Complete sign-in verification
+- Register an account
+- Reset a forgotten password
+- View and sign out of active sessions
 
 [View detailed documentation →](/en/docs/guide/feature-guide/user/auth)
 
-### Overview and Data Dashboard
+### Playground
 
-The overview page provides module information such as a quick start guide, API request examples, balance and usage summary, performance health, announcements, FAQ, and operational status. <br/>The data dashboard offers model call analysis, traffic splitting, and user analysis (Admin and Root only).
+Select a group and model in your browser, adjust request parameters, and chat with the model to evaluate its responses. The playground also provides the API URL, authentication methods, SDK examples, and supported endpoints for calling models programmatically.
 
-- Quick Start Guide
-- Usage and Health Status
-- API Information, Announcements, FAQ, and Uptime
-- Model Call Analysis
-- Traffic Splitting
-- User Statistics
+- Send messages and view responses
+- Adjust request parameters
+- Manage conversations
+- API URL and authentication
+- SDK examples
+- Supported API endpoints
 
-[View detailed documentation →](/en/docs/guide/feature-guide/user/dashboard)
+[View detailed documentation →](/en/docs/guide/feature-guide/user/playground)
 
-### Profile and Security
+### Chat
 
-View or manage personal settings such as account information, binding information, notification and behavior preferences, security settings, 2FA management, Passkey management, and login session management.
+Import your New API configuration into AI chat applications for testing and everyday use.
 
-- View Account Information
-- Manage Account Binding Information
-- Set Notification and Behavior Preferences
-- Set Interface Language Preference
-- Personal Left Sidebar Custom Display Settings
-- Daily Check-in
-- Security Settings
-- Enable or Disable Two-Factor Authentication (2FA)
-- Enable or Disable Passkey Passwordless Login
-- Login Session Management
-
-[View detailed documentation →](/en/docs/guide/feature-guide/user/personal-setting)
-
-### API Keys
-
-Manage API Keys. API Keys are credentials for calling gateway APIs and can be configured with parameters such as quota, expiration time, model restrictions, groups, Auto Group order, cross-group retry, and IP whitelist.
-
-- Create API Key
-- View and Copy API Key
-- Edit API Key
-- Enable, Disable, and Delete API Key
-
-[View detailed documentation →](/en/docs/guide/feature-guide/user/token)
-
-### Using API and Playground
-
-Use the Playground to test and experience AI models online; or use API Keys with OpenAI-compatible interfaces to call endpoints for Claude, Gemini, Responses, images, audio, etc.
-
-- Playground
-- API Address and Authentication
-- SDK Examples
-- Supported Interface Endpoints
-
-[View detailed documentation →](/en/docs/guide/feature-guide/user/api)
-
-### Chat Application Integration
-
-New API supports quick configuration import into various AI chat applications for convenient testing and daily use. <br/>
-
-- There are three ways to integrate chat with New API:
-1. One-click import of chat preset configuration
-2. One-click import of API Key configuration
-3. Manual configuration of chat applications
+- Import settings from a chat preset with one click
+- Import settings from an API key with one click
+- Configure a chat application manually
 
 [View detailed documentation →](/en/docs/guide/feature-guide/user/chat-apps)
 
-### Logs and Asynchronous Tasks
+### Overview
 
-View usage logs, drawing logs, and asynchronous task logs, filtering log information by request, model, status, Token, duration, errors, results, and billing.
+Check your account quota, usage, and request count. Follow the setup guide and use the sample command to make your first call. View announcements, API information, FAQs, and service status published by the administrator.
 
-- Usage Logs
-- Drawing Logs
-- Asynchronous Task Logs
-- Task Status and Background Processing
-- API Reference: Log Query Interface, Asynchronous Generation and Task Interface
+- Follow the setup guide
+- Copy the sample command to send your first request
+- Check quota and usage
+- View announcements, API information, FAQs, and uptime
+
+[View detailed documentation →](/en/docs/guide/feature-guide/user/overview)
+
+### Dashboard
+
+View model call counts, token usage, and quota consumption for a selected time range. See how calls are distributed across API keys, groups, and models, and set the default chart views.
+
+- Filter data
+- Set default chart views
+- Analyze model calls
+- View traffic distribution
+- View user statistics (administrators only)
+
+[View detailed documentation →](/en/docs/guide/feature-guide/user/dashboard)
+
+### API Keys
+
+Create, copy, and manage API keys for calling models. Set quota limits and expiration dates, restrict which models and IP addresses are allowed, and import keys into clients such as CC Switch with one click.
+
+- Create an API key
+- Copy a key and call a model
+- Import a key into CC Switch or a chat application
+- Edit, disable, or delete a key
+
+[View detailed documentation →](/en/docs/guide/feature-guide/user/token)
+
+### Usage Logs
+
+Review usage and charges for each model call, along with quota changes such as top-ups and refunds. Filter and export records, and open a log entry to verify its billing details.
+
+- Filter logs and view statistics
+- View log details
+- Export logs
 
 [View detailed documentation →](/en/docs/guide/feature-guide/user/log)
 
-### Wallet and Subscriptions
+### Audit Logs
 
-View and manage wallet balance, online top-up balance, redemption code balance, view order history, subscription plans, view and claim invitation rewards, and select billing preferences. Payment methods, amounts, discounts, rewards, plans, and billing rules are all configured by the platform administrator.
+Review account activity involving sign-ins, security settings, API keys, and access tokens. Check when each action occurred, where it originated, and whether it succeeded.
 
-- View Balance and Usage
-- Online Top-up
-- Redemption Codes
-- Subscription Plans
-- Purchase Subscription Plan
-- View Subscription Status
-- Select Billing Preferences
-- Invitation Rewards
-- Order History
-- Common Restrictions
+- Filter audit logs
+- View audit details
+- Event categories
+
+[View detailed documentation →](/en/docs/guide/feature-guide/user/audit-log)
+
+### Task Logs
+
+Track the status, progress, results, and reasons for failure for asynchronous tasks such as video and music generation, as well as Midjourney image generation tasks. Learn how timeouts and refunds work.
+
+- Filter tasks
+- View task details and artifacts
+- View image generation logs
+- View prompts, images, and reasons for failure
+- Check refunds for failed tasks
+
+[View detailed documentation →](/en/docs/guide/feature-guide/user/task-log)
+
+### Wallet
+
+Check your balance and usage, top up online or redeem codes for quota, purchase subscription plans, choose billing preferences, transfer referral rewards, and view your order history. The administrator configures payment methods, top-up amounts, subscription plans, and referral rewards.
+
+- Top up online
+- Redeem codes
+- View order history
+- Subscription plans
+- Choose billing preferences
+- Transfer referral rewards
 
 [View detailed documentation →](/en/docs/guide/feature-guide/user/wallet)
 
-### Model Marketplace and Leaderboard
+### Profile
 
-Browse pricing information and status of AI models enabled on the platform; view usage rankings and trends for platform models and providers.
+View your account information and usage, configure notification methods and preferences, choose the interface language and the pages shown in the left sidebar, and check in daily to earn quota.
 
-- Model Marketplace
-- Leaderboard
+- Set notification and behavior preferences
+- Set the interface language
+- Check in daily to earn quota
+- Choose which pages appear in the left sidebar
+
+[View detailed documentation →](/en/docs/guide/feature-guide/user/personal-setting)
+
+### Security and Access
+
+Change your password, link an email address and third-party accounts, enable two-step verification and passkey authentication, manage sign-in sessions and access tokens, choose whether to log IP addresses, or delete your account.
+
+- Complete security verification
+- Change or set a password
+- Link an email address and third-party accounts
+- Enable or disable two-step verification and regenerate backup codes
+- Enable or unlink a passkey
+- Manage sign-in sessions
+- Create and manage access tokens and view access records
+- Choose whether to log IP addresses
+- Delete your account
+
+[View detailed documentation →](/en/docs/guide/feature-guide/user/security)
+
+### Model Marketplace and Leaderboards
+
+Browse the models available on the site and compare prices. View model performance and sample calls, and see how models and providers rank by usage.
+
+- Find and filter models
+- Switch views and price display options
+- Understand model pricing
+- View model details
+- View leaderboards
 
 [View detailed documentation →](/en/docs/guide/feature-guide/user/pricing)
 
-## Admin Guide
+### Frequently Asked Questions
 
-Applicable to Admin and Root roles, covering all functions for platform operations and system configuration.
+Look up the exact message or symptom to find causes and solutions for issues across the platform, including failed calls, quota and billing, accounts and sign-in, and interface and display problems.
+
+- Failed calls
+- Quota and billing
+- Accounts and sign-in
+- Interface and display
+
+[View detailed documentation →](/en/docs/guide/feature-guide/user/faq)
+
+## Administrator Guide
+
+This guide covers nine pages that Admin and Root use for routine administration. Billing Expressions, System Information, Plugin Management, and Request Processing are available only to Root. Instance-wide options are covered separately in the System Settings Guide below.
+
+### Billing Expressions (Root Only)
+
+Use billing expressions in the pricing editor to define per-token prices, pricing tier conditions, per-request prices, and request rules for a model. Verify pricing with cost estimates and simulated requests, and learn how pre-charging, settlement, and validation on save work.
+
+[View detailed documentation →](/en/docs/guide/feature-guide/admin/billing-expression)
 
 ### Channel Management
 
-Configure AI service provider channels, supporting strategies such as multi-key polling, priority, and automatic disabling.
-
-- Add New Channel
-- Configure Channel Parameters
-- Channel Testing
-- Batch Operations
-- Multi-Key Mode Configuration
+Configure AI providers, plugins, gateways, and custom channels. Manage credentials, models, groups, routing mappings, and priorities. Use multiple keys and parameter overrides, run tests, check balances, update upstream models, and perform bulk operations.
 
 [View detailed documentation →](/en/docs/guide/feature-guide/admin/channel)
 
+### Model Management
+
+Manage model metadata, name matching, model marketplace listings, providers, and prefill groups. Sync model metadata from upstream providers. Root can also edit model pricing and sync prices. If the deployment service is configured, you can also manage io.net model deployments.
+
+[View detailed documentation →](/en/docs/guide/feature-guide/admin/model)
+
 ### User Management
 
-View and manage all users, modify roles, groups, quotas, and enable or disable accounts.
-
-- View User List
-- Edit User Information
-- Modify User Role
-- Adjust User Quota
-- Search Users
+View and manage user accounts, account status, roles, groups, quotas, linked sign-in methods, subscriptions, passkeys, and two-factor authentication (2FA). Root can set “Administrator Permissions” for Admin accounts.
 
 [View detailed documentation →](/en/docs/guide/feature-guide/admin/user)
 
 ### Redemption Code Management
 
-Batch generate and manage quota redemption codes.
-
-- Batch Generate Redemption Codes
-- Set Redemption Code Denomination
-- Export Redemption Codes
-- View Usage Status
+Create, view, edit, enable, disable, and delete quota redemption codes. Copy or delete codes in bulk, or remove invalid codes. When creating codes, you can save them to a TXT or Markdown file.
 
 [View detailed documentation →](/en/docs/guide/feature-guide/admin/redemption)
 
-### Log Management
-
-View site-wide API call logs and user operation records.
-
-- View Site-wide Logs
-- Advanced Filtering
-- Data Statistical Analysis
-
-[View detailed documentation →](/en/docs/guide/feature-guide/admin/log)
-
 ### Subscription Management
 
-Create and manage subscription plans.
-
-- Create Subscription Plan
-- Edit Plan Information
-- Manage Subscribed Users
+Create and maintain subscription plans. Configure validity periods, quota reset intervals, group upgrades and reversions, and payment methods. Enable or disable plans and reset subscription quotas in bulk.
 
 [View detailed documentation →](/en/docs/guide/feature-guide/admin/subscription)
 
-### Model Management
+### System Information (Root Only)
 
-Configure model pricing and availability.
+View instance node status, resource metrics, synchronization status for each node, and background system tasks. Remove records for unreachable instances and clear historical system tasks.
 
-- Set Model Ratio
-- Enable or Disable Model
-- Batch Modify Pricing
+[View detailed documentation →](/en/docs/guide/feature-guide/admin/system-info)
 
-[View detailed documentation →](/en/docs/guide/feature-guide/admin/model)
+### Plugin Management (Root Only)
 
-### Group Management
+Manage three types of plugins: task, channel, and request processing plugins. Browse the official and community plugin marketplaces, upload local plugins, inspect plugin details and sandboxes, enable or disable plugins, and manage their channel bindings.
 
-Create user groups to achieve differentiated billing and channel allocation.
+[View detailed documentation →](/en/docs/guide/feature-guide/admin/task-plugins)
 
-- Create User Group
-- Configure Group Ratio
-- Allocate Channels
+### Request Processing (Root Only)
 
-[View detailed documentation →](/en/docs/guide/feature-feature/admin/group)
+Inspect or modify requests before they are sent upstream. Add a request processing instance, set its scope, target models, and execution order, test it with a sample request, and add it to a channel.
 
-### System Settings (Root Exclusive)
+[View detailed documentation →](/en/docs/guide/feature-guide/admin/request-processing)
 
-Root-exclusive global configuration center, covering parameters such as site information, billing rules, payments, and OAuth.
+Groups are a shared routing and billing dimension used by channels, users, API keys, and billing settings. They no longer have a separate entry in the main navigation. For model calls and charges, see [Usage Logs](/en/docs/guide/feature-guide/user/log). For image generation records and users’ asynchronous tasks, see [Task Logs](/en/docs/guide/feature-guide/user/task-log).
 
-- Site Basic Information
-- Billing Rule Configuration
-- Payment Method Configuration
-- Email Service Configuration
-- Registration and Login Settings
+## System Settings Guide
 
-[View detailed documentation →](/en/docs/guide/feature-guide/admin/system-setting)
+System Settings is the Root-only workspace for instance-level configuration. Settings are organized into eight areas by function. The overview explains the common rules for saving changes, when changes take effect, and what needs to be verified.
 
-### Advanced System Configuration (Root Exclusive)
+### System Settings Overview
 
-Detailed configuration options for system settings, including advanced features such as payments, rate limiting, chat, and drawing.
+Learn how to access System Settings, which permissions are required, and what each of the eight settings areas covers. Review how changes are saved and applied, how multiple instances stay in sync, how sensitive settings and audit records are handled, and how to verify changes.
 
-- Payment Settings (EPay, Stripe)
-- Rate Limiting Settings
-- Ratio Settings
-- Chat Settings
-- Drawing Settings
-- Data Dashboard Settings
-- Model Settings
-- Operations Settings
+[View detailed documentation →](/en/docs/guide/feature-guide/system-settings/system-setting)
 
-[View detailed documentation →](/en/docs/guide/feature-guide/admin/system-setting-advanced)
+### Site and Branding Configuration
 
-### Custom OAuth (Root Exclusive)
+Configure site identity, public content and legal documents, system announcements, top navigation, and sidebar modules.
 
-Configure custom OAuth login providers.
+[View detailed documentation →](/en/docs/guide/feature-guide/system-settings/settings-site)
 
-- Add OAuth Provider
-- Configure OAuth Parameters
-- Test OAuth Login
+### Authentication Configuration
 
-[View detailed documentation →](/en/docs/guide/feature-guide/admin/custom-oauth)
+Configure registration, sign-in, OAuth, passkeys, bot protection, and custom OAuth identity providers.
 
-### Performance Monitoring (Root Exclusive)
+[View detailed documentation →](/en/docs/guide/feature-guide/system-settings/settings-auth)
 
-View system performance metrics and operational status.
+### Billing and Payment Configuration
 
-- View System Load
-- Monitor Channel Performance
-- Analyze Response Time
+Configure how quota and currency are displayed, model and group pricing, payment gateways, and check-in rewards.
 
-[View detailed documentation →](/en/docs/guide/feature-guide/admin/performance)
+[View detailed documentation →](/en/docs/guide/feature-guide/system-settings/settings-billing)
 
-### Documentation Configuration (Root Exclusive)
+### Model Configuration
 
-Configure the display content of the documentation site.
+Configure global model behavior, provider protocol adapters, and the io.net model deployment service.
 
-- Customize Documentation Content
-- Configure Documentation Links
+[View detailed documentation →](/en/docs/guide/feature-guide/system-settings/settings-models)
 
-[View detailed documentation →](/en/docs/guide/feature-guide/admin/docs-config)
+### Request Policy Configuration
+
+Configure session affinity and retries, channel health checks, and automatic channel disabling. Learn how request decisions are logged.
+
+[View detailed documentation →](/en/docs/guide/feature-guide/system-settings/settings-request-policies)
+
+### Security and Limit Configuration
+
+Configure rate limits for model requests, SSRF protection, and limits on the number of API keys.
+
+[View detailed documentation →](/en/docs/guide/feature-guide/system-settings/settings-security)
+
+### Console Content Configuration
+
+Configure the dashboard, announcements, API URLs, FAQs, Uptime Kuma, chat presets, and image generation.
+
+[View detailed documentation →](/en/docs/guide/feature-guide/system-settings/settings-content)
+
+### Operations Configuration
+
+Configure the operating mode, model performance metrics, email and quota alerts, the Worker proxy, log maintenance, performance safeguards, and version checks.
+
+[View detailed documentation →](/en/docs/guide/feature-guide/system-settings/settings-operations)

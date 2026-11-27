@@ -1,0 +1,610 @@
+---
+title: Operations Configuration
+description: Configure system modes, model performance metrics, email delivery (SMTP / Resend) and low-balance alerts, the Worker proxy, log maintenance and system task records, performance safeguards, and version checks as Root.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- Only Root can access these settings. In the sidebar, go to “Admin” → “System Settings,” then select a section under “Operations” in the left navigation.
+- Configure system modes, model performance metrics, email delivery and low-balance alerts, the Worker proxy, log maintenance, performance safeguards, and version checks.
+- Log cleanup, cache clearing, and garbage collection (GC) run immediately and cannot be undone.
+
+<Callout type="warn" title="Caution">
+
+- Immediate operations take effect independently of any unsaved form changes.
+- Before proceeding, confirm the target, scope of impact, and recovery plan. Avoid running these operations repeatedly during peak hours.
+
+</Callout>
+
+## Operations Configuration Overview
+
+Operations has seven sections. Switch between them under “Operations” in the left navigation. “System Behavior” opens by default.
+
+**Sections at a glance**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Section | Purpose | Tabs |
+| --- | --- | --- |
+| [System Behavior](#system-behavior) | Default sidebar preference, demo site mode, and personal use mode. | — |
+| [Model Performance Metrics](#model-performance-metrics) | Recording, database flushing, and retention of model performance metrics. | — |
+| [Email and Notifications](#email-and-notifications) | Email delivery method (SMTP / Resend) and low-balance alerts. | — |
+| [Worker Proxy](#worker-proxy) | External proxy for downloads and notifications. | — |
+| [Log Maintenance](#log-maintenance) | Usage logging, user log exports and query ranges, system task record retention, and cleanup of database logs and server log files. | — |
+| [Performance](#performance) | Request body caching, resource safeguards, and process statistics. | — |
+| [System Maintenance](#system-maintenance) | Version information and update checks. | — |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- See [FAQ](#frequently-asked-questions) if email fails after saving, low-balance alerts are missing, log cleanup stays pending, or resource protection does not take effect.
+
+</Callout>
+
+## Configuration Sections
+
+The seven sections below follow the order of the left navigation. For each section’s save button and when changes take effect, see [Saving and Applying Changes](#saving-and-applying-changes).
+
+### System Behavior
+
+- Operations → System Behavior Configuration
+
+![System Behavior Configuration](/assets/guide/feature-guide/system-settings-operations-system-behavior.png)
+
+**Steps**
+
+1. Turn the three settings on or off as needed.
+2. Click “Save Changes” at the top of the page.
+
+**Configuration settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Collapse Sidebar by Default | The UI describes this as “Collapse the sidebar by default for new users.” | Toggle. The current frontend ignores this setting. See [FAQ](#frequently-asked-questions). | Off |
+| Demo Site Mode | The UI describes this as “Enable a feature-limited demo mode.” All features remain available in the current version. If no custom footer is configured, the footer displays three columns of links labeled “About Us,” “Documentation,” and “Related Projects.” | Toggle. | Off |
+| Personal Use Mode | The UI describes this as “Optimize the system for self-hosted, single-user use.” Models without configured prices are billed at the default Ratio of `37.5`, appear in the model list, and can be used without setting a price. The login page hides the “Register” link. The registration endpoint remains available. | Toggle. | Off |
+
+</div>
+
+### Model Performance Metrics
+
+- Operations → Model Performance Metrics Configuration
+
+![Model Performance Metrics Configuration](/assets/guide/feature-guide/system-settings-operations-model-performance-metrics.png)
+
+The UI describes this section as “Collect Relay latency and success rate metrics for display in the Model Plaza.” Relay request completion and billing provide the model, Group, request duration, time to first Token, success rate, output Tokens, and generation time.
+
+**Steps**
+
+1. Based on your data volume, choose whether to record model performance metrics and set the database flush interval, aggregation bucket size, and retention period.
+2. Click “Save Changes” at the top of the page.
+
+<Callout type="info" title="Tip">
+
+- The node handling the query merges in-memory data that it has yet to flush. In a multi-instance deployment, samples from other nodes become visible after those nodes flush their data. The Model Plaza also caches results for about a minute. A blank chart immediately after saving can be expected.
+- Smaller buckets or shorter flush intervals increase memory usage, database load, and background writes. Evaluate these settings based on the number of models and Groups and the volume of requests.
+
+</Callout>
+
+**Configuration settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Enable Model Performance Metrics | Controls whether Relay performance samples are recorded. Turning this off stops new sample collection and causes the flush loop to skip database writes and expired-data cleanup. Existing database records and in-memory aggregation buckets are retained when the setting is turned off. | Toggle. Turning it off disables the other three settings. | On |
+| Database Flush Interval (Minutes) | Sets how often the flush loop writes completed in-memory aggregation buckets to the database and removes expired data. The frontend chart refreshes independently. | Minimum `1`. | `5` |
+| Aggregation Bucket Size | Changes apply only to samples collected afterward. | Choose “1 Minute,” “5 Minutes,” or “1 Hour.” | 1 hour |
+| Retention Days | A positive value causes the flush loop to remove performance metrics older than the specified number of days. | `0` retains data indefinitely. | `0` |
+
+</div>
+
+### Email and Notifications
+
+- Operations → Email and Notifications Configuration
+
+![Email and Notifications Configuration (SMTP)](/assets/guide/feature-guide/system-settings-operations-email-and-notifications.png)
+
+The system sends registration verification codes, password resets, user notifications, and other system emails through SMTP or the Resend API. This section also includes low-balance alerts.
+
+**Steps**
+
+1. Select an “Email Delivery Method.” For SMTP, get the host, port, authentication username, and authorization code or password from your email provider. Use the SMTP host in the host field. For Resend, have a sender domain you have verified with Resend and an API key ready.
+2. For SMTP, select SSL/TLS or STARTTLS as required by your provider and enter a plain sender email address. Enable certificate verification bypass only for internal scenarios where you have assessed the risks.
+3. Enter a new password, Token, or API key. Leave the field blank to keep the current credential.
+4. Set the “Default Alert Threshold” based on the “Display Mode” in <a href="/en/docs/guide/feature-guide/system-settings/settings-billing#currency-and-display" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a>.
+5. Click “Save Changes” at the top of the page.
+
+<Callout type="info" title="Tip">
+
+- The system sends low-balance alerts asynchronously. Turning off “Low-Balance Alerts” in the user’s <a href="/en/docs/guide/feature-guide/user/personal-setting#configure-notification-and-behavior-preferences" target="_blank" rel="noopener noreferrer">profile</a> suppresses these alerts. A nonzero threshold set by the user takes precedence over the global default.
+- Users can choose email, Webhook, Bark, or Gotify. Email is the default. Notification failures are recorded in the system error log.
+- By default, each user can receive up to two notifications of the same type within 10 minutes. The system skips any additional notifications of that type within the window. Set the count with `NOTIFY_LIMIT_COUNT` (default `2`) and the window in minutes with `NOTIFICATION_LIMIT_DURATION_MINUTE` (default `10`). Both are startup-only environment variables. Restart New API after changing either one.
+
+</Callout>
+
+**Email delivery method**
+
+“Email Delivery Method” supports SMTP and the Resend API and defaults to SMTP. The UI describes this as “Send email only through the selected method. The other method’s configuration is retained.” If delivery fails, the system has no fallback to the other method. The page displays fields for the selected method only. The system saves the delivery method last and applies the switch only if all other settings save successfully in the same operation.
+
+**Encryption modes**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Mode | Behavior and guidance |
+| --- | --- |
+| No Encryption | Typically opens a plaintext SMTP connection. Port `465` still uses implicit TLS when STARTTLS is disabled, as described below. Plaintext connections are suitable only for controlled internal networks or services that explicitly require this mode. |
+| SSL/TLS | Opens an implicit TLS connection. The current backend also uses implicit TLS on port `465` whenever STARTTLS is disabled, even if SSL/TLS was not explicitly selected. |
+| STARTTLS | Opens a standard SMTP connection, then requires the server to support STARTTLS and upgrades the connection. Email delivery fails if the server does not advertise STARTTLS. |
+
+</div>
+
+**SMTP configuration settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| SMTP Host | Hostname or IP address of the SMTP provider. | Enter the SMTP host only. | Blank |
+| Port | Common ports include 25, 465, and 587. | Enter an integer from 1 to 65535. Invalid input shows “Port must be a positive integer.” | `587` |
+| SMTP Encryption Mode | Selects the encryption mode for SMTP transport. | Choose “No Encryption,” “SSL/TLS,” or “STARTTLS.” See “Encryption modes” above. An environment variable can set the initial value, as described under “SMTP environment variables” below. | No Encryption |
+| Skip SMTP TLS Certificate Verification | Allows self-signed SMTP certificates or certificates with a hostname mismatch. | Toggle. An environment variable can set the initial value, as described under “SMTP environment variables” below. | Off |
+| Force AUTH LOGIN | Requires the AUTH LOGIN method for SMTP authentication. | Toggle. | Off |
+| Username | Account used to authenticate with the SMTP server. | Enter the username required by your provider. | Blank |
+| Sender Address | Enter a plain email address such as `noreply@example.com`. If blank, the system uses “Username.” Recipients see the system name as the sender name. | Enter an email address or leave the field blank. Invalid input shows “Enter a valid email address or leave this field blank.” | Blank |
+| Password / Access Token | Password or access Token used for SMTP authentication. | The UI never displays the saved credential. Leave the field blank to keep the current credential. | Blank |
+
+</div>
+
+**SMTP environment variables**
+
+- `SMTP_STARTTLS_ENABLE` (Boolean, default `false`) determines whether “SMTP Encryption Mode” initially uses STARTTLS. The legacy name `SMTP_STARTTLS_ENABLED` is still supported.
+- `SMTP_INSECURE_SKIP_VERIFY` (Boolean, default `false`) sets the initial value of “Skip SMTP TLS Certificate Verification.” The legacy name `SMTP_TLS_INSECURE_SKIP_VERIFY` is still supported.
+- Once you save a setting on this page, the saved value takes precedence.
+
+**Resend API configuration settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Sender Email Address | The domain must be verified in Resend. | Enter a valid email address. Invalid input shows “Enter a valid sender email address.” When Resend is the active delivery method, the server rejects invalid addresses on save. | Blank |
+| Sender Name | Name recipients see. If blank, the system uses the site name. | Newline and null characters are prohibited. Invalid input shows “Sender name cannot contain newline or null characters.” The system saves this value together with the sender email address. | Blank |
+| Resend API Key | API key the backend uses to send email through Resend. | The UI never displays the saved key. Leave the field blank to keep the current key. If no key has been configured, this field is required and leaving it blank shows “Configure a Resend API key before enabling Resend.” When Resend is the active delivery method, the server rejects invalid keys on save. | Blank |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- The backend opens SMTP connections and sends Resend requests directly, without using the Worker proxy or URL SSRF validation.
+- If Resend rejects a message, the specific reason appears only in the server logs.
+- In production, verify DNS, ports, certificates, authentication, SPF, DKIM, DMARC, and sender policies.
+
+</Callout>
+
+**Alert rules**
+
+- During Relay settlement, the system checks wallet and subscription Quotas separately. For the wallet, it compares the balance before and after the charge. For the subscription, it subtracts usage from the total subscription Quota.
+- The system sends an alert only when a charge drops the balance from at or above the threshold to below it.
+- Once the balance is below the threshold, another alert is possible only after a top-up restores the balance to at least the threshold.
+
+**Low-balance alert settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Low-Balance Alerts | The UI describes this as “Notify users through their chosen notification method when their balance falls below the threshold.” An alert is sent only when a charge crosses the threshold. See “Alert rules” above. Turning this off disables low-balance alerts site-wide. | Toggle. | On |
+| Default Alert Threshold (USD) | Global default threshold for low-balance alerts. | Appears only when alerts are enabled. Enter a value greater than or equal to 0. Invalid input shows “Must be greater than or equal to 0.” Depending on “Display Mode,” the unit in parentheses is USD, CNY, a custom symbol, or Tokens. Enter a value in the displayed unit. The system converts it to Quota points on save. | `1000` Quota points (`0.002` in USD display mode) |
+
+</div>
+
+### Worker Proxy
+
+- Operations → Worker Proxy Configuration
+
+![Worker Proxy Configuration](/assets/guide/feature-guide/system-settings-operations-worker-proxy.png)
+
+The Worker proxy handles server-side outbound requests that explicitly integrate with it in the source code, such as remote file and image downloads, user Webhooks, and Bark and Gotify notifications. Channel Relay, payments, OAuth, and other outbound traffic outside those integrations bypass the Worker proxy.
+
+**Steps**
+
+1. Set up a Worker service you control. Confirm that it accepts New API’s request format and validates the access key, then enter its URL and key.
+2. Decide whether to allow HTTP based on the protocol of the target resources, then click “Save Worker Settings” at the top of the page.
+3. To disable the Worker, clear the Worker URL and save. This also clears the saved access key unless you enter a new key in the same save. If you keep the URL, leaving the key field blank preserves the existing key.
+
+<Callout type="warn" title="Caution">
+
+- Worker payloads may include the target URL, request headers, notification content, and authentication information.
+- New API sends the “Worker Access Key” in the request JSON. The Worker implementation determines whether to validate it. The key is for authenticating requests to the Worker. Worker responses and access controls for target URLs are independent of this key.
+- Standard downloads, Webhooks, and notifications still undergo the applicable SSRF checks before reaching the Worker. The Worker URL itself is an external trust boundary configured by Root.
+- Use only a Worker you control and whose logs you can audit. Sensitive notifications or remote resource requests may pass through this service when enabled. Verify its TLS configuration, key validation, log redaction, timeouts, target filtering, and data retention policies.
+
+</Callout>
+
+**Configuration settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Worker URL | The system removes the trailing `/` on save. When a URL is set, requests are forwarded to this Worker. | A nonempty URL must begin with `http://` or `https://`. Invalid input shows “Provide a valid URL starting with http:// or https://.” | Blank |
+| Worker Access Key | Sent with Worker requests to authenticate with the Worker. | The UI never displays the saved key. Leave the field blank to keep the current key. | Blank |
+| Allow HTTP Image Requests | The UI describes this as “Enable when proxying a Worker that retrieves images over HTTP.” | Toggle. | Off |
+
+</div>
+
+### Log Maintenance
+
+- Operations → Log Maintenance Configuration
+
+![Log Maintenance Configuration](/assets/guide/feature-guide/system-settings-operations-log-maintenance.png)
+
+Log Maintenance has five groups, “Logging,” “Log Queries and Exports,” “System Task Records,” “Clean Up Historical Logs,” and “Server Log Management.” The first three share the “Save Log Settings” button at the top of the page. Both cleanup operations run immediately and affect different data sources.
+
+**Steps for configuring logs**
+
+1. Configure “Record Quota Usage,” “Allow Users to Export Logs,” “Maximum Log Time Range (Days),” and “Completed Task Retention (Days).”
+2. Click “Save Log Settings” at the top of the page.
+
+<Callout type="info" title="Tip">
+
+- “Record Quota Usage” applies only to usage logs. Error, top-up, system, refund, and audit logs, server text logs, and the Midjourney and asynchronous task tables are unaffected.
+- The system writes error logs only when `ERROR_LOG_ENABLED` is `true`. This environment variable defaults to `false` and has no corresponding setting on this page.
+
+</Callout>
+
+**Log settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Group | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- | --- |
+| Record Quota Usage | Logging | Controls whether the system creates per-request usage logs, including records from standard Relay and asynchronous task settlement. The UI describes this as “Track usage for each request to support usage analysis. Keeping this enabled increases database writes.” | Toggle. When off, usage logs, consumption statistics, dashboard statistics, and analyses that rely on these records will lack new data. | On |
+| Allow Users to Export Logs | Log Queries and Exports | Users can download their own logs from the Usage Logs page. Administrators can always export logs. | Toggle. When off, the system rejects export requests from non-admin users. | On |
+| Maximum Log Time Range (Days) | Log Queries and Exports | Sets the maximum time range users can view in a single query in the logs or on the dashboard, and the maximum range per export. If no start time is specified, the system looks back by this amount. Exceeding the range results in an error. The limit applies to every export. Administrators can query logs without this limit. | Integer, minimum `1`. | `365` |
+| Completed Task Retention (Days) | System Task Records | The UI describes this as “Completed system tasks older than this number of days are automatically deleted each day.” The Master instance runs cleanup and keeps the latest record of each task type. See <a href="/en/docs/guide/feature-guide/admin/system-info#task-execution-and-retention" target="_blank" rel="noopener noreferrer">System Information</a> for the retention rules. | Integer, minimum `1`. | `30` |
+
+</div>
+
+**Clean up historical logs**
+
+The UI describes this as “Remove all log entries created before the selected timestamp.” Cleanup runs against the log database used by the node executing the task. The node uses the separate log database if `LOG_SQL_DSN` is set and the primary database otherwise.
+
+**Steps for cleaning up logs**
+
+1. Archive any data you need to retain.
+2. Select a cutoff in the date and time picker (the default is 30 days ago), or choose the “24 Hours Ago,” “7 Days Ago,” or “30 Days Ago” shortcut.
+3. Click “Clean Up Logs.”
+4. In the “Confirm Log Cleanup” dialog, click “Delete Logs.” The UI shows “Log cleanup task started.” The system creates a “Log Cleanup” task.
+
+<Callout type="info" title="Tip">
+
+- If no time is selected, the UI shows “Select a timestamp before clearing logs.”
+- While the task is pending or running, the button displays “Cleaning up...” and is disabled. The task continues in the background if you close the page. Reopening the page reconnects to the task in progress.
+- This operation leaves `quota_data` aggregates, performance metrics, audit logs, image generation and asynchronous task records, and server log files intact.
+- If multiple nodes share a log database, the deletion affects their shared log history.
+- To check the task status, see <a href="/en/docs/guide/feature-guide/admin/system-info#system-task-status" target="_blank" rel="noopener noreferrer">System Information</a>.
+
+</Callout>
+
+**Cleanup results**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Status | UI display | Next action |
+| --- | --- | --- |
+| In progress | The “Log Cleanup Progress” card shows the percentage and “Processed … / … log entries.” | Wait for the task to finish before starting another cleanup. |
+| Completed | “Deleted … log entries.” or “No log entries matched the selected time.” | — |
+| Failed | “Log cleanup failed” or the original error message from the task. | Review the error and check the log database and Master instance. Completed deletions are permanent unless you restore the data yourself. |
+
+</div>
+
+**Server log management**
+
+The UI description reads “Manage server runtime log files. Log files accumulate over time. Clean them up periodically to free disk space.” Below it, the page displays “Log Directory,” “Log File Count,” “Total Log Size,” and “Time Range.” Set the log directory with the `--log-dir` startup option (default `./logs`). If no directory is configured, the page shows “Server logging is disabled (no log directory configured).” The system scans only files in that directory whose names match `oneapi-*.log`.
+
+**Steps for cleaning up log files**
+
+1. Under “Cleanup Method,” select “Keep the Most Recent N Files” or “Keep the Last N Days,” then enter the “Number of Files to Keep” or “Days to Keep.”
+2. Click “Clean Up Log Files.”
+3. In the “Confirm Log File Cleanup?” dialog, click “Confirm Cleanup.” On success, the UI shows “Cleaned up … log files and freed …”
+
+<Callout type="warn" title="Caution">
+
+- Deleting database logs or server log files is irreversible.
+- Before cleanup, verify the retention periods required for audits, dispute resolution, payments, compliance, and troubleshooting. Archive the necessary database records or log files.
+
+</Callout>
+
+**Cleanup rules**
+
+1. By file count, the system sorts files from newest to oldest by filename, which includes a timestamp. It keeps the N most recent files and deletes the rest.
+2. By day count, the system keeps the last N days of logs and deletes files last modified more than N days ago.
+3. The system always skips the active log file. If the value is less than 1, the UI shows “Enter a valid number.”
+
+### Performance
+
+- Operations – Performance Configuration
+
+![Performance Configuration](/assets/guide/feature-guide/system-settings-operations-performance.png)
+
+The **Performance Settings** section contains two settings groups, **Disk Cache Settings** and **System Performance Monitoring**, along with a **Performance Monitoring** toolbar. Both settings groups use the **Save Changes** button in the page header.
+
+**Procedure**
+
+1. Set the cache threshold and maximum total size based on the instance’s disk space and request body sizes. The maximum cache size does not reserve disk space.
+2. Set the resource protection thresholds and click **Save Changes** in the page header. Use the unit and valid range for each resource. Memory and disk have their own validation ranges.
+3. Click **Refresh Statistics** to check usage first. Then run **Clear Inactive Cache**, **Reset Statistics**, or **Run GC** individually as needed.
+4. In a multi-instance deployment, check each target node separately. Cache cleanup is irreversible. Resetting hit counts does not free cache space or clean up logs.
+
+<Callout type="info" title="Tip">
+- Resource protection uses periodic snapshots and provides neither request queuing nor automatic scaling. When enabled, snapshots typically update every 5 seconds.
+- Resource protection applies to Relay requests from the Playground, OpenAI-compatible endpoints (including video generation), Gemini, Midjourney, and task plugins. Login and standard management endpoints are unaffected, and coverage does not extend to all background tasks.
+</Callout>
+
+**Performance Monitoring Actions**
+
+The page shows disk and memory cache usage and hit counts, the number of active cache entries, cache directory files, disk space, Go memory usage, and the number of goroutines on the node handling the request. It also provides the following actions.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Refresh Statistics | To the right of the **Performance Monitoring** heading | Retrieves updated statistics from the node handling the request. |
+| Clear Inactive Cache | To the right of the **Performance Monitoring** heading | Opens a confirmation dialog that asks “Clear inactive disk cache?” and explains “This will delete temporary cache files that have been unused for more than 10 minutes.” Clicking **Confirm** deletes regular files in the cache directory that were last modified more than 10 minutes ago and displays “Disk cache cleared.” The cleanup uses file modification time alone, without checking whether a request still references the file. Use caution during peak traffic or while long-running requests are active. |
+| Reset Statistics | To the right of the **Performance Monitoring** heading | Runs immediately without a confirmation dialog and displays “Statistics reset.” It resets only the disk and memory cache hit counts. Active cache entries, current usage, and directory files are unaffected. |
+| Run GC | To the right of the **Performance Monitoring** heading | Runs immediately without a confirmation dialog and displays “GC completed.” It triggers garbage collection on the node handling the request and may briefly increase latency. |
+
+</div>
+
+<Callout type="info" title="Tip">
+These statistics and actions apply only to the node handling the request. To check or act on other nodes, access each one separately.
+</Callout>
+
+**Disk Cache Settings**
+
+When enabled, large request bodies or file data that exceed the size threshold and fit within the current cache capacity are temporarily stored on disk to reduce memory usage. Data that does not meet these conditions stays in memory.
+
+**Disk Cache Configuration Options**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Enable Disk Cache | Temporarily stores large request bodies on disk, which can significantly reduce memory usage. SSD storage is recommended. | Toggle. When disabled, the other three settings are grayed out. | Off |
+| Disk Cache Threshold (MB) | Request bodies larger than this value use the disk cache. | Minimum `1`. | `10` |
+| Maximum Total Disk Cache Size (MB) | The current process uses its own usage statistics to check whether existing usage plus the size of the new request would exceed this value. The operating system does not enforce it as a disk quota. | Minimum `100`. The page displays “Available space: … / Total space: …” below the field and shows a warning if available space is below this value. | `1024` |
+| Cache Directory | Leave blank to use `new-api-body-cache` under the system temporary directory. In container environments, manage this directory through mounts and container storage policies. | Placeholder text reads “Leave blank to use the system temporary directory.” This field is hidden in container environments. | Blank |
+
+</div>
+
+**System Performance Monitoring**
+
+System performance monitoring is enabled by default. A background process samples usage for CPU, memory, and the disk that contains the cache directory approximately every 5 seconds. CPU and memory usage are calculated using the container’s cgroup quotas when available, with host values used as a fallback. If a threshold is greater than `0` and the integer usage percentage strictly exceeds it in 3 consecutive samples (about 15 seconds), new Relay requests are rejected with HTTP `503`. Requests are accepted again as soon as a sample drops to or below the threshold. Disabling monitoring or raising the threshold allows requests through immediately. Requests are also accepted if the sample data has not been updated for more than 30 seconds.
+
+**System Performance Monitoring Configuration Options**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Limits | Default |
+| --- | --- | --- | --- |
+| Enable Performance Monitoring | Rejects new Relay requests when resource usage exceeds a threshold. | Toggle. When disabled, all three threshold fields are grayed out. | On |
+| CPU Threshold (%) | CPU utilization threshold. | Minimum `0`. The frontend imposes no maximum. Set to `0` to skip the CPU check. | `90` |
+| Memory Threshold (%) | Memory usage threshold. | `0–100`. Set to `0` to skip the memory check. | `90` |
+| Disk Threshold (%) | Usage threshold for the disk containing the cache directory. | `0–100`. Set to `0` to skip the disk check. | `95` |
+
+</div>
+
+### System Maintenance
+
+- Operations – System Maintenance Configuration
+
+![System Maintenance Configuration](/assets/guide/feature-guide/system-settings-operations-system-maintenance.png)
+
+This section displays **Current Version** and **Running Since** and lets you check releases on GitHub. It has no save button.
+
+**Procedure**
+
+1. Click **Check for Updates** to open the **System Update** dialog.
+2. As needed, click **Check Again**, **Ignore This Version**, or **Go to GitHub**.
+
+<Callout type="warn" title="Caution">
+The update check does not download code, verify upgrade compatibility, replace binaries, pull images, migrate databases, rebuild containers, restart services, or roll back automatically. After reviewing the GitHub release, plan your backup, testing, upgrade, and recovery steps for your deployment.
+</Callout>
+
+**Update Check Rules**
+
+- The browser fetches the release list directly from GitHub with a 10-second request timeout.
+- The page ignores draft releases and tags with unparseable version numbers. It selects the latest release by version number. For the same version number, the order from lowest to highest is alpha, beta, rc, stable, and patch. Prereleases are included in the comparison and labeled **Prerelease**.
+- **Update Available** appears only if the latest version is newer than the current version and has not been ignored.
+- **Ignore This Version** is stored only in the current browser.
+- When signed in with the Admin role or higher, you can also open the update dialog from the version number in the page header. The browser checks for updates automatically once an hour while the page is visible and the browser is online.
+
+## Saving and Applying Changes
+
+For saving options, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#save-methods" target="_blank" rel="noopener noreferrer">System Settings Overview</a>. For when changes take effect and how they propagate across instances, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#scope-and-multi-instance-synchronization" target="_blank" rel="noopener noreferrer">Scope and Multi-Instance Synchronization</a>. For when the browser displays new values, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#frontend-display-and-caching" target="_blank" rel="noopener noreferrer">Frontend Display and Caching</a>. Unless otherwise specified, the node handling the request uses the new values immediately after saving. Other nodes typically receive the changes through system settings synchronization within about 3 seconds, and no later than one synchronization interval, which defaults to 60 seconds. The `SYNC_FREQUENCY` environment variable sets this interval in seconds. All environment variables mentioned on this page are read only at startup. Restart New API after changing them. The tables below show when each setting starts using its new value.
+
+**System Behavior and Performance Metrics**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| Collapse Sidebar by Default | **Save Changes** in the page header | — |
+| Demo Site Mode | **Save Changes** in the page header | The user interface reflects the new setting after a page refresh. |
+| Personal Use Mode | **Save Changes** in the page header | Starting with the next request, models without configured pricing are billed at the default ratio and appear in the model list. The **Sign Up** link on the login page changes after a page refresh. |
+| Enable Model Performance Metrics | **Save Changes** in the page header | Sample collection starts or stops with the next request. When disabled, the database flush loop skips writes and expired-data cleanup starting with the next iteration. |
+| Database Flush Interval (Minutes) | **Save Changes** in the page header | The new interval applies once the current wait ends. |
+| Aggregation Time Bucket | **Save Changes** in the page header | Applies only to newly recorded samples. Existing data stays in its original buckets. |
+| Retention Period (Days) | **Save Changes** in the page header | The next database flush uses the new retention period to delete expired data. |
+
+</div>
+
+**Email, Notifications, and Worker**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| Email Delivery Method, SMTP, and Resend Configuration | **Save Changes** in the page header | The settings are read the next time an email is sent. |
+| Low Balance Alerts and Default Alert Threshold (USD) | **Save Changes** in the page header | The threshold is checked when the next charge is settled. A user’s personal threshold takes precedence. The default shown on the personal settings page updates after a page refresh. |
+| Worker URL, Worker Access Key, and Allow HTTP Image Requests | **Save Worker Settings** in the page header | Applies starting with the next remote file download or the next Webhook, Bark, or Gotify notification request. |
+
+</div>
+
+**Logs and Cleanup**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| Log Quota Usage | **Save Log Settings** in the page header | After you disable this setting, subsequent requests no longer write usage logs. Existing logs are unaffected. |
+| Allow Users to Export Logs and Maximum Log Time Range (Days) | **Save Log Settings** in the page header | The server validates each export and query against the new settings. The export button and default range in the user interface update after a page refresh. |
+| Finished Task Retention Period (Days) | **Save Log Settings** in the page header | Automatic cleanup runs once a day. During the next run, the Master instance uses the new retention period to delete finished system tasks. |
+| Clean Up Logs | Confirm to create a system task without using the save button. | The Master instance runs the task. Cleanup starts immediately if the Master instance handled the request, or within about 15 seconds otherwise. It applies to the log database connected to the node running the task. |
+| Server Log Cleanup | Runs immediately after confirmation. | Applies only to the log directory on the node handling the request. |
+
+</div>
+
+**Performance and Resource Protection**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When It Takes Effect |
+| --- | --- | --- |
+| Disk Cache Toggle, Threshold, Maximum Total Size, and Directory | **Save Changes** in the page header | The runtime configuration updates immediately after saving. Request bodies cached from that point on use the new settings. |
+| Performance Monitoring Toggle and Thresholds | **Save Changes** in the page header | Disabling monitoring or raising a threshold allows requests through starting with the next request. After enabling monitoring or lowering a threshold, the system starts rejecting new Relay requests only after 3 consecutive samples (about 15 seconds) exceed the threshold. |
+| Clear Inactive Cache | Runs immediately after confirmation without using the save button. | Applies only to the node handling the request. |
+| Reset Statistics and Run GC | Runs immediately when clicked without using the save button. | Applies only to the node handling the request. |
+
+</div>
+
+**Additional Notes**
+
+- **No changes** — If the model performance metrics or performance settings have not changed, the page displays “No changes to save.”
+- **System maintenance** — This section has no save button. It shows only the current version, start time, and update check.
+
+## Important Notes
+
+- **Immediate operations cannot be undone.** Log cleanup, server log cleanup, cache cleanup, resetting statistics, and running GC have no draft state or undo option. **Reset Statistics** and **Run GC** also have no confirmation dialog. See [Log Maintenance](#log-maintenance) and [Performance](#performance).
+- **Log cleanup affects the shared log database.** Cleanup runs against the log database connected to the node executing the task. If multiple nodes share that database, cleanup affects the log history of each node. See [Log Maintenance](#log-maintenance).
+- **Resource protection rejects new Relay requests.** If consecutive samples exceed a threshold, new Relay requests return HTTP `503`. Login and standard management endpoints are unaffected. Setting a threshold too low can cause normal requests to be rejected. See [Performance](#performance).
+- **Saving successfully does not verify connectivity.** The system does not test the connection when you save the email configuration. See [Email and Notifications](#email-and-notifications).
+- **SMTP and Resend bypass the Worker.** The backend sends both directly, without Worker proxying or URL SSRF validation. See [Email and Notifications](#email-and-notifications).
+- **Failed low balance alerts do not affect billing.** The system sends alerts asynchronously after settlement and records delivery failures only in the system error log. See [Email and Notifications](#email-and-notifications).
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="Changing the default sidebar setting has no effect in the current frontend">
+**Explanation** — The value is exposed in the public state, but the current frontend only reads the `sidebar_state` cookie and does not yet use this setting. Clearing the cookie simply restores the frontend’s own default expanded state. This setting is primarily intended for compatible clients.
+</Accordion>
+
+<Accordion title="Dangerous operations are still available after enabling Demo Site Mode">
+**Explanation** — In the current version, Demo Site Mode does not restrict any functionality. See [System Behavior](#system-behavior).
+
+**What to Do**
+
+1. Use role permissions, network boundaries, read-only data replicas, and external access controls to protect the demo instance.
+</Accordion>
+
+<Accordion title="Users can still sign up or see multiple users after enabling Personal Use Mode">
+**Explanation** — This toggle leaves multi-user support and registration endpoints enabled.
+
+**What to Do**
+
+1. To restrict sign-ups, disable the relevant options in <a href="/en/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">Authentication Configuration</a>.
+</Accordion>
+
+<Accordion title="The quota is already below the threshold, but no notification arrived">
+**Explanation** — The system sends an alert only when a charge causes the balance to cross the threshold. It sends no further alert if the balance was already below the threshold.
+
+**Possible Causes**
+
+- The site’s **Low Balance Alerts** toggle is off.
+- The user has disabled personal alerts.
+- The personal threshold or notification method differs from what you expect.
+- There is an issue with the selected email delivery method (SMTP or Resend), Webhook, Bark, Gotify, Worker (including **Allow HTTP Image Requests**), or SSRF checks.
+
+**What to Do**
+
+1. Check the server error logs.
+</Accordion>
+
+<Accordion title="Model performance metrics do not appear immediately">
+**Explanation** — Queries combine only data already flushed to the database and in-memory aggregation buckets on the node handling the query. In a multi-instance deployment, samples from other nodes appear after those nodes flush them to the database. The Model Marketplace page also caches its data for about 1 minute.
+
+**Possible Causes**
+
+- The main toggle is off.
+- The model name, Group, bucket interval, or retention settings differ from what you expect. Metrics are collected only for Groups listed in the Group Ratio settings and for `auto`.
+</Accordion>
+
+<Accordion title="Email still cannot be sent after saving">
+**Explanation** — The page does not test the connection.
+
+**Possible Causes**
+
+- **Email Delivery Method** is set to a method that has not been configured. The system does not fall back to the other method.
+- **SMTP** may have an issue with the host, port, security mode, certificate, account, Token, sender address (which must contain only the email address), or provider restrictions. Port `465` also triggers implicit TLS.
+- **Resend** may reject the request because the sender domain is unverified or the API key is invalid. Check the server logs for the specific reason.
+</Accordion>
+
+<Accordion title="The Worker is configured, but Channel requests still go directly to the upstream provider">
+**Explanation** — The Worker handles only download and notification flows that explicitly use it. Model Channels cannot use it as a general-purpose network proxy.
+</Accordion>
+
+<Accordion title="Dashboard history remains after cleaning up database logs">
+**Explanation** — The log cleanup task deletes records only from the `logs` table. It leaves `quota_data` aggregates, performance metrics, and task records intact.
+</Accordion>
+
+<Accordion title="Log cleanup stays pending or completes only partially">
+**Explanation** — If the task fails, records already deleted are not restored.
+
+**Possible Cause** — There may be an issue with the task runner on the Master instance or its connection to the log database.
+
+**What to Do**
+
+1. Check the task error.
+2. Verify the cutoff time again before resubmitting.
+</Accordion>
+
+<Accordion title="An old file remains after server log cleanup">
+**Explanation** — Cleanup always skips the currently active log file. When cleaning up by file count, it also keeps the specified number of newest files.
+</Accordion>
+
+<Accordion title="Do requests fail when the disk cache reaches its limit?">
+**Explanation** — The system usually falls back to memory. Some streaming read paths may return an error if disk file creation fails after the `Reader` has already been consumed. The cache limit does not guarantee a disk quota.
+</Accordion>
+
+<Accordion title="Resource usage reached the threshold, but requests were not rejected">
+**Explanation** — The system compares integer sample values and requires 3 consecutive samples (about 15 seconds) that are strictly above the threshold. It accepts requests if the sample data has not been updated for more than 30 seconds. A threshold of `0` disables the check for that resource. In containers, CPU and memory usage are calculated using cgroup quotas, so they may differ from the values reported by host monitoring.
+</Accordion>
+
+<Accordion title="The update check reports an unexpected version">
+**Explanation** — The page compares version numbers, includes prereleases such as `rc`, and ignores tags it cannot parse. It cannot compare versions when the current version is a development build.
+
+**What to Do**
+
+1. Open the GitHub release and manually verify the version, branch, and upgrade path.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">System Settings Overview</a> — How system settings take effect, multi-instance synchronization, sensitive settings, and requirements for verifying changes.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-site" target="_blank" rel="noopener noreferrer">Site and Branding Configuration</a> — Public site content, navigation, and task URLs.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-auth" target="_blank" rel="noopener noreferrer">Authentication Configuration</a> — Registration, OAuth, Passkeys, and email verification.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a> — Quota, pricing, payment compliance, and check-in rewards.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">Model Configuration</a> — Global model behavior, provider integrations, and model deployment.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">Request Policy Configuration</a> — Session persistence and retries, Channel health checks, and automatic disabling.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-security" target="_blank" rel="noopener noreferrer">Security and Limits Configuration</a> — Rate limiting, SSRF, and Token count limits.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">Console Content Configuration</a> — Dashboard, announcements, FAQ, API URLs, and client content.
+- <a href="/en/docs/guide/feature-guide/admin/system-info" target="_blank" rel="noopener noreferrer">System Information</a> — System tasks, node status, and other operational information for the Root role.

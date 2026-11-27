@@ -1,0 +1,384 @@
+---
+title: Overview
+description: Check your account quota, usage, and request count. Follow the setup guide and run the example command to make your first API call. View announcements, API information, FAQs, and uptime status configured by your administrator.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- In the sidebar, go to “General” → “Overview”.
+- Check your account quota and usage, follow the setup guide to make your first API call, and view announcements and other information from your administrator.
+- The quota, usage, and request count in “Usage Overview” are for the current account only.
+
+<Callout type="info" title="Tip">
+- The “Overview” page opens by default after you sign in.
+- The site determines the quota unit and how currency amounts are displayed.
+- The administrator configures the content for Announcements, API Information, FAQs, and Uptime. Panels without configured content display a corresponding message. Panels disabled by the administrator are hidden. See <a href="/en/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">Console Content Configuration</a>.
+- If “Overview” is missing from the left sidebar:<br/>Go to “Personal Profile”, enable “Console Section” and “Dashboard” under “Left Sidebar Preferences”, and save. The “Dashboard” toggle controls both the “Overview” and “Dashboard” entries.
+</Callout>
+
+## Overview Page
+
+- Overview – Summary
+
+![Overview – Summary page](/assets/guide/feature-guide/general-overview.png)
+
+The page displays the setup guide, usage overview, and information panels in that order. From this page, you can do the following.
+
+- [Get Started with the Setup Guide](#get-started-with-the-setup-guide)
+- [Copy the Example Command to Send Your First Request](#copy-the-example-command-to-send-your-first-request)
+- [Check Quota and Usage](#check-quota-and-usage)
+- [View Announcements, API Information, FAQs, and Uptime](#view-announcements-api-information-faqs-and-uptime)
+
+<Callout type="info" title="Tip">
+If values have not updated, the setup guide stays open, or a panel is missing, see [Frequently Asked Questions](#frequently-asked-questions).
+</Callout>
+
+**Page sections**
+
+The table lists sections in the order they appear on the page, from top to bottom and left to right.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Section | Description | When It Appears | Notes |
+| --- | --- | --- | --- |
+| Setup Guide | A card labeled “Get Started” and titled “Get your API gateway running in minutes”. It lists three steps in order: “Create API Key”, “Add Quota”, and “Send a Request”. | Automatically expands while any step is incomplete and collapses when all steps are complete. If you manually expand or collapse it, the guide keeps your selection. | Completed steps have a green check mark. See [Get Started with the Setup Guide](#get-started-with-the-setup-guide). |
+| First API Request | A ready-to-run curl command that uses an API key from your account. | Appears in the setup guide while it is expanded. | The three rows below the command show the URL, key, and model under “Route Enabled”, “Authentication Configured”, and “Model Selected”. See [Copy the Example Command to Send Your First Request](#copy-the-example-command-to-send-your-first-request). |
+| Recommended Actions | Shortcuts under “Keep your platform ready” for “API Keys”, “Channels” (administrators only), “Usage Logs”, and “Pricing”. | Appears with the setup guide. If the guide is collapsed and any step is incomplete, the shortcuts move to the collapsed row. Once all steps are complete and the guide is collapsed, the shortcuts are hidden. | Each shortcut opens its corresponding page. “Pricing” opens the Model Marketplace. |
+| Usage Overview | Shows “Last 24 Hours Usage”, “Historical Usage”, and “Request Count” for the current account. | Always visible. | Administrators also see only their own account data. See [Check Quota and Usage](#check-quota-and-usage) for how each metric is calculated. |
+| Remaining Quota | Shows the current account’s wallet balance, balance status, usage over the last 24 hours, and “Estimated Time Remaining”. | Always visible, to the right of “Usage Overview”. | Excludes subscription quota. See [Balance Status](#balance-status) for status details. Click “Wallet” to open the Wallet page. |
+| Performance Health (administrators only) | Shows the “Success Rate”, “Average Latency”, “Throughput”, and “Top Models by Traffic” for site-wide requests over the last 24 hours. | Visible only to administrators. | Metrics cover requests from all users. When no data is available, the three metrics display “—”. The dot next to each model indicates its success rate. It is dark green at 100%, light green from 90% to below 100%, yellow from 70% to below 90%, and red below 70%. |
+| Uptime | Shows the status and 24-hour availability of each Uptime Kuma monitor configured by the administrator, organized by group. | Hidden if the administrator disables the panel. If monitoring is unconfigured, the panel displays “Uptime monitoring is not configured”. If the panel cannot retrieve monitor status, it may display the same message or show groups without monitors. | See [Uptime Monitor Status](#uptime-monitor-status) for the meaning of each dot color. |
+| API Information | Lists the API endpoints provided by the administrator, with a name, description, and URL for each. | Hidden if the administrator disables the panel. If no endpoints are configured, it displays “No API routes configured”. | The first URL is used for “First API Request”. Use the controls on the right to test latency or copy the URL. See [Panel Actions](#panel-actions). |
+| Announcements | Lists announcements published by the administrator, newest first. | Hidden if the administrator disables the panel. If there are no announcements, it displays “No announcements yet”. | Each entry shows the beginning of the announcement and its publication time. The dot on the left indicates the type selected by the administrator. Click an entry to open “Announcement Details”. |
+| FAQs | Lists questions and answers compiled by the administrator. | Hidden if the administrator disables the panel. If there are no entries, it displays “No FAQ entries yet”. | Click a question to expand its answer. |
+</div>
+
+## Get Started with the Setup Guide
+
+**Steps**
+
+1. Click “1. Create API Key” and create a key on the “API Keys” page.
+2. Click “2. Add Quota” and top up or redeem quota on the “Wallet” page.
+3. Click “3. Send a Request” and send a message in “Playground”. You can also copy the command from “First API Request” and run it in a terminal.
+4. Return to “Overview”, refresh the browser page, and check for a green check mark next to each step.
+5. When you no longer need the setup guide, click “Hide Setup Guide” in the upper-right corner.
+
+<Callout type="info" title="Tip">
+- The guide determines which steps are complete from the account information loaded at sign-in. Refresh the browser page after completing a step.
+- The browser saves your choice to expand or collapse the guide. After that, the guide keeps your selection regardless of setup progress.
+- When the guide is collapsed and any step is incomplete, the row displays “Setup Progress: …/3”. Click “Show Setup Guide” to expand it again. Once all steps are complete, click “Setup Guide” to the right of the page title.
+</Callout>
+
+**Step details**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Step | Description | Completion Criteria | Opens |
+| --- | --- | --- | --- |
+| 1. Create API Key | “Create a key for your application or service” | The account has at least one API key, including disabled or expired keys. | “API Keys” page |
+| 2. Add Quota | “Make sure you have enough balance before sending production traffic” | The wallet balance is greater than 0 or the account has consumed quota before. If the account received free quota at signup, this step is complete from the start. | “Wallet” page |
+| 3. Send a Request | “Use Playground or your client to verify the route” | The account has made at least one successful API call. | “Playground” page. If the administrator has disabled Playground, this step takes you back to “Overview”. |
+</div>
+
+## Copy the Example Command to Send Your First Request
+
+**Steps**
+
+1. If your account has no API key, click “Create API Key” in the upper-right corner of “First API Request”. Create a key, then return to “Overview”.
+2. Click “Copy” in the upper-right corner of “First API Request”.
+3. Paste and run the command in a terminal.
+
+<Callout type="warn" title="Keep Your API Key Secure">
+The copied command contains your full API key. Keep it out of group chats, screenshots, and public code repositories.
+</Callout>
+
+<Callout type="info" title="Tip">
+- The command works in macOS and Linux terminals and in Git Bash on Windows.
+- “Copy” retrieves the full key and is subject to the same rate limit as viewing the full key on the “API Keys” page. The audit log records the action as “Viewed the key for API token ‘…’”.
+- To use a different key or model, copy the key and API URL from the “API Keys” page. For instructions on making the call, see <a href="/en/docs/guide/feature-guide/user/token#copy-a-key-and-call-a-model" target="_blank" rel="noopener noreferrer">API Keys</a>.
+</Callout>
+
+**Command components**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Component | Value | Notes |
+| --- | --- | --- |
+| Request URL | The first URL in “API Information” with `/v1/chat/completions` appended. If the administrator has left API Information unconfigured or disabled it, the command uses the site URL currently open in the browser with `/v1/chat/completions` appended. | Under “Route Enabled”, “Online” indicates that the command uses the URL from API Information. “Current Domain” indicates that it uses the current site URL. “Online” indicates the URL source only. Reachability is unverified. |
+| API key | The first enabled key in the “API Keys” list. If there are no enabled keys, the command uses the first key in the list. | The card subtitle shows the key name. The command preview shows only the first and last few characters of the key. Click “Copy” to copy the full key. Under “Authentication Configured”, “Protected” means a key exists and “API Key Required” means you still need to create one. The card selects the key automatically. |
+| Model | The first model available to the account. | Shown under “Model Selected”. If the available models could not be loaded, “Model Selected” displays “Loading” and the command uses gpt-4o-mini. |
+| Request body | One English chat message in ChatCompletions format. | For other parameters, see <a href="/en/docs/api/ai-model/chat/openai/createchatcompletion" target="_blank" rel="noopener noreferrer">ChatCompletions format</a>. |
+</div>
+
+## Check Quota and Usage
+
+**Steps**
+
+1. In “Usage Overview”, check the current account’s usage over the last day, total usage, and total request count.
+2. In “Remaining Quota” on the right, check your wallet balance, balance status, and “Estimated Time Remaining”.
+3. If your balance is low, click “Wallet” to top up or redeem quota.
+
+<Callout type="info" title="Tip">
+- “Remaining Quota”, “Historical Usage”, and “Request Count” use account information loaded at sign-in. After topping up or making API calls on another page, refresh the browser page to see the latest values.
+- “Remaining Quota” shows only your wallet balance. To check your remaining subscription quota, open “My Subscriptions” on the <a href="/en/docs/guide/feature-guide/user/wallet#subscription-plans" target="_blank" rel="noopener noreferrer">Wallet</a> page.
+- “Last 24 Hours Usage” and the <a href="/en/docs/guide/feature-guide/user/dashboard" target="_blank" rel="noopener noreferrer">Dashboard</a> use the same aggregated data. New calls usually appear within a few minutes. By default, data is aggregated every 5 minutes.
+</Callout>
+
+**Usage metrics**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Metric | Definition | Scope | Notes |
+| --- | --- | --- | --- |
+| Last 24 Hours Usage | Quota consumed by the current account over the last day. | Usage is grouped by clock hour and includes the current hour and the preceding 22 hours, so the window is slightly shorter than 24 hours. It includes usage paid from the wallet balance or subscription quota. The metric stops increasing if the administrator disables Dashboard statistics. | The label below the value reads “Usage in the Last 24 Hours”. When quota is displayed as a currency, the label includes the currency unit, such as “(USD)”. The line chart at the bottom shows how usage changed over the period. “Last 24 Hours Usage” in “Remaining Quota” shows the same value. |
+| Historical Usage | Total quota consumed by the current account. | Covers all usage since the account was created, including usage paid from the wallet balance or subscription quota. | The label below the value reads “Total Usage (…)” or “Total Quota Consumed” when quota is displayed in Tokens. The line chart at the bottom shows changes in usage over the last day. |
+| Request Count | Total successful API calls made by the current account. | Counts successful calls since the account was created. | The label below the value reads “Total Requests”. The line chart at the bottom shows changes in request count over the last day. |
+| Remaining Quota | The current account’s wallet balance. | Excludes subscription quota. | The upper-right corner shows the balance status. See [Balance Status](#balance-status). |
+| Estimated Time Remaining | The number of days the wallet balance is expected to last at the last day’s usage rate, calculated by dividing “Remaining Quota” by “Last 24 Hours Usage”. | Uses the same scope as “Remaining Quota” and “Last 24 Hours Usage”. | Displays “~… days” (rounded down), “999+ days”, or “Less than 1 day remaining”. When the wallet balance is zero or below, it displays “Balance Depleted”. When there was no usage over the last day, it displays “No usage recorded yet”. |
+</div>
+
+## View Announcements, API Information, FAQs, and Uptime
+
+**View announcements**
+
+1. Click an entry in “Announcements”.
+2. Read “Content” in the “Announcement Details” window. If there is additional information, it appears below under “Additional Information”.
+
+**Test API endpoint latency**
+
+1. Click the lightning bolt icon to the right of a URL in “API Information”. Hover over the icon to see “Test Latency”.
+2. Read the elapsed time to the left of the icon, such as “120 ms”. See [API Endpoint Latency](#api-endpoint-latency) for the meaning of each color.
+
+**Check uptime**
+
+1. In “Uptime”, check the dot color and 24-hour availability for each monitor by group.
+2. To get the latest status, click the refresh icon in the upper-right corner of the panel.
+
+<Callout type="info" title="Tip">
+- The administrator configures all four panels in <a href="/en/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">Console Content Configuration</a>. Changes may take a few minutes to appear or may require a browser refresh.
+- “Test Latency” measures the round-trip time between the browser and the endpoint. Model response time is outside the scope of this test. “External Speed Test” opens a third-party testing site in a new tab.
+</Callout>
+
+## Available Actions
+
+### Page Buttons
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Setup Guide | To the right of the page title | Appears after all three steps are complete. Click to expand or collapse the setup guide. |
+| Hide Setup Guide | Upper-right corner of the setup guide | Collapses the guide. See [Get Started with the Setup Guide](#get-started-with-the-setup-guide). |
+| Show Setup Guide | Right side of the collapsed setup guide row | Appears when the guide is collapsed and any step is incomplete. Click to expand the guide again. |
+| Create API Key | Upper-right corner of the setup guide or of “First API Request” | Opens the “API Keys” page. The button in “First API Request” appears only if the account has no key. |
+| 1. Create API Key, 2. Add Quota, 3. Send a Request | Steps in the setup guide | Open the “API Keys”, “Wallet”, and “Playground” pages, respectively. |
+| Copy | Upper-right corner of “First API Request” | Copies the curl command with the full key and displays “Loading” while the copy is in progress. See [Copy the Example Command to Send Your First Request](#copy-the-example-command-to-send-your-first-request). |
+| API Keys, Channels (administrators only), Usage Logs, Pricing | “Recommended Actions” or the collapsed setup guide row | Open their corresponding pages. “Pricing” opens the Model Marketplace. |
+| Wallet | Bottom of “Remaining Quota” | Opens the “Wallet” page. |
+</div>
+
+### Panel Actions
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Action | Location | Description |
+| --- | --- | --- |
+| Test Latency | Lightning bolt icon to the right of each URL in “API Information” | Sends one request from the browser to the endpoint and displays the elapsed time. See [API Endpoint Latency](#api-endpoint-latency). |
+| External Speed Test | Gauge icon to the right of each URL in “API Information” | Opens a third-party site in a new tab to test the endpoint. Hidden on narrow screens. |
+| Copy URL | Copy icon to the right of each URL in “API Information” | Copies the URL. |
+| Open in New Tab | External link icon to the right of each URL in “API Information” | Opens the URL in a new tab. Hidden on narrow screens. |
+| View Announcement Details | Each entry in “Announcements” | Opens the “Announcement Details” window. |
+| Expand or Collapse Answer | Each question in “FAQs” | Expands or collapses the answer to that question. |
+| Refresh | Refresh icon in the upper-right corner of “Uptime” | Fetches monitor status again. If the panel displays “Uptime monitoring is not configured”, the icon is hidden. Refresh the browser page instead. |
+</div>
+
+## Status Indicators
+
+### Balance Status
+
+“Remaining Quota” displays one of three balance statuses in the upper-right corner.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Normal | The wallet balance is greater than 0, and either it is estimated to last at least 3 days at the last day’s usage rate or there was no usage over the last day. | Green dot. |
+| Low Balance | The wallet balance is greater than 0 and is estimated to last less than 3 days at the last day’s usage rate. | Yellow dot. “Estimated Time Remaining” appears in yellow. The 3-day threshold is fixed and independent of the “Low Balance Alert” setting in “Personal Profile”. Go to “Wallet” to top up. |
+| Balance Depleted | The wallet balance is zero or below. | Red dot. “Estimated Time Remaining” appears in red. This status applies only to the wallet balance. If you have an active subscription, API calls can still draw from your subscription quota according to your billing preferences. |
+</div>
+
+### API Endpoint Latency
+
+“API Information” displays one of the following results when you click the lightning bolt icon.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Result | Meaning | Notes |
+| --- | --- | --- |
+| Testing... | The test is in progress. | — |
+| … ms (green) | The round-trip time is less than 200 ms. | — |
+| … ms (yellow) | The round-trip time is at least 200 ms and less than 500 ms. | — |
+| … ms (red) | The round-trip time is 500 ms or more. | — |
+| N/A | The test failed. For example, the endpoint may be unreachable. | Click the gauge icon to test the endpoint using a third-party site. |
+</div>
+
+### Uptime Monitor Status
+
+The dot next to each monitor in “Uptime” shows the status reported by Uptime Kuma.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Color | Meaning | Notes |
+| --- | --- | --- |
+| Green | Operational. | — |
+| Red | Down. | Contact the administrator. Red also appears for monitors that have yet to return a check result. |
+| Yellow | Pending confirmation. The monitor is retrying the check. | — |
+| Blue | Under maintenance. | — |
+| Gray | Unknown status. | Rarely displayed. |
+</div>
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="The Setup Guide stays open or is hard to find after collapsing">
+
+**Possible causes**
+
+- The Setup Guide automatically expands if any of the three steps are incomplete.
+- If you manually expanded the Setup Guide, your browser remembers that choice and keeps it open even after you complete all three steps.
+- When you complete all three steps, the guide automatically collapses, leaving only the “Setup Guide” button to the right of the page title.
+
+**How to fix it**
+
+1. When you no longer need the guide, click “Hide Setup Guide” in its upper-right corner.
+2. To reopen it, click “Setup Guide” to the right of the page title or “Show Setup Guide” in the collapsed row.
+
+</Accordion>
+
+<Accordion title="Values stay the same after a top-up or API call, or a step has no check mark">
+
+**Possible causes**
+
+- “Remaining Quota,” “Usage History,” “Request Count,” and step completion status are based on the account information retrieved when you sign in. Changes made on other pages do not appear immediately.
+- “3. Send a Request” only counts successful calls. A failed call does not earn a check mark.
+- It takes a few minutes for new calls to appear in “Usage in the Last 24 Hours.”
+
+**How to fix it**
+
+1. Refresh the page in your browser.
+2. Check the <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> for a “Usage” entry for the call or a “Top-up” entry for the top-up.
+3. If the values still do not match, contact your administrator.
+
+</Accordion>
+
+<Accordion title="Usage in the Last 24 Hours is zero or differs from the Usage Logs">
+
+**Possible causes**
+
+- New calls are usually counted after a few minutes. By default, usage is aggregated every 5 minutes.
+- Usage is grouped into hourly buckets aligned to the top of each hour. The resulting window is slightly shorter than 24 hours, so the total can differ from the individual entries in the Usage Logs.
+- If the administrator has left dashboard statistics disabled or turned them off, “Usage in the Last 24 Hours” stops increasing and “Available Time” displays “No usage records yet.” “Usage History” and “Request Count” are unaffected.
+
+**How to fix it**
+
+1. Wait a few minutes, then refresh the page in your browser.
+2. Select the same time range in the <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> and use the “Usage” entries to verify the total.
+3. If the value stays at zero, ask your administrator to confirm that dashboard statistics are enabled for the site.
+
+</Accordion>
+
+<Accordion title="Balance Depleted appears even though API calls still work">
+
+**Explanation**
+
+“Remaining Quota” and the balance status reflect only your wallet balance. “Usage History” and “Usage in the Last 24 Hours” also include usage covered by subscription quota. “Balance Depleted” appears when your wallet balance is zero or below. If you have an active subscription, calls can still draw from your subscription quota according to your billing preferences.
+
+**How to fix it**
+
+1. Check your remaining subscription quota under “My Subscriptions” on the <a href="/en/docs/guide/feature-guide/user/wallet#subscription-plans" target="_blank" rel="noopener noreferrer">Wallet</a> page.
+2. To pay for calls with your wallet balance, top up your wallet or redeem quota.
+
+</Accordion>
+
+<Accordion title="Running the example command returns an error">
+
+**Explanation**
+
+The command uses the first enabled key in the “API Keys” list and the first model available to your account. Calls can fail for the same reasons as they do in other clients. If “Selected Model” displays “Loading,” the list of available models has yet to be retrieved. The `gpt-4o-mini` model in the example may be unavailable. Use the exact error message to identify the cause.
+
+| Error message | Possible cause | How to fix it |
+| --- | --- | --- |
+| “Invalid token” | The key is disabled, has expired, or has run out of quota. | Check the key on the “API Keys” page. See <a href="/en/docs/guide/feature-guide/user/token#api-key-status" target="_blank" rel="noopener noreferrer">API Key Status</a>. |
+| “This token has no access to model …” | “Model Restrictions” are enabled for the key and exclude the model in the command. | Change the model in the command to one the key can access, or edit the key’s “Model Restrictions.” |
+| “Insufficient user quota” | The account balance is insufficient. | Top up your balance or redeem quota on the <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a> page. |
+| Connection failure or timeout with no error message | Your current device cannot reach the request URL in the command. | Open “API Address” in the upper-right corner of the “API Keys” page, copy a reachable URL, and replace the URL in the command. |
+
+</Accordion>
+
+<Accordion title="Clicking Copy returns an error">
+
+**Error message**
+
+“Failed to copy to clipboard,” or an error message from the server.
+
+**Possible causes**
+
+- Your browser prevents the page from writing to the clipboard.
+- The full key was viewed or copied too many times in a short period.
+- Your connection was interrupted or your sign-in session expired.
+
+**How to fix it**
+
+1. Allow clipboard access in your browser, then try again.
+2. Wait a while before trying again. You may need to wait ten minutes or more.
+3. If copying still fails, copy the key from the “API Keys” page and fill in the command by following the request instructions in <a href="/en/docs/guide/feature-guide/user/token#copy-a-key-and-call-a-model" target="_blank" rel="noopener noreferrer">API Keys</a>.
+
+</Accordion>
+
+<Accordion title="Announcements, API Information, FAQs, or Uptime are missing">
+
+**Possible causes**
+
+- The administrator disabled the panel.
+- The administrator has left the panel unconfigured. The panel displays “No announcements yet,” “No API routes configured,” “No FAQ entries yet,” or “Uptime monitoring is not configured.”
+- The administrator recently updated the content. The page may take a few minutes to reflect the changes.
+- If the site cannot retrieve monitoring status, “Uptime” also displays “Uptime monitoring is not configured,” or the group shows no monitors.
+
+**How to fix it**
+
+1. Refresh the page in your browser.
+2. If the panel still does not appear, contact your administrator.
+
+</Accordion>
+
+<Accordion title="Clicking 3. Send a Request takes you back to Overview">
+
+**Possible cause**
+
+The administrator disabled the Playground.
+
+**How to fix it**
+
+1. Copy the command under “First API Request” and run it in a terminal, or send the request from another client.
+2. If you need access to the Playground, contact your administrator.
+
+</Accordion>
+
+<Accordion title="The audit log shows a ‘Viewed the key for API token …’ entry">
+
+**Explanation**
+
+Clicking “Copy” under “First API Request” retrieves the full API key. The audit log records this as “Viewed the key for API token ‘…’.” This is expected.
+
+**How to fix it**
+
+1. Check the timestamp, IP address, and client to verify whether you performed the action.
+2. If you did not perform the action, follow the steps in the FAQ section of <a href="/en/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">Audit Logs</a>.
+
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a> — Create and manage API keys and learn how to use them to make requests.
+- <a href="/en/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">Wallet</a> — Top up your balance, redeem quota, and view your remaining subscription quota.
+- <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> — View billing details for each API call.
+- <a href="/en/docs/guide/feature-guide/user/dashboard" target="_blank" rel="noopener noreferrer">Data Dashboard</a> — View model request counts, Token usage, and Quota consumption by time range.
+- <a href="/en/docs/guide/feature-guide/user/personal-setting" target="_blank" rel="noopener noreferrer">Profile</a> — Set up low-balance alerts and choose which pages appear in the left sidebar.
+- <a href="/en/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">Model Hub and Leaderboard</a> — View available models and their prices.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-content" target="_blank" rel="noopener noreferrer">Console Content Settings</a> — Configure announcements, API addresses, FAQs, and Uptime Kuma monitoring as Root.
+- <a href="/en/docs/api/ai-model/chat/openai/createchatcompletion" target="_blank" rel="noopener noreferrer">ChatCompletions Format</a> — View the parameters for the endpoint used in the example command.

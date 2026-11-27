@@ -1,26 +1,1031 @@
 ---
 title: Model Management
-description: Manage metadata and pricing for all platform models
+description: Manage model metadata, name matching, pricing, metadata and price synchronization, prefilled groups, providers, and io.net model deployments.
 ---
 
-Manage metadata and pricing for all platform models, with support for syncing the latest model lists from upstream providers. Log in with an admin account, then click "Models" in the left sidebar or visit `/console/models` directly.
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-The model list shows all configured models with their name, type, input/output pricing, and provider.
+- Only Admin and Root can access this page. In the sidebar, go to “Admin” → “Models”.
+- Use this page to manage the site's model metadata, name matching, Model Marketplace visibility, providers, and prefilled groups. You can also configure pricing, sync metadata and prices, and deploy models on io.net.
+- This page manages model metadata. To manage the models, Groups, and routing used by Channels, go to <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>.
 
-## Add / Edit a Model
+<Callout type="info" title="Tip">
 
-1. Click "Add Model", or click the "Edit" button on an existing model
+- The page has three tabs, “Models”, “Providers”, and “Deployments”, with the respective page titles “Model Management”, “Provider Management”, and “Deployments”.
+- Admin and Root can manage model metadata, providers, prefilled groups, and model deployments.
+- Only Root can change model pricing. See [Differences Between Admin and Root](#differences-between-admin-and-root).
+- For pricing rules, see <a href="/en/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a> and <a href="/en/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">Billing Expressions</a>.
+- Creating or importing model metadata does not create a Channel that can serve the model.
+- Creating a deployment does not create or link a Channel.
 
-2. Fill in the model name, input price, output price, and other fields
-3. Click "Save" to complete the configuration
+</Callout>
 
-## Sync Upstream Models
+## Model Management Overview
 
-The sync feature fetches the latest model list from each provider. Preview the changes before deciding whether to apply them.
+- Model Management – Model List
 
-1. Click the "Sync Upstream" button on the model management page
-2. The system requests the upstream provider's model list and shows a preview dialog
+![Model Management – Model List page](/assets/guide/feature-guide/model-management-model-list.png)
 
-3. The preview dialog lists models under "Added", "Changed", and "Deleted" categories
-4. After confirming, click "Apply" — the model list updates
+- Model Management – Provider Management
 
+![Model Management – Provider Management page](/assets/guide/feature-guide/model-management-providers.png)
+
+- Model Management – Model Deployment Disabled
+
+![Model Management – Model Deployment Disabled page](/assets/guide/feature-guide/model-management-model-deployment.png)
+
+The “Models” tab lists the site's model metadata records and model names used by Channels that lack metadata.
+
+- [Add and Edit Models](#add-and-edit-models)
+- [Pricing](#pricing)
+- [Delete Models](#delete-models)
+- [Add Missing Models](#add-missing-models)
+- [Sync Metadata](#sync-metadata)
+- [Sync Prices](#sync-prices)
+- [Manage Prefilled Groups](#manage-prefilled-groups)
+- [Add and Edit Providers](#add-and-edit-providers)
+- [Merge and Delete Providers](#merge-and-delete-providers)
+- [Create a Deployment](#create-a-deployment)
+- [View and Manage Deployments](#view-and-manage-deployments)
+
+<Callout type="info" title="Tip">
+If a model is missing from the Model Marketplace, the list shows a “Missing Metadata” row, or synchronization fails, see [Frequently Asked Questions](#frequently-asked-questions).
+</Callout>
+
+**Field reference**
+
+The list does not support sorting by column. Records with metadata appear in descending ID order, followed by “Missing Metadata” rows sorted by name.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and limits | Notes |
+| --- | --- | --- | --- |
+| Model | Model name. | Set the name and provider under “Model Metadata” in the edit drawer.<br/>“Missing Metadata” rows represent names that appear in a Channel's model list, including disabled Channels, but have no metadata record with the exact same name. For these rows, you can only select “Add Metadata” or copy the name. | Shows the icon, the name, and a copy button. Click the name to open the edit drawer. The provider appears below the name. If no provider is set, it shows “No Provider Specified”. If there is no metadata, it shows “Missing Metadata”.<br/>For rules other than exact match, the list also shows the rule and the number of matching models. |
+| Pricing | Summary of current pricing. | Only Root can make changes. See [Pricing](#pricing). | Root sees a pricing summary and can click it to open the “Pricing” tab. Rules other than exact match show “Configure per Matching Model”.<br/>Admin sees “Super Admin”.<br/>If pricing fails to load, the column shows “Failed to Load Model Pricing”. |
+| Marketplace Visibility | Whether the model is displayed in the Model Marketplace. | Determined by the system. | Click to see the reason. See [Marketplace Visibility Status](#model-marketplace-visibility-status). |
+| Channels and Groups | Number of Channels that provide the model and number of Groups that can access it. | Derived from enabled Channels. | Shown as “Channels: N · Groups: M”. Hover to see Channel status. |
+| Tags | Model tags. | Set under “Model Metadata”. | Shows the first tag and a count of the remaining tags. |
+| Sync Policy | Whether “Sync Metadata” can update this model. | Corresponds to the “Allow Metadata Sync” toggle under “Model Metadata”. | Shows “Allow Updates” or “Keep Local”. |
+| ID, Provider, Match Type, Description, Custom Endpoints, Created At, Updated At | Columns hidden by default. | Recorded by the system or set under “Model Metadata”. | Enable them in “View”. See [Page Controls and Filters](#page-buttons-and-filters). |
+
+</div>
+
+## Common Tasks
+
+This section covers adding and editing models, setting prices, deleting models, adding missing models, syncing metadata and prices, and managing prefilled groups, providers, and deployments.
+
+### Add and Edit Models
+
+- Model Management – Create Model
+
+![Model Management – Create Model page](/assets/guide/feature-guide/model-management-add-model-model-information.png)
+
+**Steps**
+
+1. To create a model, click “Add Model” in the upper-right corner of the “Models” tab to open the “Create Model” drawer. To edit an entry, click the model name, “Edit”, or “Add Metadata”. The drawer title shows the model name.
+2. Fill in the fields on the “Model Metadata” tab.
+3. Click “Save Metadata”.
+
+<Callout type="info" title="Tip">
+
+- Below the drawer title, the page displays “Manage metadata, pricing, and Channel associations. Save each section separately.”
+- The drawer has three tabs, “Model Metadata”, “Pricing”, and “Channels and Groups”. When creating a model, fill in “Model Metadata” first. The other two tabs become available after you save.
+- When you open the drawer from “Add Metadata” or “Missing Models → Configure”, the model name is already filled in and all three tabs are available.
+- If saving fails, the reason appears at the bottom of the drawer.
+- Save or discard any pending pricing changes before changing the model name.
+- If you close the drawer with unsaved metadata or pricing changes, the drawer asks “Discard unsaved changes?”
+
+</Callout>
+
+**Model metadata**
+
+- Model Management – Edit Model – Model Metadata
+
+![Model Management – Edit Model – Model Metadata page](/assets/guide/feature-guide/model-management-edit-model-model-information.png)
+
+**Configuration reference**
+
+The “Model Metadata” tab has four sections, “Basic Information”, “Match Rules”, “Endpoints”, and “Status and Sync”. The table follows the order in which fields appear on the tab.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Section | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- | --- |
+| Model Name | Basic Information | Unique identifier for the model. | Required. Up to 128 characters. Must be unique among existing records.<br/>Changing the name leaves Channel model names and pricing unchanged. Existing prices remain associated with the original name. | Empty (prefilled when adding missing metadata) |
+| Description | Basic Information | Model description. | — | Empty |
+| Icon | Basic Information | Model icon. | Up to 128 characters. Select “Inherit Provider Icon” or “Custom Model Icon”. “Effective Icon” shows the icon in use. | Inherit Provider Icon |
+| Provider | Basic Information | Provider associated with the model. | Must be an existing provider. | None selected |
+| Tags | Basic Information | Model tags. | Up to 255 characters in total. Press Enter or type a comma to add a tag. | Empty |
+| Name Rule | Match Rules | Determines which model names use this metadata record. | Choose one of four rules. See [Name Matching Rules](#name-matching-rules). The list's “View” menu and the sync wizard call this “Match Type”. | Exact Match |
+| Endpoint Configuration | Endpoints | Endpoint types and custom paths shown to users. | The backend validates the format when you save. See [Endpoint Configuration](#endpoint-configuration). | Empty |
+| Marketplace Visibility | Status and Sync | Allows the model to appear in the Model Marketplace. | The model also needs an available Channel and must meet the user's Group access requirements. This setting does not affect API access permissions. | On |
+| Allow Metadata Sync | Status and Sync | Allows “Sync Metadata” to overwrite selected fields after you review and confirm the preview. | When off, the wizard shows “Metadata Sync Disabled” and skips this model. When on, you still need to run “Sync Metadata” manually. | On |
+
+</div>
+
+**Channels and Groups**
+
+- Model Management – Edit Model – Channels and Groups
+
+![Model Management – Edit Model – Channels and Groups page](/assets/guide/feature-guide/model-management-edit-model-channels-and-groups.png)
+
+This read-only tab uses enabled Channels to show Marketplace visibility, “Linked Channels” with their types, “Enabled Groups”, and “Supported Endpoints”. Rules other than exact match also show “Matching Models”.
+
+<Callout type="info" title="Tip">
+To make a model available for API calls, add it to a Channel in <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>.
+</Callout>
+
+### Pricing
+
+- Model Management – Edit Model – Pricing
+
+![Model Management – Edit Model – Pricing page](/assets/guide/feature-guide/model-management-edit-model-pricing.png)
+
+**Set prices**
+
+1. Click “Pricing” in the model row or open the “Pricing” tab in the edit drawer.
+2. If the name rule is anything other than exact match, use “Select Model” to choose a specific matching model first.
+3. Set the price in the editor below. For fields and billing methods, see <a href="/en/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">Billing Expressions</a>.
+4. Click “Save Model Price”.
+
+<Callout type="info" title="Tip">
+
+- Only Root can edit pricing. Admin sees the message “Model pricing is managed by the super admin.”
+- The top of the tab shows a summary of the billing settings currently in effect.
+- This tab uses the same editor and updates the same configuration as <a href="/en/docs/guide/feature-guide/system-settings/settings-billing#model-prices" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration → Model Prices</a>.
+- If the model's price changes elsewhere after you open the drawer, the save fails. Click “Reload Pricing” before editing again.
+
+</Callout>
+
+**Restore default pricing**
+
+1. Click “Restore Default Pricing”, then click “Restore Defaults” in the confirmation dialog.
+
+<Callout type="warn" title="Caution">
+“Restore Default Pricing” removes the model's custom price and restores its built-in default. Models without a default price become unpriced.
+</Callout>
+
+### Delete Models
+
+**Steps**
+
+1. Click “Delete” in the ⋯ menu at the end of a row, or select multiple models and click “Delete Selected Models”. You can delete 1–1,000 models at a time.
+2. In the “Delete Model?” dialog, select either option as needed. Both are unchecked by default.
+3. Click “Delete”.
+
+<Callout type="info" title="Tip">
+
+- “Missing Metadata” rows have no metadata records to delete.
+- Leave both options unchecked to delete only the model metadata and retain the model names, capabilities, and prices in Channels.
+- If an enabled Channel still references the name, it reappears in a “Missing Metadata” row and under “Missing Models”.
+- You can create a new metadata record with the same name after deletion.
+
+</Callout>
+
+**Deletion options**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Option | Description |
+| --- | --- |
+| Also Remove from All Channels | Removes the name from every Channel's model list and updates Channel capabilities accordingly. If any selected model uses a rule other than exact match, this option is unavailable and displays “Available for Exact Matches Only”. |
+| Also Remove Pricing | Deletes the custom price for the model name. Selecting this option displays “Built-in pricing may take effect again.” Only Root can select this option. |
+
+</div>
+
+<Callout type="warn" title="Caution">
+“Also Remove from All Channels” directly changes each Channel's model list. Once removed, the model can no longer be called through those Channels. To restore access, add the model name back to the Channels.
+</Callout>
+
+### Add Missing Models
+
+- Model Management – Missing Models
+
+![Model Management – Missing Models page](/assets/guide/feature-guide/model-management-missing-models.png)
+
+“Missing Models” lists model names used by enabled Channels that have no metadata record with the **exact same name**. Names covered by prefix, contains, or suffix rules still appear.
+
+**Steps**
+
+1. In the upper-right corner of the “Models” tab, click ⋯ → “Missing Models”.
+2. Search by name for the model you want to add.
+3. Click “Configure” in the row, then fill in and save the metadata in the drawer, which opens with the model name already filled in. To import metadata, click “Sync Missing Metadata” at the bottom to open the [Sync Metadata](#sync-metadata) wizard.
+
+<Callout type="info" title="Tip">
+
+- The list shows 20 entries per page.
+- “Missing Models” counts only enabled Channels.
+- “Missing Metadata” rows in the model list also include names from disabled Channels, so the counts may differ.
+
+</Callout>
+
+### Sync Metadata
+
+Click “Sync Metadata” to open the “Sync Model Metadata” wizard. It imports model metadata from the official metadata catalog and creates providers as needed. The wizard has four steps and requires a preview and confirmation every time you run it.
+
+<Callout type="info" title="Tip">
+
+- Sync updates only model metadata. It leaves Channels, model access, pricing, model names, and “Allow Metadata Sync” settings unchanged.
+- The default data source is `https://basellm.github.io/llm-metadata`. Deployment operators can override it using the `SYNC_UPSTREAM_BASE` environment variable. This setting is available only through the environment variable.
+- The server must be able to reach the data source. Step 1 of the wizard shows the actual sources for model and provider metadata.
+- You cannot close the wizard while synchronization is running.
+
+</Callout>
+
+**Select models**
+
+- Model Management – Sync Model Metadata – Select Models
+
+![Model Management – Sync Model Metadata – Select Models page](/assets/guide/feature-guide/model-management-sync-information-select-model.png)
+
+**Steps to select models**
+
+1. Choose a “Metadata Language” (Chinese, English, or Japanese) and click “Load Metadata Preview”. Changing the language clears the loaded preview and your selections.
+2. Under “Sync Scope”, choose “Models Used on This Site” (the default, which includes models with metadata and missing models) or “Upstream Model List” (all models in the official catalog).
+3. Search or select “Show Only Syncable Models” as needed. Select individual models or click “Select All Syncable Models” to select them across all pages. Then click “Preview Selected Changes”.
+
+For the “Planned Action” shown for each model, see [Planned Sync Actions](#planned-sync-actions).
+
+**Preview fields**
+
+- Model Management – Sync Model Metadata – Preview Fields
+
+![Model Management – Sync Model Metadata – Preview Fields page](/assets/guide/feature-guide/model-management-sync-information-preview-fields.png)
+
+Each selected model shows “Apply”, “Field”, “Current Value”, and “Change To”.
+
+- **New metadata.** The wizard imports all seven fields without requiring you to select them individually. For the effect of each field, see [Metadata Sync Overwrite Rules](#metadata-sync-overwrite-rules).
+- **Metadata changes.** The wizard lists only fields that differ from the official catalog and leaves them unchecked by default. Checking a field replaces its value with the value under “Change To”. “Select All Changed Fields” and “Deselect All” apply to all selected models with metadata changes.
+- “Review and Confirm” becomes available when the selection includes a new model or at least one checked field.
+
+**Confirm changes**
+
+- Model Management – Sync Model Metadata – Confirm Changes
+
+![Model Management – Sync Model Metadata – Confirm Changes page](/assets/guide/feature-guide/model-management-sync-information-confirm-changes.png)
+
+**Steps to confirm changes**
+
+1. Review the models to be created or updated, the fields to be updated, and any new providers.
+2. Click “Apply Changes to N Models”.
+
+<Callout type="info" title="Tip">
+If the official catalog or this site's model metadata changes after you preview, applying the changes fails and the wizard asks you to preview again. Click “Preview Again” to return to step 1 and make your selections again.
+</Callout>
+
+**Sync results**
+
+- Model Management – Sync Model Metadata – Sync Results
+
+![Model Management – Sync Model Metadata – Sync Results page](/assets/guide/feature-guide/model-management-sync-information-sync-results.png)
+
+The results show “Metadata Sync Complete”, the counts of models created and updated, any new providers, and the changes applied to each model. For models omitted from the results, see “Planned Action” in step 1 for the reason.
+
+<Callout type="info" title="Tip">
+The official catalog is a source of metadata. To make a synced model available for API calls, configure a Channel for it in <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>.
+</Callout>
+
+### Sync Prices
+
+- Model Management – Sync Model Pricing
+
+![Model Management – Sync Model Pricing page](/assets/guide/feature-guide/model-management-sync-prices.png)
+
+“Sync Prices” is visible only to Root. It opens the same feature as <a href="/en/docs/guide/feature-guide/system-settings/settings-billing#upstream-price-sync" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration → Upstream Price Sync</a>, which documents the fields and steps in detail.
+
+**Select price sources**
+
+- Model Management – Sync Model Pricing – Select Price Sources
+
+![Model Management – Sync Model Pricing – Select Price Sources page](/assets/guide/feature-guide/model-management-sync-prices-select-price-source.png)
+
+**Steps to select sources**
+
+1. Click “Sync Prices” to open the “Sync Model Pricing” dialog.
+2. Click “Select Price Sources”, select the presets or Channels to compare, and click “Confirm Selection”.
+
+<Callout type="info" title="Tip">
+After you confirm, the list displays prices from the selected sources.
+</Callout>
+
+**Preview price changes**
+
+- Model Management – Sync Model Pricing – Preview Price Changes
+
+![Model Management – Sync Model Pricing – Preview Price Changes page](/assets/guide/feature-guide/model-management-sync-prices-apply-sync.png)
+
+**Steps to apply changes**
+
+1. Select a source for the model and click “Apply Sync”.
+2. In “Preview Price Changes”, review the source, the current billing settings, and the final price to be saved.
+3. Click “Confirm Changes” to save.
+
+<Callout type="info" title="Tip">
+This operation updates the same pricing configuration as “Model Prices” and the “Pricing” tab in the edit drawer.
+</Callout>
+
+### Manage Prefilled Groups
+
+- Model Management – Prefilled Group Management
+
+![Model Management – Prefilled Group Management page](/assets/guide/feature-guide/model-management-prefilled-groups.png)
+
+Prefilled groups store reusable sets of values. They are **separate from** user Groups and Channel Groups and have no effect on billing.
+
+**Steps**
+
+1. In the upper-right corner of the “Models” tab, click ⋯ → “Prefilled Groups” to open “Prefilled Group Management”.
+2. Click “New Group” or click the edit action in a group row.
+3. Enter the group name and description, select a “Group Type”, and fill in the items.
+4. Click “Create” for a new group or “Save Changes” for an existing group.
+
+<Callout type="info" title="Tip">
+
+- The list shows the group name and description, type, up to six entries, and the edit and delete actions.
+- Click “Refresh” to reload the list.
+
+</Callout>
+
+**Group types**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Type | Entry format | Where it is used |
+| --- | --- | --- |
+| Model Group | List of model names | When editing a Channel, click a group name under “Preset Groups” below the model list to add the group's models to the Channel. |
+| Tag Group | List of tags | Unused in the current version of the console. |
+| Endpoint Group | JSON object with endpoint types as keys and endpoint configurations as values | Unused in the current version of the console. |
+
+</div>
+
+- Model Management – Create Prefilled Group
+
+![Model Management – Create Prefilled Group page](/assets/guide/feature-guide/model-management-prefilled-groups-create-group.png)
+
+**Configuration reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Group Name | A name that identifies the group. | Required. Up to 64 characters. Must be unique among existing groups. | Empty |
+| Description | Optional description. | Up to 255 characters. | Empty |
+| Group Type | Determines the entry format and where the group is used. | Choose one of the three types listed above under “Group types”. | Model Group |
+| Items | Entries in the group. | For model and tag groups, enter each value and press Enter to add it.<br/>For endpoint groups, fill in “Provider” and “Endpoint Configuration” on each row, or switch to “JSON Mode”. Click “Insert Template” to insert common endpoints. | Empty |
+
+</div>
+
+### Add and Edit Providers
+
+- Model Management – Create Provider
+
+![Model Management – Create Provider page](/assets/guide/feature-guide/model-management-providers-add-provider.png)
+
+Use the “Providers” tab to manage model providers. The “Linked Models” column shows how many model metadata records are assigned to each provider.
+
+**Add a provider**
+
+1. In the upper-right corner of the “Providers” tab, click “Add Provider” to open the “Create Provider” drawer.
+2. Fill in the fields and click “Save Metadata”.
+
+**Configuration reference**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and limits | Default |
+| --- | --- | --- | --- |
+| Provider Name | Provider display name. | Required. Leading and trailing spaces are trimmed. Up to 128 characters. Must be unique regardless of case. | Empty |
+| Description | Provider description. | Optional. | Empty |
+| Icon | Provider icon. | Up to 128 characters. Choose a recommended icon or enter an icon identifier. “Effective Icon” shows the preview. | Empty |
+
+</div>
+
+**Provider metadata**
+
+- Model Management – Edit Provider – Provider Metadata
+
+![Model Management – Edit Provider – Provider Metadata page](/assets/guide/feature-guide/model-management-providers-edit-provider-provider-information.png)
+
+**Edit a provider**
+
+1. Click the provider name or choose ⋯ → “Edit” to open a drawer titled with the provider's name.
+2. Update the fields under “Provider Metadata” and click “Save Metadata”.
+
+<Callout type="info" title="Tip">
+
+- The drawer has two tabs, “Provider Metadata” and “Linked Models (N)”.
+- “Provider Metadata” shows the same fields as the create drawer, along with the creation and update times.
+- If someone else edits the provider after you open the drawer, the save fails. Click “Reload Provider Metadata” before editing again.
+
+</Callout>
+
+**Linked models**
+
+- Model Management – Edit Provider – Linked Models
+
+![Model Management – Edit Provider – Linked Models page](/assets/guide/feature-guide/model-management-providers-edit-provider-linked-models.png)
+
+The “Linked Models” tab lists the model metadata records assigned to that provider, along with each record's “Name Matching Rule” and “Matching Models” count. The linked-model count is based on metadata records. For rules other than exact match, the number of models covered appears separately.
+
+**Manage linked models**
+
+1. Select the models.
+2. Click “Set Provider” to move them to another provider or “Clear Provider Assignment” to remove the assignment. Review the preview, then click “Apply Changes”.
+
+<Callout type="info" title="Tip">
+Click “View Filtered Model List” to open the “Models” tab filtered by this provider.
+</Callout>
+
+### Merge and Delete Providers
+
+**Available actions**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Where to find it | Result |
+| --- | --- | --- |
+| Merge Providers | Select multiple providers and click “Merge Providers”. Under “Keep This Provider”, choose the provider to retain. | Reassigns the models from the other selected providers to the retained provider, then deletes those other providers. The retained provider's metadata stays the same. |
+| Delete Providers | Choose ⋯ → “Delete” in a row, or select providers and click “Delete Providers”. | Deletes the selected provider records. Before deleting a provider that still has linked models, reassign those models or clear their provider assignments. |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- For provider assignment, assignment removal, merges, and deletions, first click “Preview Changes”. Review the source providers, the destination provider, and the affected records, then click “Apply Changes”.
+- Each operation supports up to 1,000 records at a time.
+- These actions change provider assignments only. Pricing, Channels, and model names retain their existing values.
+- If the data changes after you preview, applying the changes fails and the page asks you to preview again. Click “Preview Again”.
+
+</Callout>
+
+### Create a Deployment
+
+- Model Management - Create Deployment
+
+![Model Management - Create Deployment page](/assets/guide/feature-guide/model-management-model-deployment-create-deployment.png)
+
+The “Deployments” tab manages container deployments on io.net. Both Admin and Root users can access it.
+
+**Prerequisites**
+
+- The model deployment service must be enabled. See [Deployment Status](#deployment-status).
+- A Root user must enable the service and save the API key in <a href="/en/docs/guide/feature-guide/system-settings/settings-models#model-deployment" target="_blank" rel="noopener noreferrer">System Settings → Models → Model Deployment</a>.
+
+**Steps**
+
+1. Click “Create Deployment” in the upper-right corner.
+2. Fill in the configuration fields and click “Create”.
+
+**Configuration Fields**
+
+The dialog has four sections: “Basic Configuration”, “Resource Configuration”, “Price Estimate”, and “Advanced Configuration”. The table below lists the fields in the first two sections in the order they appear.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Field | Section | Definition | Requirements and Constraints | Default |
+| --- | --- | --- | --- | --- |
+| Container Name | Basic Configuration | The name of the container. | Required. As you type, the dialog shows “Name available” or “Name unavailable”. | Blank |
+| Image | Basic Configuration | The container image address. | Required. | `ollama/ollama:latest` |
+| Hardware Type | Resource Configuration | The hardware used for the deployment. Options come from io.net. | Required. | None selected |
+| Deployment Location | Resource Configuration | Where the deployment runs. | Required. You can select multiple locations after selecting a hardware type. | None selected |
+| GPU Count | Resource Configuration | The number of GPUs per container. | Minimum 1. Values above the selected hardware’s limit are automatically reduced to that limit. | 1 |
+| Replica Count | Resource Configuration | The number of container replicas. | Minimum 1. | 1 |
+| Duration (Hours) | Resource Configuration | How long the deployment runs, in hours. | Minimum 1. | 1 |
+| Port | Resource Configuration | The port used for container traffic. | 1–65535. | 11434 |
+
+</div>
+
+**Price Estimate and Advanced Configuration**
+
+These two sections appear after “Resource Configuration”. The table lists the fields in the order they appear in the dialog.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Field | Section | Definition | Requirements and Constraints | Default |
+| --- | --- | --- | --- | --- |
+| Billing Currency | Price Estimate | The currency used for the estimate. Actual charges are determined by io.net. | Choose USDC or IOCOIN. | USDC |
+| Entrypoint (Space-Separated), Arguments (Space-Separated) | Advanced Configuration | The container’s entrypoint and arguments. | Optional. Values are split on spaces. | Blank |
+| Environment Variables (JSON), Secret Environment Variables (JSON) | Advanced Configuration | The container’s environment variables and secret environment variables. | Optional. Each field accepts a JSON object. | Blank |
+| Registry Username, Registry Secret | Advanced Configuration | Credentials for a private container image registry. | Optional. | Blank |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- Hardware availability, locations, and prices are determined by io.net. The defaults on this page may vary by instance.
+- Channel creation and linking are separate from deployment creation. To call a deployed model through New API, add a Channel and set its Base URL to the deployment’s public address. See <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a>.
+
+</Callout>
+
+### View and Manage Deployments
+
+**Available Actions**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Description |
+| --- | --- |
+| View Logs | Select a “Container” and a “Stream” (stdout, stderr, or all). You can enable “Auto Refresh” (every 5 seconds), or click “Refresh” or “Download”. |
+| View Details | “Deployment Details” shows the deployment ID, status, hardware, total GPU count, location, the status of each container, and “Raw JSON”. If a container has a public address, click “Open” to access it. |
+| Update Configuration | Update the image, port, entrypoint, arguments, command, environment variables, secret environment variables, and registry credentials. The request includes only fields you fill in. |
+| Extend Deployment | Enter the “Duration (Hours)”. Once the “Estimated Cost” appears, click “Extend”. |
+| Rename Deployment | Enter a new name. The dialog checks availability as you type. |
+| Delete | After confirmation, New API asks io.net to terminate the deployment. The status changes to “Termination Requested” and then to “Destroyed”. This action is irreversible. |
+
+</div>
+
+<Callout type="warn" title="Caution">
+If a Channel Base URL or an advanced custom route points to a deployment, switch to another available Channel before terminating or modifying the deployment. Deployments are external resources. Changes in deployment status leave the Channel configuration unchanged in New API.
+</Callout>
+
+## Rules and Behavior
+
+This section covers the differences between Admin and Root permissions, name matching rules, endpoint configuration formats, and field overwrite rules for metadata sync.
+
+### Differences Between Admin and Root
+
+Both Admin and Root users can manage model metadata, vendors, prefill Groups, and model deployments. Only Root users can change model pricing.
+
+**Permission Differences**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| UI Element | Root | Admin |
+| --- | --- | --- |
+| “Sync Prices” button | Visible | Hidden |
+| “Pricing” column | Shows a summary of current pricing. Click to open the “Pricing” tab. | Shows “Super Admin”. |
+| Row-level “Pricing” button | Visible | Hidden |
+| “Pricing” tab in the edit drawer | Can edit and save pricing. | Shows only “Model pricing is managed by the super admin.” |
+| “Also Remove Pricing” option when deleting | Can select the option. | The option is disabled. Below it, the message “Model pricing is managed by the super admin.” appears. |
+
+</div>
+
+### Name Matching Rules
+
+A name matching rule determines which model names use a metadata entry.
+
+**Rule Types**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Rule | How It Matches |
+| --- | --- |
+| Exact Match | Matches only an identical model name. |
+| Prefix Match | Matches model names that start with the specified string. |
+| Contains Match | Matches model names that contain the specified string. |
+| Suffix Match | Matches model names that end with the specified string. |
+
+</div>
+
+**Matching Behavior**
+
+- If a model name matches multiple entries, the system uses the first match in this order: exact, prefix, suffix, contains.
+- Matching rules apply only to model metadata (description, icon, tags, vendor, endpoints, and Model Marketplace visibility). Pricing is always configured for each specific model name.
+- With a rule other than an exact match, individual model names from Channels are excluded from the metadata entry and may still appear under “Missing Models”. The “Also Remove from All Channels” option is disabled when deleting that entry.
+
+### Endpoint Configuration
+
+Endpoint configuration defines the endpoint types and custom paths shown to users for a model.
+
+**Enter a Configuration**
+
+- Enter an “Endpoint Type” and a “Configuration” on each row.
+- Switch to “JSON Mode” to enter JSON directly.
+- “Load Template...” **replaces** all current content with the selected template (`openai`, `openai-response`, `anthropic`, `gemini`, `jina-rerank`, `image-generation`, or `embeddings`).
+
+**Validation Rules**
+
+- Leave the field blank to omit the configuration. If provided, it must be a JSON object or an array of endpoint type strings.
+- Each object key must be a nonempty endpoint type. Its value must be either a path starting with `/` or an object with a `path` starting with `/` and an optional `method` (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, or `OPTIONS`).
+
+<Callout type="info" title="Tip">
+The Channel Base URL and upstream Channels are configured separately from custom endpoints. The “Supported Endpoints” shown in the “Channels and Groups” tab are derived from enabled Channels independently of the custom endpoints configured here.
+</Callout>
+
+### Metadata Sync Overwrite Rules
+
+Metadata sync updates only the selected fields. The table below describes what happens for each field.
+
+**Field Effects**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Field | Effect |
+| --- | --- |
+| Description, Icon, Tags | Replaces the fields with the official values. |
+| Vendor | If no vendor with the same name exists on this instance, creates one from the official vendor list. |
+| Custom Endpoints | Updates the endpoint types and custom paths shown to users. |
+| Match Type | Changes which model names inherit this metadata. Pricing is configured separately for each model name. |
+| Model Marketplace Visibility | Changes how the model appears in the Model Marketplace. Channel status and existing API access permissions are unaffected. |
+
+</div>
+
+**Sync Scope**
+
+- Sync skips models with “Allow Metadata Sync” disabled.
+- For metadata changes, the wizard lists only fields that differ from the official values and updates only the fields you select.
+
+## Controls Reference
+
+### Page Buttons and Filters
+
+**Page Header**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| “Models”, “Vendors”, “Deployments” | Top of the page | Switches tabs. The selected tab is stored in the page URL. |
+| Sync Metadata | Upper-right corner of the “Models” tab | Opens the “Sync Model Metadata” wizard. See [Sync Metadata](#sync-metadata). |
+| Sync Prices | Upper-right corner of the “Models” tab | Visible only to Root users. See [Sync Prices](#sync-prices). |
+| Add Model | Upper-right corner of the “Models” tab | Opens the “Create Model” drawer. See [Add and Edit Models](#add-and-edit-models). |
+| ⋯ Menu | Upper-right corner of the “Models” tab | Contains “Missing Models” and “Prefill Groups”. See [Add Missing Models](#add-missing-models) and [Manage Prefill Groups](#manage-prefilled-groups). |
+| Add Vendor | Upper-right corner of the “Vendors” tab | See [Add and Edit Vendors](#add-and-edit-providers). |
+| Create Deployment | Upper-right corner of the “Deployments” tab | Requires the model deployment service to be enabled. See [Deployment Status](#deployment-status) and [Create a Deployment](#create-a-deployment). |
+
+</div>
+
+**“Models” Tab**
+
+Each of the four filters accepts one selection, and you can combine filters. Applying the “Visibility Policy”, “Sync Policy”, or “Vendor” filter excludes “Missing Metadata” rows. The search query, filters, and page number are stored in the page URL.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Search Field | Toolbar above the list | Filters by model name, description, or tag. “Missing Metadata” rows match by name only. |
+| Visibility Policy | Toolbar above the list | “Allow” or “Hide”, corresponding to the “Model Marketplace Visibility” toggle. |
+| Model Marketplace Visibility | Toolbar above the list | “Visible”, “Unavailable”, “Hidden”, or “Partially Visible”. See [Model Marketplace Visibility Status](#model-marketplace-visibility-status). |
+| Vendor | Toolbar above the list | Filters by vendor. Each option shows the vendor’s model count. |
+| Sync Policy | Toolbar above the list | “Allow Updates” or “Keep Local”. |
+| View | Right side of the toolbar above the list | Shows or hides columns. ID, Vendor, Match Type, Description, Custom Endpoints, Created At, and Updated At are hidden by default. Refreshing the page resets the column selection. |
+| Pagination | Bottom of the list | Shows 20 entries per page by default. |
+
+</div>
+
+**“Vendors” Tab**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Search Field | Toolbar above the list | Displays the placeholder “Search by vendor name or description”. |
+| Model Association | Toolbar above the list | “Has Associated Models” or “No Associated Models”. |
+| View | Right side of the toolbar above the list | ID, Created At, and Updated At are hidden by default. Refreshing the page resets the column selection. |
+| Pagination | Bottom of the list | Shows 20 entries per page by default. |
+
+</div>
+
+**“Deployments” Tab**
+
+The list shows “ID”, “Name”, “Status”, “Provider” (io.net), “Time Remaining”, “Hardware”, and “Created At”.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Search Field | Toolbar above the list | Searches by name. |
+| Status | Toolbar above the list | Filters by status. See [Deployment Status](#deployment-status). |
+| View | Right side of the toolbar above the list | Shows or hides columns. Refreshing the page resets the column selection. |
+| Pagination | Bottom of the list | Shows 10 entries per page by default and 8 on narrow screens. |
+
+</div>
+
+### Row Actions
+
+**“Models” Tab**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Model Name | “Model” column | Opens the “Model Metadata” tab in the edit drawer. |
+| Copy Button | “Model” column, to the right of the name | Copies the model name. |
+| Price Summary | “Pricing” column | Available only to Root users. Opens the “Pricing” tab. See [Pricing](#pricing). |
+| Visibility Status | “Model Marketplace Visibility” column | Click to see the reason for the status. See [Model Marketplace Visibility Status](#model-marketplace-visibility-status). |
+| Edit | “Actions” column | Opens the “Model Metadata” tab in the edit drawer. On “Missing Metadata” rows, the action appears as “Add Metadata” and opens the creation drawer with the model name prefilled. |
+| Pricing | “Actions” column | Visible only to Root users. Opens the same drawer directly to the “Pricing” tab. |
+| ⋯ Menu | End of the row | Contains “Hide from Model Marketplace” or “Show in Model Marketplace”, which changes only the “Model Marketplace Visibility” toggle, and “Delete”. “Missing Metadata” rows have no ⋯ menu. See [Delete Models](#delete-models). |
+
+</div>
+
+**“Vendors” Tab**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Vendor Name | “Vendor” column | Opens the edit drawer. See [Add and Edit Vendors](#add-and-edit-providers). |
+| Associated Model Count | “Associated Models” column | Opens the “Models” tab filtered by this vendor. |
+| ⋯ Menu | End of the row | Contains “Edit” and “Delete”. |
+
+</div>
+
+**“Deployments” Tab**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| View Logs | “Actions” column, icon to the left of the ⋯ menu | See [View and Manage Deployments](#view-and-manage-deployments). |
+| ⋯ Menu | “Actions” column | Contains “View Details”, “Update Configuration”, “Extend Deployment”, “Rename Deployment”, and “Delete”. See [View and Manage Deployments](#view-and-manage-deployments). |
+
+</div>
+
+### Bulk Actions
+
+**“Models” Tab**
+
+Select rows to show bulk actions at the bottom of the list.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Set Vendor | Bottom of the list | Select a vendor for the selected models, then preview and apply the change. |
+| Clear Vendor Assignment | Bottom of the list | Remove the vendor assignment from the selected models, then preview and apply the change. |
+| Show Selected Models in Model Marketplace / Hide Selected Models from Model Marketplace | Bottom of the list | Changes the “Model Marketplace Visibility” toggle for the selected models. |
+| Copy Model Names | Bottom of the list | Copies a comma-separated list of model names to the clipboard. |
+| Delete Selected Models | Bottom of the list | Opens the deletion confirmation dialog. See [Delete Models](#delete-models). |
+
+</div>
+
+<Callout type="info" title="Tip">
+If the selection includes any “Missing Metadata” rows, a gray “Missing Metadata” label appears to the left of the bulk actions. Only “Copy Model Names” is available. Hovering over a disabled action shows “Add metadata for all selected models first.”
+</Callout>
+
+**“Vendors” Tab**
+
+Select multiple rows to use “Merge Vendors” or “Delete Vendors”. See [Merge and Delete Vendors](#merge-and-delete-providers).
+
+## Status Reference
+
+### Model Marketplace Visibility Status
+
+The “Model Marketplace Visibility” column in the “Models” list and the “Channels and Groups” tab in the edit drawer show the following statuses.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Visible | An enabled Channel provides the model. The model is shown only to users with access to the Group it belongs to. | Click to see “Shown only to users with access to the Group this model belongs to.” |
+| Unavailable | No Channel has been configured or no Channel is currently available. This status also appears if a rule other than an exact match finds no matching models in any Channel. | Click to see the reason.<br/>No Channel configured: “No Channel has been configured. The model will be excluded from the Model Marketplace.”<br/>No Channel available: “No Channel is currently available. The model is currently excluded from the Model Marketplace.”<br/>Rule other than exact match: “No model in any Channel matches this metadata rule.” |
+| Hidden | The model is hidden using the “Model Marketplace Visibility” toggle in its metadata. | Click to see “Hidden from the Model Marketplace by the metadata policy.” |
+| Partially Visible | Applies only to rules other than exact match. Some matching models are hidden or have no available Channel. | Click to see “Some matching models are hidden or have no available Channel.” |
+
+</div>
+
+<Callout type="info" title="Tip">
+“Model Marketplace Visibility” controls only whether a model appears in the Model Marketplace. Access to a model through the API depends on Channel, Group, and API key restrictions.
+</Callout>
+
+### Planned Sync Actions
+
+The “Planned Action” column in step 1 of the metadata sync wizard shows the following statuses.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Add Metadata | Model metadata exists in the official catalog and is missing from this instance. | Selectable. |
+| Update Metadata | This instance has metadata, and at least one syncable field differs from the official value. | Selectable. |
+| No Changes | All syncable fields match the official values. | Disabled. |
+| Metadata Sync Disabled | “Allow Metadata Sync” is disabled for this model. | Disabled. Enable “Allow Metadata Sync” in the model metadata to make it eligible for sync. |
+| Not Found Upstream | The official catalog has no entry with this name. | Disabled. |
+| Upstream Vendor Information Missing | The vendor for the official model is absent from both this instance and the official vendor list. | Disabled. |
+
+</div>
+
+### Deployment Status
+
+**Deployment Service**
+
+When you open the “Deployments” tab, New API first checks the configuration and connection.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Model Deployment Service Disabled | The model deployment service is disabled in System Settings. | “Go to Settings” opens the model deployment configuration in System Settings. Only Root users can access it. |
+| Connection Failed | New API could not connect to the deployment service. | An error message appears. Click “Retry” to try again. “Go to Settings” opens the same configuration described above. |
+
+</div>
+
+**Deployments**
+
+Deployment statuses include “Running”, “Completed”, “Failed”, “Deployment Requested”, “Termination Requested”, and “Destroyed”. Use the “Status” filter above the list to filter by status. After deletion, the deployment status changes to “Termination Requested” and then to “Destroyed”.
+
+## Saving and Applying Changes
+
+Each action on this page is saved as soon as you submit it, without a separate page-wide save step. Changes take effect immediately on the node that handles the request. The timing on other nodes depends on what changed, as described below.
+
+**Model Metadata and Vendors**
+
+Model metadata, vendors, and prefill Groups are stored in the database. The management page list updates immediately after saving. When you edit or sync metadata, hide or show models, or change vendor data, the Model Marketplace updates immediately on the node that handles the request. Other nodes usually update within about 3 seconds and may take up to about 1 minute. Users who already have the Model Marketplace open see the new content when they refresh the page.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Action | How to Save | When Changes Take Effect |
+| --- | --- | --- |
+| Edit Model Metadata | Click “Save Details” in the “Model Metadata” tab of the edit drawer. | The Model Marketplace displays the new metadata on the schedule described above. |
+| Hide or Show Models (Including Bulk Changes) | Click “Hide from Model Marketplace” or “Show in Model Marketplace” in the row’s ⋯ menu. The change saves immediately. | Only Model Marketplace visibility changes. |
+| Sync Metadata | After previewing, click “Apply Changes to N Models”. | Updates to the selected models are saved as a single batch. If any update fails, the entire batch is discarded. Models with “Allow Metadata Sync” disabled are skipped. |
+| Manage Vendors and Vendor Assignments | Click “Save Details” when adding or editing a vendor. When setting or clearing assignments, merging vendors, or deleting vendors, preview the changes and click “Apply Changes”. | The vendor filter and icons in the Model Marketplace update accordingly. If the data changes after the preview, applying the changes fails and you need to generate a new preview. |
+| Delete Models | Click “Delete” in the confirmation dialog. | The model metadata is deleted immediately. Model names in Channels, capabilities, and pricing are retained. See [Delete Models](#delete-models). |
+
+</div>
+
+**Model Pricing**
+
+Model pricing is stored in System Settings. Changes take effect immediately on the node that handles the request. Other nodes usually pick up the changes when System Settings sync within about 3 seconds, or within one sync cycle at the latest (60 seconds by default).
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Action | How to Save | When Changes Take Effect |
+| --- | --- | --- |
+| Update Model Pricing | Click “Save Model Pricing” in the “Pricing” tab, or click “Confirm Changes” when syncing prices. Only Root users can perform these actions. | New prices apply starting with the next request. See <a href="/en/docs/guide/feature-guide/admin/billing-expression#saving-and-applying-changes" target="_blank" rel="noopener noreferrer">Billing Expressions</a>. |
+| Select “Also Remove Pricing” When Deleting (Root Only) | Pricing is removed as part of the same deletion. | Built-in pricing may take effect again. |
+
+</div>
+
+**Channels, Prefill Groups, and Deployments**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Action | How to Save | When Changes Take Effect |
+| --- | --- | --- |
+| Select “Also Remove from All Channels” When Deleting | Channel removal is performed as part of the same deletion. | The operation updates the Channels’ model lists and capabilities. For when each node starts routing with the new configuration, see <a href="/en/docs/guide/feature-guide/admin/channel#saving-and-applying-changes" target="_blank" rel="noopener noreferrer">Channel Management</a>. |
+| Manage Prefill Groups | Click “Create” when adding a Group or “Save Changes” when editing one. | The Channel edit drawer loads the updated values the next time it opens. Existing saved Channels are unaffected. |
+| Manage io.net Deployments | New API sends create, update configuration, extend, rename, and delete requests directly to io.net for persistence. | The result returned by io.net determines the outcome. Channel creation and updates are handled separately. |
+
+</div>
+
+## Important Notes
+
+- **“Also Remove from All Channels” edits Channels directly.** To restore a model after deletion, add its name back to the affected Channels. See [Delete Models](#delete-models).
+- **Deployments are external resources.** Deletion is irreversible. Before terminating or modifying a deployment, switch any Channels that point to it to another available Channel. See [View and Manage Deployments](#view-and-manage-deployments).
+- **Model names are unique identifiers.** Renaming a model leaves its name in Channels and its pricing tied to the original name. Pricing is always configured for each specific model name. See [Add and Edit Models](#add-and-edit-models).
+- **Metadata sync overwrites selected fields.** To protect a model’s metadata from being overwritten, disable “Allow Metadata Sync” for that model. See [Sync Metadata](#sync-metadata).
+- **API access is governed separately from Model Marketplace visibility.** Whether a user can call a model depends on Channel, Group, and API key restrictions. See [Model Marketplace Visibility Status](#model-marketplace-visibility-status).
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="A model is missing from the Model Marketplace">
+**Explanation**
+
+First, check the model’s “Marketplace Visibility” status in the list. See [Marketplace Visibility Status](#model-marketplace-visibility-status).
+
+**Possible causes**
+
+- **“Hidden”** means “Marketplace Visibility” is turned off in the model’s metadata.
+- **“Cannot Be Displayed”** means the Channel that provides the model is disabled or does not include that name in its model list.
+- **“Visible”** means the user’s Group lacks access to the model.
+
+**Resolution**
+
+1. Based on the status, turn on “Marketplace Visibility” or check the Channel and the user’s Group.
+</Accordion>
+
+<Accordion title="The list contains rows marked “Missing Metadata”">
+**Message**
+
+When you select these rows, all bulk action buttons except “Copy Model Name List” are disabled. Hovering over a disabled button displays “Add metadata to all selected models first.”
+
+**Possible cause**
+
+A Channel uses a model name with no exact match in the metadata. Rules that use other match types do not remove these rows.
+
+**Resolution**
+
+1. Click “Add Metadata” or use “Sync Metadata” to import it.
+2. Deselect rows marked “Missing Metadata” before performing bulk actions.
+</Accordion>
+
+<Accordion title="A model reappears in the list after deletion">
+**Possible cause**
+
+An enabled Channel still references the model name.
+
+**Resolution**
+
+1. To remove the model completely, select “Also Remove from All Channels” when deleting it. This option is available only for exact-match rules.
+</Accordion>
+
+<Accordion title="A model cannot be selected for sync">
+**Possible causes**
+
+- If “Planned Action” shows “Metadata Sync Disabled,” the model’s “Allow Metadata Sync” setting is turned off.
+- If “Planned Action” shows “Not Found Upstream,” the official catalog has no entry with that name.
+
+**Resolution**
+
+1. To sync the model, turn on “Allow Metadata Sync” in its metadata.
+</Accordion>
+
+<Accordion title="Clicking “Load Metadata Preview” fails">
+**Message**
+
+“Failed to preview metadata.” If the server returns a reason, the interface displays the server’s original English message.
+
+**Possible cause**
+
+The server cannot reach the data source, or the deployment operator changed the data source URL using `SYNC_UPSTREAM_BASE`.
+
+**Resolution**
+
+1. Check whether the server can reach the data source.
+</Accordion>
+
+<Accordion title="Applying a sync prompts you to preview again">
+**Messages**
+
+`Upstream metadata changed; preview again` or `metadata changed; preview again before applying` (English only).
+
+**Possible cause**
+
+The official catalog or the local model metadata changed after the preview.
+
+**Resolution**
+
+1. Click “Preview Again,” then return to step 1 and make your selections again.
+</Accordion>
+
+<Accordion title="The “Sync Prices” button or “Pricing” tab is missing">
+**Message**
+
+When an Admin opens the “Pricing” tab, it displays “Model pricing is managed by a super administrator.”
+
+**Possible cause**
+
+Only Root accounts can change model pricing.
+
+**Resolution**
+
+1. Ask a Root administrator to make the change.
+</Accordion>
+
+<Accordion title="Pricing disappears after renaming a model">
+**Possible cause**
+
+Pricing is stored by model name. Renaming a model does not transfer its pricing to the new name.
+
+**Resolution**
+
+1. Ask a Root administrator to configure pricing for the new name, or restore the original name.
+</Accordion>
+
+<Accordion title="The pricing column shows “Configure by Matching Model”">
+**Possible cause**
+
+The name rule uses a match type other than exact match.
+
+**Resolution**
+
+1. In the “Pricing” tab, select a specific model before configuring its pricing.
+</Accordion>
+
+<Accordion title="A vendor cannot be deleted">
+**Message**
+
+“Vendors still have … linked model records. Transfer or clear their assignments first.”
+
+**Possible cause**
+
+Some models are still assigned to this vendor.
+
+**Resolution**
+
+1. In “Linked Models,” reassign those models or clear their vendor assignments.
+2. Alternatively, use “Merge Vendors.”
+</Accordion>
+
+<Accordion title="The “Deployment” tab reports that the service is disabled or the connection failed">
+**Messages**
+
+“Model deployment service is disabled” or “Connection failed”
+
+**Resolution**
+
+1. Ask a Root administrator to check the toggle and API key under “System Settings” → “Models” → “Model Deployment.”
+2. Click “Retry.”
+</Accordion>
+
+<Accordion title="A deployment was terminated or a container is unhealthy">
+**Resolution**
+
+1. Check the deployment details, container status, and logs.
+2. Check whether any Channels still point to the deployment address. If so, switch to other available Channels first.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/admin/channel" target="_blank" rel="noopener noreferrer">Channel Management</a> — Configure which models can be called through a Channel, set up Groups and routing, and use “Preset Groups.”
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a> — Manage global billing settings such as model pricing, upstream price sync, and Group pricing.
+- <a href="/en/docs/guide/feature-guide/admin/billing-expression" target="_blank" rel="noopener noreferrer">Billing Expressions</a> — Find syntax and examples for billing expressions in the “Pricing” tab.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">Model Configuration</a> — Enable io.net model deployment and configure the API key.
+- <a href="/en/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">Model Marketplace and Rankings</a> — See how users can browse the models displayed in the Model Marketplace.

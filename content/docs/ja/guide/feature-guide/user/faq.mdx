@@ -1,0 +1,314 @@
+---
+title: よくある質問
+description: エラーメッセージの原文や症状から、API 呼び出しの失敗、クォータと料金、アカウントとログイン、画面と表示など、複数のページに共通する問題の原因と対処方法を確認できます。
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- API 呼び出しが失敗する、残高や料金が合わない、ログインできない、ページやメニューが見つからないなど、複数のページに共通する問題をまとめています。
+- 特定のページに関する問題は、そのページの「よくある質問」で解説しています。このページには該当ページへのリンクを掲載しています。
+- API が返すメッセージは、通常、アカウントの「表示言語」に応じて簡体字中国語、繁体字中国語、英語のいずれかになります。このページの「メッセージ原文」には中国語と英語を併記しています。
+
+<Callout type="info" title="ヒント">
+
+- 各セクションの折りたたみ式の Q&A では、このページ内で対処方法まで確認できます。表には、他のページで解説している質問とリンクを掲載しています。
+- 呼び出しに失敗したときは、通常、メッセージの末尾に「(request id: …)」が付きます。管理者に問題を報告する際は、この ID も併せてお知らせください。
+- 初めて利用する際の一連の手順は、<a href="/ja/docs/guide/feature-guide/user/quick-start" target="_blank" rel="noopener noreferrer">クイックスタート</a>を参照してください。
+</Callout>
+
+問題の種類から探す：[呼び出しの失敗](#呼び出しの失敗)、[クォータと料金](#クォータと料金)、[アカウントとログイン](#アカウントとログイン)、[画面と表示](#画面と表示)。
+
+## 呼び出しの失敗
+
+API キーまたはプレイグラウンドでモデルを呼び出したときにエラーが返る場合の対処方法です。
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="呼び出し時に「分组 … 下模型 … 无可用渠道」と表示される、またはモデルが存在しない">
+**メッセージ原文**  
+「分组 … 下模型 … 无可用渠道（distributor）」（英語：No available channel for model … under group … (distributor)）、または「分组 … 下模型 … 的可用渠道不存在（retry）」（英語：No available channel for model … under group … (retry)）
+
+**説明**  
+このサイトでは、モデル名の入力に誤りがある場合も同じメッセージが返ります。
+
+**考えられる原因**
+
+- モデル名の入力に誤りがあります。たとえば、大文字と小文字の区別やバージョンの接尾辞が、モデル広場に掲載されている名前と一致していません。
+- API キーが使用するグループでは、そのモデルを呼び出せません。
+- そのモデルを提供するすべてのチャネルが一時的に利用できないか、管理者がそのモデルを無効にしています。
+
+**対処方法**
+
+1. <a href="/ja/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">モデル広場とランキング</a>でモデル名をコピーし、リクエスト内のモデル名を置き換えてください。
+2. モデル詳細の「概要」にある「グループ別料金」で、そのモデルを呼び出せるグループを確認し、API キーの「グループ」を編集してください。プレイグラウンドを使用している場合は、グループとモデルの選択欄でグループを切り替えてください。
+3. しばらく待ってから再試行してください。それでも解決しない場合は、管理者にお問い合わせください。
+</Accordion>
+
+<Accordion title="呼び出し時に「您已达到请求数限制」または「您已达到总请求数限制」と表示される">
+**メッセージ原文**  
+「您已达到请求数限制：…分钟内最多请求…次」（英語：You have reached the request limit: maximum … requests in … minutes）、または「您已达到总请求数限制：…分钟内最多请求…次，包括失败次数，请检查您的请求是否正确」（英語：You have reached the total request limit: maximum … requests in … minutes, including failed attempts. Please check that your requests are correct）
+
+**説明**  
+管理者がリクエスト数の制限を有効にしており、HTTP ステータスコードは 429 です。リクエスト数はアカウント単位で集計され、同じアカウントのすべての API キーに共通の上限が適用されます。管理者は一部のグループに個別の上限を設定できます。プレイグラウンドからの呼び出しは集計の対象外です。HTTP ステータスコードが 429 で、上記のどちらとも異なるメッセージが表示される場合は、上流サービスのレート制限です。このセクションの『呼び出し時に上流サービスのエラー、または「数据库出错，请联系管理员」と表示される』を参照してください。
+
+**考えられる原因**
+
+- メッセージに記載された時間内の呼び出し回数が、サイトで設定された上限を超えています。
+- 「総リクエスト数の制限」では、失敗したリクエストもカウントされます。リクエストパラメーターの誤りで失敗が続くと、短時間で上限に達します。
+
+**対処方法**
+
+1. メッセージに記載された時間が経過してから再試行し、呼び出し頻度を下げてください。プログラムから呼び出す場合は、失敗後に一定時間待ってから再試行してください。
+2. 「総リクエスト数の制限」に達した場合は、先に他の失敗したリクエストのメッセージを確認し、原因を調べてください。
+3. 上限の引き上げが必要な場合は、管理者にお問い合わせください。
+</Accordion>
+
+<Accordion title="呼び出し時に「用户已被封禁」と表示される">
+**メッセージ原文**  
+「用户已被封禁」（英語：User has been banned）
+
+**考えられる原因**  
+管理者がアカウントを無効にしており、そのアカウントのすべての API キーで呼び出しができません。
+
+**対処方法**
+
+1. 管理者に連絡し、アカウントの状態を確認してください。
+2. Web ページへのログイン時に同様のメッセージが表示される場合は、<a href="/ja/docs/guide/feature-guide/user/auth#よくある質問" target="_blank" rel="noopener noreferrer">登録とログイン</a>を参照してください。
+</Accordion>
+
+<Accordion title="呼び出し時に「普通用户不支持指定渠道」と表示される">
+**メッセージ原文**  
+「普通用户不支持指定渠道」（英語：Regular users cannot specify a channel）
+
+**説明**  
+API キーの `sk-` に続く部分に「-」が含まれていると、その「-」以降がチャネルの指定として扱われます。この指定ができるのは管理者アカウントのみです。
+
+**考えられる原因**
+
+- キーをコピーした際に余分な文字列が入ったか、2 つの文字列を続けて貼り付けています。
+- 管理者向けの指定方法に従い、キーの末尾に「-」とチャネル番号を追加しています。
+
+**対処方法**
+
+1. <a href="/ja/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API キー</a>ページでキーの右側にあるコピーボタンをクリックし、キー全体をコピーし直してください。
+2. リクエストヘッダーが `Authorization: Bearer sk-…` の形式で、キーの末尾に余分な文字列がないことを確認してください。
+</Accordion>
+
+<Accordion title="呼び出し時に「无效的请求」「未指定模型名称」と表示される、またはリクエストボディが大きすぎる（413）">
+**説明**  
+リクエスト形式が要件を満たしていない場合は、メッセージ原文から原因を確認してください。
+
+| メッセージ原文 | 考えられる原因 | 対処方法 |
+| --- | --- | --- |
+| 「无效的请求，…」（英語：Invalid request: …） | リクエストボディが有効な JSON ではないか、呼び出し先 API の形式と一致していません。 | <a href="/ja/docs/api" target="_blank" rel="noopener noreferrer">API リファレンス</a>でリクエスト形式を確認してください。 |
+| 「未指定模型名称，模型名称不能为空」（英語：Model name not specified, model name cannot be empty） | リクエストに `model` がありません。 | リクエストにモデル名を指定してください。 |
+| HTTP ステータスコードが 413 で、メッセージに request body too large が含まれる（英語のみ） | 添付画像やファイルが大きいなどの理由で、リクエストボディがサイトの上限（デフォルトは 128 MB）を超えています。 | 添付ファイルを圧縮するか、数を減らしてから再試行してください。上限の引き上げが必要な場合は、管理者にお問い合わせください。 |
+</Accordion>
+
+<Accordion title="呼び出し時に上流サービスのエラー、または「数据库出错，请联系管理员」と表示される">
+**説明**  
+モデルの処理は、管理者が接続した上流サービスで行われます。上流サービスがエラーを返すと、そのメッセージがアドレスを伏せた状態で表示されます。メッセージは多くの場合、英語です。HTTP ステータスコードは通常、上流サービスが返したものと同じで、400、429、500、502 などです。
+
+**考えられる原因**
+
+- 上流サービスが一時的に混雑しているか、レート制限または障害が発生しています。一般的なステータスコードは 429 と 5xx です。
+- リクエストパラメーターをモデルがサポートしておらず、上流サービスが 400 系のエラーを返しています。
+- 「数据库出错，请联系管理员」（英語：Database error, please contact the administrator）と表示される場合は、このサイトのサービスでエラーが発生しています。
+
+**対処方法**
+
+1. しばらく待ってから再試行するか、別のモデルやグループを使用してください。
+2. メッセージがリクエストパラメーターに関するものであれば、<a href="/ja/docs/api" target="_blank" rel="noopener noreferrer">API リファレンス</a>とモデル提供元の説明に従って、パラメーターを修正してください。
+3. それでも解決しない場合は、メッセージ原文を末尾の「(request id: …)」と併せて管理者に送ってください。
+</Accordion>
+
+<Accordion title="エラーメッセージの末尾にある「(request id: …)」とは">
+**説明**  
+このサイトはリクエストごとに ID を生成します。呼び出しに失敗した場合はメッセージの末尾に ID が付き、管理者はその ID を使ってリクエストの処理記録を検索できます。
+
+**対処方法**
+
+1. メッセージ原文全体をコピーし、request id と併せて管理者に送ってください。
+2. そのリクエストが使用ログに記録されている場合は、<a href="/ja/docs/guide/feature-guide/user/log#ログを絞り込んで統計を確認する" target="_blank" rel="noopener noreferrer">使用ログ</a>で「展開」をクリックし、「リクエスト ID」にその ID を入力して検索できます。
+</Accordion>
+
+<Accordion title="呼び出しが失敗したリクエストが使用ログに表示されない">
+**説明**  
+以下のリクエストはモデルの呼び出し前に拒否されるため、料金は発生せず、使用ログにも記録されません。
+
+- 「无效的令牌」「您的 IP 不在令牌允许访问的列表中」「用户已被封禁」など、API キーの検証に失敗した場合。
+- グループやモデルへのアクセス権がない、利用可能なチャネルがない、リクエスト数の上限に達した、またはリクエスト形式に誤りがある場合。
+- 「用户额度不足」「预扣费额度失败」など、クォータが不足している場合。
+
+その他の失敗したリクエストは、サイトでエラーログの記録が有効になっている場合にのみ、「エラー」として表示されます。
+
+**対処方法**
+
+1. メッセージ原文をもとに、このページまたは該当ページの「よくある質問」で原因を確認してください。
+2. 管理者による調査が必要な場合は、メッセージの末尾にある「(request id: …)」をお知らせください。
+3. 失敗したリクエストがログに記録される条件については、<a href="/ja/docs/guide/feature-guide/user/log#よくある質問" target="_blank" rel="noopener noreferrer">使用ログ</a>を参照してください。
+</Accordion>
+
+</Accordions>
+
+**他のページで解説している質問**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 問題 | 説明 | 参照先 |
+| --- | --- | --- |
+| 呼び出し時に「无效的令牌」と表示される | キーが間違っている、削除済み、無効、期限切れ、またはクォータを使い切っている可能性があります。リクエストにキーが含まれていない場合もあります。 | <a href="/ja/docs/guide/feature-guide/user/token#よくある質問" target="_blank" rel="noopener noreferrer">API キー</a> |
+| 呼び出し時に「该令牌无权访问模型 …」と表示される | キーの「モデル制限」にそのモデルが含まれていません。 | <a href="/ja/docs/guide/feature-guide/user/token#よくある質問" target="_blank" rel="noopener noreferrer">API キー</a> |
+| 呼び出し時に「您的 IP 不在令牌允许访问的列表中」と表示される | リクエスト元の IP アドレスが、キーの「IP 許可リスト」に含まれていません。 | <a href="/ja/docs/guide/feature-guide/user/token#よくある質問" target="_blank" rel="noopener noreferrer">API キー</a> |
+| 呼び出し時に「无权访问 … 分组」または「分组 … 已被弃用」と表示される | キーで指定されているグループが利用できなくなっています。 | <a href="/ja/docs/guide/feature-guide/user/token#よくある質問" target="_blank" rel="noopener noreferrer">API キー</a> |
+| 呼び出し時にクォータ不足が表示される | アカウントの残高、サブスクリプションのクォータ、またはキー自体のクォータが、このリクエストの支払いに必要な額を下回っています。 | <a href="/ja/docs/guide/feature-guide/user/token#よくある質問" target="_blank" rel="noopener noreferrer">API キー</a> |
+| 呼び出し時に「模型 … 的价格尚未由管理员配置…」と表示される | 管理者がそのモデルの価格をまだ設定していません。 | <a href="/ja/docs/guide/feature-guide/user/pricing#よくある質問" target="_blank" rel="noopener noreferrer">モデル広場とランキング</a>、<a href="/ja/docs/guide/feature-guide/user/personal-setting#よくある質問" target="_blank" rel="noopener noreferrer">プロフィール</a> |
+| アクセストークンでモデルを呼び出すと「无效的令牌」と表示される | `nap_` で始まるアクセストークンはモデルの呼び出しに使用できません。 | <a href="/ja/docs/guide/feature-guide/user/security#よくある質問" target="_blank" rel="noopener noreferrer">セキュリティとアクセス</a> |
+| プレイグラウンドに「请求发生错误: …」と表示される | メッセージ原文から原因を確認してください。 | <a href="/ja/docs/guide/feature-guide/user/playground#よくある質問" target="_blank" rel="noopener noreferrer">プレイグラウンド</a> |
+| 「最初の API リクエスト」のコマンドを実行するとエラーになる | コマンドは、一覧の先頭にある有効なキーと、最初に利用できるモデルを使用します。 | <a href="/ja/docs/guide/feature-guide/user/overview#よくある質問" target="_blank" rel="noopener noreferrer">概要</a> |
+| モデル広場に掲載されているモデルの呼び出しが失敗する | モデル広場に掲載されているモデルでも、呼び出せるグループが限られる場合があります。 | <a href="/ja/docs/guide/feature-guide/user/pricing#よくある質問" target="_blank" rel="noopener noreferrer">モデル広場とランキング</a> |
+| 呼び出し例やインポートした設定の API アドレスが `http://localhost:3000` になっている | 管理者がサーバーアドレスを設定していません。 | <a href="/ja/docs/guide/feature-guide/user/pricing#よくある質問" target="_blank" rel="noopener noreferrer">モデル広場とランキング</a>、<a href="/ja/docs/guide/feature-guide/user/chat-apps#よくある質問" target="_blank" rel="noopener noreferrer">チャット</a> |
+| チャットアプリで未認証またはアクセス禁止のエラーが表示される | 認証ヘッダー、キーの状態、グループ、または IP 制限が要件を満たしていません。 | <a href="/ja/docs/guide/feature-guide/user/chat-apps#よくある質問" target="_blank" rel="noopener noreferrer">チャット</a> |
+| 動画、音楽、画像生成のタスクが失敗する | タスクの詳細で失敗の原因を確認できます。失敗したタスクに使用したクォータは返還されます。 | <a href="/ja/docs/guide/feature-guide/user/task-log#よくある質問" target="_blank" rel="noopener noreferrer">タスクログ</a> |
+</div>
+
+## クォータと料金
+
+残高、請求額、使用量の集計値が合わない場合は、関連ページの「よくある質問」を参照してください。
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 問題 | 説明 | 参照先 |
+| --- | --- | --- |
+| 支払い後に残高が増えない | 決済サービスからサイトに通知が届いた後に残高へ反映されます。重複して支払わないでください。 | <a href="/ja/docs/guide/feature-guide/user/wallet#よくある質問" target="_blank" rel="noopener noreferrer">ウォレット</a> |
+| 引き換え時に「兑换失败，请稍后重试」と表示される | 引き換えコードが存在しない、使用済み、期限切れ、無効、または空白が含まれている可能性があります。 | <a href="/ja/docs/guide/feature-guide/user/wallet#よくある質問" target="_blank" rel="noopener noreferrer">ウォレット</a> |
+| サブスクリプションのクォータを使い切ると呼び出しが失敗する | 「課金設定」が関係しています。 | <a href="/ja/docs/guide/feature-guide/user/wallet#よくある質問" target="_blank" rel="noopener noreferrer">ウォレット</a> |
+| チェックインに成功しても残高の表示がすぐに変わらない | 報酬は残高に加算されています。ページを再読み込みすると反映されます。 | <a href="/ja/docs/guide/feature-guide/user/personal-setting#よくある質問" target="_blank" rel="noopener noreferrer">プロフィール</a> |
+| チャージや呼び出しの後に「概要」の数値が変わらない | 数値はログイン時に取得したアカウント情報に基づいています。ブラウザーでページを再読み込みすると更新されます。 | <a href="/ja/docs/guide/feature-guide/user/overview#よくある質問" target="_blank" rel="noopener noreferrer">概要</a> |
+| 「余额已耗尽」と表示されても通常どおり呼び出せる | 「残りのクォータ」に表示されるのはウォレット残高のみです。 | <a href="/ja/docs/guide/feature-guide/user/overview#よくある質問" target="_blank" rel="noopener noreferrer">概要</a> |
+| 「過去 24 時間の消費量」が 0、または使用ログと一致しない | 毎時 00 分を区切りとして 1 時間単位で集計します。新しい呼び出しは数分後に反映されます。 | <a href="/ja/docs/guide/feature-guide/user/overview#よくある質問" target="_blank" rel="noopener noreferrer">概要</a> |
+| 料金が想定と一致しない | グループ倍率、キャッシュ、ツール呼び出し、段階別課金が料金に影響します。 | <a href="/ja/docs/guide/feature-guide/user/log#よくある質問" target="_blank" rel="noopener noreferrer">使用ログ</a> |
+| 「使用量」が料金の合計やデータダッシュボードと一致しない | 集計対象の範囲と集計のタイミングが異なります。 | <a href="/ja/docs/guide/feature-guide/user/log#よくある質問" target="_blank" rel="noopener noreferrer">使用ログ</a>、<a href="/ja/docs/guide/feature-guide/user/dashboard#よくある質問" target="_blank" rel="noopener noreferrer">データダッシュボード</a> |
+| モデル広場の価格が実際の請求額と一致しない | 呼び出し時に使用したグループに基づいて課金されます。 | <a href="/ja/docs/guide/feature-guide/user/pricing#よくある質問" target="_blank" rel="noopener noreferrer">モデル広場とランキング</a> |
+| 呼び出しに失敗したリクエストにも料金がかかるか | エラーが返ったリクエストには料金がかかりません。 | <a href="/ja/docs/guide/feature-guide/user/log#よくある質問" target="_blank" rel="noopener noreferrer">使用ログ</a> |
+| 失敗したタスクにも料金がかかるか | タスクが失敗またはタイムアウトした場合、差し引かれたクォータは全額返還されます。 | <a href="/ja/docs/guide/feature-guide/user/task-log#よくある質問" target="_blank" rel="noopener noreferrer">タスクログ</a> |
+</div>
+
+## アカウントとログイン
+
+ログイン、登録、認証、ログイン状態に関する問題です。
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="「セッションの有効期限が切れました！」と表示される、またはログアウトされる">
+**表示メッセージ**
+
+「セッションの有効期限が切れました！」（英語では Session expired!）と表示された後、ログインページに戻ります。
+
+**考えられる原因**
+
+- ログインから 30 日が経過した。
+- 別の端末の「セキュリティとアクセス」ページで該当のセッションを取り消した、または「他のセッションからログアウト」をクリックした。
+- 別の端末でパスワードを変更した、2 段階認証を有効または無効にした、バックアップコードを再生成した、またはパスキーを登録もしくは登録解除した。
+- パスワードを忘れた場合の手順でパスワードをリセットした、または管理者がアカウントの 2 段階認証やパスキーをリセットした。
+
+**対処方法**
+
+1. 再度ログインします。
+2. 自分で行った操作でなければ、ログイン後すぐにパスワードを変更し、<a href="/ja/docs/guide/feature-guide/user/audit-log" target="_blank" rel="noopener noreferrer">監査ログ</a>でログイン履歴を確認します。
+3. ログイン状態の保持期間とセッションの管理方法については、<a href="/ja/docs/guide/feature-guide/user/security#ログインセッションを管理する" target="_blank" rel="noopener noreferrer">セキュリティとアクセス</a>を参照してください。
+</Accordion>
+
+</Accordions>
+
+**他のページで解説している質問**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 質問 | 説明 | 詳細 |
+| --- | --- | --- |
+| ログイン時に「ユーザー名またはパスワードが正しくないか、アカウントが利用停止になっています」と表示される | どの原因でも同じメッセージが表示されます。 | <a href="/ja/docs/guide/feature-guide/user/auth#よくある質問" target="_blank" rel="noopener noreferrer">登録とログイン</a> |
+| ログイン時に「リクエストが多すぎます」「有効なログインセッション数が上限に達しました。…」などと表示される | 表示されたメッセージから原因を判断します。 | <a href="/ja/docs/guide/feature-guide/user/auth#よくある質問" target="_blank" rel="noopener noreferrer">登録とログイン</a> |
+| 外部サービスのアカウントでログインできない | 表示されたメッセージから原因を判断します。 | <a href="/ja/docs/guide/feature-guide/user/auth#よくある質問" target="_blank" rel="noopener noreferrer">登録とログイン</a> |
+| ログインページに「登録」がない、または登録の受付を停止していると表示される | サイトで新規登録を受け付けていないか、外部サービスのアカウントでのみ登録できます。 | <a href="/ja/docs/guide/feature-guide/user/auth#よくある質問" target="_blank" rel="noopener noreferrer">登録とログイン</a> |
+| 登録用の認証コードやパスワード再設定メールが届かない | 迷惑メールフォルダーを確認してください。サイトでメールサービスが設定されていない可能性もあります。 | <a href="/ja/docs/guide/feature-guide/user/auth#よくある質問" target="_blank" rel="noopener noreferrer">登録とログイン</a> |
+| 認証アプリを使っていた端末を紛失し、ログイン時の認証を完了できない | バックアップコードでログインし、認証アプリを再設定します。 | <a href="/ja/docs/guide/feature-guide/user/security#よくある質問" target="_blank" rel="noopener noreferrer">セキュリティとアクセス</a> |
+| パスキーでログインできない、またはサイトの URL が変わってからパスキーを使えない | パスキーは登録時のサイトのドメインにひもづいています。 | <a href="/ja/docs/guide/feature-guide/user/auth#よくある質問" target="_blank" rel="noopener noreferrer">登録とログイン</a>、<a href="/ja/docs/guide/feature-guide/user/security#よくある質問" target="_blank" rel="noopener noreferrer">セキュリティとアクセス</a> |
+| メールアドレスを連携するための認証コードが届かない | 迷惑メールフォルダーとメールの振り分けルールを確認します。 | <a href="/ja/docs/guide/feature-guide/user/security#よくある質問" target="_blank" rel="noopener noreferrer">セキュリティとアクセス</a> |
+| 心当たりのないログイン履歴やログインセッションがある | 該当のセッションを取り消し、パスワードを変更します。 | <a href="/ja/docs/guide/feature-guide/user/audit-log#よくある質問" target="_blank" rel="noopener noreferrer">監査ログ</a>、<a href="/ja/docs/guide/feature-guide/user/security#よくある質問" target="_blank" rel="noopener noreferrer">セキュリティとアクセス</a> |
+| 表示名、ユーザー名、メールアドレス、グループを変更したい | メールアドレスは「セキュリティとアクセス」で変更します。それ以外の項目は管理者にお問い合わせください。 | <a href="/ja/docs/guide/feature-guide/user/personal-setting#よくある質問" target="_blank" rel="noopener noreferrer">プロフィール</a> |
+</div>
+
+## 画面と表示
+
+ページが開けない、メニューが見つからないなど、画面や表示に関する問題です。
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="ページに「403」「アクセス禁止」、または「404」「ページが見つかりません！」と表示される">
+**表示メッセージ**
+
+「アクセス禁止」（英語では Access Forbidden）の下に「このリソースを表示する権限がありません。」と表示されます。または、「ページが見つかりません！」（英語では Oops! Page Not Found!）の下に「お探しのページは存在しないか、削除された可能性があります。」と表示されます。
+
+**考えられる原因**
+
+- ブックマークに保存したページや、他の人から送られた管理ページなど、アカウントにアクセス権限がないページを開いた。
+- 旧バージョンの URL や入力ミスなどにより、存在しない URL を開いた。
+
+**対処方法**
+
+1. 「戻る」または「ホームに戻る」をクリックします。
+2. サイドバーまたは上部ナビゲーションから必要なページを開きます。各ページへのアクセス方法は、<a href="/ja/docs/guide/feature-guide/user/quick-start#コンソールの画面構成" target="_blank" rel="noopener noreferrer">クイックスタート</a>を参照してください。
+3. 管理ページへのアクセスが必要な場合は、管理者にお問い合わせください。
+</Accordion>
+
+<Accordion title="ページに「エラーが発生しました」または「リクエストが多すぎます」と表示される">
+**表示メッセージ**
+
+「エラーが発生しました」（英語では Oops! Something went wrong）の下に「しばらくしてからもう一度お試しください。」と表示されます。または、「リクエストが多すぎます」（英語では Too many requests）の下に「少し時間をおいてからもう一度お試しください。」と表示されます。ボタンを操作した際に、429 を含む英語のメッセージが 1 行だけ表示されることもあります。
+
+**考えられる原因**
+
+- サイトが更新された直後で、ブラウザーが旧バージョンのページファイルを使い続けている。
+- ネットワーク接続が切断された。
+- 学校や会社のネットワーク、プロキシなど、同じ接続元 IP アドレスから短時間にアクセスが集中した。サイトは接続元 IP アドレスごとにアクセス頻度を制限しており、デフォルトでは 3 分間にページの表示は最大 120 回、API の呼び出しは最大 360 回です。
+
+**対処方法**
+
+1. 数分待ってからページを再読み込みします。
+2. エラーが続く場合は、ページを強制再読み込みします（Windows では Ctrl+F5、Mac では ⌘+Shift+R）。または、該当サイトのブラウザーキャッシュを削除してから再試行します。
+3. それでも解決しない場合は、管理者にお問い合わせください。
+</Accordion>
+
+<Accordion title="ページに表示される時刻が現地時刻と一致しない">
+**説明**
+
+利用ログや監査ログなどのページでは、ブラウザーを実行しているコンピューターのタイムゾーンに合わせて時刻を表示します。毎日のチェックインはサーバーの日付を基準とし、概要ページとダッシュボードの統計は毎時 0 分を区切りとして 1 時間ごとに集計します。
+
+**対処方法**
+
+1. コンピューターのタイムゾーンと時刻の設定を確認します。
+2. チェックインの日付や集計時間帯が現地時刻と一致しない場合は、サーバーの時刻を基準にしてください。
+</Accordion>
+
+</Accordions>
+
+**他のページで解説している質問**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| 質問 | 説明 | 詳細 |
+| --- | --- | --- |
+| サイドバーから特定のページが消えた | 管理者またはユーザー自身が「左サイドバーの個人設定」で該当ページを非表示にしました。 | <a href="/ja/docs/guide/feature-guide/user/personal-setting#よくある質問" target="_blank" rel="noopener noreferrer">プロフィール</a> |
+| 上部ナビゲーションに「モデル広場」や「ランキング」がない、または開くとホームに戻る | 管理者が該当の項目を無効にしています。 | <a href="/ja/docs/guide/feature-guide/user/pricing#よくある質問" target="_blank" rel="noopener noreferrer">モデル広場とランキング</a> |
+| 特定のボタンやメニューが見つからない | 上部ナビゲーションとサイドバーにある各項目の位置と表示条件を確認できます。 | <a href="/ja/docs/guide/feature-guide/user/quick-start#コンソールの画面構成" target="_blank" rel="noopener noreferrer">クイックスタート</a> |
+| 「プレイグラウンド」をクリックすると「概要」ページに戻る | 管理者がプレイグラウンドを無効にしています。 | <a href="/ja/docs/guide/feature-guide/user/playground#よくある質問" target="_blank" rel="noopener noreferrer">プレイグラウンド</a> |
+| 画面の言語を切り替えても、API が返すエラーメッセージが英語のままになる | エラーメッセージは簡体字中国語、繁体字中国語、英語のみに対応しています。 | <a href="/ja/docs/guide/feature-guide/user/personal-setting#よくある質問" target="_blank" rel="noopener noreferrer">プロフィール</a> |
+| プレイグラウンドの会話履歴が消えた | 会話履歴は、使用しているブラウザーにのみ保存されます。 | <a href="/ja/docs/guide/feature-guide/user/playground#よくある質問" target="_blank" rel="noopener noreferrer">プレイグラウンド</a> |
+| 「トークン」「クォータ」「残高」などの用語の意味がわからない | このガイドで使う用語と、画面上での別の呼称を確認できます。 | <a href="/ja/docs/guide/feature-guide/user/quick-start#基本用語" target="_blank" rel="noopener noreferrer">クイックスタート</a> |
+</div>
+
+## 関連ドキュメント
+
+- <a href="/ja/docs/guide/feature-guide/user/quick-start" target="_blank" rel="noopener noreferrer">クイックスタート</a>（登録とログインからモデルを初めて呼び出すまでの手順と、コンソール画面の案内）
+- <a href="/ja/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API キー</a>（API キーの作成・管理と、API の呼び出し方法）
+- <a href="/ja/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">利用ログ</a>（呼び出しごとの課金明細と失敗履歴の確認）
+- <a href="/ja/docs/guide/feature-guide/user/wallet" target="_blank" rel="noopener noreferrer">ウォレット</a>（チャージ、クォータの引き換え、サブスクリプションの確認）
+- <a href="/ja/docs/api" target="_blank" rel="noopener noreferrer">API リファレンス</a>（各エンドポイントのリクエストパラメーターとレスポンス形式）

@@ -1,0 +1,653 @@
+---
+title: Authentication Configuration
+description: Root configuration for password sign-in and registration, email verification and domain restrictions, third-party OAuth, passkeys, Turnstile bot protection, custom OAuth, and password encryption in transit.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+- Only Root can access these settings. From the sidebar, go to “Admin” → “System Settings,” then select a section under “Authentication” in the left navigation.
+- Configure password sign-in and registration, third-party OAuth, passkeys, bot verification, and custom OAuth providers.
+- Before enabling a sign-in method, save its credentials or configuration. See [Saving and Applying Changes](#saving-and-applying-changes).
+
+<Callout type="info" title="Tip">
+
+- Only Root can create, edit, enable, disable, discover, or delete custom OAuth providers on this page. Regular administrators can only view or remove a user's linked accounts if they have the required user management permissions.
+- Secret fields are never displayed after saving. Leave them blank to retain the existing values. See <a href="/en/docs/guide/feature-guide/system-settings/system-setting#sensitive-settings-and-audit-logs" target="_blank" rel="noopener noreferrer">Sensitive Settings and Audit Logs</a>.
+- For what to record and how to verify settings before and after changes, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#recording-and-verifying-changes" target="_blank" rel="noopener noreferrer">Pre-Change Records and Verification</a>.
+</Callout>
+
+## Authentication Configuration Overview
+
+Authentication has five sections. Switch between them under “Authentication” in the left navigation. “Basic Authentication” opens by default.
+
+**Sections**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Section | Purpose | Tabs |
+| --- | --- | --- |
+| [Basic Authentication](#basic-authentication) | Password sign-in, registration, email verification, and domain restrictions. | — |
+| [OAuth Integration](#oauth-integration) | Credentials and switches for built-in third-party sign-in providers. | “GitHub,” “Discord,” “OIDC,” “Telegram,” “LinuxDO,” “WeChat” |
+| [Passkey Authentication](#passkey-authentication) | Enable WebAuthn passkeys and configure domains and verification requirements. | — |
+| [Bot Protection](#bot-protection) | Cloudflare Turnstile verification. | — |
+| [Custom OAuth](#custom-oauth) | Add and manage custom OAuth providers. | — |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- See [Frequently Asked Questions](#faq) if a sign-in method cannot be enabled, an OAuth callback returns an error, passkeys are unavailable on a new domain, or verification fails after sign-in.
+</Callout>
+
+## Configuration Sections
+
+This section covers the five configuration sections in left navigation order. For each section's save controls and when changes take effect, see [Saving and Applying Changes](#saving-and-applying-changes).
+
+### Basic Authentication
+
+- Authentication – Basic Authentication
+
+![Authentication – Basic Authentication page](/assets/guide/feature-guide/system-settings-authentication-basic-authentication.png)
+
+**Steps**
+
+1. Turn “Password Login,” “Registration Enabled,” “Password Registration,” and “Email Verification” on or off as needed.
+2. To restrict email domains, enter one domain per line in “Email Domain Allowlist” and save it, then enable “Email Domain Restriction.”
+3. Click “Save Changes” in the page header.
+
+<Callout type="warn" title="Caution">
+
+- Before enabling email verification, confirm that the server can send email using the configured SMTP or Resend settings.
+- Saving authentication options does not test email delivery. If messages cannot be delivered, users may be unable to verify their registration or reset their password.
+</Callout>
+
+**Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap [&_td_code]:wrap-anywhere">
+
+| Setting | Description | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Password Login | Allows users to sign in with a username and password. | Toggle. | Enabled |
+| Registration Enabled | Allows new users to register. | Toggle. When disabled, first-time sign-ins through OAuth or WeChat no longer create accounts. | Enabled |
+| Password Registration | Allows users to register with a password. | Toggle. Also requires “Registration Enabled.” | Enabled |
+| Email Verification | Requires new accounts created through password registration to verify their email addresses. | Toggle. Before enabling it, configure email delivery under “Email and Notifications” in <a href="/en/docs/guide/feature-guide/system-settings/settings-operations#email-and-notifications" target="_blank" rel="noopener noreferrer">Operations Settings</a>. | Disabled |
+| Email Domain Restriction | Accepts only email domains listed in “Email Domain Allowlist.” | Toggle. Save the allowlist before enabling this option. For the message shown otherwise, see [Frequently Asked Questions](#faq). | Disabled |
+| Email Alias Restriction | Blocks email aliases such as `user+alias@domain.com`. | Toggle. When enabled, rejects addresses containing `+` or `.` before the `@`, such as `first.last@example.com`. | Disabled |
+| Email Domain Allowlist | Lists allowed email domains. Applies only when email domain restriction is enabled. | Enter one exact domain per line. Full email addresses and wildcards are unsupported. | `gmail.com`, `163.com`, `126.com`, `qq.com`, `outlook.com`, `hotmail.com`, `icloud.com`, `yahoo.com`, `foxmail.com` |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- Usernames can be up to 20 characters, email addresses up to 50 characters, and passwords must be 8–128 characters long.
+- Newly registered users receive the regular user role. Administrators with the appropriate permissions can create administrator accounts or change user roles in <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a>.
+- The system checks the domain allowlist and email alias rules when sending a verification code for password registration and when a signed-in user links an email address.
+</Callout>
+
+### OAuth Integration
+
+After registering this site with a built-in third-party sign-in provider, enter the credentials on the corresponding tab and enable the provider.
+
+This section has six tabs, “GitHub,” “Discord,” “OIDC,” “Telegram,” “LinuxDO,” and “WeChat.” The page header has “Reset” and “Save Changes.” “Save Changes” saves edits across all tabs at once. Every tab except WeChat has a “Setup Guide” at the top that says “Before enabling sign-in, configure these values in your provider application” and lists callback URLs you can copy. When changes are pending, “Unsaved Changes” appears next to the title.
+
+**Steps**
+
+1. Create an application in the provider's dashboard and register its name, homepage, and the callback URL required by the provider.
+2. Enter the credentials and endpoints on the corresponding tab, then click “Save Changes” in the page header.
+3. Turn on the provider's switch and click “Save Changes” again.
+
+<Callout type="info" title="Tip">
+
+- The “Setup Guide” derives callback URLs from “Server Address,” using the format `/oauth/{provider}`. OIDC labels it “Redirect URL” and the other providers label it “Authorization Callback URL.” GitHub, Discord, and OIDC also display a “Homepage URL.”
+- If the server address is unset, these URLs start with the placeholder “Site URL” and cannot be used as shown. Set the server address in <a href="/en/docs/guide/feature-guide/system-settings/settings-site#system-information" target="_blank" rel="noopener noreferrer">Site and Branding Settings</a> first.
+- Discord and OIDC send their respective callback URLs derived from the server address during token exchange. GitHub currently omits `redirect_uri` from its token exchange.
+- LinuxDO appends `/api/oauth/linuxdo` to the scheme and host of the incoming request. This URL may differ from the one shown in the interface.
+- The callback URL, the public URL used by the browser, and the scheme seen by the server must agree. Copy the URL generated for this site and follow the provider's requirements and the actual forwarding path used by the reverse proxy.
+- Administrators can manage users' linked accounts in <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a>.
+</Callout>
+
+#### GitHub
+
+- Authentication – OAuth Integration – GitHub
+
+![Authentication – OAuth Integration – GitHub page](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-github.png)
+
+**Settings**
+
+| Setting | Description | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Enable GitHub OAuth | Allows users to sign in with GitHub. | Toggle. Save the Client ID before enabling this option. For the message shown otherwise, see [Frequently Asked Questions](#faq). | Disabled |
+| Client ID | Client ID of the GitHub OAuth application. | — | Empty |
+| Client Secret | Client Secret of the GitHub OAuth application. | Hidden after saving. Leave blank to retain the existing value. | Empty |
+
+#### Discord
+
+- Authentication – OAuth Integration – Discord
+
+![Authentication – OAuth Integration – Discord page](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-discord.png)
+
+**Settings**
+
+| Setting | Description | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Enable Discord OAuth | Allows users to sign in with Discord. | Toggle. Save the Client ID before enabling this option. For the message shown otherwise, see [Frequently Asked Questions](#faq). | Disabled |
+| Client ID | Client ID of the Discord OAuth application. | — | Empty |
+| Client Secret | Client Secret of the Discord OAuth application. | Hidden after saving. Leave blank to retain the existing value. | Empty |
+
+#### OIDC
+
+- Authentication – OAuth Integration – OIDC
+
+![Authentication – OAuth Integration – OIDC page](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-oidc.png)
+
+<Callout type="info" title="Tip">
+
+- The “Setup Guide” also says “OIDC Discovery can automatically fill in the endpoint fields when the provider supports it.”
+- If the Well-Known URL is set and either the URL has changed or OIDC is being enabled, the browser fetches the discovery document directly before saving. It uses the results to overwrite the authorization, token, and user info endpoints and displays “OIDC configuration retrieved successfully.”
+- If the request fails, saving stops and the interface displays “Failed to retrieve the OIDC configuration. Check the URL and network connection.” In all other cases, the system saves the endpoints as entered.
+</Callout>
+
+**Settings**
+
+| Setting | Description | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Enable OIDC | Allows users to sign in with OpenID Connect. | Toggle. Save the Client ID before enabling this option. | Disabled |
+| OIDC Display Name | Name displayed on the sign-in button. | Leave blank to display `OIDC`. | Empty |
+| Client ID, Client Secret | OIDC client credentials. | The Client Secret is hidden after saving. Leave it blank to retain the existing value. | Empty |
+| Well-Known URL | Automatically discovers endpoints from the provider. | Must start with `http://` or `https://`. Otherwise, saving stops and the interface displays “Well-Known URL must start with http:// or https://.” | Empty |
+| Authorization Endpoint (Optional), Token Endpoint (Optional), User Info Endpoint (Optional) | URLs for redirecting users to authorize, exchanging tokens, and retrieving user profiles. | Manually entered values can override discovered endpoints. A successful discovery overwrites them. | Empty |
+
+#### Telegram
+
+- Authentication – OAuth Integration – Telegram
+
+![Authentication – OAuth Integration – Telegram page](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-telegram.png)
+
+The “Setup Guide” says “Open Login Widget in BotFather, register this callback URL, and copy the Client ID and Client Secret. Existing Telegram account links continue to work after setup.” Telegram uses the unified OIDC/PKCE OAuth flow at `oauth.telegram.org`. The slug `telegram` is reserved for the built-in provider.
+
+**Settings**
+
+| Setting | Description | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Enable Telegram OAuth | Allows users to sign in with Telegram. | Toggle. The Client ID and Client Secret must already be saved or supplied when saving the change that enables this option. For the message shown when credentials are missing, see [Frequently Asked Questions](#faq). | Disabled |
+| Client Secret | Client Secret obtained from Login Widget in BotFather. | Appears before Client ID in the interface. Hidden after saving. Leave blank to retain the existing value. | Empty |
+| Client ID | Client ID obtained from Login Widget in BotFather. | — | Empty |
+
+#### LinuxDO
+
+- Authentication – OAuth Integration – LinuxDO
+
+![Authentication – OAuth Integration – LinuxDO page](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-linuxdo.png)
+
+A “Manage Your LinuxDO OAuth Applications” link appears below the “Setup Guide.”
+
+<Callout type="info" title="Tip">
+
+- Configure the LinuxDO token and user info endpoints through the environment variables `LINUX_DO_TOKEN_ENDPOINT` (default `https://connect.linux.do/oauth2/token`) and `LINUX_DO_USER_ENDPOINT` (default `https://connect.linux.do/api/user`), respectively.
+- New API reads both variables only at startup. Restart New API after changing them.
+</Callout>
+
+**Settings**
+
+| Setting | Description | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Enable LinuxDO OAuth | Allows users to sign in with LinuxDO. | Toggle. Save the Client ID before enabling this option. | Disabled |
+| Client ID, Client Secret | Credentials for the LinuxDO OAuth application. | The Client Secret is hidden after saving. Leave it blank to retain the existing value. | Empty |
+| Minimum Trust Level | Minimum required LinuxDO trust level. | LinuxDO accounts below this level cannot sign in. | `0` |
+
+#### WeChat
+
+- Authentication – OAuth Integration – WeChat
+
+![Authentication – OAuth Integration – WeChat page](/assets/guide/feature-guide/system-settings-authentication-oauth-integration-wechat.png)
+
+**Settings**
+
+| Setting | Description | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Enable WeChat Authorization | Allows users to sign in with WeChat. | Toggle. Save the server address before enabling this option. For the message shown otherwise, see [Frequently Asked Questions](#faq). | Disabled |
+| Server Address | Address of the WeChat sign-in service, which returns user information during sign-in. | For example, `https://wechat-server.example.com`. This dedicated flow depends on an external service. | Empty |
+| Server Token | Token used to access the WeChat sign-in service. | Hidden after saving. Leave blank to retain the existing value. | Empty |
+| QR Code Image URL | URL of the WeChat Official Account QR code image displayed on the sign-in page. | For example, `https://example.com/qr-code.png`. | Empty |
+
+### Passkey Authentication
+
+- Authentication – Passkey Authentication
+
+![Authentication – Passkey Authentication page](/assets/guide/feature-guide/system-settings-authentication-passkey-authentication.png)
+
+Passkeys use WebAuthn. Once enabled, users can register passkeys and sign in with them. “Primary Domain” and “Compatible Passkey Domains” are in the “Passkey Domains” group. Click “Why is this required?” in that group to open “How to Configure Passkey Domains.”
+
+**Steps**
+
+1. Enable “Enable Passkey” as needed and set the display name, user verification, and device type preference.
+2. Enter the “Primary Domain” in the “Passkey Domains” group and keep old domains under “Compatible Passkey Domains.” Enter full addresses with ports under “Sites Allowed to Use Passkeys.”
+3. Click “Save Changes” in the page header.
+4. When the confirmation dialog appears, review the “Current Domain” and “New Domain.” If you are removing a compatible domain, also review the affected passkeys. Then click “Change Domain” or “Remove Domain.”
+
+<Callout type="warn" title="Caution">
+
+- “How to Configure Passkey Domains” shows the current site and the domain the system currently uses. The dialog shows “Use Current Site” if no domain is set, or “Keep Existing Domain” if one is already set.
+- This button is available only when you access the site over HTTPS or through `http://localhost`, and the host is a domain name or `localhost`. Otherwise, the dialog displays “Configure passkeys using a domain over HTTPS. You can use localhost for local development.”
+- If the primary domain does not match the current site or has not been set, the group displays a yellow warning. If the current site is missing from “Sites Allowed to Use Passkeys,” the interface displays “The current site is missing from the list. If users sign in here, add ….”
+- Passkeys on removed domains will stop working. Before confirming, make sure affected users have another way to sign in.
+- If “Enable Passkey” is turned off, users who have registered a passkey and have not enabled 2FA will be unable to sign in. After primary authentication succeeds, the system still requires passkey verification and displays “This verification method is currently unavailable.”
+- To restore access, turn “Enable Passkey” back on or use “Reset Passkey” for affected users in <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a>. Resetting a user's passkey deletes their passkey credentials and revokes their existing sessions.
+</Callout>
+
+**What Happens When You Save**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Scenario | What the Interface Shows | Next Step |
+| --- | --- | --- |
+| The effective domain changes or the primary domain is cleared | The “Change passkey domain?” dialog explains that new passkeys will use the new primary domain. The previous domain is retained, so existing passkeys can still be verified. If the primary domain is cleared, “New Domain” shows “Automatically derived from the system Site URL.” | Click “Change Domain” to save. |
+| A compatible domain is removed | The “Remove compatible passkey domain?” dialog lists the domains being removed, “Passkeys using removed domains: …” and “Passkeys with an unknown domain that may be affected: …”. | Confirm that affected users have another way to sign in, then click “Remove Domain.” |
+| The settings or the set of affected passkeys changes after confirmation | The confirmation dialog reappears and asks you to review the affected passkeys again. | Review the affected passkeys and confirm again. |
+
+</div>
+
+**Settings**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Setting | Description | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Enable Passkey | Allows users to register and sign in with passkeys (WebAuthn). | Toggle. | Disabled |
+| Passkey Display Name | Human-readable name shown to users in passkey prompts. | Leave blank to use the system name. | Empty |
+| Primary Domain | Domain used by new passkeys. Located in the “Passkey Domains” group. | Enter only a domain name such as `example.com` or `localhost`. Schemes, ports, paths, wildcards, and IP addresses are unsupported. The value must match the current domain or be its parent domain. Leave blank to use the hostname in “Server Address.” | Empty |
+| Compatible Passkey Domains | Old domains used by existing passkeys. | Enter one domain per line using the same format as the primary domain. A single entry covers all ports on that domain. When the primary domain changes, the previous domain is automatically kept in this list. | Empty |
+| User Verification | Controls whether the passkey flow requires user verification through biometrics or a PIN. | Choose “Required,” “Preferred,” or “Discouraged.” | Preferred |
+| Device Type Preference | Specifies which types of devices can be used for passkeys. | Choose “No Preference,” “Built-in Device” (such as fingerprint or facial recognition or Windows Hello), or “External Device” (such as a USB security key). | No Preference |
+| Allow Insecure Origins | Allows passkey registration on non-HTTPS origins. Recommended only for development. | Toggle. Keep disabled in production. | Disabled |
+| Sites Allowed to Use Passkeys | Site addresses where passkeys can be used. | Enter one address per line, such as `https://example.com`, and omit page paths. Include the port here when applicable. Leave blank to use “Server Address.” | Empty |
+
+</div>
+
+### Bot Protection
+
+- Authentication – Bot Protection
+
+![Authentication – Bot Protection page](/assets/guide/feature-guide/system-settings-authentication-bot-protection.png)
+
+“Bot Protection” uses Cloudflare Turnstile to protect sign-in, registration, and other flows.
+
+**Steps**
+
+1. Enter the “Site Key” and “Secret Key.”
+2. Turn on “Enable Turnstile.”
+3. Click “Save Changes” in the page header. The same save operation writes the keys before enabling the switch.
+
+<Callout type="info" title="Tip">
+
+- The current middleware checks Turnstile during registration, password sign-in, requests for registration email verification codes, requests for password reset emails, and user check-in.
+- The Turnstile secret key is a server-side credential.
+</Callout>
+
+**Settings**
+
+| Setting | Description | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Enable Turnstile | Uses Cloudflare Turnstile to protect sign-in and registration. Once enabled, the applicable anonymous or sensitive operations must submit a valid challenge token. | Toggle. The site key must already be saved or supplied when saving the change that enables this option. For the message shown when the site key is missing, see [Frequently Asked Questions](#faq). | Disabled |
+| Site Key | Site key the frontend uses to render the challenge. | Hidden after saving. Leave blank to retain the existing value. | Empty |
+| Secret Key | Secret key the server uses to verify tokens with Cloudflare. | Hidden after saving. Leave blank to retain the existing value. | Empty |
+
+### Custom OAuth
+
+Add and manage custom OAuth providers that users can use on the login page.
+
+The “Callback URL Format” notice at the top of the section displays a copyable “OAuth Callback URL”. The URL consists of the server address followed by `/oauth/{slug}`. If the server address is unset, the URL starts with the “Site Address”. Below the notice is the provider list, with “Add Provider” on the right. This section has no header save button. Save each provider individually in its dialog.
+
+#### Provider List
+
+- Authentication - Custom OAuth
+
+![Authentication - Custom OAuth page](/assets/guide/feature-guide/system-settings-authentication-custom-oauth.png)
+
+The list description is “Manage custom OAuth providers for user authentication”. If there are no providers, the list displays “No custom OAuth providers have been configured.”
+
+**To delete a provider**
+
+1. Confirm that no users are linked to the provider. See “Login, Linking, and Deletion Rules” below.
+2. Select “Delete” from the row’s ⋯ menu.
+3. Confirm the deletion in the “Delete Provider” dialog. The success message is “Provider deleted successfully”.
+
+<Callout type="warn" title="Warning">
+
+- After deletion, users who signed in through this provider can no longer use it to sign in.
+- If any users are still linked, the system rejects the deletion and displays “This OAuth provider still has linked users and cannot be deleted. Unbind all users first.”
+
+</Callout>
+
+**List columns**
+
+| Column | Description |
+| --- | --- |
+| Icon, Name | The provider’s icon and name. |
+| Identifier | The provider’s identifier (slug), which determines the callback URL. |
+| Status | “Enabled” or “Disabled”. Only enabled providers appear on the login page. |
+| Client ID | The provider’s Client ID. |
+| Actions | The edit icon opens “Edit OAuth Provider”. The ⋯ menu contains “Delete”. |
+
+**Login, linking, and deletion rules**
+
+1. OAuth state is currently valid for about 10 minutes. State for account linking is also tied to the initiating user and session, preventing reuse across sessions.
+2. A user can have only one linked account per custom provider. Each provider account can be linked to only one local user.
+3. Disabling a provider blocks future logins and account linking. Existing links remain in place.
+4. Before deleting a provider, users must unlink their accounts on the <a href="/en/docs/guide/feature-guide/user/security#link-your-email-address-and-third-party-accounts" target="_blank" rel="noopener noreferrer">Security and Access</a> page, or an authorized administrator must remove all links in <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a>. The system rejects the deletion request if any links remain.
+
+#### Adding and Editing Providers
+
+- Authentication - Add Custom OAuth
+
+![Authentication - Add Custom OAuth page](/assets/guide/feature-guide/system-settings-authentication-custom-oauth-add-provider.png)
+
+- Authentication - Edit Custom OAuth
+
+![Authentication - Edit Custom OAuth page](/assets/guide/feature-guide/system-settings-authentication-custom-oauth-edit-provider.png)
+
+“Add OAuth Provider” and “Edit OAuth Provider” use the same dialog. From top to bottom, it contains “Quick Setup from Preset” (shown only when adding a provider), the “OAuth Callback URL” card, and five sections labeled “Basic Information”, “Credentials”, “Endpoints”, “Field Mapping”, and “Advanced”.
+
+**Prerequisites**
+
+- Create an OAuth application in the third-party provider’s admin console and have its Client ID, Client Secret, authorization endpoint, Token endpoint, and user info endpoint ready.
+
+**Steps**
+
+1. Click “Add Provider”. In “Quick Setup from Preset”, select a preset template and enter the “API Address”, or fill out the blank form directly.
+2. Enter the name, identifier (slug), client credentials, three endpoints, and any required advanced fields.
+3. Copy the callback URL from the “OAuth Callback URL” card and register it in the provider’s admin console. The URL updates in real time as you edit the identifier.
+4. Click “Create Provider”. The success message is “Provider created successfully”.
+5. To edit a provider, click the edit icon in its row, make your changes, and click “Update Provider”. The success message is “Provider updated successfully”. Use the “Enabled” toggle in the same dialog to disable or re-enable the provider.
+6. Before changing the identifier (slug), update the registered callback URL in the third-party provider’s admin console. Once you save the change, the old URL no longer points to the provider.
+
+<Callout type="info" title="Tip">
+
+- Presets are available for GitHub Enterprise, GitLab, Gitea, Nextcloud, Keycloak, Authentik, and ORY Hydra. Preset endpoint paths are appended to the “API Address”. If you leave “API Address” blank, the preset fills in only the name, identifier, icon, scopes, and field mappings.
+- Presets help fill out the form. They do not guarantee connectivity to the provider.
+- When you add, edit, or delete a provider, the node handling the request applies the change immediately. Edits include enabling or disabling a provider and changing its identifier. Other nodes load the change automatically within about 3 seconds without a restart. Until then, their login pages and callbacks use the previous configuration. See <a href="/en/docs/guide/feature-guide/system-settings/system-setting#scope-and-multi-instance-synchronization" target="_blank" rel="noopener noreferrer">Scope and Multi-Instance Synchronization</a>.
+
+</Callout>
+
+**Basic settings**
+
+| Setting | Section | Definition | Requirements and Restrictions | Default |
+| --- | --- | --- | --- | --- |
+| Preset Template, API Address | Quick Setup from Preset | The template used to prefill the form and the provider’s base URL. | Shown only when adding a provider. | No selection, blank |
+| Enabled | Basic Information | Allows users to sign in with this provider. | Toggle. | On |
+| Provider Name | Basic Information | The name shown on the admin page and the login option. | Required. | Blank |
+| Identifier | Basic Information | The identifier (slug) used in the callback URL and routing. | Required. Converted to lowercase. Only lowercase letters, digits, and hyphens are allowed. The built-in slug `telegram` is reserved.<br/>Messages include “This slug is already in use” and “This slug conflicts with a built-in OAuth provider”. | Blank |
+| Icon | Basic Information | An optional icon identifier for the login button. | Optional. For example, `github`. | Blank |
+| Client ID | Credentials | The Client ID of the provider application. | Required. | Blank |
+| Client Secret | Credentials | The Client Secret of the provider application. | Required when creating a provider. The stored value is hidden. Leave the field blank when editing to keep the existing value. | Blank |
+| Authentication Method | Credentials | Specifies how client credentials are sent to the Token endpoint. | Choose Auto Detect, Params (in body), or Header (Basic Auth). Auto Detect currently sends credentials as request body parameters. | Auto Detect |
+
+**Endpoint and advanced settings**
+
+| Setting | Section | Definition | Requirements and Restrictions | Default |
+| --- | --- | --- | --- | --- |
+| Well-Known URL | Endpoints | The OIDC discovery URL. | Click “Auto Discover” to have the server retrieve the endpoints. On success, the dialog displays “OIDC endpoints discovered successfully”. If the field is blank, it displays “Enter the Well-Known URL first”. | Blank |
+| Authorization Endpoint, Token Endpoint, User Info Endpoint | Endpoints | Used for the authorization redirect, Token exchange, and retrieval of user profile data, respectively. | All three are required. | Blank |
+| Scopes | Endpoints | Space-separated OAuth scopes. | For example, `openid profile email`. | Blank |
+| User ID Field, Username Field, Display Name Field, Email Field | Field Mapping | Maps fields in the user info response to local user attributes. | “User ID Field” is required. Nested paths such as `ocs.data.id` are supported. | Blank |
+| Access Policy (JSON) | Advanced | Determines whether to allow login based on the user info fields returned by the provider. | Conditions and nested groups support and/or. Leave blank to allow all users.<br/>Supported operators are eq, ne, gt, gte, lt, lte, in, not_in, contains, not_contains, exists, and not_exists. | Blank |
+| Access Denied Message | Advanced | The message displayed when the user does not meet the access policy. | Supported variables include `{{provider}}`, `{{field}}`, `{{op}}`, `{{required}}`, `{{current}}`, and path variables such as `{{current.roles}}`. | Blank |
+
+## Login Verification and Security
+
+This section describes the scope of authentication-related security checks. Most of these features affect login and account security and are configured outside this page.
+
+- **Unified login verification**. If the user has enabled 2FA or Passkey authentication, successful primary authentication is followed by a unified verification challenge that is valid for about 5 minutes. The system issues a session only after the user completes the challenge. This mechanism strengthens login security. Signing in directly with a Passkey skips the additional challenge.
+- **Single-use verification proofs**. Each proof is tied to a session and an action through an HMAC-based context hash, and the system consumes it once. If a callback, verification, or account linking flow fails, usually you need to restart the flow to obtain a fresh proof.
+- **Scope of 2FA**. 2FA is a per-user security feature. Users enable and manage it on the <a href="/en/docs/guide/feature-guide/user/security#enable-two-step-verification" target="_blank" rel="noopener noreferrer">Security and Access</a> page. To reset a user’s 2FA, backup codes, and login sessions, administrators use “Reset 2FA” in <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a>.
+- **Linking, unlinking, and deleting accounts**. Changes to account links and account deletion require re-verification to protect against session hijacking. Use 2FA or a Passkey if enabled. Otherwise, use a password or third-party login.
+
+<Callout type="warn" title="Warning">
+
+After enabling 2FA or Passkey authentication, users must complete the verification challenge, which lasts about 5 minutes, after primary authentication and before the system issues a session. Keep at least one verified alternative login method for Root and user accounts. If the verification proof or OAuth state has expired or been consumed, start a new login or account linking flow.
+
+</Callout>
+
+## Password Transmission Encryption
+
+Password transmission encryption is controlled by the `PASSWORD_LOGIN_ENCRYPTION_ENABLED` environment variable, a boolean that defaults to `false`. This page has no corresponding setting. New API reads the variable only at startup. Restart New API after changing it.
+
+When enabled, the front end uses RSA-OAEP to encrypt passwords before submitting them for password login or password verification during sensitive operations. Registration continues to submit the original password.
+
+**How it works**
+
+- At startup, the server reads the RSA private key from the database. If no key exists, the server generates a 2048-bit key and stores it in the database. Nodes connected to the same database share the key.
+- The front end retrieves the enabled status and public key from the server, encrypts the password using an RSA-OAEP v1/v2 envelope, and submits it with the request.
+- The server uses the private key to decrypt and verify the password.
+
+<Callout type="warn" title="Warning">
+
+- This is an instance-level environment variable. All nodes in a multi-instance deployment must use the same value.
+- If the setting differs across nodes, some login requests will be rejected with the message “Invalid parameters”.
+- The service fails to start if it cannot read or write the private key. If decryption fails, it displays “Incorrect username or password, or the user has been banned”.
+- Account for HTTPS/HTTP transport through the reverse proxy. Disabling this setting sends the password in plaintext at the application layer.
+
+</Callout>
+
+## Saving and Applying Changes
+
+For saving options, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#save-methods" target="_blank" rel="noopener noreferrer">System Settings Overview</a>. For when changes take effect and how instances synchronize, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#scope-and-multi-instance-synchronization" target="_blank" rel="noopener noreferrer">Scope and Multi-Instance Synchronization</a>. For when the browser displays new values, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#frontend-display-and-caching" target="_blank" rel="noopener noreferrer">Front-End Display and Caching</a>. For the rules on hiding stored secrets and preserving existing values when fields are left blank, see <a href="/en/docs/guide/feature-guide/system-settings/system-setting#sensitive-settings-and-audit-logs" target="_blank" rel="noopener noreferrer">Sensitive Settings and Audit Logs</a>.
+
+Unless otherwise specified, the node handling the save request uses the new values immediately. Other nodes pick them up through system settings synchronization within about 3 seconds, or within one synchronization interval at the latest (60 seconds by default). The `SYNC_FREQUENCY` environment variable sets the interval in seconds. New API reads all environment variables mentioned on this page only at startup. Restart New API after changing them. The following table shows when each setting starts using the new value.
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Setting | How to Save | When Changes Take Effect |
+| --- | --- | --- |
+| Basic Authentication › Password Login | “Save Changes” in the page header | Applies starting with the next password login request. Existing sessions are unaffected. |
+| Basic Authentication › Registration Enabled, Password Registration | “Save Changes” in the page header | Applies starting with the next registration request. Turning off “Registration Enabled” also prevents automatic account creation on first login through OAuth or WeChat. |
+| Basic Authentication › Email Verification | “Save Changes” in the page header | Requires an email address and verification code starting with the next registration. Existing accounts are unaffected. |
+| Basic Authentication › Email Domain Restriction, Email Alias Restriction, Email Domain Allowlist | “Save Changes” in the page header | Applies the next time a verification code is sent or an email address is linked. Email addresses on existing accounts are exempt from rechecking. |
+| OAuth Integration › Provider Toggles, Credentials, and Endpoints | “Save Changes” in the page header | Applies starting with the next login or account linking attempt. Disabling a provider leaves existing user links in place. |
+| Passkey Authentication | “Save Changes” in the page header. Confirm before saving if the domain settings change the effective domain, clear the primary domain, or remove a compatible domain. | Applies starting with the next Passkey registration or login. Passkeys for removed domains are unusable. |
+| Bot Protection | “Save Changes” in the page header | The server performs verification starting with the next protected request. See [Bot Protection](#bot-protection) for the scope. |
+| Custom OAuth | Save each provider individually through the list and dialog. The page header has no save button. | The node handling the request applies the change immediately. Other nodes load it automatically within about 3 seconds without a restart. Until then, they use the previous configuration. |
+| Password Transmission Encryption | Controlled by an environment variable and saved outside this page. | Requires a service restart. Use the same value across all instances. See [Password Transmission Encryption](#password-transmission-encryption). |
+
+</div>
+
+**Additional notes**
+
+- **Order of operations**. Before enabling GitHub, Discord, OIDC, LinuxDO, or WeChat login, or enabling email domain restriction, enter and save the corresponding credentials or settings. Then turn on the toggle and save again. The system rejects attempts to enable a feature before its required settings are saved. See [FAQ](#faq) for the messages.
+- **No changes**. If OAuth integration or Passkey authentication settings are unchanged, the page displays “No changes to save”.
+- **Unsaved changes**. If you leave the page with unsaved OAuth integration settings, the “Unsaved Changes” confirmation dialog appears.
+- **Login and registration pages**. Login methods, registration options, and the Turnstile component are displayed based on site status cached in the browser. The server applies the new settings immediately, and pages that are already open show the changes after a refresh. The browser used to save Passkey settings, the OIDC display name, or custom OAuth settings updates automatically.
+
+## Important Notes
+
+**Login and callbacks**
+
+- **Callback consistency**. The public URL used by the browser, the “Server Address”, the callback URL registered with the provider, and the Host/Proto values forwarded by the reverse proxy must all match.
+- **Single-use verification proofs and state**. After a failure, start a new login or account linking flow.
+- **Unified login verification**. Users with 2FA or Passkey authentication must complete the verification challenge after primary authentication. The challenge is valid for about 5 minutes.
+
+**Credentials and domains**
+
+- **Passkeys are bound to their domains**. After changing the domain or protocol, recheck the primary domain, compatible Passkey domains, sites allowed to use Passkeys, and the “Server Address”. Keep the old domain in the compatible domain list.
+- **Turnstile**. Both the site key and secret key must be correct, Cloudflare must be reachable, and the Token must be valid. Turnstile uses a single global toggle. See [Bot Protection](#bot-protection) for the protected flows.
+- **Telegram migration**. If you previously used the legacy Login Widget, register the `/oauth/telegram` callback URL under Login Widget in BotFather and obtain the Client ID and Client Secret. Existing account links continue to work. The `telegram` identifier (slug) remains reserved for the built-in provider.
+- **Shared password encryption key**. The key is generated automatically at startup and stored in the database. All nodes must connect to the same database.
+
+## FAQ
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="Registration fails even though it is enabled">
+
+**Possible causes**
+
+The issue may involve the password registration toggle, email verification, outgoing email settings, the allowlist, alias rules, or Turnstile.
+
+**Troubleshooting**
+
+1. Check the specific error returned by the backend.
+
+</Accordion>
+
+<Accordion title="The email domain allowlist has no effect">
+
+**Possible causes**
+
+- Domain restriction is disabled.
+- The list is empty.
+- An entry contains a full email address or a wildcard. Entries must be exact domain names.
+
+**Troubleshooting**
+
+1. Use lowercase domain names in the email domain allowlist.
+
+</Accordion>
+
+<Accordion title="Password reset still accepts email addresses subject to domain restrictions">
+
+**Explanation**
+
+The current domain and alias rules apply primarily to registration verification codes. Password reset follows a separate flow and may behave differently.
+
+</Accordion>
+
+<Accordion title="The OAuth callback returns an error or the state is invalid">
+
+**Possible causes**
+
+- There is a problem with the “Server Address”, the reverse proxy’s Host/Proto values, or the callback URL registered in the provider’s admin console.
+- The single-use flow Token has expired.
+
+</Accordion>
+
+<Accordion title="Saving OIDC settings returns a discovery document error">
+
+**Possible causes**
+
+- The Well-Known URL does not start with `http://` or `https://`.
+- The browser used to save the settings cannot reach the URL.
+
+**Troubleshooting**
+
+1. Clear the Well-Known URL and enter the endpoints manually.
+2. Check the network policy.
+
+</Accordion>
+
+<Accordion title="Custom OAuth Token exchange still fails with Auto Detect">
+
+**Explanation**
+
+When “Authentication Method” is set to Auto Detect, the system sends credentials as request body parameters. It does not retry with Basic Auth.
+
+**Troubleshooting**
+
+1. Select Params (in body) or Header (Basic Auth) according to the provider’s requirements.
+
+</Accordion>
+
+<Accordion title="A custom OAuth provider cannot be deleted">
+
+**Message**
+
+“This OAuth provider still has linked users and cannot be deleted. Unbind all users first.”
+
+**Explanation**
+
+Disabling a provider leaves existing account links in place.
+
+**Troubleshooting**
+
+1. Remove all existing links to the provider on users’ “Security and Access” pages or in User Management.
+
+</Accordion>
+
+<Accordion title="Users still appear linked after OAuth is disabled">
+
+**Explanation**
+
+Disabling OAuth blocks new logins and account linking. Existing linked identities remain in place.
+
+**Troubleshooting**
+
+1. Remove the links in User Management.
+
+</Accordion>
+
+<Accordion title="Passkeys do not work on the new domain">
+
+**Possible causes**
+
+The primary domain, compatible Passkey domains, sites allowed to use Passkeys, HTTPS, or the “Server Address” does not match the new domain.
+
+**Troubleshooting**
+
+1. An administrator can reset the user’s Passkey in User Management and have the user register it again.
+
+</Accordion>
+
+<Accordion title="Turnstile settings save successfully, but all requests still fail">
+
+**Explanation**
+
+The server still verifies requests at runtime after you save the settings.
+
+**Possible causes**
+
+The site key, secret key, Cloudflare site domain, server outbound connectivity, or Token validity period may be causing the issue.
+
+</Accordion>
+
+<Accordion title="No session is issued after login, or verification fails">
+
+**Possible causes**
+
+- The user has enabled 2FA or Passkey authentication but did not complete the unified verification challenge successfully.
+- The verification proof or OAuth state has already been consumed or has expired.
+
+</Accordion>
+
+<Accordion title="Login fails after enabling password transmission encryption">
+
+**Possible causes**
+
+- The `PASSWORD_LOGIN_ENCRYPTION_ENABLED` value differs across nodes.
+- The nodes connect to different databases.
+
+</Accordion>
+
+<Accordion title="Telegram login fails">
+
+**Possible causes**
+
+- The `/oauth/telegram` callback URL has not been registered under Login Widget in BotFather.
+- The corresponding Client ID and Client Secret have not been entered.
+
+</Accordion>
+
+<Accordion title="Enabling a login method displays a “Cannot enable…” message">
+
+**Explanation**
+
+The system rejects attempts to enable a feature before its required settings are saved. The table lists common messages.
+
+| Message | Possible Cause | Troubleshooting |
+| --- | --- | --- |
+| “Cannot enable GitHub OAuth. Enter the GitHub OAuth Client ID and Client Secret first.” Equivalent messages apply to Discord OAuth, OIDC, and LinuxDO OAuth. | The provider’s credentials have not been saved. | Turn off the toggle and save the credentials. Then turn the toggle back on and save again. |
+| “Cannot enable the email domain restriction. Enter the allowed email domains first.” | The “Email Domain Allowlist” has not been saved. | Save the allowlist, then enable “Email Domain Restriction”. |
+| “Cannot enable WeChat login. Enter the WeChat login settings first.” | The WeChat server address has not been saved. | Save the WeChat settings, then enable WeChat login. |
+| “Cannot enable Turnstile verification. Enter the Turnstile settings first.” | The site key has no saved value and was omitted from the current save request. | Enter the site key and secret key, then save them together with the enabled toggle. |
+| “Telegram OAuth is not configured or enabled. Please contact your administrator.” | The Telegram Client ID or Client Secret has no saved value and was omitted from the current save request. | Enter the Client ID and Client Secret, then save them together with the enabled toggle. |
+
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- System settings activation, multi-instance synchronization, sensitive settings, and verification requirements for changes. <a href="/en/docs/guide/feature-guide/system-settings/system-setting" target="_blank" rel="noopener noreferrer">System Settings Overview</a>
+- Server address, logo, public content, and sidebar and top navigation settings. <a href="/en/docs/guide/feature-guide/system-settings/settings-site" target="_blank" rel="noopener noreferrer">Site and Branding Settings</a>
+- Email delivery methods (SMTP / Resend) and sending credentials. <a href="/en/docs/guide/feature-guide/system-settings/settings-operations#email-and-notifications" target="_blank" rel="noopener noreferrer">Operations Settings</a>
+- 2FA resets, Passkey resets, and the administrator permissions matrix. <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a>
+- Entitlements and Group settings related to user registration and login. <a href="/en/docs/guide/feature-guide/admin/subscription" target="_blank" rel="noopener noreferrer">Subscription Management</a>

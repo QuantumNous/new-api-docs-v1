@@ -3,6 +3,7 @@
   "pages": [
     "index",
     "user",
-    "admin"
+    "admin",
+    "system-settings"
   ]
 }

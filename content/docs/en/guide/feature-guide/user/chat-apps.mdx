@@ -1,81 +1,178 @@
 ---
-title: Chat Application Integration
-description: Quickly import New API configurations into various AI chat applications
+title: Chat
+description: Quickly import your New API configuration into a variety of AI chat apps
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-- New API supports quickly importing configurations into various AI chat applications, facilitating testing and daily use.
+- New API lets you quickly import your configuration into a variety of AI chat apps for testing and everyday use.
 
 ## Chat Integration Methods
 
-- New API offers three chat integration methods:
-1. **One-click import of chat presets**
-2. **One-click import of API key configurations**
-3. **Manually configure chat applications**
+- New API supports three ways to configure a chat app:
+1. **One-Click Import Using a Chat Preset**
+2. **One-Click Import Using an API Key**
+3. **Configure a Chat App Manually**
 
-### Preparation Before Use
+### Before You Begin
 
-1. Log in to New API and create a key on the 'API Key' page.
-2. Ensure the key is enabled, has sufficient quota, is not expired, and that current IP, group, and model restrictions allow the call.
+1. Sign in to New API and create a key on the “API Keys” page.
+2. Make sure the key is enabled, has enough quota, and has not expired. Verify that the IP, group, and model restrictions allow the request you want to make.
 
-<Callout type="info">
-  **For detailed steps on creating and using API keys, please refer to the [API Key](/en/docs/guide/feature-guide/user/token) page.**
+<Callout type="info" title="Tip">
+  **For instructions on creating and using API keys, see the <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a> page.**
 </Callout>
 
-### One-click Import of Chat Presets
+### One-Click Import Using a Chat Preset
 
-1. Click 'Chat' in the left sidebar to expand the platform's configured chat presets.
-2. Click the target chat preset.
-3. The browser will attempt to launch the installed external application in a new window.
-4. The system automatically jumps to the target application and populates the configuration information.
+- Chat — One-click import using a chat preset
 
-![聊天预设一键导入配置页](/assets/guide/feature-guide/chat-presets-configuration-import.png)
+![Chat page showing one-click import using a chat preset](/assets/guide/feature-guide/chat-chat-presets-one-click-configuration-import.png)
 
+**Steps:**
+1. In the left sidebar, click the arrow to the right of “Chat” to see the chat presets configured for the site.
+2. Click the chat preset you want to use.
+3. When the browser prompts you to open the chat app, click “Open”.
+4. The app opens with the configuration already filled in.
 
-<Callout type="info">
-  Root users can maintain and manage chat presets in 'System Settings' → 'Console Content' → 'Chat'.
+<Callout type="info" title="Tip">
+  - “Chat” in the sidebar automatically uses the most recently created key among your enabled keys. To use a different key, see [One-Click Import Using an API Key](#one-click-import-using-an-api-key).
+  - Apps without an external link icon next to their name are web apps and open within the current site. The others are desktop apps and must be installed on your computer first.
+  - Browser extensions such as FluentRead do not appear in the sidebar. To use one, go to “API Keys” and select ⋯ → “Chat”.
+  - The Root user manages chat presets under “System Settings” → “Console Content” → “Chat Presets”.
 </Callout>
 
-### One-click Import of API Key Configurations
+### One-Click Import Using an API Key
 
-1. Click to enter 'API Key' in the left sidebar.
-2. Select the API key to use.
-3. Next to the selected key, click '...' → 'Chat' → 'Target Chat Application'.
-4. Quickly jump to the corresponding application and use the selected key to import the configuration with one click.
+- Chat — One-click import using an API key
 
-![API密钥一键导入配置页](/assets/guide/feature-guide/api-key-configuration-import.png)
+![Chat page showing one-click import using an API key](/assets/guide/feature-guide/chat-api-key-one-click-configuration-import.png)
 
-### Manually Configure Chat Applications
+**Steps:**
+1. Click “API Keys” in the left sidebar.
+2. Find the API key you want to use.
+3. In that key’s row, click ⋯ → “Chat”, then select the chat app.
+4. The browser will try to launch the installed external app in a new window. When prompted, click “Open”.
+5. The app opens and imports the configuration using the key from that row.
 
-For applications that do not support one-click import, you can configure them manually:
+<Callout type="info" title="Tip">
+  - The import uses the key from the row where you click ⋯. You do not need to select the checkbox at the start of the row; the checkmark in the screenshot is for illustration only. The import does not check the key’s status. You can import a disabled or expired key, or one with no quota remaining, but requests made with it will fail.
+  - Web apps open in a new tab. Browser extensions such as FluentRead receive the API address and key directly and must be installed and activated first.
+</Callout>
 
-- Obtain the following configuration information from New API:<br/>
+### Configure a Chat App Manually
 
-| Configuration Item | Description | Location to Obtain |
+If an app does not support one-click import, you can configure it manually:
+
+- Get the following configuration details from New API:<br/>
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+| Setting | Description | Where to find it |
 | --- | --- | --- |
-| API Base URL | API Endpoint Address | New API address, e.g., `https://api.example.com/v1` |
-| API Key | API Key | API Key page |
-| Available Models | List of supported models | Filter and view available models under the key's group in the Model Marketplace |
+| API Base URL | Base address for API requests | Open “API Address” in the upper-right corner of the “API Keys” page and append `/v1` to the address, for example `https://api.example.com/v1`. Follow the app’s instructions for the exact URL. |
+| API Key | Your API key | The “API Keys” page |
+| Available Models | List of supported models | In the Model Marketplace, filter by the key’s group to see the models available to it. |
+</div>
 
-- General Configuration Steps
+**Steps:**
+1. Open “Settings” or “Configuration” in the app.
+2. Find the “Custom API” or “OpenAI-Compatible API” section.
+3. Enter the API Base URL and API Key.
+4. Save the configuration to start using the app.
 
-1. In the target application, find the 'Settings' or 'Configuration' entry.
-2. Locate the 'Custom API' or 'OpenAI Compatible Interface' configuration area.
-3. Fill in the API Base URL and API Key.
-4. Save the configuration to start using it.
-
-<Callout type="info">
-  1. Most applications supporting OpenAI API compatible interfaces can integrate with New API by filling in a custom API address.
-  2. If the application requires a full endpoint, use `https://api.example.com/v1/chat/completions`; refer to the application's specific configuration instructions to supplement the path.
-  3. **For a list of currently verified supported AI applications and configuration guides, please refer to the [AI Applications](/en/docs/apps) page.**
+<Callout type="info" title="Tip">
+  1. Most apps that support an OpenAI-compatible API can connect to New API through a custom API address.
+  2. If the app requires a full endpoint URL, use `https://api.example.com/v1/chat/completions`. Check the app’s configuration instructions for the exact path to append.
+  3. **For a list of AI apps verified to work with New API and their configuration guides, see the <a href="/en/docs/apps" target="_blank" rel="noopener noreferrer">AI Apps</a> page.**
 </Callout>
 
 ## Frequently Asked Questions
 
-- **No chat presets in the sidebar**: Confirm that the 'Chat' module is enabled in 'Profile' → 'Left Sidebar Personal Settings'.
-- **No available key prompt**: Create or enable an API key, and check the quota, expiration time, model restrictions, and IP whitelist.
-- **Desktop application not launching**: First, install the target application and confirm that the operating system has registered the corresponding custom protocol; the browser may also ask for confirmation to open an external application.
-- **Web preset blank or refused to load**: The target site might prohibit iframes via CSP or `X-Frame-Options`. In this case, switch to manual configuration for that application.
-- **FluentRead key invalid after connection**: Confirm that the extension is installed and active on the current page; the current version might have key prefix compatibility differences, if it still fails, switch to manual configuration or another preset.
-- **Request returns unauthorized or forbidden access**: Check the authentication header format, model name, key status, group permissions, and IP restrictions; for Claude and Gemini requests, also confirm that the correct paths and request headers are used.
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="No chat presets appear in the sidebar">
+**Note**: “Chat” in the ⋯ menu on the “API Keys” page also appears only if the site has chat presets. The site includes presets by default.
+
+**Possible causes**:
+- “Chat Area” or “Chat” is turned off under “Left Sidebar Preferences” on the “Profile” page.
+- An administrator turned off “Chat” or deleted all chat presets.
+- An administrator recently changed the chat presets, and the page has not yet been refreshed.
+
+**What to do**:
+1. On the “Profile” page, turn on both “Chat Area” and “Chat” under “Left Sidebar Preferences” and save your changes.
+2. Refresh the browser page.
+3. If the presets still do not appear, ask an administrator to check the chat preset configuration.
+</Accordion>
+
+<Accordion title="Opening Chat displays “No enabled API keys found”">
+**Message**: “No enabled API keys found. Create or enable one first.” This message is displayed in English only. For web apps, the page displays “Unable to open chat” along with the same English message.
+
+**Possible cause**: “Chat” in the sidebar uses only enabled keys, and your account has no keys with the “Enabled” status.
+
+**What to do**:
+1. On the “API Keys” page, create a key or enable a disabled key.
+2. If a key is marked “Expired” or “Exhausted”, update its expiration time or quota, respectively, before clicking “Enable”.
+</Accordion>
+
+<Accordion title="The desktop app does not launch">
+**Possible causes**:
+- The app is not installed, or its custom protocol is not registered with the operating system.
+- The browser is waiting for permission to open an external app.
+
+**What to do**:
+1. Install the app and verify that its custom protocol is registered with the operating system.
+2. When the browser asks whether to open the external app, allow it.
+</Accordion>
+
+<Accordion title="A web app preset shows a blank page or refuses to load">
+**Possible cause**: Web apps opened from the sidebar are embedded within the current site. The destination site may use a Content Security Policy (CSP) or `X-Frame-Options` to prevent other pages from embedding it.
+
+**What to do**:
+1. On the “API Keys” page, use ⋯ → “Chat” in the key’s row to open the app in a new tab.
+2. Alternatively, configure the app manually. See [Configure a Chat App Manually](#configure-a-chat-app-manually).
+</Accordion>
+
+<Accordion title="FluentRead reports an invalid key after connecting">
+**Note**: FluentRead appears only under ⋯ → “Chat” on the “API Keys” page. Use the message you see to identify the cause:
+
+| Message | Possible cause | What to do |
+| --- | --- | --- |
+| “FluentRead extension not detected. Make sure it is installed and activated.” | The FluentRead extension is not installed or activated. | Install and activate the extension, then try again. |
+| “API key sent to FluentRead.” appears, but requests still fail. | The API address or key saved in the extension is incorrect. | Manually enter the API address and the full API key in the extension, making sure the key starts with exactly one `sk-` prefix. Alternatively, use a different preset. |
+</Accordion>
+
+<Accordion title="Requests return Unauthorized or Forbidden">
+**Possible causes**: The authorization header is incorrectly formatted, the model name is incorrect, or the key status, group permissions, or IP restrictions do not allow the request. Claude or Gemini requests may be using the wrong path or headers.
+
+**What to do**:
+1. Check the authorization header format and model name.
+2. On the “API Keys” page, check the key’s status, group, and IP restrictions.
+3. For Claude or Gemini requests, also verify that you are using the path and headers required by the respective API.
+</Accordion>
+
+<Accordion title="Clicking the “CC Switch” preset opens the current site">
+**Possible cause**: The “CC Switch” preset under “Chat” cannot import the configuration. Clicking it opens the current site in a new tab.
+
+**What to do**:
+1. On the “API Keys” page, select “CC Switch” directly from the top level of the ⋯ menu. See <a href="/en/docs/guide/feature-guide/user/token#import-into-cc-switch-or-a-chat-app" target="_blank" rel="noopener noreferrer">API Keys</a>.
+</Accordion>
+
+<Accordion title="The app shows the wrong API address after import">
+**Possible cause**: One-click import uses the server address configured by the administrator. If no address is configured, it defaults to `http://localhost:3000`.
+
+**What to do**:
+1. In the app, replace the address with the one shown under “API Address” on the “API Keys” page.
+2. If that address is also `http://localhost:3000`, ask an administrator to set the server address.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/user/token" target="_blank" rel="noopener noreferrer">API Keys</a>: Create an API key, copy the API address and key, and import the configuration into a chat app using ⋯ → “Chat”.
+- <a href="/en/docs/guide/feature-guide/user/playground" target="_blank" rel="noopener noreferrer">Playground</a>: Test models directly in your browser.
+- <a href="/en/docs/guide/feature-guide/user/pricing" target="_blank" rel="noopener noreferrer">Model Marketplace and Leaderboard</a>: View available models and pricing.
+- <a href="/en/docs/guide/feature-guide/user/personal-setting#choose-which-pages-appear-in-the-left-sidebar" target="_blank" rel="noopener noreferrer">Profile</a>: Choose which pages appear in the left sidebar, including “Chat”.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-content#chat-presets" target="_blank" rel="noopener noreferrer">Console Content Configuration</a>: How the Root user manages chat presets.
+- <a href="/en/docs/apps" target="_blank" rel="noopener noreferrer">AI Apps</a>: Find AI apps verified to work with New API and their configuration guides.

@@ -1,64 +1,1153 @@
 ---
 title: Channel Management
-description: Channels are the core configuration unit for connecting AI providers
+description: Configure channels for AI service providers, plugins, gateways, and custom routing. Manage credentials, models, groups, and routing policies.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-Channels are the core configuration unit for connecting AI providers — each channel corresponds to one provider's API key. Log in with an admin account, then click "Channels" in the left sidebar or visit `/console/channel` directly.
+- Only Admin and Root users can access this page. In the sidebar, go to **Admin** → **Channels**.
+- Configure channels that connect to upstream AI services and manage their credentials, models, groups, routing policies, and request rewrite rules.
+- Channels determine where requests can be sent. Model information, pricing, and user groups are configured on separate pages.
 
-The channel list shows all configured AI provider channels with their name, type, status (green = active / red = disabled), response time, and used quota.
+<Callout type="info" title="Tip">
 
-## Add a Channel
+- Channels fall into four categories: built-in, plugin, gateway, and custom. Select a category in the picker when creating a channel. See [Create and Edit Channels](#create-and-edit-channels).
+- Root determines which channel operations Admin users can perform by granting administrator permissions. See [Permissions and Security Boundaries](#permissions-and-security-boundaries).
+- Configure the model catalog, pricing, and user groups using <a href="/en/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">Model Management</a>, <a href="/en/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">Billing and Payment Settings</a>, and <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a>.
+- Configure request rewrites that apply to all channels on the <a href="/en/docs/guide/feature-guide/admin/request-processing" target="_blank" rel="noopener noreferrer">Request Processing</a> page.
 
-1. Click the "Add Channel" button in the top-right of the channel list page — a configuration dialog appears
-2. Select the provider type (e.g. OpenAI, Claude, Gemini)
-3. Enter the channel name and API key
+</Callout>
 
-4. Check the models this channel supports in the model list, or click "Fill Default Models" to auto-populate
-5. Expand the advanced config section as needed and fill in optional fields:
+## Channel Management Overview
 
-| Option | Description |
+- Channel Management – Card View
+
+![Channel Management card view](/assets/guide/feature-guide/channel-management-card-view.png)
+
+- Channel Management – Table View
+
+![Channel Management table view](/assets/guide/feature-guide/channel-management-table-view.png)
+
+The list shows all channels on the site and defaults to card view.
+
+- [Create and Edit Channels](#create-and-edit-channels)
+- [Standalone Plugin Channels](#standalone-plugin-channels)
+- [New API and Sub2API Gateway Channels](#gateway-channels-new-api-and-sub2api)
+- [Advanced Custom Channels](#advanced-custom-channels)
+- [Test Connections](#test-connection)
+- [Check Balances and Service Status](#check-balance-and-runtime-status)
+- [Fetch Models and Check for Upstream Model Updates](#fetch-models-and-apply-upstream-model-updates)
+- [Duplicate Channels](#duplicate-channels)
+- [Enable, Disable, and Delete Channels](#enable-disable-and-delete-channels)
+- [Manage Channels by Tag](#manage-channels-by-tag)
+- [Drag to Adjust Priority](#adjust-priorities-with-drag-and-drop)
+- [Manage Multi-Key Channels](#manage-multi-key-channels)
+- [Repair Channel Consistency](#repair-channel-consistency)
+
+<Callout type="info" title="Tip">
+If you cannot save a channel, a test fails, users cannot see a model, or requests are routed to an unexpected channel, see [FAQ](#frequently-asked-questions).
+</Callout>
+
+**Field descriptions**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Field | Definition | Requirements and Restrictions | Notes |
+| --- | --- | --- | --- |
+| ID | Channel identifier. | Assigned automatically by the system and cannot be changed. | Sortable. Displayed as “#…” in card view. |
+| Name | The name administrators use to identify the channel. | Set in the channel editing drawer. | Sortable. When Request Body Passthrough is enabled, a warning icon appears next to the name. Hover over it to see “Request body passthrough is enabled. The request body will be sent directly to the upstream without any transformation.” If parameter overrides are configured, the “Override Request Parameters” icon appears. Any notes appear below the name. |
+| Type | The channel's provider or plugin. | Selected at creation. See [Create and Edit Channels](#create-and-edit-channels). | Multi-key channels show “Multi-Key: Random” or “Multi-Key: Round Robin.” Aggregated rows in tag mode show “Tag Aggregation.” |
+| Status | Whether the channel currently participates in routing. | You can enable or disable a channel manually. The system determines when to disable it automatically. | See [Channel Status](#channel-status). |
+| Models | The models available through the channel. | Set under “Connection and Models” in the editing drawer. | Hidden by default. Use “View” to show this field. |
+| Groups | The user groups that can use the channel. | Set under “Connection and Models” in the editing drawer. | Additional groups are collapsed into “+…”. When sensitive data is hidden, this field displays as ••••. |
+| Tag | The channel's tag. | Set under “Other Settings” in the editing drawer or apply in bulk. | Hidden by default. Use “View” to show this field. |
+| Priority | The order in which eligible channels for the same model and group are considered for selection. | Edit directly in the list to save automatically, or drag to adjust. | Sortable. Editing an aggregated row opens “Confirm Bulk Update” and applies the change to all channels with that tag. |
+| Weight | The selection weight among channels with the same priority. | Edit directly in the list to save automatically. | Editing an aggregated row also requires confirmation. |
+| Used / Remaining | The quota used by the channel and the upstream balance. | The balance is recorded from the balance check result. See [Check Balances and Service Status](#check-balance-and-runtime-status). | Click to refresh the balance for a single channel. The tooltip reads “Click to Refresh Balance.” For vLLM and SGLang, clicking opens the inference service status. For Codex, it opens usage. If a plugin does not report a balance, the field shows “-”. |
+| Response | The response time of the most recent test. | Recorded by the test. | Sortable and color-coded by response time. Shows “Not Tested” until a test has run. |
+| Last Test | When the most recent test ran. | Recorded by the test. | Sortable. |
+| Card View | Cards display the type, #ID, name, priority, weight, used / remaining quota, response, last test, and groups. Models and tags are omitted. | — | Status badges appear only for automatically disabled channels, unknown statuses, and aggregated rows. The toggle icon in the upper-right corner of the card indicates whether the channel is enabled or manually disabled. |
+
+</div>
+
+## Common Operations
+
+This section follows the order in which you typically work with channels. It covers creation and editing, the three specialized channel types (plugin, gateway, and advanced custom), and maintenance tasks such as testing connections, checking balances, updating models, duplicating channels, enabling, disabling, and deleting channels, managing tags and priorities, managing multiple keys, and repairing channel consistency.
+
+### Create and Edit Channels
+
+**Steps**
+
+1. Click “Create Channel” in the upper-right corner of the page. To edit a channel, click the edit icon in its row or select “Edit” from the card's ⋯ menu.
+2. Select a provider or plugin in the picker.
+3. Turn on any quick options you need at the top of the drawer.
+4. Complete the four tabs in order: “Connection and Models,” “Routing and Mapping,” “Request and Response,” and “Other Settings.”
+5. Click “Create Channel” or “Update Channel.”
+
+<Callout type="info" title="Tip">
+
+- Use “Change Provider” below the drawer title to select a different type or plugin.
+- A status indicator next to each tab shows “Incomplete,” “Error,” “Ready,” or “Configured.”
+- If your account lacks the “Edit Sensitive Channel Settings” permission, the top of the drawer displays “Your account has view-only access to sensitive channel settings. You can still edit non-sensitive operational fields such as models, groups, priority, and weight.”
+- When you save, the page validates the form first. The server then checks the channel type, credentials, plugin bindings, and advanced settings.
+
+</Callout>
+
+**Select a provider or plugin**
+
+- Channel Management – Select a Built-in Channel
+
+![Channel Management built-in channel picker](/assets/guide/feature-guide/channel-management-select-provider-or-plugin-built-in.png)
+
+- Channel Management – Select a Plugin Channel
+
+![Channel Management plugin channel picker](/assets/guide/feature-guide/channel-management-select-provider-or-plugin-plugin.png)
+
+- Channel Management – Select a Gateway Channel
+
+![Channel Management gateway channel picker](/assets/guide/feature-guide/channel-management-select-provider-or-plugin-gateway.png)
+
+- Channel Management – Select a Custom Channel
+
+![Channel Management custom channel picker](/assets/guide/feature-guide/channel-management-select-provider-or-plugin-custom.png)
+
+The picker has five categories: “All,” “Built-in,” “Plugin,” “Gateway,” and “Custom.”
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Category | Type and Purpose | Key Differences at Creation |
+| --- | --- | --- |
+| Built-in Channel | Each type uses a fixed adapter, such as OpenAI, Anthropic, Vertex, AWS, Gemini, Codex, vLLM, or SGLang. Cards display the type ID, such as “#1.” | The type determines the credential format, URL, additional fields, and available operations. Some built-in types require credentials other than a standard API key. See [Type-Specific Configuration](#type-specific-settings). |
+| Plugin Channel | Select an installed plugin that can be bound to a channel. The card displays the plugin identifier and “… models.” | A plugin may prefill models and the Base URL. Plugins with only a task component act as task-forwarding channels. Plugins with a channel component (provider plugins) can forward regular API requests in the same way as advanced custom channels. Plugins with only a request processing component are omitted from the list. This category requires the “Bind Task Plugins” permission. See [Standalone Plugin Channels](#standalone-plugin-channels). |
+| Gateway Channel | New API (#60) and Sub2API (#59). | Enter the gateway Base URL and credentials, then fetch models from the gateway. A New API channel can also bind plugin extensions that support New API upstreams and retains its gateway channel type. See [New API and Sub2API Gateway Channels](#gateway-channels-new-api-and-sub2api). |
+| Custom Channel | Custom (#8, labeled “Deprecated”) and Advanced Custom (#58, labeled “Flexible Integration”). | Custom uses the legacy full-URL integration. For new configurations, use Advanced Custom to configure the upstream, authentication, and transformers for each inbound path. See [Advanced Custom Channels](#advanced-custom-channels). |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- The “Plugin” category appears only if your account has the “Bind Task Plugins” permission. If the plugin list fails to load, it shows “Failed to Load Plugins” and an option to retry. If no plugins can be bound, it shows “No Plugins Available to Bind.”
+- Use the search box to find a name, plugin, or type ID. Entering a number that is absent from the list displays a “Use Channel Type …” card. Adapter support is limited to supported type IDs.
+- If an installed plugin replaces a legacy built-in type such as Sora, Kling AI, or Jimeng, only the plugin card appears in the picker. Searching for the legacy type name or ID also finds the plugin.
+
+</Callout>
+
+**Choose a channel type**
+
+- **Standard provider or protocol**. Select a built-in channel and follow the guidance for its credentials and default URL.
+- **Installed plugin**. Select “Plugin,” verify the plugin's models, upstream type, and default URL, then configure the credentials it requires.
+- **New API or Sub2API upstream gateway**. Select “Gateway” to use the gateway adapter. The legacy Custom type (#8) cannot substitute for it.
+- **Multiple inbound paths, protocols, or providers**. Select Advanced Custom. Define the inbound paths, upstream paths, authentication, and transformers first.
+
+**Quick options**
+
+The toggles to the right of the drawer title control the settings of the same name in the tabs. Available toggles depend on the channel type.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Toggle | Availability | Description |
+| --- | --- | --- |
+| Request Body Passthrough | Non-plugin channels | A confirmation dialog appears before you enable it. This controls “Request Body Passthrough” under “Request and Response.” See [How Passthrough and Overrides Are Applied](#how-pass-through-and-overrides-interact). |
+| Request Header Passthrough | Non-plugin channels | A confirmation dialog appears before you enable it. The toggle adds passthrough rules to “Request Header Overrides.” If the overrides contain invalid JSON, the toggle is unavailable and displays “Fix the JSON in Request Header Overrides first.” |
+| Auto-Disable on Failure | Always visible | Enabled by default. This controls “Auto-Ban” under “Routing and Mapping.” The text below the toggle shows whether automatic disabling applies to this channel and where the setting comes from. |
+| Check for Model Updates | Types that support fetching models | This controls “Check for Upstream Model Updates” under “Other Settings.” |
+| Responses WebSocket | Supported types. For plugin channels, availability depends on what the plugin declares. | This controls the setting of the same name under “Request and Response.” The upstream must support WebSocket. |
+
+</div>
+
+**Connection and Models**
+
+- Channel Management – Connection and Models
+
+![Channel Management Connection and Models tab](/assets/guide/feature-guide/create-channel-connection-and-models.png)
+
+**Paste connection information**
+
+1. On another New API site, open the API key's ⋯ menu and click “Copy Connection Info.”
+2. When creating a channel on this site, click “Paste Connection Info” in the upper-right corner of the drawer.
+
+<Callout type="info" title="Tip">
+
+- When the connection information is recognized, “API Key” and “API URL” are filled in automatically, and “Connection info added” appears.
+- If the clipboard already contains connection information when you open the drawer, “Connection info detected on the clipboard” appears at the top. Click “Fill In” or “Ignore.”
+- If the clipboard contains no recognizable connection information, “No connection info found on the clipboard” appears.
+
+</Callout>
+
+**Connection and Models settings**
+
+The table follows the order of the fields in the tab.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Definition | Requirements and Restrictions | Default |
+| --- | --- | --- | --- |
+| Name | The name administrators use to identify the channel. | Required. | Blank. Defaults to the plugin name when a plugin is selected. |
+| Enabled | Whether the channel participates in routing. | — | On |
+| API URL | The upstream Base URL. Omit the full request path, such as `/v1/chat/completions`, unless the channel type calls for a complete URL. | Required for types such as Azure, Custom (#8), New API, plugin channels, vLLM, and SGLang. For Custom (#8), enter the full legacy endpoint URL. For Advanced Custom, this field is required when using relative upstream paths. | Prefilled based on the type or plugin |
+| Add Mode | Determines whether to create one channel for a credential or add multiple credentials at once. | Select one of the three modes listed under **Add Mode** below. | Single Key |
+| API Key | The upstream credential. | Required when creating a channel. The format depends on the type. For plugin channels, “Key format: …” appears below the field. The existing credential is omitted when editing. Leave the field blank to keep it. | Blank |
+| Models | The user-facing model names available through the channel. | At least one is required. Use “Fetch Models” or “Quick Actions” to fill in the list. The model list is used for capability indexing and routing. | Blank. Plugins may prefill this field. |
+| Groups | The user groups that can use the channel. | At least one is required. A channel is eligible only if the user or API key has the corresponding group and the other model conditions are met. | `default` |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- After selecting a type, read its URL and credential guidance. Type-specific fields such as “OpenAI Organization,” the Vertex AI deployment region, and the AWS interface appear near “API URL.” See [Type-Specific Configuration](#type-specific-settings).
+- “Fetch Models” reads upstream models using the saved channel or the unsaved connection settings. The model list is written when you save the models or the channel.
+- When editing a channel as Root, you can click “Show Key” under “Current Key” after passing security verification.
+
+</Callout>
+
+**Add Mode**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Mode | Result | Usage Notes |
+| --- | --- | --- |
+| Single Key | One credential creates one channel. | Use this mode to verify the URL, model, and credential for the first time. This is the only mode supported by Codex and by Vertex AI in API Key mode. |
+| Bulk Add (One Key per Line) | Each line contains one credential and creates a separate channel. | Each new channel participates in routing independently. Use “Remove Duplicates” to deduplicate the credentials. Plugins that require sign-in do not offer this mode. |
+| Multi-Key Mode (Multiple Keys, One Channel) | Multiple credentials are saved to one channel. | Set “Multi-Key Strategy” to “Random” or “Round Robin.” Selecting round robin displays “Round robin mode requires Redis and in-memory caching. Performance will drop significantly without them.” When editing, select “Append” or “Replace” under “Key Update Mode.” |
+
+</div>
+
+**Routing and Mapping**
+
+- Channel Management – Routing and Mapping
+
+![Channel Management Routing and Mapping tab](/assets/guide/feature-guide/create-channel-routing-and-mapping.png)
+
+**Routing and Mapping settings**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Section | Definition | Requirements and Restrictions | Default |
+| --- | --- | --- | --- | --- |
+| Model Mapping | Model Mapping | Client model name → upstream model name. | Optional JSON object. Values must be strings. Rules can be generated in bulk. The source model must be in the “Models” list. The upstream must support the target model, which should generally be omitted from the public model list. | Blank |
+| Priority | Routing Policy | Among eligible channels for the same model and group, higher-priority channels are considered first. | The global retry count is configured separately. | `0` |
+| Weight | Routing Policy | The selection weight among channels with the same priority. | Retries and channel status can change the actual distribution. | `0` |
+| Test Model | Routing Policy | The model used when no model is specified for a quick test. | Enter a model the channel supports. | Blank |
+| Auto-Ban | Routing Policy | Controls the “Auto-Disable on Failure” quick option at the top of the drawer. | Also requires the global “Disable on Failure” setting under <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#channel-health" target="_blank" rel="noopener noreferrer">Request Policies → Channel Health</a>. An insufficient balance detected during a bulk balance refresh is an exception. See [Check Balances and Service Status](#check-balance-and-runtime-status). Manual and automatic disabling are distinct statuses. | On |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- Common mapping issues include invalid JSON, source models missing from the public list, and upstream target names being exposed to users.
+- If you save a mapping whose source model is missing from the model list, “Model is missing from the list and may be unavailable” appears. Choose “Go Back and Edit,” “Submit Anyway,” or “Add and Submit.”
+- If the mapping target is also in the model list, the interface displays a yellow warning and offers “Remove Mapping Target.”
+- Verify the user-facing model list before adding or removing names.
+
+</Callout>
+
+**Request and Response**
+
+- Channel Management – Request and Response
+
+![Channel Management Request and Response tab](/assets/guide/feature-guide/create-channel-request-and-response.png)
+
+From top to bottom, the tab has three sections: “Override Rules,” “Request Processing,” and “Field Passthrough Controls.” References to the “Request Processing” section below refer to the section in this tab. The sidebar has a separate “Request Processing” page.
+
+**Request and Response settings (Override Rules)**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Section | Definition | Requirements and Restrictions | Default |
+| --- | --- | --- | --- | --- |
+| Status Code Mapping | Override Rules | Maps upstream response status codes to the codes New API uses for processing. | Optional. Both the original and mapped values must be integer HTTP status codes. New mappings may affect retry behavior. Mapping 504 or 524 to another status code opens the “Confirm High-Risk Operation” dialog. Enter the full phrase “I understand the risk of multiple charges and crashes and confirm that I want to enable this.” | Blank |
+| Parameter Overrides | Override Rules | Rewrites the transformed request JSON before it is sent. | Optional. Enter JSON or use “Visual Editor.” Supports setting, deleting, moving, and copying fields, as well as string operations, conditions, and custom errors. See [Parameter Override System](#parameter-override-system). Configure rules that apply to all channels on the sidebar's “Request Processing” page. The hint below the field reads “Rules that apply to all channels are configured on the Request Processing page.” | Blank |
+| Request Processing Plugins | Override Rules | Adds instances from the sidebar's <a href="/en/docs/guide/feature-guide/admin/request-processing#add-an-instance-to-a-channel" target="_blank" rel="noopener noreferrer">Request Processing</a> page to this channel. | Optional. This is a sensitive setting that requires the “Bind Task Plugins” permission. Instances that apply to all requests or to this channel's groups also run. The “Before Reading the Request,” “Before Format Conversion,” and “Before Sending” stages run before parameter overrides. See <a href="/en/docs/guide/feature-guide/admin/request-processing#execution-stages-and-order" target="_blank" rel="noopener noreferrer">Execution Stages and Order</a>. | Blank |
+| Request Header Overrides | Override Rules | Sets, deletes, or copies headers on upstream requests. | Optional JSON object. Supports `{api_key}` and `{client_header:NAME}`, with the latter used as the entire value. “Passthrough Template” adds request header passthrough rules. | Blank |
+
+</div>
+
+**Request and Response settings (Request Processing and Field Passthrough Controls)**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Section | Definition | Requirements and Restrictions | Default |
+| --- | --- | --- | --- | --- |
+| Responses WebSocket | Request Processing | Enables connections for the corresponding Responses WebSocket path. | Visible only for supported types. The `stream` field in parameter overrides cannot set the transport mode. | Off |
+| Force Formatting, Reasoning to Content | Request Processing | Handles specific request or response formats or converts reasoning content to `<think>`. | Availability depends on the type. “Force Formatting” is available only for OpenAI channels. These settings apply to specific formats and do not provide general protocol switching. | Off |
+| Request Body Passthrough | Request Processing | Sends the client's original request body whenever possible. | Availability depends on the type. This setting skips some transformations, field filtering, and parameter overrides. Verify upstream protocol compatibility before enabling it. When enabled on an Advanced Custom channel, it applies to all routes. See [Advanced Custom Channels](#advanced-custom-channels). | Off |
+| System Prompt, Append System Prompt | Request Processing | Sets a channel-level system prompt and controls whether it is concatenated with the user's prompt. | Optional. These settings change the meaning of the request sent upstream. The placeholder reads “Enter a system prompt (the user prompt takes precedence).” | Blank, Off |
+| Field Passthrough Controls | Field Passthrough Controls | Controls whether specific fields in the client request are passed through to the upstream, using options such as “Allow service_tier Passthrough” and “Block store Passthrough.” | Available toggles depend on the type. OpenAI-compatible and Claude-compatible types each have their own set. See [How Passthrough and Overrides Are Applied](#how-pass-through-and-overrides-interact). | All off |
+
+</div>
+
+**Other Settings**
+
+- Channel Management – Other Settings
+
+![Channel Management Other Settings tab](/assets/guide/feature-guide/create-channel-other-settings.png)
+
+**Other Settings configuration**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Setting | Section | Definition | Requirements and Restrictions | Default |
+| --- | --- | --- | --- | --- |
+| Skip Async Task Polling Delay | Additional Channel Settings | Shortens the interval between polls for asynchronous tasks. | May increase the frequency of upstream requests. | Off |
+| Proxy URL | Additional Channel Settings | The proxy this channel uses to connect to its upstream. | Supports HTTP, HTTPS, SOCKS5, and SOCKS5H. The URL must contain a valid host. Keep proxy passwords out of notes and screenshots. | Blank |
+| HTTP Protocol | Additional Channel Settings | The protocol used to connect to the upstream. | “Auto” can negotiate HTTP/2. HTTP/2 connection sharding is unavailable when “HTTP/1.1” is selected. | Auto |
+| HTTP/2 Connection Sharding | Additional Channel Settings | Distributes HTTP/2 requests across multiple connections. | `1–8`. Applies only in HTTP/2 mode. | `1` |
+| Skip Upstream Certificate Verification | Additional Channel Settings | Accepts upstream certificates that fail verification, such as self-signed certificates. Applies only to this channel. | Enable only for trusted upstreams on your private network. Certificate verification still applies when Codex refreshes credentials or when Vertex and plugins use service accounts to obtain tokens. | Off |
+| Check for Upstream Model Updates | Upstream Model Update Settings | Periodically checks for models added or removed upstream. | Available only for types that support fetching models. Enable checks before enabling automatic sync. | Off |
+| Automatically Sync Upstream Models | Upstream Model Update Settings | Adds new models found during scheduled checks directly to the model list. | Unavailable when checks are off. Sync only adds models. See [Fetch Models and Check for Upstream Model Updates](#fetch-models-and-apply-upstream-model-updates). | Off |
+| Ignored Upstream Models | Upstream Model Update Settings | Excludes models from automatic addition. | Use comma-separated exact names or `regex:` rules. Maintain the channel's model list separately. | Blank |
+| Tag, Notes | Internal Notes | Used for filtering and internal management. | Notes can contain up to 255 characters. Keep keys, private user information, and temporary credentials out of notes. | Blank |
+
+</div>
+
+### Standalone Plugin Channels
+
+- Channel Management - Plugin Channels
+
+![Channel Management - Plugin Channels page](/assets/guide/feature-guide/create-channel-plugin-channel.png)
+
+For plugins that provide a channel component, you can test the channel, fetch models, check for upstream model updates, and check the balance if the plugin provides it. The models declared by the plugin serve as initial values. Check the connection to verify that the upstream credentials work. The models, routes, and request types a plugin supports may vary by installed version.
+
+On shared endpoints such as `/v1/images/generations`, `/v1/images/edits`, `/v1/responses`, and `/v1/videos`, standard and plugin channels that serve the same model are selected together based on Group, priority, and weight. When the system selects a standard channel, that channel forwards the request directly, bypassing the plugin.
+
+**Prerequisites**
+
+- The account must have the “Bind Task Plugins” permission for the “Plugins” category to appear in the selection dialog.
+- The target plugin must be installed and enabled. See <a href="/en/docs/guide/feature-guide/admin/task-plugins#create-a-plugin-channel" target="_blank" rel="noopener noreferrer">Plugin Management</a>.
+
+**Steps**
+
+1. Select a registered plugin from the “Plugins” category.
+2. Enter the credentials, Group, and other fields required by the plugin. The plugin provides the “Key Format” hint below “API Key”.
+3. If the plugin declares settings, fill in the “Plugin Settings” section.
+4. Click “Create Channel”. For plugins that require signing in to an upstream account, click “Save and Sign In”.
+5. After saving, the sign-in window opens automatically. Follow the prompts to sign in.
+
+<Callout type="info" title="Tip">
+
+- When you select a plugin, its name fills the name field if the field is empty. The plugin’s declared models and default URL are also prefilled.
+- If the plugin has a default URL, “Plugin Default: …” and “Use Default” appear below “API URL”. Otherwise, enter a URL.
+- In “Plugin Settings”, unchanged fields retain their saved values, and blank fields use the plugin defaults. If validation fails, the message reads “Fix the highlighted fields before saving.”
+- If you change the plugin while editing a channel, save the channel before signing in.
+</Callout>
+
+**Credentials**
+
+For plugins that require signing in to an upstream account, “Connection and Models” displays a “Credentials” section in place of “API Key”.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| State | “Credentials” Section | Next Action |
+| --- | --- | --- |
+| Creating a channel | “This channel uses a provider account to sign in. Save the channel to sign in.” | Click “Save and Sign In”. |
+| Saved, signed out | “Not Signed In” and “Sign in to use this channel.” | Click “Sign In”. |
+| Signed in | Account name or account ID, and “… Expires” | Click “Add Account” to add an account. This converts the channel to a multi-key channel and makes “Manage Keys” available. Single-key channels also offer “Switch Account”. Each account row offers “Sign In Again”. |
+| Invalid credentials | “Sign-In Required” | Click “Sign In Again”. |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- The sign-in window is titled “Sign In to …” or “Sign In Again to …”. Depending on the plugin, you may be redirected to a sign-in page, asked to paste a callback URL, prompted to enter a device code, or shown a form.
+- On success, the window displays “Signed In”. On failure, it shows “Sign-In Failed” and “Retry”. If the device code expires, it shows “Verification Code Expired” and “Start Over”.
+</Callout>
+
+### Gateway Channels: New API and Sub2API
+
+- Channel Management - New API Gateway Channel
+
+![Channel Management - New API Gateway Channel page](/assets/guide/feature-guide/create-channel-newapi-gateway-channel.png)
+
+New API and Sub2API both append the request path to the gateway Base URL. The standard configuration leaves `/v1` out of the Base URL, so enter a Base URL without a trailing `/v1`. Both gateways can support OpenAI, Responses, Claude, Gemini, and other APIs. The available capabilities depend on the gateway deployment.
+
+In New API, you can also use “Upstream Task Plugins” to bind task plugin extensions that support a New API upstream. The field description reads “This channel will provide the models from each selected plugin. The upstream New API gateway must have the same plugins installed.” These extensions run as part of the New API gateway channel (#60). [Standalone plugin channels](#standalone-plugin-channels) use a separate channel type.
+
+<Callout type="info" title="Tip">
+
+- “Upstream Task Plugins” appears only for accounts with the “Bind Task Plugins” permission.
+- Binding or unbinding extensions, or duplicating a channel with extensions, requires the “Bind Task Plugins” permission. You can save a channel without this permission if the set of bindings stays the same.
+- You can copy connection information from another New API instance and fill in the fields in one click. See [Create and Edit Channels](#create-and-edit-channels).
+</Callout>
+
+### Advanced Custom Channels
+
+- Channel Management - Advanced Custom Channel
+
+![Channel Management - Advanced Custom Channel page](/assets/guide/feature-guide/create-channel-advanced-custom-channel.png)
+
+After selecting Advanced Custom, you must keep at least one valid route.
+
+**Steps**
+
+1. Under “Connection and Models”, go to “Advanced Custom Routing” and click “Configure Routes”.
+2. Under “Route Forwarding”, click “Add Route” or “Add Template”, then fill in each route using the table below.
+3. If needed, add one management route each under “Model List” and “Balance Check”.
+4. Click “Save Changes”, then save the channel.
+
+<Callout type="info" title="Tip">
+
+- Routes for the same endpoint are matched against the client’s `model` value. Leave the last route’s model rules empty to make it the fallback. If the routes are out of order, the message reads “The fallback must be last”. Click “Fix Order” to correct it.
+- “Add Template” asks “Replace forwarding routes?” before replacing them. Model list and balance routes are preserved.
+- An invalid route configuration may prevent you from saving or prevent the affected endpoint from forwarding requests.
+</Callout>
+
+- Channel Management - Advanced Custom Routing
+
+![Channel Management - Advanced Custom Routing page](/assets/guide/feature-guide/create-channel-advanced-custom-channel-advanced-custom-routing.png)
+
+**Route Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Route Field | Description |
 | --- | --- |
-| Base URL | Custom endpoint URL for proxies or self-hosted deployments |
-| Priority | Higher value = higher selection priority, default 0 |
-| Weight | Random weight among same-priority channels, default 0 |
-| Model Mapping | Map user-requested model names to actual model names (JSON) |
-| Parameter Override | Force-override certain request parameters (JSON) |
-| Auto Disable | When enabled, automatically disables the channel after consecutive failures |
+| Inbound Path | Must start with `/` and contain no query string. For example, use `/v1/chat/completions`. You can also select DeepSeek Search (`/v1/tools/search`) and DeepSeek Fetch (`/v1/tools/fetch`) from the dropdown. |
+| Upstream Path | Accepts a full `http(s)` URL or a path relative to the channel Base URL. You can use `{model}` in forwarding routes. Management routes do not support it. |
+| Model Rules | An empty list serves as the fallback for the endpoint. Plain names match exactly, and rules starting with `re:` are regular expressions. Place specific rules before the fallback. |
+| Transformer | Must match the inbound protocol. Select “Native Forwarding” to forward requests using their original protocol. Route-level “Passthrough” is available only for native forwarding routes. Channel-level “Pass Through Request Body” applies to every route and prevents routes that require format conversion from handling requests. To enable passthrough for specific routes, use the route-level toggle. |
+| Authentication | Choose “Default Bearer”, “No Authentication”, “Request Header”, or “Query”. “Request Header” and “Query” require a name and value. The value can contain `{api_key}`. |
+| Model List Route | You can configure at most one `/v1/models` route, which must use native forwarding. This route is required when upstream model checks are enabled. |
+| Balance Route | You can configure at most one `/v1/dashboard/billing/credit_grants` route. It does not support model rules, transformers, passthrough, or `{model}`. |
 
-6. Click "Submit" — the new channel appears in the list
+</div>
 
-## Test a Channel
+<Callout type="warn" title="Caution">
+Before saving, verify that the inbound and upstream protocols match, authentication credentials are protected from disclosure, and any relative paths have a Base URL.
+</Callout>
 
-1. Find the target channel in the list and click the "Test" button in the action column on the right
-2. Wait for the test request to complete — a dialog shows the response time and success/failure status
+### Test Connection
 
-Lower response time means faster performance. You can also click "Test All Channels" at the top of the list for one-click batch testing.
+- Channel Management - Test Channel Connection
 
-## Batch Operations
+![Channel Management - Test Channel Connection page](/assets/guide/feature-guide/channel-management-test-channel-connection.png)
 
-1. Check the checkboxes on the left side of multiple channel rows
-2. A batch operation toolbar appears at the top of the page
+For a quick test, click the “Test Connection” icon in the row. This sends a single request using the channel’s test model. If none is configured, it tries a channel model first, then the default test model. For a detailed test, use the test dialog to select an endpoint, streaming mode, and models.
 
-3. Click the corresponding button to perform the batch operation:
-   - **Batch Enable**: Set selected channels to active
-   - **Batch Disable**: Set selected channels to disabled
-   - **Batch Tag**: Assign a tag to selected channels for categorized management
+**Steps**
 
-## Multi-Key Mode
+1. Click “Test Connection” in the ⋯ menu. In card view, you can also click the “Test Channel Connection” icon.
+2. Select an “Endpoint Type”. “Auto Detect (Default)” uses the default endpoint for the channel type. Codex uses Responses if no endpoint is specified. Plugin channels list only the endpoints supported by the plugin, and auto-detection uses the first one.
+3. Enable “Streaming Mode” if needed. Embeddings, image generation, Rerank, and Responses Compaction do not support streaming.
+4. Select one or more models and run the test.
+5. Review the result, response time, and error details.
+6. Before removing a failed model, check whether the failure was caused by a temporary network issue, rate limits, the proxy, the endpoint, or the pricing configuration.
 
-Multi-Key mode lets a single channel use multiple API keys with automatic polling. A failed key is skipped automatically and re-enabled when it recovers.
+<Callout type="info" title="Tip">
 
-1. Click the "Edit" button on the right side of the target channel row
-2. Find the "Multi-Key Management" section in the edit dialog
+- When testing multiple models, each batch runs up to five models. “Stop Test” prevents subsequent batches from running. Requests already sent may still complete.
+- In the results, you can choose “Select Successful Models (…)” or “Remove Failed Models (…)”. If a test fails because pricing is missing, “Go to Settings” opens model pricing.
+- Testing an individual channel only displays the results and leaves the channel status unchanged.
+</Callout>
 
-3. Click "Add Key" to enter multiple API keys one by one
-4. Select a polling mode:
+### Check Balance and Runtime Status
 
-| Polling Mode | Description |
+- Channel Management - Check Balance
+
+![Channel Management - Check Balance page](/assets/guide/feature-guide/channel-management-check-balance.png)
+
+**Steps**
+
+1. Click the balance in the “Used / Remaining” column, or click “Check Balance” in the ⋯ menu.
+2. In the “Check Balance” dialog, click “Update Balance”.
+
+<Callout type="info" title="Tip">
+
+- Standard channels use different upstream balance endpoints depending on the channel type. Balance checks are available only for supported types.
+- Built-in multi-key channel types do not support balance checks.
+- Plugin channels support balance checks only when the plugin provides balance information. Otherwise, the balance column shows “-” and the ⋯ menu omits “Check Balance”.
+- For multi-key plugin channels, the system checks the balance of each key individually. “Multi-Key Management” displays a “Balance” column.
+- If a check fails, a warning icon appears next to the balance. When sensitive data is visible, hover over the icon to see “Last Updated:” and “Last Error:”.
+- For vLLM/SGLang, the balance field opens the inference service status. For Codex, it shows usage and Quota reset information.
+</Callout>
+
+**Update All Balances**
+
+“Update All Balances” in the page header’s ⋯ menu checks enabled channels in the background, skipping built-in multi-key channel types. This can generate many upstream requests because it processes eligible channels regardless of the current list filters.
+
+- After submission, the message reads “Balances are updating in the background. The list will refresh automatically.” In <a href="/en/docs/guide/feature-guide/admin/system-info" target="_blank" rel="noopener noreferrer">System Information</a>, check “System Tasks” for the “Batch Balance Update” task type.
+- If a channel’s balance is zero or lower, the system automatically disables it for “Insufficient Balance” if the channel’s “Auto-Disable on Error” setting is enabled, regardless of the global “Disable on Failure” setting. For multi-key plugin channels, the system disables only the keys with insufficient balance.
+- To run “Update All Balances” automatically, set the `CHANNEL_UPDATE_FREQUENCY` environment variable to an integer interval in minutes. A non-integer value prevents the system from starting. By default, the variable is unset and updates run only on demand. This setting is available only through the environment variable.
+
+### Fetch Models and Apply Upstream Model Updates
+
+- Channel Management - Fetch Models
+
+![Channel Management - Fetch Models page](/assets/guide/feature-guide/channel-management-fetch-models.png)
+
+**Fetch Models**
+
+1. Click “Fetch Models” in the ⋯ menu to request the upstream model list.
+2. Switch between “New Models”, “Existing Models”, and “Removed Models”.
+3. Models are grouped by provider. Select individual models or an entire provider group.
+4. Click “Save Models” to update the channel. Canceling or encountering a request failure leaves the saved list intact.
+
+**Apply Upstream Updates**
+
+1. Click “Upstream Updates” in the ⋯ menu to open “Preview Upstream Model Changes”.
+2. Under “Models to Add” and “Models to Remove”, select the changes to apply. Click “Check Again” if needed.
+3. Click “Review Selected Changes”, then click “Confirm and Apply Selected Changes” in the “Confirm Model Changes” dialog.
+
+<Callout type="info" title="Tip">
+
+- For channels with “Check for Upstream Model Updates” enabled, the counts of models to add (“+…”) and remove (“-…”) appear next to the channel name. Click a count to open the preview.
+- “Check All Upstream Updates” in the page header’s ⋯ menu starts a background task. The message reads “The upstream model check has started. Check progress in ‘System Information’ and refresh when it finishes to see pending updates.”
+- “Apply All Upstream Updates” immediately applies all pending model additions and removals for channels that have been checked, without a confirmation dialog.
+- Fetching models for an existing channel requires the “Operate Channels” permission. Fetching models with an unsaved connection in the create or edit drawer requires the “Edit Sensitive Channel Settings” permission.
+</Callout>
+
+### Duplicate Channels
+
+- Channel Management - Duplicate Channel
+
+![Channel Management - Duplicate Channel page](/assets/guide/feature-guide/channel-management-duplicate-channel.png)
+
+**Steps**
+
+1. Click “Duplicate Channel” in the ⋯ menu and enter a “Name Suffix”. The default is `_copy`.
+2. Choose whether to keep “Reset Balance and Used Quota” selected. It is selected by default.
+3. Confirm the duplication.
+
+<Callout type="info" title="Tip">
+
+- The new channel copies most of the original channel’s configuration and credentials and receives a new ID and creation timestamp. The test timestamp and response time are reset.
+- Duplicating a channel requires the “Edit Sensitive Channel Settings” permission. Duplicating a channel with task plugin bindings also requires the “Bind Task Plugins” permission.
+- Rotate credentials separately from channel duplication.
+</Callout>
+
+### Enable, Disable, and Delete Channels
+
+**Enable or Disable Channels**
+
+1. Click the enable or disable icon in the row. For bulk operations, select channels in batch mode and click “Enable Selected Channels” or “Disable Selected Channels”.
+
+**Delete Channels**
+
+1. Click “Delete” in the ⋯ menu and confirm in the “Delete Channel” dialog. In batch mode, click “Delete Selected Channels”.
+2. To delete every disabled channel, click “Delete All Disabled” in the page header’s ⋯ menu and confirm in the “Delete All Disabled Channels?” dialog.
+
+<Callout type="warn" title="Caution">
+
+- Manual status changes can only enable or manually disable channels. Reliability logic handles automatic disabling. See [Channel Status](#channel-status).
+- Deleting a single channel, deleting channels in bulk, and using “Delete All Disabled” require the “Edit Sensitive Channel Settings” permission.
+- “Delete All Disabled” deletes manually and automatically disabled channels across the entire database, **regardless of the current search, type, Group, tag, or pagination filters**. The confirmation dialog reads “This will permanently delete all manually and automatically disabled channels. This action cannot be undone.”
+- Export or record the configuration before deleting a channel. New API cannot restore deleted channels.
+</Callout>
+
+### Manage Channels by Tag
+
+- Channel Management - Batch Operations
+
+![Channel Management - Batch Operations page](/assets/guide/feature-guide/channel-management-batch-mode.png)
+
+**Set Tags**
+
+1. Turn on “Batch Operations” in the page header and select the channels.
+2. Click “Set Tag for Selected Channels” at the bottom of the list and enter a tag in “Set Tag”. Leave the field blank to remove the tag.
+
+**Manage Channels by Tag**
+
+1. Turn on “Tag Mode” in the page header to group channels with the same tag into one row.
+2. In the grouped row, click the “Edit Tag” icon, or choose “Batch Edit”, “Enable All”, or “Disable All” from the ⋯ menu.
+3. In “Edit Tag: …” or “Batch Edit by Tag”, update the tag name, models, model mappings, or Groups, then click “Save Changes”. Leave the tag name blank to remove the tag from all channels in the group.
+
+<Callout type="info" title="Tip">
+
+- Batch operations apply to the currently selected channels. Tag-based enable, disable, and edit operations apply to all channels with that tag, regardless of which rows are selected on the current page.
+- A grouped row represents a tag and can be edited using the tag controls.
+- Disabling channels by tag marks them as manually disabled.
+</Callout>
+
+### Adjust Priorities with Drag and Drop
+
+- Channel Management - Drag-and-Drop Mode
+
+<video
+  src="/assets/guide/feature-guide/channel-management-drag-and-drop-mode.mp4"
+  width={512}
+  height={640}
+  autoPlay
+  loop
+  muted
+  playsInline
+  controls
+  aria-label="Channel Management - Drag-and-Drop Mode"
+/>
+
+Click “Drag-and-Drop Mode” on the toolbar, then drag the handle on the left side of a channel row or in the upper-left corner of a card to adjust its priority. The button changes to “Finish Sorting”. Click it again to exit. Drop a channel in the middle of another channel to “Join Same Priority”, or between two priority levels to “Insert New Priority”. The system calculates the value automatically. Changes are saved as soon as you drop the channel. Click “Undo” below the list to revert the last adjustment.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Item | Description |
 | --- | --- |
-| Round Robin | Use each key in sequence |
-| Weighted Random | Select keys randomly by weight |
+| Availability | Sort by “Priority” in ascending or descending order, turn off “Tag Mode”, and make sure you have the “Edit Channel Routing” permission. If any requirement is unmet, the button is grayed out and displays the reason. Filters, pagination, and switching views do not affect availability. |
+| Scope | You can drop a channel only on channels visible on the current page, but the system calculates priority values using the priority levels of all channels. If there is no unused integer between two levels, the adjacent levels shift by one, which may affect channels outside the current view. The number of affected channels appears below the list as you drag. |
+| Priority and Weight | Dragging changes only “Priority”. Channels within the same priority level are still selected by weight. |
+| Keyboard Controls | Focus the drag handle and use the arrow keys to move the channel before or after an adjacent channel and save immediately. Press Esc to cancel dragging. |
+| Conflicts | If channel priorities change after you begin dragging, or after the last save when undoing, the save or undo is rejected. The message reads “Channel priorities have changed. Refresh and try again.” |
+| Walkthrough | A demo opens automatically the first time you enter drag-and-drop mode in each view, card and table. To see it again, click “?” next to “Drag-and-Drop Mode”. |
 
-5. Click "Save" to complete the configuration
+</div>
+
+### Manage Multi-Key Channels
+
+- Channel Management - Multi-Key Management
+
+![Channel Management - Multi-Key Management page](/assets/guide/feature-guide/channel-management-key-management.png)
+
+Selecting “Multi-Key Mode” when creating a channel stores multiple credentials in one channel. See “Add Mode” in [Create and Edit Channels](#create-and-edit-channels). “Random” selects a key at random from the currently enabled keys. “Round Robin” selects an enabled key in sequence and advances the position using the cache component.
+
+**Steps**
+
+1. Click “Manage Keys” in the ⋯ menu to open “Multi-Key Management”.
+2. Filter keys by status and enable, disable, or delete individual keys.
+3. For bulk operations, click “Enable All”, “Disable All”, or “Delete Auto-Disabled Keys”.
+
+<Callout type="warn" title="Caution">
+
+- The paginated key list shows each key’s index, status, disable reason, and disable time. The “Enabled”, “Manually Disabled”, and “Automatically Disabled” summary cards always count all keys, regardless of filters.
+- Enabling or disabling an individual key affects only that key.
+- Deleting a key reindexes the keys that follow it. At least one key must remain. Deleting a key requires the “Edit Sensitive Channel Settings” permission.
+- “Delete Auto-Disabled Keys” removes only automatically disabled keys and preserves manually disabled keys. The button appears only if there are automatically disabled keys.
+- If no usable keys remain, the entire channel is disabled. See [Channel Status](#channel-status) for recovery rules.
+</Callout>
+
+### Repair Channel Consistency
+
+- Channel Management - Repair Channel Consistency
+
+![Channel Management - Repair Channel Consistency page](/assets/guide/feature-guide/channel-management-fix-channel-consistency.png)
+
+“Repair Channel Consistency” rebuilds the indexes for supported models, Groups, priorities, and weights from all channel configurations. Resolve any upstream credential, proxy, or model pricing issues separately.
+
+**Steps**
+
+1. Click “Repair Channel Consistency” in the page header’s ⋯ menu.
+2. Click “Repair” in the “Repair Channel Consistency?” dialog.
+
+<Callout type="warn" title="Caution">
+Routing may be briefly incomplete during the rebuild. Run this operation during off-peak hours. The confirmation dialog reads “This will rebuild the channel routing index from all channel configurations, including supported models, Groups, priorities, and weights. Routing may be briefly incomplete during the rebuild. Continue?”
+</Callout>
+
+## Rules and Mechanisms
+
+This section covers channel permissions and security boundaries, type-specific settings, when passthrough and overrides take effect, and how parameter overrides work.
+
+### Permissions and Security Boundaries
+
+All channel operations require the Admin or Root role. Each operation then checks the applicable channel permission. Root configures the permissions for standard Admin accounts in <a href="/en/docs/guide/feature-guide/admin/user#administrator-permissions" target="_blank" rel="noopener noreferrer">Administrator Permissions</a>.
+
+**Permissions**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Permission | Main Operations |
+| --- | --- |
+| Read Channels | View the channel list, channel details, model lists, default Base URLs, runtime policies, balance and usage results, and vLLM/SGLang status. |
+| Operate Channels | Test channels, check balances, enable or manually disable channels, repair channel consistency, fetch models for existing channels, check for upstream model updates, and enable or disable keys in multi-key channels. |
+| Edit Channel Routing | Edit models, Groups, mappings, status code mappings, test models, automatic bans, tags, notes, priorities (including drag-and-drop adjustments), and weights. Apply upstream model updates. |
+| Edit Sensitive Channel Settings | Create, delete, and duplicate channels. Modify credentials, types, Base URLs, proxies, request header overrides, parameter overrides, and other sensitive settings. Fetch models using a temporary configuration. Delete keys from multi-key channels. |
+| Bind Task Plugins | Create or modify task plugin bindings and bind plugin extensions to a New API gateway channel. Add request processing instances to a channel and view the instance list, with access limited to the list itself. |
+| Root and Security Verification | View full channel keys. This operation requires the Root role and successful security verification, and is rate-limited. The “View Channel Keys” permission does not grant access to this operation. |
+
+</div>
+
+<Callout type="warn" title="Protect Your Keys">
+  Keep API keys, service account JSON, proxy passwords, request header credentials, and Codex OAuth JSON out of lists, screenshots, logs, and support tickets. The edit drawer leaves existing keys blank. Leave the field blank to keep the current value, or enter a new value to replace it. Duplicating a channel copies its credentials. Deleting a channel or key is permanent.
+</Callout>
+
+### Type-Specific Settings
+
+Some channel types have their own credential formats, fields, or actions. “Connection and Models” displays the options for the selected type.
+
+**Channel Types**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Type | Credentials and Type-Specific Fields | Limitations and Notes |
+| --- | --- | --- |
+| Vertex AI | “Vertex AI Key Format” supports JSON (service account) or API Key. Set the “Deployment Region”. API Key mode also offers an optional “Vertex AI Project ID”. The “Use Vertex AI v1beta1 Endpoint” toggle is off by default. | JSON mode supports adding service accounts in bulk and takes the project from the service account. API Key mode supports a single key. If the project ID is blank, Google determines the region. If a project ID is set, requests go to the deployment region. When using JSON for “Deployment Region”, include a `default` region. Enabling the toggle sends only Gemini and Imagen requests to v1beta1. Claude and other models continue to use v1. Some features require v1beta1. See the Vertex AI documentation for details. The toggle is a sensitive setting. |
+| AWS | “AWS API” supports “InvokeModel (Legacy API)” (default) or “Mantle (Messages API)”. “AWS Key Format” supports AK/SK (default) or API Key. The credential hint includes the region. | Enter `AccessKey\|SecretAccessKey\|Region` or `APIKey\|Region` as prompted. The frontend’s delimiter format check can catch only some AWS errors. Mantle is available only for supported Claude models. Amazon Nova and older models continue to use InvokeModel. With Mantle, you can leave the Base URL blank to use the regional default. A custom URL must use HTTPS. |
+| Azure | API Key, Base URL, and default API version. The Responses API version is optional. | “Default API Version” is required. Model names usually correspond to Azure deployment names. |
+| Codex | OAuth JSON containing at least `access_token` and `account_id`. | Only single-key creation is supported. Use “Refresh Credentials” when editing. Tests use Responses if no endpoint is specified. Open “Account Information” to view usage and Quota reset information. |
+| vLLM/SGLang | Self-hosted Base URL and an API Key or `EMPTY`. | These types use fixed protocol presets. Configure HTTP/2 and model detection as permitted by the options on the page. Advanced custom route editing is unavailable for these types. The balance field shows the inference service status. |
+| Ollama | Uses a local or self-hosted URL by default. You can also switch to the OpenAI-compatible chat endpoint. | Pulling models, deleting models, and checking versions are Ollama-specific operations and may affect upstream models. Open “Manage Ollama Models” in the ⋯ menu. |
+| Custom (#8) | Legacy full-URL configuration. “API URL” supports the `{model}` variable. | The drawer shows “If you are connecting to an upstream One API or New API relay, use the OpenAI type unless you know what you are doing.” |
+
+</div>
+
+<Callout type="info" title="Tip">
+
+- “Fetch Models”, “Upstream Updates”, and “Upstream Model Check Settings” appear only for channel types that support fetching models.
+- Built-in channel types that support plugin extensions display “Plugin Extensions” below “Models”, where you can select models from the extensions.
+</Callout>
+
+### How Pass-Through and Overrides Interact
+
+- Channel Management – Confirm Request Body Pass-Through
+
+![Channel Management – Confirm Request Body Pass-Through page](/assets/guide/feature-guide/create-channel-pass-through-request-body-description.png)
+
+- Channel Management – Confirm Request Header Pass-Through
+
+![Channel Management – Confirm Request Header Pass-Through page](/assets/guide/feature-guide/create-channel-pass-through-request-headers-description.png)
+
+Before pass-through is enabled, a confirmation dialog lists the features that will become unavailable. Click “Confirm and Enable Pass-Through” to apply the setting.
+
+**Execution Rules**
+
+- Global or Channel-level request body pass-through bypasses the normal conversion pipeline. Model mapping, parameter overrides, and protocol conversion may no longer follow the standard processing path.
+- When “Pass Through Request Body” is enabled for a Channel, instances configured for the “Before Format Conversion” and “Before Sending” stages on the sidebar’s “Request Processing” page are skipped. Instances added to this Channel for the “Before Reading the Request” stage are also skipped. “Final Check” and “Check Response” run as usual. See <a href="/en/docs/guide/feature-guide/admin/request-processing#important-notes" target="_blank" rel="noopener noreferrer">Request Processing</a>.
+- Request header pass-through uses `*` or `re:`/`regex:` rules to copy client request headers. It excludes Authorization, `x-api-key`, `x-goog-api-key`, WebSocket handshake headers, and other security headers.
+- Request header overrides are applied after pass-through, so explicit overrides take precedence. `{client_header:NAME}` must be the entire value. The header is omitted if the client did not send it.
+- Select streaming mode in the client request. Rewriting `stream` in the JSON with a parameter override does not guarantee that the gateway, adapter, and upstream service will switch streaming modes together.
+
+**Field Pass-Through Controls**
+
+- All “Field Pass-Through Controls” toggles under “Request and Response” are off by default and are shown by Channel type. “Allow `service_tier` Pass-Through” applies to all types shown in this section.
+- OpenAI-type Channels also offer “Block `store` Pass-Through,” “Allow `safety_identifier` Pass-Through,” “Allow `include` Usage Obfuscation Pass-Through,” and “Allow Inference Geography Pass-Through.”
+- Claude-type Channels also offer “Allow `speed` Pass-Through.” Anthropic Channels additionally offer “Allow `inference_geo` Pass-Through” and “Allow Claude Beta Query Pass-Through.”
+
+### Parameter Override System
+
+- Channel Management – Parameter Overrides
+
+![Channel Management – Parameter Overrides page](/assets/guide/feature-guide/create-channel-request-and-response-parameter-overrides-visual-editor.png)
+
+Parameter overrides run after request conversion and before the request is sent upstream. They provide limited protocol conversion and do not automatically synchronize the client’s streaming state. The visual editor and JSON mode write to the same set of parameter override rules.
+
+**Execution Order and Scope**
+
+- Overrides run only when the request enters the corresponding relay processing path. Request body pass-through bypasses normal conversion and parts of the override pipeline.
+- <a href="/en/docs/guide/feature-guide/admin/request-processing#global-parameter-override" target="_blank" rel="noopener noreferrer">Global Parameter Override</a> instances on the sidebar’s “Request Processing” page run before Channel-level parameter overrides. The Channel setting takes precedence for the same parameter. The global “Return Custom Error” operation always returns HTTP 400.
+- Rules in the `operations` array run in array order. Each operation’s output becomes the input to the next operation.
+- When both legacy top-level fields and the `operations` array are present, the legacy fields are applied first, followed by the operations.
+- When a session rule matches, its parameter override template is merged with the Channel’s parameter overrides. See <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#session-and-retry" target="_blank" rel="noopener noreferrer">Sessions and Retries</a>.
+- Conditions default to “Match Any Condition (OR).” Select “Match All Conditions (AND)” (`logic: "AND"`) to require every condition to match.
+- Conditions read the current request JSON and runtime context. If an earlier operation changes the model, a later condition may read the updated value. Context values such as `original_model` and `upstream_model` are not automatically written to the request JSON.
+- “Return Custom Error” (`return_error`) ends the request early and returns a custom error. Supported status codes and error fields depend on what the backend can parse. The values an input field accepts may extend beyond what the backend supports.
+- If a condition comparison fails, the request fails with `channel:param_override_invalid` and is handled as a Channel error. Examples include operands of different types in an “Exact Match” (`full`), a nonnumeric operand in a numeric comparison, or an invalid regular expression (`regex`).
+
+**Visual Editor and JSON**
+
+Under “Request and Response,” click “Visual Editor” to open the “Parameter Overrides” dialog. Under “Mode,” select “Visual” or “JSON Text.” Use Visual mode to edit rules individually and JSON mode to copy the complete rule set.
+
+**Operation Quick Reference for Fields and Values**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Operation | Common Fields | Description |
+| --- | --- | --- |
+| Set Field (`set`), Delete Field (`delete`) | `path`, `value`. Set Field also supports Keep Original Value (`keep_origin`). | Sets or deletes a JSON field. |
+| Append (`append`), Prepend (`prepend`) | `path`, `value`, Keep Original Value (`keep_origin`) | Adds content before or after a string or array. Keep Original Value prevents existing content from being overwritten. |
+| Move Field (`move`), Copy Field (`copy`) | `from`, `to` | Moving deletes the source field. Copying retains it. |
+| Trim Prefix (`trim_prefix`), Trim Suffix (`trim_suffix`) | `path`, `value` | Removes a matching prefix or suffix. |
+| Ensure Prefix (`ensure_prefix`), Ensure Suffix (`ensure_suffix`) | `path`, `value` | Adds the prefix or suffix if it is missing. |
+| Trim Whitespace (`trim_space`), Convert to Lowercase (`to_lower`), Convert to Uppercase (`to_upper`) | `path` | Trims whitespace or changes the case of a string. |
+| String Replace (`replace`), Regex Replace (`regex_replace`) | `path`, `from`, `to` | Performs a literal or regular expression replacement. |
+| Prune Object Entries (`prune_objects`) | `path`, conditions | Removes object entries based on conditions. |
+
+</div>
+
+**Operation Quick Reference for Request Headers and Control Flow**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Operation | Common Fields | Description |
+| --- | --- | --- |
+| Set Request Header (`set_header`), Delete Request Header (`delete_header`) | Header name and value. Set Request Header also supports Keep Original Value (`keep_origin`). | Modifies header overrides. The adapter may later regenerate a native header that was deleted. |
+| Copy Request Header (`copy_header`), Move Request Header (`move_header`) | `from`, `to`, Keep Original Value (`keep_origin`) | Copies or moves entries in the runtime request header override table. |
+| Pass Through Request Headers (`pass_headers`) | List of header names, Keep Original Value (`keep_origin`) | Copies the listed client request headers into the runtime header overrides under their original names. The security header exclusions for `*` and `re:` pass-through in request header overrides do not apply here. Listed headers such as `Authorization` and `x-api-key` are copied as well. List only the headers you need. |
+| Sync Fields (`sync_fields`) | JSON or header source and destination | Synchronizes values between request fields and request headers. |
+| Return Custom Error (`return_error`) | Error object | Ends the request immediately and returns a custom error. Use it when you have explicit conditions for rejecting a request. |
+
+</div>
+
+**Conditions, Paths, and Security Fields**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Condition | Description |
+| --- | --- |
+| Exact Match (`full`), Prefix (`prefix`), Suffix (`suffix`), Contains (`contains`) | Match methods for strings or other comparable values. |
+| Regular Expression (`regex`) | Matches the string representation of a field against a regular expression. The condition value must be a string. |
+| Greater Than (`gt`), Greater Than or Equal To (`gte`), Less Than (`lt`), Less Than or Equal To (`lte`) | Both operands must be JSON numbers. Arbitrary strings cannot be used as numbers in these comparisons. |
+| Invert Match (`invert`) | Inverts the match result. “Pass If Field Is Missing” (`pass_missing_key`) is evaluated first to determine whether a missing field passes. |
+| Pass If Field Is Missing (`pass_missing_key`) | Allows the condition to pass if the path is missing. By default, the condition does not pass. |
+| Match Any Condition (OR), Match All Conditions (AND) (`logic`) | “Match All Conditions (AND)” requires every condition to pass. The default is “Match Any Condition (OR).” |
+| JSON Path | Supports paths such as `messages.0.content` and `messages.-1.content`. |
+| Runtime Context | Supports matching on context values such as the original model, upstream model, user, and Group. These names are runtime context keys and should not be treated as fixed request body fields. |
+
+</div>
+
+<Callout type="warn" title="Caution">
+Parameter overrides can change request semantics, request headers, and error handling. Avoid using them to switch `stream` or pass client keys to untrusted upstream services. Enable regex replacement, header synchronization, and custom errors with care.
+</Callout>
+
+## Actions
+
+### Page Buttons and Filters
+
+**Page Header**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| “Max Retries” badge | Next to the page title | Shows the maximum number of retries from <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#session-and-retry" target="_blank" rel="noopener noreferrer">Request Policies</a>. Root users can click the badge, which has a “Retry Settings” tooltip, to open “Sessions and Retries.” Admin users can only see the number. |
+| Node Status | Upper-right corner of the page | Visible only to Root users. In multi-instance deployments, shows whether each node has loaded the Channels, with messages such as “Applied on … nodes,” “Failed to update … nodes,” or “…/… nodes updated.” Click to open the “Nodes” list. Each node shows “Applied,” “Updating,” or “Update Failed,” along with any error. |
+| Drag-and-Drop Mode | Upper-right corner of the page | See [Reorder Priorities by Dragging](#adjust-priorities-with-drag-and-drop). |
+| Bulk Actions | Upper-right corner of the page | Toggle to show a selection column and a bulk action bar at the bottom. Turning it off clears the selection. The toggle resets when you refresh the page. See [Bulk Actions](#bulk-actions). |
+| Tag Mode | Upper-right corner of the page | Toggle to group Channels with the same tag into a single row. The setting is saved in the current browser. See [Manage Channels by Tag](#manage-channels-by-tag). |
+| Sort | Upper-right corner of the page | Choose “Priority,” “ID,” “Name,” “Balance,” “Response,” or “Last Test” from the dropdown. Use the button on the right to switch between ascending and descending order. The default is descending by priority. Changing the sort returns you to page 1. |
+| Create Channel | Upper-right corner of the page | Requires the “Edit Sensitive Channel Settings” permission. Without it, the action is unavailable and displays “You do not have permission to perform this action.” See [Create and Edit Channels](#create-and-edit-channels). |
+| ⋯ Menu | Upper-right corner of the page | The tooltip reads “More Actions.” All items apply regardless of the current list filters. See “Page Header ⋯ Menu” below. |
+
+</div>
+
+**Page Header ⋯ Menu**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Test All Channels | Page header ⋯ menu | Runs Channel tests in the background and displays “Testing of all enabled Channels has started. Refresh to view the results.” It skips manually disabled Channels and automatically disables or restores Channels according to the rules under <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#channel-health" target="_blank" rel="noopener noreferrer">Request Policies → Channel Health</a>. If a task of the same type is already running, the submission is rejected. The `CHANNEL_TEST_FREQUENCY` (positive integer in minutes) and `CHANNEL_TEST_ENABLED` environment variables can override the scheduled testing settings under “Channel Health.” Manual tests are unaffected. |
+| Update All Balances | Page header ⋯ menu | Updates balances in the background. See [Check Balances and Runtime Status](#check-balance-and-runtime-status). |
+| Check All Upstream Updates, Apply All Upstream Updates | Page header ⋯ menu | See [Fetch Models and Update Upstream Models](#fetch-models-and-apply-upstream-model-updates). |
+| Repair Channel Consistency | Page header ⋯ menu | See [Repair Channel Consistency](#repair-channel-consistency). |
+| Delete All Disabled Channels | Page header ⋯ menu | See [Enable, Disable, and Delete](#enable-disable-and-delete-channels). |
+
+</div>
+
+**List Toolbar**
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Search Box | Toolbar above the list | The placeholder reads “Filter by name, ID, or key...” Matches the name, Channel ID, key, or Base URL. Keys require an exact match. The list does not return full keys. |
+| Model Filter | Toolbar above the list | The placeholder reads “Filter by model...” Filters by the models each Channel exposes. |
+| Status | Toolbar above the list | “Disabled” includes both manually and automatically disabled Channels. This filter does not distinguish between them. The setting is saved in the current browser. |
+| Type, Group | Toolbar above the list | “All Types” lists only types present in existing Channels and shows their counts. “All Groups” filters by Group. |
+| Show, Hide | Right side of the toolbar above the list | The eye icon shows sensitive data by default. Switching to Hide masks IDs, names, Groups, and balances. This toggle changes only what is masked in the list. Viewing full keys requires a separate Root security verification step. The toggle resets when you refresh the page. |
+| Refresh | Right side of the toolbar above the list | Reloads the list. |
+| Card View, Table View | Right side of the toolbar above the list | Switches views. Card View is the default. The setting is saved in the current browser. |
+| View | Right side of the toolbar above the list | Controls which columns appear in Table View. “Models” and “Tags” are hidden by default. The setting is saved in the current browser. |
+| Pagination | Bottom of the list | Choose 10, 20, 50, or 100 entries per page. The default is 20. Selection applies only to the currently loaded rows. |
+
+</div>
+
+### Row Actions
+
+- Channel Management – Channel Actions
+
+![Channel Management – Channel Actions page](/assets/guide/feature-guide/channel-management-channel-actions.png)
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Edit | Edit icon at the end of the row (card ⋯ menu) | Opens the “Edit Channel” drawer. See [Create and Edit Channels](#create-and-edit-channels). |
+| Test Connection | Icon at the end of the row | Runs a quick test by sending a single request. See [Test Connection](#test-connection). |
+| Test Channel Connection | Icon in the upper-right corner of the card | Opens the same test dialog as “Test Connection” in the ⋯ menu. |
+| Enable or Disable | Icon at the end of the row (upper-right corner of the card) | Enables or manually disables the Channel. See [Enable, Disable, and Delete](#enable-disable-and-delete-channels). |
+| Priority, Weight | “Priority” and “Weight” columns | Edit these values directly. Changes are saved automatically. See “Field Reference” in [Channel Management Overview](#channel-management-overview). |
+| Balance | “Used / Remaining” column | Click to update the balance. See [Check Balances and Runtime Status](#check-balance-and-runtime-status). |
+| Test Connection | ⋯ menu at the end of the row (upper-right corner of the card) | Opens the test dialog, where you can select an endpoint, streaming mode, and model. |
+| Check Balance | ⋯ menu at the end of the row (upper-right corner of the card) | Opens the “Check Balance” dialog. For plugin Channels, this action appears only if the plugin provides balance information. |
+| Fetch Models, Upstream Updates | ⋯ menu at the end of the row (upper-right corner of the card) | Available for Channel types that support model fetching. See [Fetch Models and Update Upstream Models](#fetch-models-and-apply-upstream-model-updates). |
+| Manage Ollama Models | ⋯ menu at the end of the row (upper-right corner of the card) | Available only for Ollama Channels. |
+| Duplicate Channel | ⋯ menu at the end of the row (upper-right corner of the card) | Requires the “Edit Sensitive Channel Settings” permission. See [Duplicate a Channel](#duplicate-channels). |
+| Manage Keys | ⋯ menu at the end of the row (upper-right corner of the card) | Available only for multi-key Channels. See [Manage Multi-Key Channels](#manage-multi-key-channels). |
+| Delete | ⋯ menu at the end of the row (upper-right corner of the card) | Opens the “Delete Channel” confirmation dialog. See [Enable, Disable, and Delete](#enable-disable-and-delete-channels). |
+
+</div>
+
+<Callout type="info" title="Tip">
+Grouped rows in Tag Mode have different actions. See [Manage Channels by Tag](#manage-channels-by-tag).
+</Callout>
+
+### Bulk Actions
+
+Turn on “Bulk Actions” in the page header and select Channels to display the bulk action bar at the bottom of the list. Actions apply only to the selected Channels. Filtered results are not selected automatically.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_td:nth-child(2)]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Action | Location | Description |
+| --- | --- | --- |
+| Enable Selected Channels, Disable Selected Channels | Bottom of the list | See [Enable, Disable, and Delete](#enable-disable-and-delete-channels). |
+| Set Tag for Selected Channels | Bottom of the list | Opens the “Set Tag” dialog. Leave the field blank to remove the tag. See [Manage Channels by Tag](#manage-channels-by-tag). |
+| Delete Selected Channels | Bottom of the list | Requires the “Edit Sensitive Channel Settings” permission. |
+
+</div>
+
+## Status Reference
+
+### Channel Status
+
+The “Status” column and card badges show the following Channel statuses.
+
+<div className="[&_table]:min-w-[36rem] [&_td:first-child]:whitespace-nowrap [&_th]:whitespace-nowrap">
+
+| Status | Meaning | Notes |
+| --- | --- | --- |
+| Enabled | The Channel participates in routing. | Green. Multi-key Channels show the enabled and total key counts, as in “Enabled (2/2).” |
+| Disabled | An administrator disabled the Channel manually or by tag. The Channel is excluded from routing. | Red, with the whole row grayed out. When in-memory caching is enabled, automatic disabling does not override manual disabling. |
+| Automatically Disabled | The system disables the Channel when a failed request, “Test All Channels,” a scheduled test, or “Update All Balances” meets the conditions for automatic disabling. | Yellow, with the whole row grayed out. Hover to see “Reason:” and “Time:”. When “Re-enable on Success” is on, the next scheduled test or “Test All Channels” can restore the Channel. |
+| Unknown | The status value is unrecognized. | — |
+
+</div>
+
+**Key Status in Multi-Key Channels**
+
+In “Multi-Key Management,” each key is “Enabled,” “Manually Disabled,” or “Automatically Disabled.” The summary cards at the top count all keys.
+
+- If disabling or deleting keys in “Multi-Key Management” leaves no usable keys, the Channel becomes manually disabled. Re-enabling any key automatically restores the Channel.
+- If the system automatically disables all keys, the Channel becomes automatically disabled. Re-enabling any key in “Multi-Key Management” or choosing “Enable All” automatically restores the Channel. When “Re-enable on Success” is on, the next scheduled test or “Test All Channels” can also restore it.
+- If the Channel is subsequently disabled manually or by tag, it stays disabled until manually re-enabled.
+
+## Saving and Applying Changes
+
+Channels are stored in the database. With in-memory caching disabled, every node reads the database directly on each request, and the operations below take effect on each node’s next request. With in-memory caching enabled, including in deployments with Redis enabled, the node handling the request refreshes immediately. Other nodes reload the Channels within about 3 seconds, or within one sync cycle at the latest (60 seconds by default). Automatic disabling after request failures and automatic recovery after tests follow different timing. See “Automatic Changes and Background Tasks” below. The `SYNC_FREQUENCY` environment variable sets the sync interval in seconds and defaults to 60. New API reads all environment variables mentioned on this page at startup, so restart New API after changing them.
+
+**Administrator Actions**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Action | How Changes Are Saved | When Changes Take Effect |
+| --- | --- | --- |
+| Create Channels (including bulk creation) | Click “Create Channel” in the drawer. | With in-memory caching enabled, all nodes, including the node handling the request, begin using the new Channels within about 3 seconds, or within one sync cycle at the latest (60 seconds by default). |
+| Edit a Channel | Click “Update Channel” in the drawer to save all four tabs at once. | The new configuration is used for routing starting with the next request. |
+| Change priority or weight, manage tags, enable, disable, delete, duplicate, or manage multiple keys | Changes are written immediately from the list or upon confirmation, without saving through the drawer. | The new configuration is used for routing starting with the next request. |
+| Fetch models or update upstream models | Changes are written back to the Channel only after you click “Save Models” or “Confirm and Apply Selected Changes.” | The new model list is used for routing starting with the next request. |
+| Repair Channel consistency | Runs synchronously when clicked. On completion, it displays “Channel consistency repair complete: … succeeded, … failed.” | Once the message appears, routing uses the rebuilt capability index starting with the next request. |
+
+</div>
+
+**Automatic Changes and Background Tasks (Automatic Execution)**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Action | How Changes Are Saved | When Changes Take Effect |
+| --- | --- | --- |
+| Automatically Disable | Runs automatically when a failed request, “Test All Channels,” a scheduled test, or “Update All Balances” meets the conditions for automatic disabling. | The node that detects the issue stops using the Channel immediately. Other nodes stop using it when they reload on their sync cycle (60 seconds by default). |
+| Automatically Restore | If “Re-enable on Success” is on, runs automatically when a scheduled test or “Test All Channels” succeeds. | With in-memory caching enabled, all nodes, including the node that ran the test, resume using the Channel after reloading on their sync cycle (60 seconds by default). |
+| Automatically Sync Upstream Models | When “Automatically Sync Upstream Models” is on, the Master instance checks for updates every 30 minutes by default.<br/>`CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_INTERVAL_MINUTES` sets the interval in minutes. The default is 30, and values below 1 are treated as 30. `CHANNEL_UPSTREAM_MODEL_UPDATE_TASK_ENABLED` defaults to `true`. Setting it to `false` disables scheduled checks while leaving manual checks available. `CHANNEL_UPSTREAM_MODEL_UPDATE_MIN_CHECK_INTERVAL_SECONDS` sets the minimum time between scheduled checks for the same Channel, in seconds. The default is 300, and values below 0 are treated as 300. This limit does not apply to manual checks. These three environment variables have no corresponding settings on the page. | After a new model is added to a Channel’s model list, it participates in routing starting with the next request. With in-memory caching enabled, other nodes reload the Channel within about 3 seconds, or within one sync cycle at the latest (60 seconds by default). |
+
+</div>
+
+**Automatic Changes and Background Tasks (Manual Submission)**
+
+<div className="[&_table]:min-w-[36rem] [&_th]:whitespace-nowrap">
+
+| Action | How Changes Are Saved | When Changes Take Effect |
+| --- | --- | --- |
+| Test All Channels, Check All Upstream Updates | Clicking submits a background task. | The Master instance picks up the task. If it handled the request, the task starts immediately. Otherwise, the task starts within about 15 seconds. The submission is rejected if a task of the same type is already running. A manual check records models pending addition or removal. The model list changes only when you apply the updates. |
+| Update All Balances | Clicking submits a background task and displays “Balances are being updated in the background. The list will refresh automatically.” | The Master instance runs the task. The list refreshes every 5 seconds and displays “All balances updated” or “Failed to update balances” when finished. If a balance update is already running, the page displays “A balance update is already in progress” and tracks that task. Channels with insufficient balance are automatically disabled. |
+| Test Connection, Check Balance (Single Channel) | Run a test in the test dialog or click the balance. | Updates only the test time, response time, or balance. Channel status and routing remain unaffected. |
+
+</div>
+
+**Additional Notes**
+
+- **Saving from the drawer**. All four tabs share one form. On success, the drawer shows “Channel created successfully” or “Channel updated successfully.” If saving fails, the drawer stays open and displays the reason.
+- **Manual testing after saving**. Saving writes the configuration without connecting to the upstream service or running a test. When needed, run a manual test from [Test Connection](#test-connection).
+- **Active connections**. Disabling or deleting a Channel, including automatic disabling, closes its active Realtime and Responses WebSocket connections. With Redis enabled, those connections are also closed on other nodes.
+- **Before synchronization completes**. With in-memory caching enabled, routing may temporarily differ across nodes.
+- **Background task progress**. You can track “Test All Channels,” “Check All Upstream Updates,” and “Update All Balances” under “System Tasks” in <a href="/en/docs/guide/feature-guide/admin/system-info" target="_blank" rel="noopener noreferrer">System Information</a>.
+
+## Notes
+
+- **Bulk operations affect all channels.** “Test All Channels,” “Update All Balances,” “Check All Upstream Updates,” “Apply All Upstream Updates,” “Delete All Disabled Channels,” and “Repair Channel Consistency” ignore the current list filters. Run these operations during off-peak hours.
+- **Tests and balance updates may change channel status.** “Test All Channels” may automatically disable or re-enable channels. “Update All Balances” may automatically disable channels with insufficient balances. See “Automatic Changes and Background Tasks” under [Saving and Applying Changes](#saving-and-applying-changes).
+- **Automatic syncing updates the channel’s model list directly.** When “Automatically Sync Upstream Models” is enabled, scheduled checks add newly discovered models to the channel’s model list, excluding ignored models. Existing models stay on the list.
+- **“Apply All Upstream Updates” skips individual review.** It applies all pending model additions and removals for every channel that has been checked. To review changes individually, select them in “Preview Upstream Model Changes” and click “Confirm and Apply Selected Changes.”
+- **Sensitive operations require the “Edit Sensitive Channel Settings” permission.** Admins without this permission cannot create, duplicate, or delete channels, or save changes to sensitive settings such as credentials, channel type, Base URL, proxy, header overrides, or parameter overrides. See [Permissions and Security Boundaries](#permissions-and-security-boundaries).
+- **Deletion is irreversible, and duplication copies credentials.** New API cannot restore a deleted channel. A duplicate inherits the original channel’s credentials and therefore cannot serve as credential rotation. See [Enabling, Disabling, and Deleting Channels](#enable-disable-and-delete-channels) and [Duplicating a Channel](#duplicate-channels).
+
+## Frequently Asked Questions
+
+<Accordions type="multiple" className="[&_h3]:font-semibold [&_h3[data-state=open]]:bg-fd-muted [&_[role=region]>div]:border-t [&_[role=region]>div]:pt-3 [&_[role=region]>div]:pb-3 [&_[role=region]>div]:ps-9 [&_[role=region]>div]:text-sm [&_[role=region]>div]:leading-6 [&_[role=region]>div]:text-fd-muted-foreground [&_[role=region]_strong]:text-fd-foreground [&_[role=region]_p]:my-2 [&_[role=region]_ol]:my-1 [&_[role=region]_ul]:my-1 [&_[role=region]_li]:my-0.5 [&_[role=region]_table]:table-fixed [&_[role=region]_th:nth-child(1)]:w-[40%] [&_[role=region]_th:nth-child(2)]:w-[30%]">
+
+<Accordion title="Unable to save a new or updated channel">
+**Overview**
+
+The page validates the settings first, followed by the server. Common messages are listed below.
+
+| Message | Possible cause | Resolution |
+| --- | --- | --- |
+| “Please fix the highlighted fields before saving” | The name, models, or group are missing, or credentials are missing for a new channel. A JSON field, proxy address, HTTP/2 connection sharding setting, or advanced custom route may also be invalid. | Correct each highlighted field. |
+| “Unauthorized, insufficient privileges” | You changed sensitive settings such as credentials, channel type, Base URL, proxy, header overrides, or parameter overrides, but your account lacks the “Edit Sensitive Channel Settings” permission. | Ask a Root user to grant the permission or make the change for you. |
+| “Deployment region cannot be empty” or “Deployment region must include a default field” | The Vertex AI “Deployment Region” field is empty, or the JSON is missing `default`. | Enter a region. If you use JSON, include `default`. |
+| “Invalid channel extra settings format: …” | The channel’s extra settings are invalid JSON. | Correct the JSON and save again. |
+| `Codex key must be a valid JSON object`, `New API channel base URL cannot be empty`, or similar messages (English only) | The credentials or Base URL do not meet the requirements of the channel type. For example, Codex credentials must be a JSON object containing `access_token` and `account_id`, and New API, vLLM, and SGLang channels require a Base URL. | Correct the corresponding field as indicated by the message. |
+</Accordion>
+
+<Accordion title="Authentication fails when testing a channel">
+**Overview**
+
+When a test fails, the message “... test failed” appears with the error details returned by the upstream provider.
+
+**Possible causes**
+
+- The Base URL includes the full endpoint path.
+- The credential format is invalid, or the organization, project, or region is incorrect.
+- The proxy or endpoint type is incompatible with the upstream provider.
+
+**Resolution**
+
+1. Correct the corresponding field based on the error details.
+2. Run a detailed test with a different endpoint type or model. See [Testing the Connection](#test-connection).
+</Accordion>
+
+<Accordion title="A user cannot see a model">
+**Overview**
+
+The model list returned to a caller includes only models with configured pricing that are offered by enabled channels in the caller’s group. The “Show in Gallery” setting separately controls whether a model appears in the Model Gallery. See <a href="/en/docs/guide/feature-guide/admin/model#model-marketplace-visibility-status" target="_blank" rel="noopener noreferrer">Model Management</a>.
+
+**Possible causes**
+
+- The channel’s model list does not include the model name. If you use model mapping, add the source name from the mapping to the model list as well.
+- The channel’s group does not match the user’s group or the API key’s group.
+- The API key restricts which models are available.
+- The channel that offers the model is disabled.
+- The model has no configured price. This restriction is lifted when the site enables “Personal Use Mode” or the user enables “Accept Unpriced Models.”
+
+**Resolution**
+
+1. Check the channel’s models, group, and status, along with the API key’s model restrictions.
+2. If the model has no configured price, ask a Root user to set one in <a href="/en/docs/guide/feature-guide/system-settings/settings-billing#model-pricing" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a>.
+</Accordion>
+
+<Accordion title="A request is routed to an unexpected channel">
+**Possible causes**
+
+- The priority, weight, channel status, or tag scope differs from what you expected.
+- The request used a different path, matched a session rule, or triggered the <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#session-and-retry" target="_blank" rel="noopener noreferrer">retry settings</a>.
+- At a shared entry point, both standard channels and plugin channels are eligible for selection.
+
+**Resolution**
+
+1. To see how the channel was selected, open <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#request-decision-records" target="_blank" rel="noopener noreferrer">Request Policy Decision</a> in the usage log details.
+</Accordion>
+
+<Accordion title="Parameter overrides do not take effect">
+**Possible causes**
+
+- Request body passthrough is enabled and bypasses parameter overrides.
+- The operation order, condition path, or JSON type differs from what you expected.
+- The request did not go through the relay processing path that applies parameter overrides.
+
+**Resolution**
+
+1. Check each item under “Application Order and Boundaries” in [Parameter Override System](#parameter-override-system).
+</Accordion>
+
+<Accordion title="A channel is frequently disabled automatically">
+**Possible causes**
+
+- An upstream status code or error message matched an automatic disable rule, for example after a failure caused by the test model, the proxy, or upstream rate limiting. See <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies#channel-health" target="_blank" rel="noopener noreferrer">Channel Health</a>.
+- During “Update All Balances,” the channel’s balance was zero or negative, so the channel was automatically disabled with the reason “Insufficient balance.”
+
+**Resolution**
+
+1. Check the reason shown for the channel to determine whether it was disabled automatically or manually.
+2. Review the Channel Health rules and adjust the channel or test settings accordingly.
+</Accordion>
+
+<Accordion title="Failed to fetch models">
+**Messages**
+
+“Failed to fetch models” or “This channel type does not support fetching models.” If the server or upstream provider returns a reason, the message displays it verbatim.
+
+**Overview**
+
+A failed fetch leaves the saved model list intact.
+
+**Possible causes**
+
+- The channel type does not support fetching models.
+- There is an issue with the credentials, Base URL, or network.
+- The advanced custom channel has no model list route.
+
+**Resolution**
+
+1. Correct the issue and fetch the models again.
+</Accordion>
+
+<Accordion title="The balance has not updated">
+**Messages**
+
+“Multi-key channels do not support balance queries.” For a plugin channel whose plugin does not provide a balance, the message is “The plugin of this channel does not report a balance.”
+
+**Possible causes**
+
+- The channel type does not support the standard balance endpoint, the channel is a built-in multi-key channel, or its plugin does not report a balance.
+- “Update All Balances” is still running in the background. The list may show the previous balance until the task finishes.
+- Codex, vLLM, and SGLang expose runtime information separately. See [Checking Balances and Runtime Status](#check-balance-and-runtime-status).
+</Accordion>
+
+<Accordion title="A multi-key channel is unavailable">
+**Possible causes**
+
+All keys in the channel have been disabled manually or automatically, leaving no usable keys. The overall channel status does not reflect the status of each key.
+
+**Resolution**
+
+1. Check each key’s status and the reason it was disabled automatically. See [Managing Multi-Key Channels](#manage-multi-key-channels) and [Channel Status](#channel-status).
+</Accordion>
+
+<Accordion title="Requests still cannot be routed after running “Repair Channel Consistency”">
+**Overview**
+
+The repair runs synchronously when you click the action. In multi-instance deployments with in-memory caching enabled, other nodes reload the channels and start using the new index within about 3 seconds and no later than one sync cycle (60 seconds by default). If a repair is already running, the message “A repair task is already running. Please try again later” appears.
+
+**Possible causes**
+
+The channel’s models, group, priority, or weight may differ from what you expected, or there may be an issue with the credentials or upstream provider. The repair only rebuilds the index.
+
+**Resolution**
+
+1. Refresh the list and check the models, group, priority, and weight.
+2. Check the credentials and upstream provider for issues.
+</Accordion>
+
+<Accordion title="Some requests still use the old routing configuration after a channel is saved">
+**Overview**
+
+When in-memory caching is enabled, including in deployments with Redis enabled, other nodes reload channels within about 3 seconds and no later than one sync cycle (60 seconds by default). Routing may differ across nodes until they finish reloading. When a request failure automatically disables a channel or a test automatically re-enables it, other nodes reload it on the regular sync cycle (60 seconds by default). When in-memory caching is disabled, routing reads directly from the database.
+
+**Resolution**
+
+1. In a multi-instance deployment, a Root user can check the node status in the upper-right corner of the channel list. If the status reports that one or more nodes failed to update, click it to identify the affected nodes and check their logs.
+2. Wait a few seconds and try again. If the channel was automatically disabled or re-enabled, allow up to one sync cycle (60 seconds by default).
+</Accordion>
+
+<Accordion title="“Test All Channels” reports that another task is already running">
+**Messages**
+
+“Test All Channels” displays “A channel test task is already running or queued. Cannot start this manual task”. “Check All Upstream Updates” displays “A model update task is already running or queued. Cannot start this manual task”.
+
+**Possible causes**
+
+A system task of the same type is running or queued. This includes tasks started on a schedule.
+
+**Resolution**
+
+1. Check the progress under “System Tasks” in <a href="/en/docs/guide/feature-guide/admin/system-info" target="_blank" rel="noopener noreferrer">System Information</a>.
+2. Run the action again after the task finishes.
+</Accordion>
+
+</Accordions>
+
+## Related Documentation
+
+- <a href="/en/docs/guide/feature-guide/admin/model" target="_blank" rel="noopener noreferrer">Model Management</a> — Model catalog, providers, and deployments.
+- <a href="/en/docs/guide/feature-guide/admin/user" target="_blank" rel="noopener noreferrer">User Management</a> — User groups, permissions, and statuses.
+- <a href="/en/docs/guide/feature-guide/admin/task-plugins" target="_blank" rel="noopener noreferrer">Plugin Management</a> — Plugin installation, declarations, and binding conditions.
+- <a href="/en/docs/guide/feature-guide/admin/request-processing" target="_blank" rel="noopener noreferrer">Request Processing</a> — Add request processing instances that apply to all channels or to specified groups.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-billing" target="_blank" rel="noopener noreferrer">Billing and Payment Configuration</a> — Model pricing, group ratios, and payment settings.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-request-policies" target="_blank" rel="noopener noreferrer">Request Policy Configuration</a> — Session persistence, retries, scheduled channel tests, and automatic disabling and re-enabling.
+- <a href="/en/docs/guide/feature-guide/system-settings/settings-models" target="_blank" rel="noopener noreferrer">Model Configuration</a> — Global model behavior, provider adapters, and model deployments.
+- <a href="/en/docs/guide/feature-guide/user/log" target="_blank" rel="noopener noreferrer">Usage Logs</a> — Request, usage, and charge details.
+- <a href="/en/docs/guide/feature-guide/user/task-log" target="_blank" rel="noopener noreferrer">Task Logs</a> — Status of asynchronous tasks such as image, music, and video generation.
